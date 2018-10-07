@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="26dp"
+    android:background="@color/mainColor"
+    android:gravity="center_vertical">
+
+    <TextView
+        android:id="@+id/login_title_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="动态"
+        android:textColor="@color/textColor"
+        android:textSize="12sp" />
+
+    <ImageView
+        android:id="@+id/title_extraicon"
+        android:layout_width="12dp"
+        android:layout_height="16dp"
+        android:layout_marginLeft="2dp"
+        android:layout_toRightOf="@+id/login_title_title"
+        android:src="@drawable/icon_extra" />
+</RelativeLayout>

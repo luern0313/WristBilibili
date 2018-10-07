@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/login_title_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/mainColor"
+            android:gravity="center_vertical"
+            android:paddingBottom="4dp"
+            android:paddingTop="10dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true">
+
+            <TextView
+                android:id="@+id/login_title_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="登录"
+                android:textColor="@color/textColor" />
+
+            <ImageView
+                android:id="@+id/login_title_extraicon"
+                android:layout_width="12dp"
+                android:layout_height="19dp"
+                android:layout_marginLeft="2dp"
+                android:layout_toLeftOf="@id/login_title_title"
+                android:rotation="90"
+                android:src="@drawable/icon_extra" />
+
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/login_qr"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_below="@+id/login_title_layout"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/img_qrloading" />
+
+        <ImageView
+            android:id="@+id/login_qrdone"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_below="@+id/login_title_layout"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/img_qrdone"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/login_tip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/login_qr"
+            android:layout_centerHorizontal="false"
+            android:gravity="center"
+            android:text="打开哔哩哔哩客户端 - 扫一扫"
+            android:textColor="@color/mainColor"
+            android:textSize="12sp" />
+
+
+    </RelativeLayout>
+
+</ScrollView>
