@@ -110,28 +110,33 @@ public class UserLogin
 
     private String post(String url, String data)
     {
-        OkHttpClient client = new OkHttpClient.Builder().connectTimeout(8, TimeUnit.SECONDS)//设置连接超时时间
-                .readTimeout(8, TimeUnit.SECONDS)//设置读取超时时间
-                .build();
-        //Form表单格式的参数传递
-        RequestBody body = RequestBody.create(MediaType.parse("text/plain; charset=utf-8"), data);
-        Request request = new Request.Builder().url(url).post(body)
-                .header("Referer", "https://www.bilibili.com/")
-                .addHeader("Connection", "close")
-                .addHeader("Accept", "*/*")
-                .addHeader("User-Agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)")
-                .addHeader("sid", sid).build();
-        Response response = null;
         try
         {
-            response = client.newCall(request).execute();
+            OkHttpClient client = new OkHttpClient.Builder().connectTimeout(8, TimeUnit.SECONDS)//设置连接超时时间
+                .readTimeout(8, TimeUnit.SECONDS)//设置读取超时时间
+                .build();
+            //Form表单格式的参数传递
+            RequestBody body = RequestBody.create(MediaType.parse("application/x-www-form-urlencoded; charset=utf-8"), data);
+            Request request = new Request.Builder().url(url).post(body)
+                    .header("Referer", "https://www.bilibili.com/")
+                    .addHeader("Connection", "keep-alive")
+                    .addHeader("Accept", "*/*")
+                    .addHeader("User-Agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)")
+                    .addHeader("Referer", "https://passport.bilibili.com/login")
+                    .addHeader("Cookie", "sid:" + sid).build();
+            Response response = client.newCall(request).execute();
             if(response.isSuccessful())
             {
-                return response.body().string();
+                String returnString = response.body().string();
+                response.close();
+                response = null;
+                return returnString;
+
             }
         } catch (IOException e)
         {
             e.printStackTrace();
+            Log.i("bilibili", e.toString());
         }
         return null;
     }
@@ -150,10 +155,10 @@ public class UserLogin
         inStream.close();
         return outStream.toByteArray();
     }
-
-
-
 }
+
+
+
 /**
  * @ClassName: QRCodeUtil
  * @Description: 二维码工具类
