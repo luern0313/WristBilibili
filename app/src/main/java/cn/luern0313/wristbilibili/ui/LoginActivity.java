@@ -8,6 +8,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.Toast;
+
+import java.net.ConnectException;
+import java.net.UnknownHostException;
 
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.UserLogin;
@@ -81,7 +85,11 @@ public class LoginActivity extends Activity
                         try
                         {
                             Log.i("bilibili", userLogin.getLoginState());
-                        } catch (Exception e)
+                        } catch (ConnectException | UnknownHostException e)
+                        {
+                            Toast.makeText(ctx, "好像没有网络连接呢...", Toast.LENGTH_SHORT).show();
+                            e.printStackTrace();
+                        } catch(Exception e)
                         {
                             e.printStackTrace();
                         }

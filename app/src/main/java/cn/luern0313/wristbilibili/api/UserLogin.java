@@ -19,6 +19,8 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.ConnectException;
+import java.net.UnknownHostException;
 import java.util.Hashtable;
 import java.util.concurrent.TimeUnit;
 
@@ -47,7 +49,7 @@ public class UserLogin
         Log.i("bilibili", sid);
     }
 
-    public Bitmap getLoginQR()
+    public Bitmap getLoginQR() throws ConnectException, UnknownHostException
     {
         try
         {
@@ -61,7 +63,7 @@ public class UserLogin
         }
     }
 
-    public String getLoginState()
+    public String getLoginState() throws ConnectException, UnknownHostException
     {
         try
         {
@@ -79,12 +81,12 @@ public class UserLogin
         return oauthKey;
     }
 
-    private Object http(String url, String cookie, int mode)
+    private Object http(String url, String cookie, int mode) throws ConnectException, UnknownHostException
     {
         try
         {
-            OkHttpClient client = new OkHttpClient.Builder().connectTimeout(8, TimeUnit.SECONDS)//设置连接超时时间
-                    .readTimeout(8, TimeUnit.SECONDS)//设置读取超时时间
+            OkHttpClient client = new OkHttpClient.Builder().connectTimeout(15, TimeUnit.SECONDS)//设置连接超时时间
+                    .readTimeout(15, TimeUnit.SECONDS)//设置读取超时时间
                     .build();
             Request.Builder requestb = new Request.Builder().url(url).header("Referer", "https://www.bilibili.com/").addHeader("Accept", "*/*").addHeader("User-Agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
             if(!cookie.equals("")) requestb.addHeader("Cookie", cookie);
@@ -100,7 +102,6 @@ public class UserLogin
                     return BitmapFactory.decodeByteArray(buffer, 0, buffer.length);
                 }
             }
-
         } catch (Exception e)
         {
             e.printStackTrace();
@@ -108,12 +109,13 @@ public class UserLogin
         return null;
     }
 
-    private String post(String url, String data)
+    private String post(String url, String data) throws ConnectException, UnknownHostException
     {
         try
         {
-            OkHttpClient client = new OkHttpClient.Builder().connectTimeout(8, TimeUnit.SECONDS)//设置连接超时时间
-                .readTimeout(8, TimeUnit.SECONDS)//设置读取超时时间
+            Response response = null;
+            OkHttpClient client = new OkHttpClient.Builder().connectTimeout(15, TimeUnit.SECONDS)//设置连接超时时间
+                .readTimeout(15, TimeUnit.SECONDS)//设置读取超时时间
                 .build();
             //Form表单格式的参数传递
             RequestBody body = RequestBody.create(MediaType.parse("application/x-www-form-urlencoded; charset=utf-8"), data);
@@ -124,19 +126,16 @@ public class UserLogin
                     .addHeader("User-Agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)")
                     .addHeader("Referer", "https://passport.bilibili.com/login")
                     .addHeader("Cookie", "sid:" + sid).build();
-            Response response = client.newCall(request).execute();
+            response = client.newCall(request).execute();
             if(response.isSuccessful())
             {
                 String returnString = response.body().string();
                 response.close();
-                response = null;
                 return returnString;
-
             }
         } catch (IOException e)
         {
             e.printStackTrace();
-            Log.i("bilibili", e.toString());
         }
         return null;
     }
