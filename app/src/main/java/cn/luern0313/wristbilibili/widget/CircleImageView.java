@@ -16,8 +16,6 @@ import android.widget.ImageView;
 
 public class CircleImageView extends android.support.v7.widget.AppCompatImageView
 {
-
-
     /**
      * 自定义的圆形ImageView，可以直接当组件在布局中使用。
      *
@@ -94,7 +92,5 @@ public class CircleImageView extends android.support.v7.widget.AppCompatImageVie
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
         canvas.drawBitmap(bitmap, rect, rect, paint);
         return output;
-
-
     }
 }

@@ -57,7 +57,17 @@
             android:layout_below="@+id/login_title_layout"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="8dp"
-            android:src="@drawable/img_qrdone"
+            android:src="@drawable/img_qr_done"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/login_qrerr"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_below="@+id/login_title_layout"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/img_qr_err"
             android:visibility="gone" />
 
         <TextView

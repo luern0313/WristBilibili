@@ -38,6 +38,8 @@
                 android:layout_marginLeft="2dp"
                 android:layout_marginTop="4dp"
                 android:layout_toRightOf="@+id/menu_useric"
+                android:allowUndo="false"
+                android:autoText="false"
                 android:text="你还没登录呢~"
                 android:textColor="@color/textColor" />
 

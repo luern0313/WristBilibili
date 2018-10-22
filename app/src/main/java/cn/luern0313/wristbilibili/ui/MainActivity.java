@@ -3,22 +3,17 @@ package cn.luern0313.wristbilibili.ui;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.os.AsyncTask;
 import android.support.v4.util.LruCache;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.R;
 
@@ -27,6 +22,7 @@ public class MainActivity extends Activity
     Context ctx;
 
     ListView mainListView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -70,7 +66,7 @@ public class MainActivity extends Activity
         @Override
         public int getCount()
         {
-            return 8;
+            return 5;
         }
 
         @Override
@@ -86,21 +82,79 @@ public class MainActivity extends Activity
         }
 
         @Override
+        public int getViewTypeCount()
+        {
+            return 5;
+        }
+
+        @Override
+        public int getItemViewType(int position)
+        {
+            return position;
+        }
+
+        @Override
         public View getView(int position, View convertView, ViewGroup viewGroup)
         {
-            //Log.i("part", position + "," + mImgurl.get(position));
-            ViewHolder viewHolder;
+            ViewHolderOriText viewHolderOriText = null;
+            ViewHolderOriVid viewHolderOriVid = null;
+            ViewHolderShaText viewHolderShaText = null;
+            ViewHolderShaVid viewHolderShaVid = null;
+            ViewHolderUnktyp viewHolderUnktyp = null;
+            int type = getItemViewType(position);
+
             // 若无可重用的 view 则进行加载
             if(convertView == null)
             {
-                convertView = mInflater.inflate(R.layout.item_liveitem, null);
-                // 初始化 ViewHolder 方便重用
-                viewHolder = new ViewHolder();
-                convertView.setTag(viewHolder);
+                switch (type)
+                {
+                    case 4:
+                        convertView = mInflater.inflate(R.layout.item_news_original_video, null);
+                        viewHolderOriVid = new ViewHolderOriVid();
+                        convertView.setTag(viewHolderOriVid);
+                        break;
+                    case 3:
+                        convertView = mInflater.inflate(R.layout.item_news_original_text, null);
+                        viewHolderOriText = new ViewHolderOriText();
+                        convertView.setTag(viewHolderOriText);
+                        break;
+                    case 2:
+                        convertView = mInflater.inflate(R.layout.item_news_unknowtype, null);
+                        viewHolderUnktyp = new ViewHolderUnktyp();
+                        convertView.setTag(viewHolderUnktyp);
+                        break;
+                    case 1:
+                        convertView = mInflater.inflate(R.layout.item_news_share_video, null);
+                        viewHolderShaVid = new ViewHolderShaVid();
+                        convertView.setTag(viewHolderShaVid);
+                        break;
+                    case 0:
+                        convertView = mInflater.inflate(R.layout.item_news_share_text, null);
+                        viewHolderShaText = new ViewHolderShaText();
+                        convertView.setTag(viewHolderShaText);
+                        break;
+                }
             }
             else
-            { // 否则进行重用
-                viewHolder = (ViewHolder) convertView.getTag();
+            {
+                switch (type)
+                {
+                    case 4:
+                        viewHolderOriVid = (ViewHolderOriVid) convertView.getTag();
+                        break;
+                    case 3:
+                        viewHolderOriText = (ViewHolderOriText) convertView.getTag();
+                        break;
+                    case 2:
+                        viewHolderUnktyp = (ViewHolderUnktyp) convertView.getTag();
+                        break;
+                    case 1:
+                        viewHolderShaVid = (ViewHolderShaVid) convertView.getTag();
+                        break;
+                    case 0:
+                        viewHolderShaText = (ViewHolderShaText) convertView.getTag();
+                        break;
+                }
             }
 
             /*if(mImgurl.size() != 0)
@@ -122,12 +176,29 @@ public class MainActivity extends Activity
             return convertView;
         }
 
-        class ViewHolder
+        class ViewHolderOriText
         {
-            ImageView vImg;
-            TextView vTitle;
-            TextView vCount;
-            TextView vCountt;
+
+        }
+
+        class ViewHolderOriVid
+        {
+
+        }
+
+        class ViewHolderShaText
+        {
+
+        }
+
+        class ViewHolderShaVid
+        {
+
+        }
+
+        class ViewHolderUnktyp
+        {
+
         }
 
         /*class ImageTask extends AsyncTask<String, Void, BitmapDrawable>
@@ -159,11 +230,11 @@ public class MainActivity extends Activity
                 }
             }*/
 
-            /**
-             * 根据url从网络上下载图片
-             *
-             * @return
-             */
+        /**
+         * 根据url从网络上下载图片
+         *
+         * @return
+         */
             /*private Bitmap downloadImage()
             {
                 HttpURLConnection con = null;
