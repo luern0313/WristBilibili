@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -12,6 +13,10 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import cn.luern0313.wristbilibili.R;
@@ -31,6 +36,7 @@ public class MenuActivity extends Activity
 
     Handler handler = new Handler();
     Runnable runnableUi;
+    Runnable runnableProg;
 
     Bitmap head;
 
@@ -51,6 +57,14 @@ public class MenuActivity extends Activity
         uiUserName.setText(sharedPreferences.getString("userName", "你还没登录呢~"));
         uiUserCoin.setText("硬币 : " + String.valueOf(sharedPreferences.getInt("userCoin", 0)));
         uiUserLV.setText("LV" + String.valueOf(sharedPreferences.getInt("userLV", 0)));
+        try
+        {
+            uiUserHead.setImageBitmap(BitmapFactory.decodeStream(new FileInputStream(new File(getFilesDir(), "head.png"))));
+        }
+        catch (FileNotFoundException e)
+        {
+            e.printStackTrace();
+        }
 
         setUserInfo();
 
@@ -80,6 +94,14 @@ public class MenuActivity extends Activity
                     editor.commit();
                 }
             };
+            runnableProg = new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    findViewById(R.id.menu_headlod).setVisibility(View.GONE);
+                }
+            };
             new Thread(new Runnable()
             {
                 @Override
@@ -89,10 +111,12 @@ public class MenuActivity extends Activity
                     {
                         userInfo.getUserInfo();
                         head = userInfo.getUserHead();
+                        saveBitmap(head);
                         handler.post(runnableUi);
                     }
                     catch (IOException e)
                     {
+                        handler.post(runnableProg);
                         Looper.prepare();
                         Toast.makeText(ctx, "好像没有网络连接...", Toast.LENGTH_SHORT).show();
                         Looper.loop();
@@ -100,6 +124,23 @@ public class MenuActivity extends Activity
                     }
                 }
             }).start();
+        }
+    }
+
+    protected void saveBitmap(Bitmap bt)
+    {
+        File file = new File(this.getFilesDir(), "head.png");
+        FileOutputStream out = null;
+        try
+        {
+            out = new FileOutputStream(file);
+            bt.compress(Bitmap.CompressFormat.PNG, 100, out);
+            out.flush();
+            out.close();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
         }
     }
 
@@ -120,5 +161,11 @@ public class MenuActivity extends Activity
             Intent intent = new Intent(ctx, LoginActivity.class);
             startActivityForResult(intent, 0);
         }
+    }
+
+    public void buttonDL(View view)
+    {
+        Intent intent = new Intent(ctx, DownloadActivity.class);
+        startActivity(intent);
     }
 }

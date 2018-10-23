@@ -6,7 +6,7 @@
     android:gravity="center_vertical">
 
     <TextView
-        android:id="@+id/login_title_title"
+        android:id="@+id/main_title_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -19,6 +19,6 @@
         android:layout_width="12dp"
         android:layout_height="16dp"
         android:layout_marginLeft="2dp"
-        android:layout_toRightOf="@+id/login_title_title"
+        android:layout_toRightOf="@+id/main_title_title"
         android:src="@drawable/icon_extra" />
 </RelativeLayout>
