@@ -2,6 +2,7 @@ package cn.luern0313.wristbilibili.ui;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -43,6 +44,8 @@ public class LoginActivity extends Activity
 
     Boolean stopFlag = false;
 
+    Intent reusltIntent = new Intent();
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -56,6 +59,9 @@ public class LoginActivity extends Activity
 
         loginQR = findViewById(R.id.login_qr);
         userLogin = new UserLogin();
+
+        reusltIntent.putExtra("isLogin", false);
+        setResult(0, reusltIntent);
 
         new Thread(new Runnable()
         {
@@ -130,9 +136,13 @@ public class LoginActivity extends Activity
                             for (int i = 0; i < cookiesList.size(); i++)
                                 cookies += cookiesList.get(i).split("; ")[0] + "; ";
                             cookies = cookies.substring(0, cookies.length() - 2);
+
                             editor.putString("cookies", cookies);
                             editor.commit();
                             stopFlag = true;
+
+                            reusltIntent.putExtra("isLogin", true);
+                            setResult(0, reusltIntent);
                             finish();
                         }
                         Thread.sleep(3000);

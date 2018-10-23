@@ -1,5 +1,6 @@
 package cn.luern0313.wristbilibili.api;
 
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.widget.Toast;
 
@@ -36,7 +37,7 @@ public class UserInfo
     {
         try
         {
-            userInfoJson = new JSONObject((String) get("https://api.bilibili.com/x/web-interface/nav?", 1));
+            userInfoJson = new JSONObject((String) get("https://api.bilibili.com/x/web-interface/nav", 1));
         } catch (JSONException e)
         {
             e.printStackTrace();
@@ -47,7 +48,43 @@ public class UserInfo
     {
         try
         {
-            return (String) userInfoJson.get("uname");
+            return (String) userInfoJson.getJSONObject("data").get("uname");
+        } catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public double getUserCoin()
+    {
+        try
+        {
+            return (Double) userInfoJson.getJSONObject("data").get("money");
+        } catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int getUserLV()
+    {
+        try
+        {
+            return (int) userInfoJson.getJSONObject("data").getJSONObject("level_info").get("current_level");
+        } catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public Bitmap getUserHead() throws IOException
+    {
+        try
+        {
+            return (Bitmap) get((String) userInfoJson.getJSONObject("data").get("face"), 2);
         } catch (JSONException e)
         {
             e.printStackTrace();
@@ -79,7 +116,6 @@ public class UserInfo
 
     private Response post(String url, String data) throws IOException
     {
-
         Response response;
         OkHttpClient client;
         RequestBody body;
