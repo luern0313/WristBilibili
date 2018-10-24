@@ -154,7 +154,6 @@ public class MenuActivity extends Activity
         {
             Intent intent = new Intent(ctx, LoginActivity.class);
             startActivityForResult(intent, 0);
-            finish();
         }
     }
 
