@@ -80,6 +80,19 @@ public class UserInfo
         return 0;
     }
 
+    public boolean isVip()
+    {
+        try
+        {
+            return ((int) userInfoJson.getJSONObject("data").get("vipStatus")) == 1;
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public Bitmap getUserHead() throws IOException
     {
         try

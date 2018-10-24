@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
 
     <application
         android:allowBackup="true"
@@ -18,16 +18,24 @@
             android:name="com.google.android.wearable.standalone"
             android:value="true" />
 
-        <activity android:name=".ui.MainActivity">
+        <activity
+            android:name=".ui.MainActivity"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.MenuActivity" />
-        <activity android:name=".ui.LoginActivity" />
-        <activity android:name=".ui.DownloadActivity"/>
+        <activity
+            android:name=".ui.DownloadActivity"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".ui.MenuActivity"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".ui.LoginActivity"
+            android:launchMode="singleTask" />
+
     </application>
 
 </manifest>

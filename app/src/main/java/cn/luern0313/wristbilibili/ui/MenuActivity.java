@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,6 +34,7 @@ public class MenuActivity extends Activity
     TextView uiUserCoin;
     TextView uiUserLV;
     CircleImageView uiUserHead;
+    ImageView uiUserVip;
 
     Handler handler = new Handler();
     Runnable runnableUi;
@@ -53,10 +55,12 @@ public class MenuActivity extends Activity
         uiUserCoin = findViewById(R.id.menu_usercoin);
         uiUserLV = findViewById(R.id.menu_userlv);
         uiUserHead = findViewById(R.id.menu_useric);
+        uiUserVip = findViewById(R.id.menu_uservip);
 
         uiUserName.setText(sharedPreferences.getString("userName", "你还没登录呢~"));
         uiUserCoin.setText("硬币 : " + String.valueOf(sharedPreferences.getInt("userCoin", 0)));
         uiUserLV.setText("LV" + String.valueOf(sharedPreferences.getInt("userLV", 0)));
+        uiUserVip.setVisibility(sharedPreferences.getBoolean("userVip", false) ? View.VISIBLE : View.GONE);
         try
         {
             uiUserHead.setImageBitmap(BitmapFactory.decodeStream(new FileInputStream(new File(getFilesDir(), "head.png"))));
@@ -75,8 +79,6 @@ public class MenuActivity extends Activity
         if(!sharedPreferences.getString("cookies", "").equals(""))//是否登录
         {
             final UserInfo userInfo = new UserInfo(sharedPreferences.getString("cookies", ""));
-            findViewById(R.id.menu_headlod).setVisibility(View.VISIBLE);
-
             runnableUi = new Runnable()
             {
                 @Override
@@ -86,20 +88,13 @@ public class MenuActivity extends Activity
                     uiUserCoin.setText("硬币 : " + String.valueOf(userInfo.getUserCoin()));
                     uiUserLV.setText("LV" + userInfo.getUserLV());
                     uiUserHead.setImageBitmap(head);
-                    findViewById(R.id.menu_headlod).setVisibility(View.GONE);
+                    uiUserVip.setVisibility(userInfo.isVip() ? View.VISIBLE : View.GONE);
 
                     editor.putString("userName", userInfo.getUserName());
                     editor.putInt("userCoin", (int) userInfo.getUserCoin());
                     editor.putInt("userLV", userInfo.getUserLV());
+                    editor.putBoolean("userVip", userInfo.isVip());
                     editor.commit();
-                }
-            };
-            runnableProg = new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    findViewById(R.id.menu_headlod).setVisibility(View.GONE);
                 }
             };
             new Thread(new Runnable()
@@ -116,7 +111,6 @@ public class MenuActivity extends Activity
                     }
                     catch (IOException e)
                     {
-                        handler.post(runnableProg);
                         Looper.prepare();
                         Toast.makeText(ctx, "好像没有网络连接...", Toast.LENGTH_SHORT).show();
                         Looper.loop();
@@ -160,6 +154,7 @@ public class MenuActivity extends Activity
         {
             Intent intent = new Intent(ctx, LoginActivity.class);
             startActivityForResult(intent, 0);
+            finish();
         }
     }
 
@@ -167,5 +162,6 @@ public class MenuActivity extends Activity
     {
         Intent intent = new Intent(ctx, DownloadActivity.class);
         startActivity(intent);
+        finish();
     }
 }

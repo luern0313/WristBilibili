@@ -32,15 +32,13 @@
                 android:layout_marginTop="2dp"
                 android:src="@drawable/img_defaultavatar" />
 
-            <ProgressBar
-                android:id="@+id/menu_headlod"
-                style="?android:attr/progressBarStyle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginBottom="2dp"
-                android:layout_marginRight="2dp"
-                android:layout_marginTop="2dp"
-                android:padding="8dp"
+            <ImageView
+                android:id="@+id/menu_uservip"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_alignBottom="@+id/menu_useric"
+                android:layout_alignRight="@+id/menu_useric"
+                android:src="@drawable/icon_vip"
                 android:visibility="gone" />
 
             <TextView
