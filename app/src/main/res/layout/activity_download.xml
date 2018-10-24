@@ -13,6 +13,7 @@
         android:focusable="true"
         android:focusableInTouchMode="true"
         android:gravity="center_vertical"
+        android:onClick="buttonTitle"
         android:paddingBottom="4dp"
         android:paddingTop="10dp">
 
