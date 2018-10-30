@@ -8,11 +8,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,7 +20,6 @@ import java.io.IOException;
 
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.UserInfo;
-import cn.luern0313.wristbilibili.widget.CircleImageView;
 
 public class MenuActivity extends Activity
 {
@@ -33,14 +30,14 @@ public class MenuActivity extends Activity
     TextView uiUserName;
     TextView uiUserCoin;
     TextView uiUserLV;
-    CircleImageView uiUserHead;
+    ImageView uiUserHead;
     ImageView uiUserVip;
 
     Handler handler = new Handler();
     Runnable runnableUi;
-    Runnable runnableProg;
 
     Bitmap head;
+    private Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -58,7 +55,7 @@ public class MenuActivity extends Activity
         uiUserVip = findViewById(R.id.menu_uservip);
 
         uiUserName.setText(sharedPreferences.getString("userName", "你还没登录呢~"));
-        uiUserCoin.setText("硬币 : " + String.valueOf(sharedPreferences.getInt("userCoin", 0)));
+        uiUserCoin.setText("硬币 : " + sharedPreferences.getString("userCoin", "0"));
         uiUserLV.setText("LV" + String.valueOf(sharedPreferences.getInt("userLV", 0)));
         uiUserVip.setVisibility(sharedPreferences.getBoolean("userVip", false) ? View.VISIBLE : View.GONE);
         try
@@ -69,6 +66,10 @@ public class MenuActivity extends Activity
         {
             e.printStackTrace();
         }
+
+        intent = new Intent();
+        intent.putExtra("activity", 0);
+        setResult(0, intent);
 
         setUserInfo();
 
@@ -85,13 +86,13 @@ public class MenuActivity extends Activity
                 public void run()
                 {
                     uiUserName.setText(userInfo.getUserName());
-                    uiUserCoin.setText("硬币 : " + String.valueOf(userInfo.getUserCoin()));
+                    uiUserCoin.setText("硬币 : " + userInfo.getUserCoin());
                     uiUserLV.setText("LV" + userInfo.getUserLV());
                     uiUserHead.setImageBitmap(head);
                     uiUserVip.setVisibility(userInfo.isVip() ? View.VISIBLE : View.GONE);
 
                     editor.putString("userName", userInfo.getUserName());
-                    editor.putInt("userCoin", (int) userInfo.getUserCoin());
+                    editor.putString("userCoin", userInfo.getUserCoin());
                     editor.putInt("userLV", userInfo.getUserLV());
                     editor.putBoolean("userVip", userInfo.isVip());
                     editor.commit();
@@ -111,9 +112,6 @@ public class MenuActivity extends Activity
                     }
                     catch (IOException e)
                     {
-                        Looper.prepare();
-                        Toast.makeText(ctx, "好像没有网络连接...", Toast.LENGTH_SHORT).show();
-                        Looper.loop();
                         e.printStackTrace();
                     }
                 }
@@ -144,7 +142,11 @@ public class MenuActivity extends Activity
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == 0 && resultCode == 0)
         {
-            if(data.getBooleanExtra("isLogin", false)) setUserInfo();
+            if(data.getBooleanExtra("isLogin", false))
+            {
+                uiUserName.setText("登录中...");
+                setUserInfo();
+            }
         }
     }
 
@@ -154,13 +156,55 @@ public class MenuActivity extends Activity
         {
             Intent intent = new Intent(ctx, LoginActivity.class);
             startActivityForResult(intent, 0);
+            overridePendingTransition(R.anim.anim_activity_in_left,R.anim.anim_activity_out_right);
         }
+    }
+
+    public void buttonDynamic(View view)
+    {
+        intent.putExtra("activity", 1);
+        setResult(0, intent);
+        finish();
+        overridePendingTransition(0, R.anim.anim_activity_out_up);
+    }
+
+    public void buttonRemind(View view)
+    {
+        intent.putExtra("activity", 2);
+        setResult(0, intent);
+        finish();
+        overridePendingTransition(0, R.anim.anim_activity_out_up);
     }
 
     public void buttonDL(View view)
     {
-        Intent intent = new Intent(ctx, DownloadActivity.class);
-        startActivity(intent);
+        intent.putExtra("activity", 3);
+        setResult(0, intent);
         finish();
+        overridePendingTransition(0, R.anim.anim_activity_out_up);
+    }
+
+    public void buttonSearch(View view)
+    {
+        intent.putExtra("activity", 4);
+        setResult(0, intent);
+        finish();
+        overridePendingTransition(0, R.anim.anim_activity_out_up);
+    }
+
+    public void buttonCollect(View view)
+    {
+        intent.putExtra("activity", 5);
+        setResult(0, intent);
+        finish();
+        overridePendingTransition(0, R.anim.anim_activity_out_up);
+    }
+
+    public void buttonSetting(View view)
+    {
+        intent.putExtra("activity", 6);
+        setResult(0, intent);
+        finish();
+        overridePendingTransition(0, R.anim.anim_activity_out_up);
     }
 }

@@ -27,14 +27,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.DownloadActivity"
-            android:launchMode="singleTask" />
+            android:name=".ui.MenuActivity"/>
         <activity
-            android:name=".ui.MenuActivity"
-            android:launchMode="singleTask" />
-        <activity
-            android:name=".ui.LoginActivity"
-            android:launchMode="singleTask" />
+            android:name=".ui.LoginActivity" />
 
     </application>
 

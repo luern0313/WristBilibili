@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <FrameLayout
+        android:id="@+id/main_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="33dp" />
 
     <RelativeLayout
         android:id="@+id/main_title"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="33dp"
         android:background="@color/mainColor"
         android:gravity="center_vertical"
         android:onClick="buttonTitle"
@@ -30,11 +35,5 @@
             android:layout_toRightOf="@id/main_title_title"
             android:src="@drawable/icon_extra" />
     </RelativeLayout>
-
-    <ListView
-        android:id="@+id/main_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/main_title" />
 
 </RelativeLayout>

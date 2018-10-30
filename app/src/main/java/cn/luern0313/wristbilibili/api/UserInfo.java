@@ -53,19 +53,19 @@ public class UserInfo
         {
             e.printStackTrace();
         }
-        return null;
+        return "";
     }
 
-    public double getUserCoin()
+    public String getUserCoin()
     {
         try
         {
-            return (Double) userInfoJson.getJSONObject("data").get("money");
+            return String.valueOf(userInfoJson.getJSONObject("data").get("money"));
         } catch (JSONException e)
         {
             e.printStackTrace();
         }
-        return 0;
+        return "0";
     }
 
     public int getUserLV()

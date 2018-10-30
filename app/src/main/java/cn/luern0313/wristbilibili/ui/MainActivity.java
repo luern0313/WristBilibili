@@ -1,269 +1,125 @@
 package cn.luern0313.wristbilibili.ui;
 
+import android.animation.Animator;
+import android.animation.ValueAnimator;
 import android.app.Activity;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.BitmapDrawable;
-import android.support.v4.util.LruCache;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
+import android.support.annotation.Nullable;
+import android.util.DisplayMetrics;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import cn.luern0313.wristbilibili.R;
+import cn.luern0313.wristbilibili.fragment.Download;
+import cn.luern0313.wristbilibili.fragment.Dynamic;
+
+/**
+ * Created by liupe on 2018/10/25.
+ */
 
 public class MainActivity extends Activity
 {
     Context ctx;
+    private FragmentManager fm;
+    private FragmentTransaction transaction;
+    DisplayMetrics dm;
 
-    ListView mainListView;
+    String[] menuTitleList = new String[]{"动态", "离线缓存", "搜索", "收藏", "设置"};
+
+    TextView titleText;
+    ImageView titleImg;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
+    protected void onCreate(@Nullable Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         ctx = this;
+        dm = getResources().getDisplayMetrics();
+        fm = getFragmentManager();
+        transaction = fm.beginTransaction();
+        transaction.replace(R.id.main_frame, new Dynamic());
+        transaction.commit();
 
-        mainListView = findViewById(R.id.main_list);
-        mAdapter adapter = new mAdapter(getLayoutInflater());
-        mainListView.setAdapter(adapter);
+        titleText = findViewById(R.id.main_title_title);
+        titleImg = findViewById(R.id.main_title_extraicon);
     }
 
-    public void buttonTitle(View view)
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 0 && resultCode == 0 && data != null)
+        {
+            fm = getFragmentManager();
+            transaction = fm.beginTransaction();
+            switch (data.getIntExtra("activity", 0))
+            {
+                case 1:
+                    transaction.replace(R.id.main_frame, new Dynamic());
+                    titleText.setText("动态");
+                    titleText.setTextSize(14);
+                    break;
+                case 2:
+                    transaction.replace(R.id.main_frame, new Dynamic());
+                    titleText.setText("提醒");
+                    titleText.setTextSize(14);
+                    break;
+                case 3:
+                    transaction.replace(R.id.main_frame, new Download());
+                    titleText.setText("离线缓存");
+                    titleText.setTextSize(13);
+                    break;
+            }
+            transaction.commit();
+        }
+    }
+
+    public void buttonTitle(final View view)
+    {
+        /*titleText.setVisibility(View.GONE);
+        titleImg.setVisibility(View.GONE);
+
+        final int viewHeight = view.getLayoutParams().height;
+
+        ValueAnimator anim = ValueAnimator.ofInt(viewHeight, dm.heightPixels);
+        anim.setDuration(500);
+        anim.setRepeatCount(0);
+
+        anim.addListener(new Animator.AnimatorListener()
+        {
+            @Override public void onAnimationStart(Animator animation) {}
+            @Override public void onAnimationCancel(Animator animation) {}
+            @Override public void onAnimationRepeat(Animator animation) {}
+            @Override
+            public void onAnimationEnd(Animator animation)
+            {
+                titleText.setVisibility(View.VISIBLE);
+                titleImg.setVisibility(View.VISIBLE);
+                view.getLayoutParams().height = viewHeight;
+            }
+        });
+        anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener()
+        {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation)
+            {
+                int currentValue = (Integer) animation.getAnimatedValue();
+                view.getLayoutParams().height = currentValue;
+                view.requestLayout();
+            }
+        });
+        anim.start();*/
         Intent intent = new Intent(ctx, MenuActivity.class);
-        startActivity(intent);
-    }
-
-    class mAdapter extends BaseAdapter
-    {
-        private LayoutInflater mInflater;
-
-        private LruCache<String, BitmapDrawable> mImageCache;
-
-        public mAdapter(LayoutInflater inflater)
-        {
-            mInflater = inflater;
-
-            int maxCache = (int) Runtime.getRuntime().maxMemory();
-            int cacheSize = maxCache / 8;
-            mImageCache = new LruCache<String, BitmapDrawable>(cacheSize)
-            {
-                @Override
-                protected int sizeOf(String key, BitmapDrawable value)
-                {
-                    return value.getBitmap().getByteCount();
-                }
-            };
-        }
-
-        @Override
-        public int getCount()
-        {
-            return 5;
-        }
-
-        @Override
-        public Object getItem(int position)
-        {
-            return position;
-        }
-
-        @Override
-        public long getItemId(int position)
-        {
-            return position;
-        }
-
-        @Override
-        public int getViewTypeCount()
-        {
-            return 5;
-        }
-
-        @Override
-        public int getItemViewType(int position)
-        {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup viewGroup)
-        {
-            ViewHolderOriText viewHolderOriText = null;
-            ViewHolderOriVid viewHolderOriVid = null;
-            ViewHolderShaText viewHolderShaText = null;
-            ViewHolderShaVid viewHolderShaVid = null;
-            ViewHolderUnktyp viewHolderUnktyp = null;
-            int type = getItemViewType(position);
-
-            // 若无可重用的 view 则进行加载
-            if(convertView == null)
-            {
-                switch (type)
-                {
-                    case 4:
-                        convertView = mInflater.inflate(R.layout.item_news_original_video, null);
-                        viewHolderOriVid = new ViewHolderOriVid();
-                        convertView.setTag(viewHolderOriVid);
-                        break;
-                    case 3:
-                        convertView = mInflater.inflate(R.layout.item_news_original_text, null);
-                        viewHolderOriText = new ViewHolderOriText();
-                        convertView.setTag(viewHolderOriText);
-                        break;
-                    case 2:
-                        convertView = mInflater.inflate(R.layout.item_news_unknowtype, null);
-                        viewHolderUnktyp = new ViewHolderUnktyp();
-                        convertView.setTag(viewHolderUnktyp);
-                        break;
-                    case 1:
-                        convertView = mInflater.inflate(R.layout.item_news_share_video, null);
-                        viewHolderShaVid = new ViewHolderShaVid();
-                        convertView.setTag(viewHolderShaVid);
-                        break;
-                    case 0:
-                        convertView = mInflater.inflate(R.layout.item_news_share_text, null);
-                        viewHolderShaText = new ViewHolderShaText();
-                        convertView.setTag(viewHolderShaText);
-                        break;
-                }
-            }
-            else
-            {
-                switch (type)
-                {
-                    case 4:
-                        viewHolderOriVid = (ViewHolderOriVid) convertView.getTag();
-                        break;
-                    case 3:
-                        viewHolderOriText = (ViewHolderOriText) convertView.getTag();
-                        break;
-                    case 2:
-                        viewHolderUnktyp = (ViewHolderUnktyp) convertView.getTag();
-                        break;
-                    case 1:
-                        viewHolderShaVid = (ViewHolderShaVid) convertView.getTag();
-                        break;
-                    case 0:
-                        viewHolderShaText = (ViewHolderShaText) convertView.getTag();
-                        break;
-                }
-            }
-
-            /*if(mImgurl.size() != 0)
-            {
-                viewHolder.vImg.setTag(mImgurl.get(position));
-                if(mImgurl.get(position).charAt(0) == 'h')
-                {
-                    if(mImageCache.get(mImgurl.get(position)) != null)
-                    {
-                        viewHolder.vImg.setImageDrawable(mImageCache.get(mImgurl.get(position)));
-                    }
-                    else
-                    {
-                        ImageTask it = new ImageTask();
-                        it.execute(mImgurl.get(position));
-                    }
-                }
-            }*/
-            return convertView;
-        }
-
-        class ViewHolderOriText
-        {
-
-        }
-
-        class ViewHolderOriVid
-        {
-
-        }
-
-        class ViewHolderShaText
-        {
-
-        }
-
-        class ViewHolderShaVid
-        {
-
-        }
-
-        class ViewHolderUnktyp
-        {
-
-        }
-
-        /*class ImageTask extends AsyncTask<String, Void, BitmapDrawable>
-        {
-            private String imageUrl;
-
-            @Override
-            protected BitmapDrawable doInBackground(String... params)
-            {
-                imageUrl = params[0];
-                Bitmap bitmap = downloadImage();
-                BitmapDrawable db = new BitmapDrawable(boxListview.getResources(), bitmap);
-                // 如果本地还没缓存该图片，就缓存
-                if(mImageCache.get(imageUrl) == null)
-                {
-                    mImageCache.put(imageUrl, db);
-                }
-                return db;
-            }
-
-            @Override
-            protected void onPostExecute(BitmapDrawable result)
-            {
-                // 通过Tag找到我们需要的ImageView，如果该ImageView所在的item已被移出页面，就会直接返回null
-                ImageView iv = boxListview.findViewWithTag(imageUrl);
-                if(iv != null && result != null)
-                {
-                    iv.setImageDrawable(result);
-                }
-            }*/
-
-        /**
-         * 根据url从网络上下载图片
-         *
-         * @return
-         */
-            /*private Bitmap downloadImage()
-            {
-                HttpURLConnection con = null;
-                Bitmap bitmap = null;
-                try
-                {
-                    URL url = new URL(imageUrl);
-                    con = (HttpURLConnection) url.openConnection();
-                    con.setConnectTimeout(5 * 1000);
-                    con.setReadTimeout(10 * 1000);
-                    bitmap = BitmapFactory.decodeStream(con.getInputStream());
-                } catch (MalformedURLException e)
-                {
-                    e.printStackTrace();
-                } catch (IOException e)
-                {
-                    e.printStackTrace();
-                } finally
-                {
-                    if(con != null)
-                    {
-                        con.disconnect();
-                    }
-                }
-
-                return bitmap;
-            }
-
-        }*/
-
+        startActivityForResult(intent, 0);
+        overridePendingTransition(R.anim.anim_activity_in_down, 0);
     }
 }

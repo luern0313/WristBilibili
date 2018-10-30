@@ -8,6 +8,8 @@
     <color name="textColor2">#fdd4e0</color>
     <color name="textcolor3">#555555</color>
     <color name="black">#000000</color>
-    <color name="shareBG">#CCC</color>
+    <color name="shareBG">#DDD</color>
     <color name="shareText">#126845</color>
+
+    <color name="activityBG">#fafafa</color>
 </resources>

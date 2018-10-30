@@ -11,7 +11,7 @@
         android:layout_marginRight="20dp"
         android:layout_marginTop="2dp">
 
-        <cn.luern0313.wristbilibili.widget.CircleImageView
+        <ImageView
             android:id="@+id/li_head"
             android:layout_width="36dp"
             android:layout_height="36dp"
@@ -21,6 +21,14 @@
             android:layout_marginRight="4dp"
             android:layout_marginTop="1dp"
             android:src="@drawable/img_tempmy" />
+
+        <ImageView
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginBottom="1dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginTop="1dp"
+            android:src="@drawable/mask_circle_white" />
 
         <TextView
             android:id="@+id/li_name"
@@ -61,12 +69,18 @@
             android:background="@color/shareBG"
             android:padding="4dp">
 
-            <cn.luern0313.wristbilibili.widget.CircleImageView
+            <ImageView
                 android:id="@+id/il_share_head"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_margin="2dp"
-                app:srcCompat="@drawable/img_temp" />
+                android:src="@drawable/img_temp" />
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_margin="2dp"
+                android:src="@drawable/mask_circle_gray" />
 
             <TextView
                 android:id="@+id/il_share_up"

@@ -8,7 +8,6 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -16,7 +15,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.net.ConnectException;
 import java.net.UnknownHostException;
@@ -144,6 +142,7 @@ public class LoginActivity extends Activity
                             reusltIntent.putExtra("isLogin", true);
                             setResult(0, reusltIntent);
                             finish();
+                            overridePendingTransition(0, R.anim.anim_activity_out_right);
                         }
                         Thread.sleep(3000);
                         times++;
