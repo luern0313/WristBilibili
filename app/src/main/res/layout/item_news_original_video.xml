@@ -11,7 +11,7 @@
         android:layout_marginRight="20dp"
         android:layout_marginTop="2dp">
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/li_head"
             android:layout_width="36dp"
             android:layout_height="36dp"
@@ -21,14 +21,6 @@
             android:layout_marginRight="4dp"
             android:layout_marginTop="1dp"
             android:src="@drawable/img_temp" />
-
-        <ImageView
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_marginBottom="1dp"
-            android:layout_marginRight="4dp"
-            android:layout_marginTop="1dp"
-            android:src="@drawable/mask_circle_white" />
 
         <TextView
             android:id="@+id/li_name"
@@ -80,7 +72,7 @@
             android:padding="1dp"
             android:text="07:45  946.4万观看"
             android:textColor="@color/textColor"
-            android:textSize="10sp" />
+            android:textSize="11sp" />
 
         <TextView
             android:id="@+id/il_title"

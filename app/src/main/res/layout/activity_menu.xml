@@ -22,7 +22,7 @@
             android:paddingLeft="30dp"
             android:paddingRight="30dp">
 
-            <ImageView
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/menu_useric"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -30,14 +30,6 @@
                 android:layout_marginRight="2dp"
                 android:layout_marginTop="2dp"
                 android:src="@drawable/img_defaultavatar" />
-
-            <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginBottom="2dp"
-                android:layout_marginRight="2dp"
-                android:layout_marginTop="2dp"
-                android:src="@drawable/mask_circle_pink" />
 
             <ImageView
                 android:id="@+id/menu_uservip"
