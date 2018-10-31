@@ -156,7 +156,7 @@ public class MenuActivity extends Activity
         {
             Intent intent = new Intent(ctx, LoginActivity.class);
             startActivityForResult(intent, 0);
-            overridePendingTransition(R.anim.anim_activity_in_left,R.anim.anim_activity_out_right);
+            overridePendingTransition(R.anim.anim_activity_in_left, 0);
         }
     }
 

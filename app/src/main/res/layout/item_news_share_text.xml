@@ -7,9 +7,12 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="2dp">
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:descendantFocusability="blocksDescendants"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="2dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/li_head"
@@ -57,8 +60,10 @@
             android:id="@+id/li_share_lay"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@drawable/selector_share"
+            android:clickable="true"
+            android:descendantFocusability="blocksDescendants"
             android:layout_below="@+id/li_text"
-            android:background="@color/shareBG"
             android:padding="4dp">
 
             <de.hdodenhof.circleimageview.CircleImageView
