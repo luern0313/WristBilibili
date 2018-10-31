@@ -2,26 +2,21 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingBottom="33dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical">
+    <ImageView
+        android:layout_width="97dp"
+        android:layout_height="92dp"
+        android:padding="6dp"
+        android:src="@drawable/img_nodata" />
 
-        <ImageView
-            android:layout_width="97dp"
-            android:layout_height="92dp"
-            android:padding="6dp"
-            android:src="@drawable/img_nodata" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/dl_title_layout"
-            android:text="这里没有任何内容. . ."
-            android:textSize="13sp" />
-    </LinearLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/dl_title_layout"
+        android:text="这里没有任何内容. . ."
+        android:textSize="13sp" />
 
 </LinearLayout>

@@ -31,8 +31,6 @@ public class MainActivity extends Activity
     private FragmentTransaction transaction;
     DisplayMetrics dm;
 
-    String[] menuTitleList = new String[]{"动态", "离线缓存", "搜索", "收藏", "设置"};
-
     TextView titleText;
     ImageView titleImg;
 
@@ -70,8 +68,8 @@ public class MainActivity extends Activity
                     break;
                 case 2:
                     transaction.replace(R.id.main_frame, new Dynamic());
-                    titleText.setText("提醒");
-                    titleText.setTextSize(14);
+                    titleText.setText("番剧提醒");
+                    titleText.setTextSize(13);
                     break;
                 case 3:
                     transaction.replace(R.id.main_frame, new Download());
