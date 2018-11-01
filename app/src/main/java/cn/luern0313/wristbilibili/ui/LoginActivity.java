@@ -35,6 +35,7 @@ public class LoginActivity extends Activity
     Bitmap QRImage;
 
     Handler UIhandler = new Handler();
+    Handler timeoutHandler = new Handler();
     Runnable runnableUi;
     Runnable runnableDone;
     Runnable runnableTimeout;
@@ -106,6 +107,7 @@ public class LoginActivity extends Activity
             @Override
             public void run()
             {
+                stopFlag = true;
                 findViewById(R.id.login_qrerr).setVisibility(View.VISIBLE);
                 ((TextView) findViewById(R.id.login_tip)).setText("二维码失效，请重进登录界面刷新");
             }
@@ -117,10 +119,10 @@ public class LoginActivity extends Activity
             {
                 try
                 {
-                    int times = 0;
                     JSONObject loginJson;
                     while (!stopFlag)//不要停下来啊（指登录）
                     {
+                        timeoutHandler.postDelayed(runnableTimeout, 170000);
                         Response response = userLogin.getLoginState();
                         loginJson = new JSONObject(response.body().string());
                         if(!(Boolean) loginJson.get("status"))
@@ -129,6 +131,7 @@ public class LoginActivity extends Activity
                         }
                         else if((Boolean) loginJson.get("status"))
                         {
+                            timeoutHandler.removeCallbacks(runnableTimeout);
                             String cookies = "";
                             List<String> cookiesList = response.headers("Set-Cookie");
                             for (int i = 0; i < cookiesList.size(); i++)
@@ -145,12 +148,6 @@ public class LoginActivity extends Activity
                             overridePendingTransition(0, R.anim.anim_activity_out_right);
                         }
                         Thread.sleep(3000);
-                        times++;
-                        if(times >= 55)//我的极限是三分钟
-                        {
-                            stopFlag = true;
-                            UIhandler.post(runnableTimeout);
-                        }
                     }
                 } catch (ConnectException | UnknownHostException e)
                 {
@@ -171,5 +168,12 @@ public class LoginActivity extends Activity
     {
         super.onDestroy();
         stopFlag = true;
+        timeoutHandler.removeCallbacks(runnableTimeout);
+    }
+
+    public void loginTitle(View view)
+    {
+        finish();
+        overridePendingTransition(0, R.anim.anim_activity_out_right);
     }
 }

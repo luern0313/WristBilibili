@@ -12,13 +12,12 @@
         <RelativeLayout
             android:id="@+id/login_title_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="33dp"
             android:background="@color/mainColor"
+            android:onClick="loginTitle"
             android:gravity="center_vertical"
             android:paddingBottom="4dp"
-            android:paddingTop="10dp"
-            android:focusable="true"
-            android:focusableInTouchMode="true">
+            android:paddingTop="10dp">
 
             <TextView
                 android:id="@+id/main_title_title"
