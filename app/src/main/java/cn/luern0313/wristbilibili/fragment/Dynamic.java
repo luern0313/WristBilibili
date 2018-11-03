@@ -1,8 +1,10 @@
 package cn.luern0313.wristbilibili.fragment;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.util.LruCache;
 import android.os.Bundle;
@@ -14,6 +16,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.UserDynamic;
@@ -24,13 +27,29 @@ public class Dynamic extends Fragment
     Context ctx;
 
     UserDynamic userDynamic;
+    ArrayList<Object> dynamicList;
 
     ListView dyListView;
     private View rootLayout;
 
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    Handler handler = new Handler();
+    Runnable runnableUi;
+
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         rootLayout = inflater.inflate(R.layout.fragment_dynamic, container, false);
+        dyListView = rootLayout.findViewById(R.id.dy_listview);
+
+        runnableUi = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                mAdapter adapter = new mAdapter(inflater, dynamicList);
+                dyListView.setAdapter(adapter);
+            }
+        };
+
         if(!MainActivity.sharedPreferences.getString("cookies", "").equals(""))
         {
             userDynamic = new UserDynamic(MainActivity.sharedPreferences.getString("cookies", ""), MainActivity.sharedPreferences.getString("mid", ""));
@@ -42,6 +61,8 @@ public class Dynamic extends Fragment
                     try
                     {
                         userDynamic.getDynamic();
+                        dynamicList = userDynamic.getDynamicList();
+                        handler.post(runnableUi);
                     }
                     catch (IOException e)
                     {
@@ -52,10 +73,6 @@ public class Dynamic extends Fragment
                     }
                 }
             }).start();
-
-            dyListView = rootLayout.findViewById(R.id.dy_listview);
-            mAdapter adapter = new mAdapter(inflater);
-            dyListView.setAdapter(adapter);
         }
         else
         {
@@ -71,9 +88,12 @@ public class Dynamic extends Fragment
 
         private LruCache<String, BitmapDrawable> mImageCache;
 
-        public mAdapter(LayoutInflater inflater)
+        private ArrayList<Object> dyList;
+
+        public mAdapter(LayoutInflater inflater, ArrayList<Object> dyList)
         {
             mInflater = inflater;
+            this.dyList = dyList;
 
             int maxCache = (int) Runtime.getRuntime().maxMemory();
             int cacheSize = maxCache / 8;
@@ -90,7 +110,7 @@ public class Dynamic extends Fragment
         @Override
         public int getCount()
         {
-            return 5;
+            return dyList.size();
         }
 
         @Override
@@ -130,33 +150,35 @@ public class Dynamic extends Fragment
             // 若无可重用的 view 则进行加载
             if(convertView == null)
             {
-                switch (type)
+                if(dyList.get(position) instanceof UserDynamic.cardOriginalVideo)
                 {
-                    case 4:
-                        convertView = mInflater.inflate(R.layout.item_news_original_video, null);
-                        viewHolderOriVid = new ViewHolderOriVid();
-                        convertView.setTag(viewHolderOriVid);
-                        break;
-                    case 3:
-                        convertView = mInflater.inflate(R.layout.item_news_original_text, null);
-                        viewHolderOriText = new ViewHolderOriText();
-                        convertView.setTag(viewHolderOriText);
-                        break;
-                    case 2:
-                        convertView = mInflater.inflate(R.layout.item_news_unknowtype, null);
-                        viewHolderUnktyp = new ViewHolderUnktyp();
-                        convertView.setTag(viewHolderUnktyp);
-                        break;
-                    case 1:
-                        convertView = mInflater.inflate(R.layout.item_news_share_video, null);
-                        viewHolderShaVid = new ViewHolderShaVid();
-                        convertView.setTag(viewHolderShaVid);
-                        break;
-                    case 0:
-                        convertView = mInflater.inflate(R.layout.item_news_share_text, null);
-                        viewHolderShaText = new ViewHolderShaText();
-                        convertView.setTag(viewHolderShaText);
-                        break;
+                    convertView = mInflater.inflate(R.layout.item_news_original_video, null);
+                    viewHolderOriVid = new ViewHolderOriVid();
+                    convertView.setTag(viewHolderOriVid);
+                }
+                else if(dyList.get(position) instanceof UserDynamic.cardOriginalText)
+                {
+                    convertView = mInflater.inflate(R.layout.item_news_original_text, null);
+                    viewHolderOriText = new ViewHolderOriText();
+                    convertView.setTag(viewHolderOriText);
+                }
+                else if(dyList.get(position) instanceof UserDynamic.cardUnknow)
+                {
+                    convertView = mInflater.inflate(R.layout.item_news_unknowtype, null);
+                    viewHolderUnktyp = new ViewHolderUnktyp();
+                    convertView.setTag(viewHolderUnktyp);
+                }
+                else if(dyList.get(position) instanceof UserDynamic.cardShareVideo)
+                {
+                    convertView = mInflater.inflate(R.layout.item_news_share_video, null);
+                    viewHolderShaVid = new ViewHolderShaVid();
+                    convertView.setTag(viewHolderShaVid);
+                }
+                else if(dyList.get(position) instanceof UserDynamic.cardShareText)
+                {
+                    convertView = mInflater.inflate(R.layout.item_news_share_text, null);
+                    viewHolderShaText = new ViewHolderShaText();
+                    convertView.setTag(viewHolderShaText);
                 }
             }
             else
