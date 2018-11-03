@@ -3,7 +3,10 @@ package cn.luern0313.wristbilibili.fragment;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.util.LruCache;
@@ -12,10 +15,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.R;
@@ -134,6 +141,16 @@ public class Dynamic extends Fragment
         @Override
         public int getItemViewType(int position)
         {
+            if(dyList.get(position) instanceof UserDynamic.cardOriginalVideo)
+                return 4;
+            else if(dyList.get(position) instanceof UserDynamic.cardOriginalText)
+                return 3;
+            else if(dyList.get(position) instanceof UserDynamic.cardUnknow)
+                return 2;
+            else if(dyList.get(position) instanceof UserDynamic.cardShareVideo)
+                return 1;
+            else if(dyList.get(position) instanceof UserDynamic.cardShareText)
+                return 0;
             return position;
         }
 
@@ -247,7 +264,7 @@ public class Dynamic extends Fragment
 
         }
 
-        /*class ImageTask extends AsyncTask<String, Void, BitmapDrawable>
+        class ImageTask extends AsyncTask<String, Void, BitmapDrawable>
         {
             private String imageUrl;
 
@@ -256,7 +273,7 @@ public class Dynamic extends Fragment
             {
                 imageUrl = params[0];
                 Bitmap bitmap = downloadImage();
-                BitmapDrawable db = new BitmapDrawable(boxListview.getResources(), bitmap);
+                BitmapDrawable db = new BitmapDrawable(dyListView.getResources(), bitmap);
                 // 如果本地还没缓存该图片，就缓存
                 if(mImageCache.get(imageUrl) == null)
                 {
@@ -269,19 +286,19 @@ public class Dynamic extends Fragment
             protected void onPostExecute(BitmapDrawable result)
             {
                 // 通过Tag找到我们需要的ImageView，如果该ImageView所在的item已被移出页面，就会直接返回null
-                ImageView iv = boxListview.findViewWithTag(imageUrl);
+                ImageView iv = dyListView.findViewWithTag(imageUrl);
                 if(iv != null && result != null)
                 {
                     iv.setImageDrawable(result);
                 }
-            }*/
+            }
 
         /**
          * 根据url从网络上下载图片
          *
          * @return
          */
-            /*private Bitmap downloadImage()
+            private Bitmap downloadImage()
             {
                 HttpURLConnection con = null;
                 Bitmap bitmap = null;
@@ -305,11 +322,9 @@ public class Dynamic extends Fragment
                         con.disconnect();
                     }
                 }
-
                 return bitmap;
             }
-
-        }*/
+        }
 
     }
 }

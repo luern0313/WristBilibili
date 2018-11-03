@@ -93,7 +93,7 @@ public class UserDynamic
         private JSONObject oriVideoDesc;
         private JSONObject oriVideoDescUser;
 
-        public cardOriginalVideo(JSONObject oriVideoJson, JSONObject oriVideoDesc)
+        cardOriginalVideo(JSONObject oriVideoJson, JSONObject oriVideoDesc)
         {
             this.oriVideoJson = oriVideoJson;
             this.oriVideoDesc = oriVideoDesc;
@@ -162,7 +162,7 @@ public class UserDynamic
         private JSONObject oriTextDesc;
         private JSONObject oriTextDescUser;
 
-        public cardOriginalText(JSONObject oriTextJson, JSONObject oriTextDesc)
+        cardOriginalText(JSONObject oriTextJson, JSONObject oriTextDesc)
         {
             this.oriTextItemJson = getJsonFromJson(oriTextJson, "item");
             this.oriTextDesc = oriTextDesc;
@@ -224,7 +224,7 @@ public class UserDynamic
         private JSONObject shareVideoDesc;
         private JSONObject shareVideoDescUser;
 
-        public cardShareVideo(JSONObject shareVideoJson, JSONObject shareVideoDesc)
+        cardShareVideo(JSONObject shareVideoJson, JSONObject shareVideoDesc)
         {
             this.shareVideoJson = shareVideoJson;
             this.shareVideoItemJson = getJsonFromJson(shareVideoJson, "item");
@@ -270,7 +270,7 @@ public class UserDynamic
         private JSONObject shareTextDesc;
         private JSONObject shareTextDescUser;
 
-        public cardShareText(JSONObject shareTextJson, JSONObject shareTextDesc)
+        cardShareText(JSONObject shareTextJson, JSONObject shareTextDesc)
         {
             this.shareTextJson = shareTextJson;
             this.shareTextItemJson = getJsonFromJson(shareTextJson, "item");
@@ -315,7 +315,7 @@ public class UserDynamic
         private JSONObject unknowDesc;
         private JSONObject unknowDescUser;
 
-        public cardUnknow(JSONObject unknowJson, JSONObject unknowDesc)
+        cardUnknow(JSONObject unknowJson, JSONObject unknowDesc)
         {
             this.unknowJson = unknowJson;
             this.unknowDesc = unknowDesc;
