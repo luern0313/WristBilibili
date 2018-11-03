@@ -42,7 +42,6 @@ public class UserLogin
     public UserLogin()
     {
         sid = String.valueOf(Math.round(Math.random() * 100000000));
-        Log.i("bilibili", sid);
     }
 
     public Bitmap getLoginQR() throws Exception
@@ -50,7 +49,6 @@ public class UserLogin
         JSONObject loginUrlJson = new JSONObject((String) get("https://passport.bilibili.com/qrcode/getLoginUrl", "sid=" + sid, 1)).getJSONObject("data");
         oauthKey = (String) loginUrlJson.get("oauthKey");
         return QRCodeUtil.createQRCodeBitmap((String) loginUrlJson.get("url"), 120, 120);
-
     }
 
     public Response getLoginState() throws IOException

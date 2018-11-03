@@ -1,14 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
     <ListView
-        android:id="@+id/main_list"
+        android:id="@+id/dy_listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
         android:paddingBottom="25dp" />
 
-</LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/dy_nologin"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingBottom="33dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="92dp"
+            android:padding="6dp"
+            android:src="@drawable/img_nologin" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/dl_title_layout"
+            android:text="你好像还没有登录...\n点上面的按钮试试吧"
+            android:textSize="13sp" />
+
+    </LinearLayout>
+</RelativeLayout>

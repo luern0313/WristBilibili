@@ -56,11 +56,21 @@
             android:text="一天前"
             android:textSize="10sp" />
 
+        <TextView
+            android:id="@+id/li_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/li_head"
+            android:layout_marginBottom="2dp"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"
+            android:text="走过路过的看一看，教你怎么让支付宝的钱无限" />
+
         <ImageView
             android:id="@+id/il_img"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/li_head"
+            android:layout_below="@+id/li_text"
             android:layout_margin="2dp"
             android:scaleType="centerCrop"
             android:src="@drawable/img_tail" />

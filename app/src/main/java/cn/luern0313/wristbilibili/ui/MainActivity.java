@@ -7,6 +7,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
@@ -27,6 +28,8 @@ import cn.luern0313.wristbilibili.fragment.Dynamic;
 public class MainActivity extends Activity
 {
     Context ctx;
+    public static SharedPreferences sharedPreferences;
+    public static SharedPreferences.Editor editor;
     private FragmentManager fm;
     private FragmentTransaction transaction;
     DisplayMetrics dm;
@@ -41,6 +44,8 @@ public class MainActivity extends Activity
         setContentView(R.layout.activity_main);
 
         ctx = this;
+        sharedPreferences = getSharedPreferences("default", Context.MODE_PRIVATE);
+        editor = sharedPreferences.edit();
         dm = getResources().getDisplayMetrics();
         fm = getFragmentManager();
         transaction = fm.beginTransaction();

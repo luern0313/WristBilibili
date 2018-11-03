@@ -139,6 +139,7 @@ public class LoginActivity extends Activity
                             cookies = cookies.substring(0, cookies.length() - 2);
 
                             editor.putString("cookies", cookies);
+                            editor.putString("mid", getMidFromCookie(cookies));
                             editor.commit();
                             stopFlag = true;
 
@@ -161,6 +162,17 @@ public class LoginActivity extends Activity
                 }
             }
         });
+    }
+
+    private String getMidFromCookie(String cookie)
+    {
+        String[] cookies = cookie.split("; ");
+        for(String i : cookies)
+        {
+            if(i.contains("DedeUserID="))
+                return i.substring(11);
+        }
+        return "";
     }
 
     @Override

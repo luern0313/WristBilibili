@@ -1,37 +1,66 @@
 package cn.luern0313.wristbilibili.fragment;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Looper;
 import android.support.v4.util.LruCache;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.IOException;
 
 import cn.luern0313.wristbilibili.R;
-import cn.luern0313.wristbilibili.ui.MenuActivity;
+import cn.luern0313.wristbilibili.api.UserDynamic;
+import cn.luern0313.wristbilibili.ui.MainActivity;
 
 public class Dynamic extends Fragment
 {
     Context ctx;
 
-    ListView mainListView;
+    UserDynamic userDynamic;
+
+    ListView dyListView;
     private View rootLayout;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         rootLayout = inflater.inflate(R.layout.fragment_dynamic, container, false);
-        mainListView = rootLayout.findViewById(R.id.main_list);
-        mAdapter adapter = new mAdapter(inflater);
-        mainListView.setAdapter(adapter);
+        if(!MainActivity.sharedPreferences.getString("cookies", "").equals(""))
+        {
+            userDynamic = new UserDynamic(MainActivity.sharedPreferences.getString("cookies", ""), MainActivity.sharedPreferences.getString("mid", ""));
+            new Thread(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    try
+                    {
+                        userDynamic.getDynamic();
+                    }
+                    catch (IOException e)
+                    {
+                        Looper.prepare();
+                        Toast.makeText(ctx, "好像没有网络连接呢...", Toast.LENGTH_SHORT).show();
+                        Looper.loop();
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+
+            dyListView = rootLayout.findViewById(R.id.dy_listview);
+            mAdapter adapter = new mAdapter(inflater);
+            dyListView.setAdapter(adapter);
+        }
+        else
+        {
+            rootLayout.findViewById(R.id.dy_nologin).setVisibility(View.VISIBLE);
+        }
 
         return rootLayout;
     }
