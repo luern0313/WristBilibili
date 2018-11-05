@@ -24,6 +24,7 @@
             android:layout_marginBottom="1dp"
             android:layout_marginRight="4dp"
             android:layout_marginTop="1dp"
+            android:clickable="true"
             android:src="@drawable/img_default_head" />
 
         <TextView

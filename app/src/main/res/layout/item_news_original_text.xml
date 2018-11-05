@@ -23,6 +23,7 @@
             android:layout_marginBottom="1dp"
             android:layout_marginRight="4dp"
             android:layout_marginTop="1dp"
+            android:clickable="true"
             android:src="@drawable/img_default_head" />
 
         <TextView
@@ -68,7 +69,8 @@
             android:layout_marginRight="2dp"
             android:clickable="true"
             android:text="查看共9张图片"
-            android:textColor="@color/colorPrimary" />
+            android:textColor="@color/colorPrimary"
+            android:visibility="gone" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -78,6 +80,7 @@
             android:layout_marginBottom="2dp"
             android:layout_marginRight="10dp"
             android:layout_marginTop="4dp"
+            android:clickable="true"
             android:orientation="horizontal">
 
             <ImageView

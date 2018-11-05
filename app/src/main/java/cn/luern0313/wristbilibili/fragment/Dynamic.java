@@ -269,7 +269,12 @@ public class Dynamic extends Fragment
                 UserDynamic.cardOriginalVideo dy = (UserDynamic.cardOriginalVideo) dyList.get(position);
                 viewHolderOriVid.name.setText(Html.fromHtml("<b>" + dy.getOwnerName() + "</b>投稿了视频"));
                 viewHolderOriVid.time.setText(dy.getDynamicTime());
-                viewHolderOriVid.text.setText(dy.getDynamic());
+                if(!dy.getDynamic().equals(""))
+                {
+                    viewHolderOriVid.text.setVisibility(View.VISIBLE);
+                    viewHolderOriVid.text.setText(dy.getDynamic());
+                }
+                else viewHolderOriVid.text.setVisibility(View.GONE);
                 viewHolderOriVid.imgtext.setText(dy.getVideoDuration() + "  " + dy.getVideoView() + "观看");
                 viewHolderOriVid.title.setText(dy.getVideoTitle());
                 viewHolderOriVid.like.setText(String.valueOf(dy.getBeLiked()));
@@ -285,6 +290,7 @@ public class Dynamic extends Fragment
                     viewHolderOriText.textimg.setVisibility(View.VISIBLE);
                     viewHolderOriText.textimg.setText("查看共" + dy.getTextImgCount() + "张图片");
                 }
+                else viewHolderOriText.textimg.setVisibility(View.GONE);
                 viewHolderOriText.like.setText(String.valueOf(dy.getBeLiked()));
             }
             else if(type == 2)
