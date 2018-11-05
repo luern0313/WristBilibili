@@ -278,6 +278,13 @@ public class Dynamic extends Fragment
                 viewHolderOriVid.imgtext.setText(dy.getVideoDuration() + "  " + dy.getVideoView() + "观看");
                 viewHolderOriVid.title.setText(dy.getVideoTitle());
                 viewHolderOriVid.like.setText(String.valueOf(dy.getBeLiked()));
+                viewHolderOriVid.head.setImageResource(R.drawable.img_default_head);
+                viewHolderOriVid.img.setImageResource(R.drawable.img_default_vid);
+
+                viewHolderOriVid.head.setTag(dy.getOwnerHead());
+                viewHolderOriVid.img.setTag(dy.getVideoImg());
+                setImageFormWeb(dy.getOwnerHead());
+                setImageFormWeb(dy.getVideoImg());
             }
             else if(type == 3)
             {
@@ -292,12 +299,20 @@ public class Dynamic extends Fragment
                 }
                 else viewHolderOriText.textimg.setVisibility(View.GONE);
                 viewHolderOriText.like.setText(String.valueOf(dy.getBeLiked()));
+                viewHolderOriText.head.setImageResource(R.drawable.img_default_head);
+
+                viewHolderOriText.head.setTag(dy.getUserHead());
+                setImageFormWeb(dy.getUserHead());
             }
             else if(type == 2)
             {
                 UserDynamic.cardUnknow dy = (UserDynamic.cardUnknow) dyList.get(position);
                 viewHolderUnktyp.name.setText(dy.getOwnerName());
                 viewHolderUnktyp.time.setText(dy.getDynamicTime());
+                viewHolderUnktyp.head.setImageResource(R.drawable.img_default_head);
+
+                viewHolderUnktyp.head.setTag(dy.getOwnerHead());
+                setImageFormWeb(dy.getOwnerHead());
             }
             else if(type == 1)
             {
@@ -310,6 +325,16 @@ public class Dynamic extends Fragment
                 viewHolderShaVid.simgtext.setText(sdy.getVideoDuration() + "  " + sdy.getVideoView() + "观看");
                 viewHolderShaVid.stitle.setText(sdy.getVideoTitle());
                 viewHolderShaVid.like.setText(String.valueOf(dy.getBeLiked()));
+                viewHolderShaVid.head.setImageResource(R.drawable.img_default_head);
+                viewHolderShaVid.shead.setImageResource(R.drawable.img_default_head);
+                viewHolderShaVid.simg.setImageResource(R.drawable.img_default_vid);
+
+                viewHolderShaVid.head.setTag(dy.getUserHead());
+                viewHolderShaVid.shead.setTag(sdy.getOwnerHead());
+                viewHolderShaVid.simg.setTag(sdy.getVideoImg());
+                setImageFormWeb(dy.getUserHead());
+                setImageFormWeb(sdy.getOwnerHead());
+                setImageFormWeb(sdy.getVideoImg());
             }
             else if(type == 0)
             {
@@ -326,24 +351,32 @@ public class Dynamic extends Fragment
                     viewHolderShaText.stextimg.setText("查看共" + sdy.getTextImgCount() + "张图片");
                 }
                 viewHolderShaText.like.setText(String.valueOf(dy.getBeLiked()));
+                viewHolderShaText.head.setImageResource(R.drawable.img_default_head);
+                viewHolderShaText.shead.setImageResource(R.drawable.img_default_head);
 
+                viewHolderShaText.head.setTag(dy.getUserHead());
+                viewHolderShaText.shead.setTag(sdy.getUserHead());
+                setImageFormWeb(dy.getUserHead());
+                setImageFormWeb(sdy.getUserHead());
             }
-
-            /*
-            if(mImgurl.size() != 0)
-            {
-                viewHolder.vImg.setTag(mImgurl.get(position));
-                    if(mImageCache.get(mImgurl.get(position)) != null)
-                    {
-                        viewHolder.vImg.setImageDrawable(mImageCache.get(mImgurl.get(position)));
-                    }
-                    else
-                    {
-                        ImageTask it = new ImageTask();
-                        it.execute(mImgurl.get(position));
-                    }
-            }*/
             return convertView;
+        }
+
+        void setImageFormWeb(String url)
+        {
+            if(mImageCache.get(url) != null)
+            {
+                ImageView iv = dyListView.findViewWithTag(url);
+                if(iv != null)
+                {
+                    iv.setImageDrawable(mImageCache.get(url));
+                }
+            }
+            else
+            {
+                ImageTask it = new ImageTask();
+                it.execute(url);
+            }
         }
 
         class ViewHolderOriVid

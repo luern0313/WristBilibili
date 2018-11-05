@@ -134,9 +134,9 @@ public class UserDynamic
             return (String) getInfoFromJson(oriVideoJson, "title");
         }
 
-        public Bitmap getVideoImg() throws IOException
+        public String getVideoImg()
         {
-            return (Bitmap) get((String) getInfoFromJson(oriVideoJson, "pic"), 2);
+            return (String) getInfoFromJson(oriVideoJson, "pic");
         }
 
         public String getDynamic()
@@ -163,12 +163,12 @@ public class UserDynamic
             else return (String) getInfoFromJson(getJsonFromJson(oriVideoJson, "owner"), "name");
         }
 
-        public Bitmap getOwnerHead() throws IOException
+        public String getOwnerHead()
         {
             if(mode == 1)
-                return (Bitmap) get((String) getInfoFromJson(oriVideoDescUser, "face"), 2);
+                return (String) getInfoFromJson(getJsonFromJson(oriVideoDescUser, "info"), "face");
             else
-                return (Bitmap) get((String) getInfoFromJson(getJsonFromJson(oriVideoJson, "owner"), "face"), 2);
+                return (String) getInfoFromJson(getJsonFromJson(oriVideoJson, "owner"), "face");
         }
 
         public String getDynamicTime()
@@ -257,10 +257,10 @@ public class UserDynamic
             }
         }
 
-        public Bitmap getUserHead() throws IOException
+        public String getUserHead()
         {
-            if(mode == 1) return (Bitmap) get((String) getInfoFromJson(oriTextDescUser, "face"), 2);
-            else return (Bitmap) get((String) getInfoFromJson(oriTextUserJson, "head_url"), 2);
+            if(mode == 1) return (String) getInfoFromJson(getJsonFromJson(oriTextDescUser, "info"), "face");
+            else return (String) getInfoFromJson(oriTextUserJson, "head_url");
         }
 
         public String getDynamicTime()
@@ -299,9 +299,9 @@ public class UserDynamic
             return (String) getInfoFromJson(getJsonFromJson(shareVideoDescUser, "info"), "uname");
         }
 
-        public Bitmap getUserHead() throws IOException
+        public String getUserHead()
         {
-            return (Bitmap) get((String) getInfoFromJson(shareVideoDescUser, "face"), 2);
+            return (String) getInfoFromJson(getJsonFromJson(shareVideoDescUser, "info"), "face");
         }
 
         public String getDynamicTime()
@@ -345,9 +345,9 @@ public class UserDynamic
             return (String) getInfoFromJson(getJsonFromJson(shareTextDescUser, "info"), "uname");
         }
 
-        public Bitmap getUserHead() throws IOException
+        public String getUserHead()
         {
-            return (Bitmap) get((String) getInfoFromJson(shareTextDescUser, "face"), 2);
+            return (String) getInfoFromJson(getJsonFromJson(shareTextDescUser, "info"), "face");
         }
 
         public String getDynamicTime()
@@ -384,9 +384,9 @@ public class UserDynamic
             return (String) getInfoFromJson(getJsonFromJson(unknowDescUser, "info"), "uname");
         }
 
-        public Bitmap getOwnerHead() throws IOException
+        public String getOwnerHead()
         {
-            return (Bitmap) get((String) getInfoFromJson(unknowDescUser, "face"), 2);
+            return (String) getInfoFromJson(getJsonFromJson(unknowDescUser, "info"), "face");
         }
 
         public String getDynamicTime()
