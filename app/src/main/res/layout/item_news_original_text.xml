@@ -15,7 +15,7 @@
         android:paddingTop="2dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/li_head"
+            android:id="@+id/liot_head"
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:layout_alignParentStart="true"
@@ -23,58 +23,72 @@
             android:layout_marginBottom="1dp"
             android:layout_marginRight="4dp"
             android:layout_marginTop="1dp"
-            android:src="@drawable/img_temp" />
+            android:src="@drawable/img_default_head" />
 
         <TextView
-            android:id="@+id/li_name"
+            android:id="@+id/liot_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="1dp"
-            android:layout_toRightOf="@+id/li_head"
+            android:layout_toRightOf="@+id/liot_head"
             android:text="luern0313"
             android:textColor="@color/black"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:ellipsize="end"
+            android:maxLines="1"/>
 
         <TextView
-            android:id="@+id/li_time"
+            android:id="@+id/liot_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/li_name"
-            android:layout_below="@+id/li_name"
+            android:layout_alignStart="@+id/liot_name"
+            android:layout_below="@+id/liot_name"
             android:layout_marginLeft="1dp"
             android:layout_marginTop="2dp"
             android:text="一天前"
             android:textSize="10sp" />
 
         <TextView
-            android:id="@+id/li_text"
+            android:id="@+id/liot_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/li_head"
+            android:layout_below="@+id/liot_head"
             android:layout_marginBottom="2dp"
             android:layout_marginLeft="2dp"
             android:layout_marginRight="2dp"
             android:text="戳我上期视频，教你怎么让支付宝的钱无限" />
 
+        <TextView
+            android:id="@+id/liot_textimg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/liot_text"
+            android:layout_marginBottom="2dp"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"
+            android:clickable="true"
+            android:text="查看共9张图片"
+            android:textColor="@color/colorPrimary" />
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_below="@+id/li_text"
+            android:layout_below="@+id/liot_textimg"
             android:layout_marginBottom="2dp"
             android:layout_marginRight="10dp"
             android:layout_marginTop="4dp"
             android:orientation="horizontal">
 
             <ImageView
-                android:id="@+id/imageView"
+                android:id="@+id/liot_likebu"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_margin="2dp"
                 android:src="@drawable/icon_like" />
 
             <TextView
-                android:id="@+id/textView"
+                android:id="@+id/liot_like"
                 android:layout_width="wrap_content"
                 android:layout_height="20dp"
                 android:layout_margin="1dp"

@@ -16,7 +16,7 @@
         android:paddingBottom="6dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/li_head"
+            android:id="@+id/liuk_head"
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:layout_alignParentStart="true"
@@ -24,58 +24,49 @@
             android:layout_marginBottom="1dp"
             android:layout_marginRight="4dp"
             android:layout_marginTop="1dp"
-            android:src="@drawable/img_temp" />
+            android:src="@drawable/img_default_head" />
 
         <TextView
-            android:id="@+id/li_name"
+            android:id="@+id/liuk_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="1dp"
-            android:layout_toRightOf="@+id/li_head"
+            android:layout_toRightOf="@+id/liuk_head"
             android:text="luern0313"
             android:textColor="@color/black"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:ellipsize="end"
+            android:maxLines="1" />
 
         <TextView
-            android:id="@+id/li_time"
+            android:id="@+id/liuk_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/li_name"
-            android:layout_below="@+id/li_name"
+            android:layout_alignStart="@+id/liuk_name"
+            android:layout_below="@+id/liuk_name"
             android:layout_marginLeft="1dp"
             android:layout_marginTop="2dp"
             android:text="一天前"
             android:textSize="10sp" />
 
-        <TextView
-            android:id="@+id/li_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/li_head"
-            android:layout_marginBottom="2dp"
-            android:layout_marginLeft="2dp"
-            android:layout_marginRight="2dp"
-            android:text="猜猜这是什么类型的动态" />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/li_text"
+            android:layout_below="@+id/liuk_head"
+            android:layout_marginTop="5dp"
             android:background="@color/shareBG"
             android:padding="10dp">
 
             <ImageView
-                android:id="@+id/imageView2"
                 android:layout_width="18dp"
                 android:layout_height="18dp"
                 android:layout_marginRight="2dp"
                 android:src="@drawable/icon_warning" />
 
             <TextView
-                android:id="@+id/textView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="暂不支持该类型动态。。"
+                android:text="暂不支持该类型动态..."
                 android:textSize="13sp" />
         </LinearLayout>
 

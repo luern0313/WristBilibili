@@ -70,39 +70,68 @@ public class UserDynamic
         return null;
     }
 
+    public Object getDynamicClass(String cardJson, int which)
+    {
+        try
+        {
+            if(which == 1)  //video
+                return new cardOriginalVideo(new JSONObject(cardJson));
+            else  //text
+                return new cardOriginalText(new JSONObject(cardJson));
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     private Object getDynamicClass(JSONObject cardJson, JSONObject descJson)
     {
-        if(((int) getInfoFromJson(descJson, "type")) == 1)//转载
+        if(((int) getInfoFromJson(descJson, "type")) == 1)  //转载
         {
-            if((int) getInfoFromJson(descJson, "orig_type") == 2 || (int) getInfoFromJson(descJson, "orig_type") == 4)//文字
+            if((int) getInfoFromJson(descJson, "orig_type") == 2 || (int) getInfoFromJson(descJson, "orig_type") == 4)  //文字
                 return new cardShareText(cardJson, descJson);
-            else if((int) getInfoFromJson(descJson, "orig_type") == 8)//视频
+            else if((int) getInfoFromJson(descJson, "orig_type") == 8)  //视频
                 return new cardShareVideo(cardJson, descJson);
             else return new cardUnknow(cardJson, descJson);
         }
-        else if(((int) getInfoFromJson(descJson, "type")) == 2 || ((int) getInfoFromJson(descJson, "type")) == 4)//文字
+        else if(((int) getInfoFromJson(descJson, "type")) == 2 || ((int) getInfoFromJson(descJson, "type")) == 4)  //文字
             return new cardOriginalText(cardJson, descJson);
-        else if(((int) getInfoFromJson(descJson, "type")) == 8)//视频
+        else if(((int) getInfoFromJson(descJson, "type")) == 8)  //视频
             return new cardOriginalVideo(cardJson, descJson);
         else return new cardUnknow(cardJson, descJson);
     }
 
     public class cardOriginalVideo
     {
+        private int mode;
         private JSONObject oriVideoJson;
         private JSONObject oriVideoDesc;
         private JSONObject oriVideoDescUser;
 
         cardOriginalVideo(JSONObject oriVideoJson, JSONObject oriVideoDesc)
         {
+            mode = 1;
             this.oriVideoJson = oriVideoJson;
             this.oriVideoDesc = oriVideoDesc;
-            this.oriVideoDescUser = getJsonFromJson(getJsonFromJson(oriVideoDesc, "user_profile"), "info");
+            this.oriVideoDescUser = getJsonFromJson(oriVideoDesc, "user_profile");
+        }
+
+        public cardOriginalVideo(JSONObject oriVideoJson)
+        {
+            mode = 2;
+            this.oriVideoJson = oriVideoJson;
         }
 
         public String getVideoAid()
         {
             return (String) getInfoFromJson(oriVideoJson, "aid");
+        }
+
+        public String getVideoTitle()
+        {
+            return (String) getInfoFromJson(oriVideoJson, "title");
         }
 
         public Bitmap getVideoImg() throws IOException
@@ -124,17 +153,22 @@ public class UserDynamic
 
         public String getVideoDuration()
         {
-            return getMinFromSec((int) getInfoFromJson(getJsonFromJson(oriVideoJson, "stat"), "duration"));
+            return getMinFromSec((int) getInfoFromJson(oriVideoJson, "duration"));
         }
 
         public String getOwnerName()
         {
-            return (String) getInfoFromJson(oriVideoDescUser, "uname");
+            if(mode == 1)
+                return (String) getInfoFromJson(getJsonFromJson(oriVideoDescUser, "info"), "uname");
+            else return (String) getInfoFromJson(getJsonFromJson(oriVideoJson, "owner"), "name");
         }
 
         public Bitmap getOwnerHead() throws IOException
         {
-            return (Bitmap) get((String) getInfoFromJson(oriVideoDescUser, "face"), 2);
+            if(mode == 1)
+                return (Bitmap) get((String) getInfoFromJson(oriVideoDescUser, "face"), 2);
+            else
+                return (Bitmap) get((String) getInfoFromJson(getJsonFromJson(oriVideoJson, "owner"), "face"), 2);
         }
 
         public String getDynamicTime()
@@ -158,25 +192,39 @@ public class UserDynamic
 
     public class cardOriginalText
     {
+        private int mode;
+        private JSONObject oriTextUserJson;
         private JSONObject oriTextItemJson;
         private JSONObject oriTextDesc;
         private JSONObject oriTextDescUser;
 
         cardOriginalText(JSONObject oriTextJson, JSONObject oriTextDesc)
         {
+            mode = 1;
             this.oriTextItemJson = getJsonFromJson(oriTextJson, "item");
             this.oriTextDesc = oriTextDesc;
             this.oriTextDescUser = getJsonFromJson(oriTextDesc, "user_profile");
         }
 
-        public String getDynamicText()
+        cardOriginalText(JSONObject oriTextJson)
         {
-            return (String) getInfoFromJson(oriTextItemJson, "description");
+            mode = 2;
+            this.oriTextUserJson = getJsonFromJson(oriTextJson, "user");
+            this.oriTextItemJson = getJsonFromJson(oriTextJson, "item");
         }
 
-        public int getTextImgCount()
+        public String getDynamicText()
         {
-            return (int) getInfoFromJson(oriTextItemJson, "pictures_count");
+            if(getTextImgCount().equals("0"))
+                return (String) getInfoFromJson(oriTextItemJson, "content");
+            else return (String) getInfoFromJson(oriTextItemJson, "description");
+        }
+
+        public String getTextImgCount()
+        {
+            if(oriTextItemJson.has("pictures_count"))
+                return String.valueOf(getInfoFromJson(oriTextItemJson, "pictures_count"));
+            else return "0";
         }
 
         public ArrayList<String> getImgsSrc()
@@ -198,12 +246,21 @@ public class UserDynamic
 
         public String getUserName()
         {
-            return (String) getInfoFromJson(oriTextDescUser, "uname");
+            if(mode == 1)
+                return (String) getInfoFromJson(getJsonFromJson(oriTextDescUser, "info"), "uname");
+            else
+            {
+                if(getTextImgCount().equals("0"))
+                    return (String) getInfoFromJson(oriTextUserJson, "uname");
+                else
+                    return (String) getInfoFromJson(oriTextUserJson, "name");
+            }
         }
 
         public Bitmap getUserHead() throws IOException
         {
-            return (Bitmap) get((String) getInfoFromJson(oriTextDescUser, "face"), 2);
+            if(mode == 1) return (Bitmap) get((String) getInfoFromJson(oriTextDescUser, "face"), 2);
+            else return (Bitmap) get((String) getInfoFromJson(oriTextUserJson, "head_url"), 2);
         }
 
         public String getDynamicTime()
@@ -239,7 +296,7 @@ public class UserDynamic
 
         public String getUserName()
         {
-            return (String) getInfoFromJson(shareVideoDescUser, "uname");
+            return (String) getInfoFromJson(getJsonFromJson(shareVideoDescUser, "info"), "uname");
         }
 
         public Bitmap getUserHead() throws IOException
@@ -285,7 +342,7 @@ public class UserDynamic
 
         public String getUserName()
         {
-            return (String) getInfoFromJson(shareTextDescUser, "uname");
+            return (String) getInfoFromJson(getJsonFromJson(shareTextDescUser, "info"), "uname");
         }
 
         public Bitmap getUserHead() throws IOException
@@ -324,7 +381,7 @@ public class UserDynamic
 
         public String getOwnerName()
         {
-            return (String) getInfoFromJson(unknowDesc, "uname");
+            return (String) getInfoFromJson(getJsonFromJson(unknowDescUser, "info"), "uname");
         }
 
         public Bitmap getOwnerHead() throws IOException
@@ -334,7 +391,7 @@ public class UserDynamic
 
         public String getDynamicTime()
         {
-            return getTime((int) getInfoFromJson(unknowDescUser, "timestamp"));
+            return getTime((int) getInfoFromJson(unknowDesc, "timestamp"));
         }
     }
 
