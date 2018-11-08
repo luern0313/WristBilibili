@@ -27,11 +27,14 @@ import okhttp3.Response;
 
 public class UserDynamic
 {
-    private final String APIURL = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/dynamic_new";
+    private final String DYNAMICAPIURL = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/dynamic_new";
+    private final String HISTORYAPIURL = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/dynamic_history";
     private final String DYNAMICTYPE = "268435455";
     private String mid;
     private String cookie;
     private JSONArray dynamicJsonArray;
+
+    private String lastDynamicId;
 
     public UserDynamic(String cookie, String mid)
     {
@@ -43,7 +46,19 @@ public class UserDynamic
     {
         try
         {
-            dynamicJsonArray = new JSONObject((String) get(APIURL + "?uid=" + mid + "&type=" + DYNAMICTYPE, 1)).getJSONObject("data").getJSONArray("cards");
+            dynamicJsonArray = new JSONObject((String) get(DYNAMICAPIURL + "?uid=" + mid + "&type=" + DYNAMICTYPE, 1)).getJSONObject("data").getJSONArray("cards");
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public void getHistoryDynamic() throws IOException
+    {
+        try
+        {
+            dynamicJsonArray = new JSONObject((String) get(HISTORYAPIURL + "?uid=" + mid + "&offset_dynamic_id=" + lastDynamicId + "&type=" + DYNAMICTYPE, 1)).getJSONObject("data").getJSONArray("cards");
         }
         catch (JSONException e)
         {
@@ -60,6 +75,8 @@ public class UserDynamic
             {
                 JSONObject dy = (JSONObject) dynamicJsonArray.get(i);
                 dynamicList.add(getDynamicClass(new JSONObject((String) dy.get("card")), dy.getJSONObject("desc")));
+                if(i == dynamicJsonArray.length() - 1)
+                    lastDynamicId = String.valueOf(dy.getJSONObject("desc").get("dynamic_id"));
             }
             return dynamicList;
         }

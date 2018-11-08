@@ -40,7 +40,9 @@ dependencies {
 
     implementation 'com.squareup.okhttp3:okhttp:3.11.0'//okhttp
     implementation 'com.google.zxing:core:3.3.0'//二维码
-
     implementation 'de.hdodenhof:circleimageview:2.2.0'//圆形imageview
+    implementation 'cn.carbs.android:ExpandableTextView:1.0.3'//折叠textview
+    implementation 'tyrant:heartlayout:1.0.1'//heart泡泡
+    implementation 'com.github.recruit-lifestyle:WaveSwipeRefreshLayout:1.6'//水滴状下拉刷新
 
 }

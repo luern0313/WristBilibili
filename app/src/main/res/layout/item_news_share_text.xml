@@ -49,7 +49,7 @@
             android:text="2分钟前"
             android:textSize="10sp" />
 
-        <TextView
+        <cn.carbs.android.expandabletextview.library.ExpandableTextView
             android:id="@+id/list_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -57,7 +57,7 @@
             android:layout_marginBottom="2dp"
             android:layout_marginLeft="2dp"
             android:layout_marginRight="2dp"
-            android:text="看见没，这个人的确很有前途，明天来我公司上班" />
+            app:etv_MaxLinesOnShrink="3"/>
 
         <RelativeLayout
             android:id="@+id/list_share_lay"
@@ -94,7 +94,8 @@
                     android:textSize="13sp" />
             </LinearLayout>
 
-            <TextView
+
+            <cn.carbs.android.expandabletextview.library.ExpandableTextView
                 android:id="@+id/list_share_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -102,8 +103,8 @@
                 android:layout_marginBottom="2dp"
                 android:layout_marginLeft="2dp"
                 android:layout_marginRight="2dp"
-                android:text="戳我上期视频，教你怎么让支付宝的钱无限"
-                android:textSize="13sp" />
+                android:textSize="13sp"
+                app:etv_MaxLinesOnShrink="3" />
 
             <TextView
                 android:id="@+id/list_share_textimg"
@@ -115,8 +116,8 @@
                 android:layout_marginRight="2dp"
                 android:clickable="true"
                 android:text="查看共9张图片"
-                android:textColor="@color/colorPrimary" />
-
+                android:textColor="@color/colorPrimary"
+                android:visibility="gone" />
 
         </RelativeLayout>
 
