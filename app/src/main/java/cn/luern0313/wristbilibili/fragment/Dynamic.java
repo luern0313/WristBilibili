@@ -39,8 +39,8 @@ public class Dynamic extends Fragment
     UserDynamic userDynamic;
     ArrayList<Object> dynamicList;
 
-    ListView dyListView;
     View rootLayout;
+    ListView dyListView;
     WaveSwipeRefreshLayout waveSwipeRefreshLayout;
     View loadingView;
     mAdapter adapter;
@@ -51,7 +51,8 @@ public class Dynamic extends Fragment
     Runnable runnableNoWebH;
     Runnable runnableAddlist;
 
-    boolean isLoading = false;
+    boolean isLoading = true;
+    public static boolean isLogin = false;
 
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
@@ -60,6 +61,8 @@ public class Dynamic extends Fragment
         dyListView = rootLayout.findViewById(R.id.dy_listview);
         loadingView = inflater.inflate(R.layout.widget_dyloading, null);
         dyListView.addFooterView(loadingView);
+
+        isLogin = !MainActivity.sharedPreferences.getString("cookies", "").equals("");
 
         runnableUi = new Runnable()
         {
@@ -117,8 +120,12 @@ public class Dynamic extends Fragment
                     @Override
                     public void run()
                     {
-                        dyListView.setVisibility(View.GONE);
-                        getDynamic();
+                        if(isLogin)
+                        {
+                            dyListView.setVisibility(View.GONE);
+                            getDynamic();
+                        }
+                        else waveSwipeRefreshLayout.setRefreshing(false);
                     }
                 });
             }
@@ -126,15 +133,12 @@ public class Dynamic extends Fragment
 
         dyListView.setOnScrollListener(new AbsListView.OnScrollListener()
         {
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState)
-            {
-            }
+            @Override public void onScrollStateChanged(AbsListView view, int scrollState) {}
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
             {
-                if(visibleItemCount + firstVisibleItem == totalItemCount && !isLoading)
+                if(visibleItemCount + firstVisibleItem == totalItemCount && !isLoading && isLogin)
                 {
                     isLoading = true;
                     new Thread(new Runnable()
@@ -146,8 +150,8 @@ public class Dynamic extends Fragment
                             {
                                 userDynamic.getHistoryDynamic();
                                 dynamicList.addAll(userDynamic.getDynamicList());
-                                handler.post(runnableAddlist);
                                 isLoading = false;
+                                handler.post(runnableAddlist);
                             }
                             catch (IOException e)
                             {
@@ -160,10 +164,9 @@ public class Dynamic extends Fragment
             }
         });
 
-        if(!MainActivity.sharedPreferences.getString("cookies", "").equals(""))
+        if(isLogin)
         {
             waveSwipeRefreshLayout.setRefreshing(true);
-            userDynamic = new UserDynamic(MainActivity.sharedPreferences.getString("cookies", ""), MainActivity.sharedPreferences.getString("mid", ""));
             getDynamic();
         }
         else
@@ -184,8 +187,10 @@ public class Dynamic extends Fragment
             {
                 try
                 {
+                    userDynamic = new UserDynamic(MainActivity.sharedPreferences.getString("cookies", ""), MainActivity.sharedPreferences.getString("mid", ""));
                     userDynamic.getDynamic();
                     dynamicList = userDynamic.getDynamicList();
+                    isLoading = false;
                     handler.post(runnableUi);
                 }
                 catch (IOException e)
@@ -578,7 +583,6 @@ public class Dynamic extends Fragment
                     // 如果本地还没缓存该图片，就缓存
                     if(mImageCache.get(imageUrl) == null && bitmap != null)
                     {
-                        Log.i("bilibili", "缓存了！！");
                         mImageCache.put(imageUrl, db);
                     }
                     return db;

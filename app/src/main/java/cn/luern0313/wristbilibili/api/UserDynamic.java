@@ -50,6 +50,7 @@ public class UserDynamic
         }
         catch (JSONException e)
         {
+            dynamicJsonArray = new JSONArray();
             e.printStackTrace();
         }
     }
@@ -74,7 +75,8 @@ public class UserDynamic
             for (int i = 0; i < dynamicJsonArray.length(); i++)
             {
                 JSONObject dy = (JSONObject) dynamicJsonArray.get(i);
-                dynamicList.add(getDynamicClass(new JSONObject((String) dy.get("card")), dy.getJSONObject("desc")));
+                Object d = getDynamicClass(new JSONObject((String) dy.get("card")), dy.getJSONObject("desc"));
+                if(d != null) dynamicList.add(d);
                 if(i == dynamicJsonArray.length() - 1)
                     lastDynamicId = String.valueOf(dy.getJSONObject("desc").get("dynamic_id"));
             }
@@ -107,9 +109,9 @@ public class UserDynamic
     {
         if(((int) getInfoFromJson(descJson, "type")) == 1)  //转载
         {
-            if((int) getInfoFromJson(descJson, "orig_type") == 2 || (int) getInfoFromJson(descJson, "orig_type") == 4)  //文字
+            if(((int) getInfoFromJson(descJson, "orig_type")) == 2 || ((int) getInfoFromJson(descJson, "orig_type")) == 4)  //文字
                 return new cardShareText(cardJson, descJson);
-            else if((int) getInfoFromJson(descJson, "orig_type") == 8)  //视频
+            else if(((int) getInfoFromJson(descJson, "orig_type")) == 8)  //视频
                 return new cardShareVideo(cardJson, descJson);
             else return new cardUnknow(cardJson, descJson);
         }
@@ -117,6 +119,8 @@ public class UserDynamic
             return new cardOriginalText(cardJson, descJson);
         else if(((int) getInfoFromJson(descJson, "type")) == 8)  //视频
             return new cardOriginalVideo(cardJson, descJson);
+        else if(((int) getInfoFromJson(descJson, "type")) == 512 && ((int) getInfoFromJson(descJson, "orig_type")) == 0)//番剧，暂时不处理
+            return null;
         else return new cardUnknow(cardJson, descJson);
     }
 
@@ -277,7 +281,13 @@ public class UserDynamic
         public String getUserHead()
         {
             if(mode == 1) return (String) getInfoFromJson(getJsonFromJson(oriTextDescUser, "info"), "face");
-            else return (String) getInfoFromJson(oriTextUserJson, "head_url");
+            else
+            {
+                if(getTextImgCount().equals("0"))
+                    return (String) getInfoFromJson(oriTextUserJson, "face");
+                else
+                    return (String) getInfoFromJson(oriTextUserJson, "head_url");
+            }
         }
 
         public String getDynamicTime()

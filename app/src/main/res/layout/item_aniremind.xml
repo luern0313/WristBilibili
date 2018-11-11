@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/anre_img"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginRight="2dp"
+        android:padding="2dp"
+        android:src="@drawable/temp_tnl" />
+
+    <TextView
+        android:id="@+id/anre_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_toRightOf="@+id/anre_img"
+        android:text="青春猪头少年不会梦到兔女郎学姐" />
+
+    <TextView
+        android:id="@+id/anre_isfollow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/anre_name"
+        android:layout_marginTop="2dp"
+        android:layout_toRightOf="@+id/anre_img"
+        android:background="@drawable/shape_anre_followbg"
+        android:padding="2dp"
+        android:text="已追番"
+        android:textColor="@color/textColor"
+        android:textSize="10sp" />
+
+    <TextView
+        android:id="@+id/anre_last"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/anre_isfollow"
+        android:layout_toRightOf="@+id/anre_img"
+        android:text="更新至第六话"
+        android:textColor="@color/mainColor"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/anre_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/anre_last"
+        android:layout_toRightOf="@+id/anre_img"
+        android:textSize="11sp" />
+</RelativeLayout>

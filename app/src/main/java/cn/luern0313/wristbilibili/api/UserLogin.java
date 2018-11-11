@@ -54,7 +54,6 @@ public class UserLogin
     public Response getLoginState() throws IOException
     {
         return post("https://passport.bilibili.com/qrcode/getLoginInfo", "oauthKey=" + oauthKey + "&gourl=https://www.bilibili.com/");
-
     }
 
     public String getOauthKey()

@@ -29,7 +29,7 @@
                 android:layout_marginBottom="2dp"
                 android:layout_marginRight="2dp"
                 android:layout_marginTop="2dp"
-                android:src="@drawable/img_defaultavatar" />
+                android:src="@drawable/img_default_avatar" />
 
             <ImageView
                 android:id="@+id/menu_uservip"
@@ -136,7 +136,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="番剧提醒"
+                android:text="追番提醒"
                 android:textColor="@color/textColor" />
         </LinearLayout>
 

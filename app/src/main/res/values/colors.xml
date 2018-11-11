@@ -17,4 +17,6 @@
     <color name="shareText">#126845</color>
 
     <color name="activityBG">#fafafa</color>
+
+    <color name="alphe">#00000000</color>
 </resources>

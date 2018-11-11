@@ -21,11 +21,4 @@ public class Download extends Fragment
         ctx = this.getActivity();
         return inflater.inflate(R.layout.fragment_download, container, false);
     }
-
-
-    public void buttonTitle(View view)
-    {
-        Intent intent = new Intent(ctx, MenuActivity.class);
-        startActivity(intent);
-    }
 }
