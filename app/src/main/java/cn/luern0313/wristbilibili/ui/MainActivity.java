@@ -55,6 +55,8 @@ public class MainActivity extends Activity
 
         titleText = findViewById(R.id.main_title_title);
         titleImg = findViewById(R.id.main_title_extraicon);
+
+        startActivity(new Intent(ctx, FollowmeActivity.class));
     }
 
     @Override

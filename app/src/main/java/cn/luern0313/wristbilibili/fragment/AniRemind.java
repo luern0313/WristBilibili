@@ -230,7 +230,7 @@ public class AniRemind extends Fragment
 
         class ViewHolder
         {
-            CircleImageView img;
+            ImageView img;
             TextView name;
             TextView isfollow;
             TextView last;

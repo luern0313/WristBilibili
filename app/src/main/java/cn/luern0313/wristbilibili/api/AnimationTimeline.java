@@ -49,7 +49,7 @@ public class AnimationTimeline
                 {
                     JSONObject anim = dailyAnims.getJSONObject(j);
                     if(anim.getInt("pub_ts") <= nowTime && anim.getInt("is_published") == 1)
-                        anims.add(new Anim(anim.getString("title"), anim.getString("cover"), anim.getString("pub_index"), (int) anim.get("follow"), day + anim.getString("pub_time")));
+                        anims.add(new Anim(anim.getString("title"), anim.getString("square_cover"), anim.getString("pub_index"), (int) anim.get("follow"), day + anim.getString("pub_time")));
                 }
             }
             return anims;

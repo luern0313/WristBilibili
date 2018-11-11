@@ -44,5 +44,6 @@ dependencies {
     implementation 'cn.carbs.android:ExpandableTextView:1.0.3'//折叠textview
     implementation 'tyrant:heartlayout:1.0.1'//heart泡泡
     implementation 'com.github.recruit-lifestyle:WaveSwipeRefreshLayout:1.6'//水滴状下拉刷新
+    implementation 'com.android.support:cardview-v7:26.1.0'//cardview
 
 }
