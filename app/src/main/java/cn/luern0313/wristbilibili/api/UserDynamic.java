@@ -207,6 +207,7 @@ public class UserDynamic
             String m = String.valueOf(sec / 60);
             String s = String.valueOf(sec - sec / 60 * 60);
             if(m.length() == 1) m = "0" + m;
+            if(s.length() == 1) s = "0" + s;
             return m + ":" + s;
         }
     }
