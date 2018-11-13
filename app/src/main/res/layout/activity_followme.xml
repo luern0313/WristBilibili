@@ -54,6 +54,8 @@
             android:layout_marginLeft="17dp"
             android:layout_marginRight="17dp"
             android:layout_marginTop="6dp"
+            android:clickable="true"
+            android:descendantFocusability="blocksDescendants"
             app:cardCornerRadius="8dp"
             app:cardElevation="6dp">
 
@@ -135,18 +137,23 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:orientation="horizontal"
-            android:paddingBottom="6dp">
+            android:orientation="horizontal">
 
             <LinearLayout
+                android:id="@+id/fme_like"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:descendantFocusability="blocksDescendants"
                 android:gravity="center_horizontal"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:paddingBottom="3dp"
+                android:paddingTop="3dp">
 
                 <ImageView
-                    android:id="@+id/fme_coinimg"
+                    android:id="@+id/fme_like_img"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:src="@drawable/icon_like_no" />
@@ -163,18 +170,25 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
+                android:paddingBottom="3dp"
                 android:text="再"
                 android:textSize="13sp" />
 
             <LinearLayout
+                android:id="@+id/fme_coin"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:descendantFocusability="blocksDescendants"
                 android:gravity="center_horizontal"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:paddingBottom="3dp"
+                android:paddingTop="3dp">
 
                 <ImageView
-                    android:id="@+id/fme_likeimg"
+                    android:id="@+id/fme_coin_img"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:src="@drawable/icon_coin_no" />

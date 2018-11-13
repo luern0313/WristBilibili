@@ -34,7 +34,6 @@
             android:layout_toRightOf="@+id/lisv_head"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="马云"
             android:textColor="@color/black"
             android:textStyle="bold" />
 
@@ -46,7 +45,6 @@
             android:layout_below="@+id/lisv_name"
             android:layout_marginLeft="1dp"
             android:layout_marginTop="2dp"
-            android:text="2分钟前"
             android:textSize="10sp" />
 
         <cn.carbs.android.expandabletextview.library.ExpandableTextView
@@ -90,7 +88,6 @@
                     android:layout_marginLeft="2dp"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:text="luern0313的投稿"
                     android:textSize="13sp" />
             </LinearLayout>
 
@@ -111,7 +108,6 @@
                 android:layout_margin="4dp"
                 android:background="@drawable/shape_dynamic_videotext"
                 android:padding="2dp"
-                android:text="07:45  946.4万观看"
                 android:textColor="@color/textColor"
                 android:textSize="11sp" />
 
@@ -123,7 +119,6 @@
                 android:layout_marginBottom="2dp"
                 android:layout_marginLeft="2dp"
                 android:layout_marginRight="2dp"
-                android:text="教你怎么让支付宝的钱无限"
                 android:textSize="13sp" />
 
 
@@ -153,7 +148,6 @@
                 android:layout_height="20dp"
                 android:layout_margin="1dp"
                 android:gravity="center_vertical"
-                android:text="1561"
                 android:textSize="12sp" />
         </LinearLayout>
     </RelativeLayout>

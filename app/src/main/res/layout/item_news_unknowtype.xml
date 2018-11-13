@@ -33,7 +33,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="1dp"
             android:layout_toRightOf="@+id/liuk_head"
-            android:text="luern0313"
             android:textColor="@color/black"
             android:textStyle="bold"
             android:ellipsize="end"
@@ -47,7 +46,6 @@
             android:layout_below="@+id/liuk_name"
             android:layout_marginLeft="1dp"
             android:layout_marginTop="2dp"
-            android:text="一天前"
             android:textSize="10sp" />
 
         <LinearLayout

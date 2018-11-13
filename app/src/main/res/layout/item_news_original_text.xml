@@ -32,7 +32,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="1dp"
             android:layout_toRightOf="@+id/liot_head"
-            android:text="luern0313"
             android:textColor="@color/black"
             android:textStyle="bold"
             android:ellipsize="end"
@@ -46,7 +45,6 @@
             android:layout_below="@+id/liot_name"
             android:layout_marginLeft="1dp"
             android:layout_marginTop="2dp"
-            android:text="一天前"
             android:textSize="10sp" />
 
         <cn.carbs.android.expandabletextview.library.ExpandableTextView
@@ -69,7 +67,6 @@
             android:layout_marginLeft="2dp"
             android:layout_marginRight="2dp"
             android:clickable="true"
-            android:text="查看共9张图片"
             android:textColor="@color/colorPrimary"
             android:visibility="gone" />
 
@@ -97,7 +94,6 @@
                 android:layout_height="20dp"
                 android:layout_margin="1dp"
                 android:gravity="center_vertical"
-                android:text="1561"
                 android:textSize="12sp" />
         </LinearLayout>
     </RelativeLayout>
