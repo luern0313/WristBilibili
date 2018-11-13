@@ -58,7 +58,7 @@
                 android:layout_marginLeft="2dp"
                 android:layout_marginTop="10dp"
                 android:layout_toRightOf="@+id/menu_useric"
-                android:background="@drawable/shape_lvbg"
+                android:background="@drawable/shape_lvbg_menu"
                 android:paddingBottom="1dp"
                 android:paddingLeft="4dp"
                 android:paddingRight="4dp"
