@@ -21,9 +21,11 @@ import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.fragment.AniRemind;
 import cn.luern0313.wristbilibili.fragment.Download;
 import cn.luern0313.wristbilibili.fragment.Dynamic;
+import cn.luern0313.wristbilibili.fragment.Setting;
 
 /**
  * Created by liupe on 2018/10/25.
+ * fragment.....
  */
 
 public class MainActivity extends Activity
@@ -55,8 +57,6 @@ public class MainActivity extends Activity
 
         titleText = findViewById(R.id.main_title_title);
         titleImg = findViewById(R.id.main_title_extraicon);
-
-        startActivity(new Intent(ctx, FollowmeActivity.class));
     }
 
     @Override
@@ -84,6 +84,19 @@ public class MainActivity extends Activity
                     titleText.setText("离线缓存");
                     titleText.setTextSize(13);
                     break;
+                case 4:
+                    titleText.setText("搜索");
+                    titleText.setTextSize(14);
+                    break;
+                case 5:
+                    titleText.setText("收藏");
+                    titleText.setTextSize(14);
+                    break;
+                case 6:
+                    transaction.replace(R.id.main_frame, new Setting());
+                    titleText.setText("设置");
+                    titleText.setTextSize(14);
+                    break;
             }
             transaction.commit();
         }
@@ -91,39 +104,6 @@ public class MainActivity extends Activity
 
     public void buttonTitle(final View view)
     {
-        /*titleText.setVisibility(View.GONE);
-        titleImg.setVisibility(View.GONE);
-
-        final int viewHeight = view.getLayoutParams().height;
-
-        ValueAnimator anim = ValueAnimator.ofInt(viewHeight, dm.heightPixels);
-        anim.setDuration(500);
-        anim.setRepeatCount(0);
-
-        anim.addListener(new Animator.AnimatorListener()
-        {
-            @Override public void onAnimationStart(Animator animation) {}
-            @Override public void onAnimationCancel(Animator animation) {}
-            @Override public void onAnimationRepeat(Animator animation) {}
-            @Override
-            public void onAnimationEnd(Animator animation)
-            {
-                titleText.setVisibility(View.VISIBLE);
-                titleImg.setVisibility(View.VISIBLE);
-                view.getLayoutParams().height = viewHeight;
-            }
-        });
-        anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener()
-        {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation)
-            {
-                int currentValue = (Integer) animation.getAnimatedValue();
-                view.getLayoutParams().height = currentValue;
-                view.requestLayout();
-            }
-        });
-        anim.start();*/
         Intent intent = new Intent(ctx, MenuActivity.class);
         startActivityForResult(intent, 0);
         overridePendingTransition(R.anim.anim_activity_in_down, 0);

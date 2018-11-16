@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/join_title_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/mainColor"
+            android:gravity="center_vertical"
+            android:paddingBottom="4dp"
+            android:paddingTop="10dp">
+
+            <TextView
+                android:id="@+id/join_title_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="联系作者"
+                android:textColor="@color/textColor"
+                android:textSize="13sp" />
+
+            <ImageView
+                android:id="@+id/join_title_extraicon"
+                android:layout_width="12dp"
+                android:layout_height="19dp"
+                android:layout_marginLeft="2dp"
+                android:layout_toLeftOf="@+id/join_title_title"
+                android:rotation="90"
+                android:src="@drawable/icon_extra" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="22dp"
+            android:layout_marginRight="22dp"
+            android:layout_marginTop="6dp"
+            android:gravity="center_horizontal"
+            android:text="如果您发现了产品的bug，或对产品有任何建议\n(或者只是单纯想来吹水)\n欢迎加入我们的QQ群！\n群号：680497357"
+            android:textSize="12sp" />
+
+        <ImageView
+            android:layout_width="128dp"
+            android:layout_height="128dp"
+            android:layout_marginBottom="16dp"
+            android:src="@drawable/img_qq" />
+    </LinearLayout>
+</ScrollView>

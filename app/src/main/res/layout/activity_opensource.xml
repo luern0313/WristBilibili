@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/open_title_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/mainColor"
+            android:gravity="center_vertical"
+            android:paddingBottom="4dp"
+            android:paddingTop="10dp">
+
+            <TextView
+                android:id="@+id/open_title_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="关于开源"
+                android:textColor="@color/textColor"
+                android:textSize="13sp" />
+
+            <ImageView
+                android:id="@+id/open_title_extraicon"
+                android:layout_width="12dp"
+                android:layout_height="19dp"
+                android:layout_marginLeft="2dp"
+                android:layout_toLeftOf="@+id/open_title_title"
+                android:rotation="90"
+                android:src="@drawable/icon_extra" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="19dp"
+            android:layout_marginRight="19dp"
+            android:layout_marginTop="6dp"
+            android:gravity="center_horizontal"
+            android:text="本应用在github开源，欢迎star~~\nhttps://github.com/luern0313/WristBilibili" />
+
+        <ImageView
+            android:layout_width="128dp"
+            android:layout_height="128dp"
+            android:src="@drawable/img_opensource" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:layout_marginLeft="26dp"
+            android:layout_marginRight="26dp"
+            android:layout_marginTop="6dp"
+            android:text="--------------------------\n本应用使用了以下开源库，向这些开源库的作者致以敬意！\n--------------------------\nCircleImageView\nhdodenhof\nhttps://github.com/hdodenhof/CircleImageView\n--------------------------\nExpandableTextView\nCarbs0126\nhttps://github.com/Carbs0126/ExpandableTextView\n--------------------------\nWaveSwipeRefreshLayout\nrecruit-lifestyle\nhttps://github.com/recruit-lifestyle/WaveSwipeRefreshLayout\n--------------------------"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+</ScrollView>

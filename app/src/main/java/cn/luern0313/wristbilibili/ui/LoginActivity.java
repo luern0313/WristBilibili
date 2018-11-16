@@ -141,7 +141,7 @@ public class LoginActivity extends Activity
 
                             editor.putString("cookies", cookies);
                             editor.putString("mid", getInfoFromCookie("DedeUserID", cookies));
-                            editor.putString("jct", getInfoFromCookie("bili_jct", cookies));
+                            editor.putString("csrf", getInfoFromCookie("bili_jct", cookies));
                             editor.commit();
                             stopFlag = true;
 

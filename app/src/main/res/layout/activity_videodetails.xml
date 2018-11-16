@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/vd_title_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/mainColor"
+            android:gravity="center_vertical"
+            android:paddingBottom="4dp"
+            android:paddingTop="10dp">
+
+            <TextView
+                android:id="@+id/vd_title_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="视频"
+                android:textColor="@color/textColor" />
+
+            <ImageView
+                android:id="@+id/vd_title_extraicon"
+                android:layout_width="12dp"
+                android:layout_height="19dp"
+                android:layout_marginLeft="2dp"
+                android:layout_toLeftOf="@+id/vd_title_title"
+                android:rotation="90"
+                android:src="@drawable/icon_extra" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+</ScrollView>

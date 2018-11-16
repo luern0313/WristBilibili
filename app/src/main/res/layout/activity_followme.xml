@@ -44,8 +44,8 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginTop="6dp"
-            android:text="@string/followme"
-            android:textSize="13sp" />
+            android:text="关注软件作者小哥哥的b站账号吧~"
+            android:textSize="12sp" />
 
         <android.support.v7.widget.CardView
             android:id="@+id/fme_card"
@@ -56,10 +56,11 @@
             android:layout_marginTop="6dp"
             android:clickable="true"
             android:descendantFocusability="blocksDescendants"
-            app:cardCornerRadius="8dp"
+            app:cardCornerRadius="4dp"
             app:cardElevation="6dp">
 
             <RelativeLayout
+                android:id="@+id/fme_card_lay"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
@@ -120,7 +121,8 @@
                     android:paddingRight="6dp"
                     android:paddingTop="4dp"
                     android:text="+关注"
-                    android:textColor="@color/textColor" />
+                    android:textColor="@color/textColor"
+                    android:textSize="13sp" />
             </RelativeLayout>
 
         </android.support.v7.widget.CardView>

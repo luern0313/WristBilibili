@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingBottom="10dp">
+
+        <RelativeLayout
+            android:id="@+id/sme_title_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/mainColor"
+            android:gravity="center_vertical"
+            android:paddingBottom="4dp"
+            android:paddingTop="10dp">
+
+            <TextView
+                android:id="@+id/sme_title_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="支持我"
+                android:textColor="@color/textColor" />
+
+            <ImageView
+                android:id="@+id/sme_title_extraicon"
+                android:layout_width="12dp"
+                android:layout_height="19dp"
+                android:layout_marginLeft="2dp"
+                android:layout_toLeftOf="@+id/sme_title_title"
+                android:rotation="90"
+                android:src="@drawable/icon_extra" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="6dp"
+            android:gravity="center_horizontal"
+            android:text="    大学生维护项目不易. . . \n望慷慨捐赠" />
+
+        <ImageView
+            android:layout_width="134dp"
+            android:layout_height="134dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:src="@drawable/img_pay_alipay" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:text="支付宝"
+            android:textSize="12sp" />
+
+        <ImageView
+            android:layout_width="134dp"
+            android:layout_height="134dp"
+            android:src="@drawable/img_pay_wechat" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="微信"
+            android:textSize="12sp" />
+    </LinearLayout>
+</ScrollView>

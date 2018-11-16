@@ -20,6 +20,7 @@ import okhttp3.Response;
 
 /**
  * Created by liupe on 2018/10/5.
+ * emmmm.....
  */
 
 public class UserInfo
