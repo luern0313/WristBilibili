@@ -449,9 +449,12 @@ public class Dynamic extends Fragment
                 viewHolderUnktyp.time.setText(dy.getDynamicTime());
                 viewHolderUnktyp.head.setImageResource(R.drawable.img_default_head);
 
-                viewHolderUnktyp.head.setTag(dy.getOwnerHead());
-                BitmapDrawable h = setImageFormWeb(dy.getOwnerHead());
-                if(h != null) viewHolderUnktyp.head.setImageDrawable(h);
+                if(dy.getOwnerHead() != null)
+                {
+                    viewHolderUnktyp.head.setTag(dy.getOwnerHead());
+                    BitmapDrawable h = setImageFormWeb(dy.getOwnerHead());
+                    if(h != null) viewHolderUnktyp.head.setImageDrawable(h);
+                }
             }
             else if(type == 1)
             {

@@ -409,7 +409,15 @@ public class UserDynamic
 
         public String getOwnerName()
         {
-            return (String) getInfoFromJson(getJsonFromJson(unknowDescUser, "info"), "uname");
+            try
+            {
+                return (String) unknowDescUser.getJSONObject("info").get("uname");
+            }
+            catch (JSONException e)
+            {
+                e.printStackTrace();
+            }
+            return "未知UP";
         }
 
         public String getOwnerHead()
@@ -419,7 +427,15 @@ public class UserDynamic
 
         public String getDynamicTime()
         {
-            return getTime((int) getInfoFromJson(unknowDesc, "timestamp"));
+            try
+            {
+                return getTime((int) unknowDesc.get("timestamp"));
+            }
+            catch (JSONException e)
+            {
+                e.printStackTrace();
+            }
+            return "未知时间";
         }
     }
 
