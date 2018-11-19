@@ -2,6 +2,7 @@ package cn.luern0313.wristbilibili.fragment;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -19,6 +20,7 @@ import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.io.IOException;
@@ -30,6 +32,7 @@ import cn.carbs.android.expandabletextview.library.ExpandableTextView;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.UserDynamic;
 import cn.luern0313.wristbilibili.ui.MainActivity;
+import cn.luern0313.wristbilibili.ui.VideodetailsActivity;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
 public class Dynamic extends Fragment
@@ -273,7 +276,6 @@ public class Dynamic extends Fragment
         @Override
         public View getView(int position, View convertView, ViewGroup viewGroup)
         {
-            Log.i("bilibili", String.valueOf(position));
             ViewHolderOriText viewHolderOriText = null;
             ViewHolderOriVid viewHolderOriVid = null;
             ViewHolderShaText viewHolderShaText = null;
@@ -291,6 +293,7 @@ public class Dynamic extends Fragment
                         viewHolderOriVid = new ViewHolderOriVid();
                         convertView.setTag(viewHolderOriVid);
 
+                        viewHolderOriVid.lay = convertView.findViewById(R.id.liov_lay);
                         viewHolderOriVid.head = convertView.findViewById(R.id.liov_head);
                         viewHolderOriVid.name = convertView.findViewById(R.id.liov_name);
                         viewHolderOriVid.time = convertView.findViewById(R.id.liov_time);
@@ -386,7 +389,7 @@ public class Dynamic extends Fragment
 
             if(type == 4)
             {
-                UserDynamic.cardOriginalVideo dy = (UserDynamic.cardOriginalVideo) dyList.get(position);
+                final UserDynamic.cardOriginalVideo dy = (UserDynamic.cardOriginalVideo) dyList.get(position);
                 viewHolderOriVid.name.setText(Html.fromHtml("<b>" + dy.getOwnerName() + "</b>投稿了视频"));
                 viewHolderOriVid.time.setText(dy.getDynamicTime());
                 if(!dy.getDynamic().equals(""))
@@ -407,6 +410,17 @@ public class Dynamic extends Fragment
                 BitmapDrawable i = setImageFormWeb(dy.getVideoImg());
                 if(h != null) viewHolderOriVid.head.setImageDrawable(h);
                 if(i != null) viewHolderOriVid.img.setImageDrawable(i);
+
+                viewHolderOriVid.lay.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        Intent intent = new Intent(ctx, VideodetailsActivity.class);
+                        intent.putExtra("aid", dy.getVideoAid());
+                        startActivity(intent);
+                    }
+                });
 
             }
             else if(type == 3)
@@ -509,6 +523,7 @@ public class Dynamic extends Fragment
 
         class ViewHolderOriVid
         {
+            RelativeLayout lay;
             ImageView head;
             TextView name;
             TextView time;

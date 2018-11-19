@@ -44,7 +44,7 @@ public class AniRemind extends Fragment
     ListView arListView;
     WaveSwipeRefreshLayout waveSwipeRefreshLayout;
 
-    boolean isLogin;
+    public static boolean isLogin;
     AnimationTimeline animationTimeline;
     ArrayList<Anim> animationTimelineList;
 
@@ -114,8 +114,8 @@ public class AniRemind extends Fragment
         }
         else
         {
-            rootLayout.findViewById(R.id.dy_noweb).setVisibility(View.GONE);
-            rootLayout.findViewById(R.id.dy_nologin).setVisibility(View.VISIBLE);
+            rootLayout.findViewById(R.id.ar_noweb).setVisibility(View.GONE);
+            rootLayout.findViewById(R.id.ar_nologin).setVisibility(View.VISIBLE);
         }
 
         return rootLayout;

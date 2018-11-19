@@ -1,7 +1,5 @@
 package cn.luern0313.wristbilibili.ui;
 
-import android.animation.Animator;
-import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -12,15 +10,14 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.fragment.AniRemind;
 import cn.luern0313.wristbilibili.fragment.Download;
 import cn.luern0313.wristbilibili.fragment.Dynamic;
+import cn.luern0313.wristbilibili.fragment.Search;
 import cn.luern0313.wristbilibili.fragment.Setting;
 
 /**
@@ -85,6 +82,7 @@ public class MainActivity extends Activity
                     titleText.setTextSize(13);
                     break;
                 case 4:
+                    transaction.replace(R.id.main_frame, new Search());
                     titleText.setText("搜索");
                     titleText.setTextSize(14);
                     break;

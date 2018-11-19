@@ -11,10 +11,11 @@ import cn.luern0313.wristbilibili.R;
 
 /**
  * Created by liupe on 2018/11/16.
- * 搜索。。
+ * 收藏的fragment
+ * 畜生！你收藏了甚么！
  */
 
-public class Search extends Fragment
+public class Favor extends Fragment
 {
     Context ctx;
 

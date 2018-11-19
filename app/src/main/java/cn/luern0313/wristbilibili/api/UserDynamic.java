@@ -147,7 +147,7 @@ public class UserDynamic
 
         public String getVideoAid()
         {
-            return (String) getInfoFromJson(oriVideoJson, "aid");
+            return String.valueOf(getInfoFromJson(oriVideoJson, "aid"));
         }
 
         public String getVideoTitle()

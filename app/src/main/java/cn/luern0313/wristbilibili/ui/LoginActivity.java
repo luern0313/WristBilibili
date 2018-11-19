@@ -22,6 +22,7 @@ import java.util.List;
 
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.UserLogin;
+import cn.luern0313.wristbilibili.fragment.AniRemind;
 import cn.luern0313.wristbilibili.fragment.Dynamic;
 import okhttp3.Response;
 
@@ -146,6 +147,7 @@ public class LoginActivity extends Activity
                             stopFlag = true;
 
                             Dynamic.isLogin = true;
+                            AniRemind.isLogin = true;
 
                             reusltIntent.putExtra("isLogin", true);
                             setResult(0, reusltIntent);
