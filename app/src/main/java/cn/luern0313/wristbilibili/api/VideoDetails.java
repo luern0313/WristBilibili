@@ -4,12 +4,12 @@ import android.graphics.BitmapFactory;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.jsoup.Jsoup;
-import org.jsoup.select.Elements;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
@@ -21,84 +21,95 @@ import okhttp3.Response;
 /**
  * Created by liupe on 2018/11/13.
  * 不给title的api！！！
+ * ...
+ * ...
+ * ...我错了，有这个api，我自罚重写
  */
 
 public class VideoDetails
 {
     private String cookie;
+    private String csrf;
+    private String mid;
     private String aid;
 
-    private Elements videoWebHead;
     private JSONObject videoJSON;
+    private JSONObject videoUserJson;
+    private JSONObject videoViewJson;
+    private int isLiked;//0,1喜欢,2不喜欢
+    private int isCoined;//已投个数
+    private boolean isFaved;
 
-    public VideoDetails(String cookie, String aid)
+    public VideoDetails(String cookie, String csrf, String mid, String aid)
     {
         this.cookie = cookie;
+        this.csrf = csrf;
+        this.mid = mid;
         this.aid = aid;
     }
 
-    public void getVideoDetails() throws IOException
+    public boolean getVideoDetails() throws IOException
     {
         try
         {
-            videoWebHead = Jsoup.parse((String) get("https://www.bilibili.com/video/av" + aid + "/?redirectFrom=h5", 1)).head().getElementsByTag("meta");
-            videoJSON = new JSONObject((String) get("https://api.bilibili.com/x/web-interface/archive/stat?aid=" + aid, 1)).getJSONObject("data");
+            videoJSON = new JSONObject((String) get("https://api.bilibili.com/x/web-interface/view/detail?aid=" + aid, 1));
+            if(videoJSON.getInt("code") == -404) return false;
+            videoUserJson = videoJSON.getJSONObject("data").getJSONObject("Card");
+            videoViewJson = videoJSON.getJSONObject("data").getJSONObject("View");
+            isLiked = new JSONObject((String) get("https://api.bilibili.com/x/web-interface/archive/has/like?aid=" + aid, 1)).getInt("data");
+            isCoined = new JSONObject((String) get("https://api.bilibili.com/x/web-interface/archive/coins?aid=" + aid, 1)).getJSONObject("data").getInt("multiply");
+            isFaved = new JSONObject((String) get("https://api.bilibili.com/x/v2/fav/video/favoured?aid=" + aid, 1)).getJSONObject("data").getBoolean("favoured");
+            return true;
         }
         catch (JSONException e)
         {
             e.printStackTrace();
         }
+        return false;
     }
 
     public String getVideoTitle()
     {
-        try
-        {
-            return videoWebHead.select("meta[itemprop=keywords]").attr("content").split(",")[0];
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            return "获取视频标题错误...";
-        }
+        return (String) getInfoFromJson(videoViewJson, "title");
     }
 
     public String getVideoUP()
     {
-        try
-        {
-            return videoWebHead.select("meta[itemprop=author]").attr("content");
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            return "获取UP错误...";
-        }
+        return (String) getInfoFromJson(getJsonFromJson(videoUserJson, "card"), "name");
+    }
+
+    public String getVideoUpSign()
+    {
+        return (String) getInfoFromJson(getJsonFromJson(videoUserJson, "card"), "sign");
+    }
+
+    public String getVideoFace()
+    {
+        return (String) getInfoFromJson(getJsonFromJson(videoUserJson, "card"), "face");
+    }
+
+    public boolean isFollowing()
+    {
+        return (boolean) getInfoFromJson(videoUserJson, "following");
     }
 
     public String getVideoPlay()
     {
-        int view = (int) getInfoFromJson(videoJSON, "view");
+        int view = (int) getInfoFromJson(getJsonFromJson(videoViewJson, "stat"), "view");
         if(view > 10000) return view / 1000 / 10.0 + "万";
         else return String.valueOf(view);
     }
 
     public String getVideoDanmaku()
     {
-        return String.valueOf(getInfoFromJson(videoJSON, "danmaku"));
+        return String.valueOf(getInfoFromJson(getJsonFromJson(videoViewJson, "stat"), "danmaku"));
     }
 
     public String getVideoupTime()
     {
-        try
-        {
-            return videoWebHead.select("meta[itemprop=datePublished]").attr("content");
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            return "获取时间错误...";
-        }
+        Date date = new Date((int) getInfoFromJson(videoViewJson, "pubdate") * 1000L);
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        return format.format(date);
     }
 
     public String getVideoAid()
@@ -108,30 +119,127 @@ public class VideoDetails
 
     public String getVideoDetail()
     {
-        try
-        {
-            return videoWebHead.select("meta[itemprop=description]").attr("content");
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            return "获取介绍错误...";
-        }
+        return (String) getInfoFromJson(videoViewJson, "desc");
     }
 
     public String getVideoLike()
     {
-        return String.valueOf(getInfoFromJson(videoJSON, "like"));
+        return String.valueOf(getInfoFromJson(getJsonFromJson(videoViewJson, "stat"), "like"));
     }
 
     public String getVideoCoin()
     {
-        return String.valueOf(getInfoFromJson(videoJSON, "coin"));
+        return String.valueOf(getInfoFromJson(getJsonFromJson(videoViewJson, "stat"), "coin"));
     }
 
     public String getVideoFav()
     {
-        return String.valueOf(getInfoFromJson(videoJSON, "favorite"));
+        return String.valueOf(getInfoFromJson(getJsonFromJson(videoViewJson, "stat"), "favorite"));
+    }
+
+    public int getSelfLiked()
+    {
+        return isLiked;
+    }
+
+    public int getSelfCoined()
+    {
+        return isCoined;
+    }
+
+    public boolean getSelfFaved()
+    {
+        return isFaved;
+    }
+
+    public boolean likeVideo(int mode) throws IOException  //1好评，2取消差评，3差评，4取消差评，后一个会覆盖前一个
+    {
+        try
+        {
+            if(post("https://api.bilibili.com/x/web-interface/archive/like", "aid=" + aid + "&like=" + mode + "&csrf=" + csrf).body().string().equals("{\"code\":0,\"message\":\"0\",\"ttl\":1}"))
+                return true;
+        }
+        catch (NullPointerException e)
+        {
+            e.printStackTrace();
+            return false;
+        }
+        return false;
+    }
+
+    public boolean coinVideo(int how) throws IOException
+    {
+        try
+        {
+            if(post("https://api.bilibili.com/x/web-interface/coin/add", "aid=" + aid + "&multiply=" + how + "&cross_domain=true&csrf=" + csrf).body().string().equals("{\"code\":0,\"message\":\"0\",\"ttl\":1}"))
+                return true;
+        }
+        catch (NullPointerException e)
+        {
+            e.printStackTrace();
+            return false;
+        }
+        return false;
+    }
+
+    public boolean favVideo() throws IOException
+    {
+        try
+        {
+            if(post("https://api.bilibili.com/x/v2/fav/video/add", "aid=" + aid + "&csrf=" + csrf).body().string().equals("{\"code\":0,\"message\":\"0\",\"ttl\":1}"))
+                return true;
+        }
+        catch (NullPointerException e)
+        {
+            e.printStackTrace();
+            return false;
+        }
+        return false;
+    }
+
+    public boolean favCancalVideo() throws IOException
+    {
+        try
+        {
+            if(post("https://api.bilibili.com/x/v2/fav/video/del", "aid=" + aid + "&csrf=" + csrf).body().string().equals("{\"code\":0,\"message\":\"0\",\"ttl\":1}"))
+                return true;
+        }
+        catch (NullPointerException e)
+        {
+            e.printStackTrace();
+            return false;
+        }
+        return false;
+    }
+
+    public boolean playLater() throws IOException
+    {
+        try
+        {
+            if(post("https://api.bilibili.com/x/v2/history/toview/add", "aid=" + aid + "&csrf=" + csrf).body().string().equals("{\"code\":0,\"message\":\"0\",\"ttl\":1}"))
+                return true;
+        }
+        catch (NullPointerException e)
+        {
+            e.printStackTrace();
+            return false;
+        }
+        return false;
+    }
+
+    public boolean playHistory() throws IOException
+    {
+        try
+        {
+            if(post("https://api.bilibili.com/x/report/web/heartbeat", "aid=" + aid + "&mid=" + mid + "&csrf=" + csrf + "&played_time=0&realtime=0&start_ts=" + (System.currentTimeMillis() / 1000) + "&type=3&dt=2&play_type=1").body().string().equals("{\"code\":0,\"message\":\"0\",\"ttl\":1}"))
+                return true;
+        }
+        catch (NullPointerException e)
+        {
+            e.printStackTrace();
+            return false;
+        }
+        return false;
     }
 
     private Object getInfoFromJson(JSONObject json, String get)

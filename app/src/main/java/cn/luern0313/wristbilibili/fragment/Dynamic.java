@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -338,6 +339,7 @@ public class Dynamic extends Fragment
                         viewHolderShaVid.name = convertView.findViewById(R.id.lisv_name);
                         viewHolderShaVid.time = convertView.findViewById(R.id.lisv_time);
                         viewHolderShaVid.text = convertView.findViewById(R.id.lisv_text);
+                        viewHolderShaVid.slay = convertView.findViewById(R.id.lisv_share_lay);
                         viewHolderShaVid.shead = convertView.findViewById(R.id.lisv_share_head);
                         viewHolderShaVid.sname = convertView.findViewById(R.id.lisv_share_name);
                         viewHolderShaVid.simg = convertView.findViewById(R.id.lisv_share_img);
@@ -458,8 +460,8 @@ public class Dynamic extends Fragment
             }
             else if(type == 1)
             {
-                UserDynamic.cardShareVideo dy = (UserDynamic.cardShareVideo) dyList.get(position);
-                UserDynamic.cardOriginalVideo sdy = (UserDynamic.cardOriginalVideo) userDynamic.getDynamicClass(dy.getOriginalVideo(), 1);
+                final UserDynamic.cardShareVideo dy = (UserDynamic.cardShareVideo) dyList.get(position);
+                final UserDynamic.cardOriginalVideo sdy = (UserDynamic.cardOriginalVideo) userDynamic.getDynamicClass(dy.getOriginalVideo(), 1);
                 viewHolderShaVid.name.setText(dy.getUserName());
                 viewHolderShaVid.time.setText(dy.getDynamicTime());
                 viewHolderShaVid.text.setText(dy.getDynamicText());
@@ -480,6 +482,17 @@ public class Dynamic extends Fragment
                 if(h != null) viewHolderShaVid.head.setImageDrawable(h);
                 if(o != null) viewHolderShaVid.shead.setImageDrawable(o);
                 if(i != null) viewHolderShaVid.simg.setImageDrawable(i);
+
+                viewHolderShaVid.slay.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        Intent intent = new Intent(ctx, VideodetailsActivity.class);
+                        intent.putExtra("aid", sdy.getVideoAid());
+                        startActivity(intent);
+                    }
+                });
             }
             else if(type == 0)
             {
@@ -562,6 +575,7 @@ public class Dynamic extends Fragment
             TextView name;
             TextView time;
             ExpandableTextView text;
+            RelativeLayout slay;
             ImageView shead;
             TextView sname;
             ImageView simg;

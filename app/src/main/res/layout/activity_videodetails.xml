@@ -57,8 +57,8 @@
                 android:id="@+id/vd_video_play"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="21dp"
-                android:layout_marginRight="21dp"
+                android:layout_marginLeft="19dp"
+                android:layout_marginRight="19dp"
                 android:layout_marginTop="4dp"
                 android:ellipsize="end"
                 android:maxLines="1"
@@ -69,8 +69,8 @@
                 android:id="@+id/vd_video_time"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="21dp"
-                android:layout_marginRight="21dp"
+                android:layout_marginLeft="19dp"
+                android:layout_marginRight="19dp"
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:text="2011-11-09 22:55  AV170001"
@@ -107,12 +107,39 @@
                         <LinearLayout
                             android:layout_width="55dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="24dp"
+                            android:layout_marginLeft="22dp"
                             android:layout_marginRight="2dp"
                             android:background="?android:attr/selectableItemBackground"
                             android:clickable="true"
                             android:descendantFocusability="blocksDescendants"
                             android:gravity="center_horizontal"
+                            android:onClick="clickPlay"
+                            android:orientation="vertical"
+                            android:padding="3dp">
+
+                            <ImageView
+                                android:layout_width="38dp"
+                                android:layout_height="38dp"
+                                android:src="@drawable/icon_vdd_play_cover" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="6dp"
+                                android:text="查看封面"
+                                android:textSize="12sp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="55dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="2dp"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:descendantFocusability="blocksDescendants"
+                            android:gravity="center_horizontal"
+                            android:onClick="clickPlay"
                             android:orientation="vertical"
                             android:padding="3dp">
 
@@ -158,7 +185,7 @@
                         <LinearLayout
                             android:layout_width="55dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginRight="24dp"
+                            android:layout_marginRight="22dp"
                             android:background="?android:attr/selectableItemBackground"
                             android:clickable="true"
                             android:descendantFocusability="blocksDescendants"
@@ -199,7 +226,7 @@
                             android:id="@+id/vd_like"
                             android:layout_width="55dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="24dp"
+                            android:layout_marginLeft="22dp"
                             android:layout_marginRight="2dp"
                             android:background="?android:attr/selectableItemBackground"
                             android:clickable="true"
@@ -284,7 +311,7 @@
                             android:id="@+id/vd_dislike"
                             android:layout_width="55dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginRight="24dp"
+                            android:layout_marginRight="22dp"
                             android:background="?android:attr/selectableItemBackground"
                             android:clickable="true"
                             android:descendantFocusability="blocksDescendants"
@@ -355,7 +382,7 @@
                         android:id="@+id/vd_card_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_margin="6dp"
+                        android:layout_margin="5dp"
                         android:layout_toLeftOf="@+id/vd_card_button"
                         android:layout_toRightOf="@+id/vd_card_head"
                         android:ellipsize="end"
@@ -365,22 +392,18 @@
                         android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/vd_card_lv"
+                        android:id="@+id/vd_card_sen"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/vd_card_name"
-                        android:layout_marginLeft="6dp"
+                        android:layout_marginLeft="5dp"
                         android:layout_toRightOf="@+id/vd_card_head"
-                        android:background="@drawable/shape_lvbg_fme"
-                        android:paddingBottom="1dp"
-                        android:paddingLeft="4dp"
-                        android:paddingRight="4dp"
-                        android:paddingTop="1dp"
-                        android:text="LV6"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="啊，seigai"
                         android:textColor="@color/textcolor3"
-                        android:textSize="8sp" />
+                        android:textSize="10sp" />
                 </RelativeLayout>
-
             </android.support.v7.widget.CardView>
         </LinearLayout>
 
@@ -398,10 +421,10 @@
         android:visibility="gone">
 
         <ImageView
+            android:id="@+id/vd_loading_img"
             android:layout_width="wrap_content"
             android:layout_height="92dp"
-            android:padding="6dp"
-            android:src="@drawable/anim_loading" />
+            android:padding="6dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -431,6 +454,30 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="加载失败\n可能是没有网络？"
+            android:textSize="13sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/vd_novideo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/vd_title_layout"
+        android:background="@color/textColor"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingBottom="33dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="92dp"
+            android:padding="6dp"
+            android:src="@drawable/img_videonotfound" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="视频不见了. . ."
             android:textSize="13sp" />
     </LinearLayout>
 </RelativeLayout>

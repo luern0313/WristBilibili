@@ -29,13 +29,13 @@
         </activity>
         <activity android:name=".ui.MenuActivity" />
         <activity android:name=".ui.LoginActivity" />
-        <activity android:name=".ui.VideodetailsActivity"/>
-
+        <activity android:name=".ui.VideodetailsActivity" />
         <activity android:name=".ui.FollowmeActivity" />
         <activity android:name=".ui.SupportActivity" />
         <activity android:name=".ui.JoinqqActivity" />
-        <activity android:name=".ui.OpensourceActivity"/>
+        <activity android:name=".ui.OpensourceActivity" />
         <activity android:name=".ui.AboutActivity" />
+        <activity android:name=".ui.QRActivity"></activity>
     </application>
 
 </manifest>
