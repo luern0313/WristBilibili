@@ -32,6 +32,7 @@ public class VideodetailsActivity extends Activity
     Handler handler = new Handler();
     Runnable runnableNoWeb;
     Runnable runnableUi;
+    Runnable runnableImg;
 
     AnimationDrawable loadingImgAnim;
 
@@ -129,6 +130,15 @@ public class VideodetailsActivity extends Activity
             }
         };
 
+        runnableImg = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                setIcon();
+            }
+        };
+
         new Thread(new Runnable()
         {
             @Override
@@ -156,18 +166,36 @@ public class VideodetailsActivity extends Activity
 
     void setIcon()
     {
+        uiLikeText.setText(videoDetail.getVideoLike());
+        uiCoinText.setText(videoDetail.getVideoCoin());
+        uiFavText.setText(videoDetail.getVideoFav());
         uiLikeImg.setImageResource(R.drawable.icon_vdd_do_like_no);
         uiCoinImg.setImageResource(R.drawable.icon_vdd_do_coin_no);
         uiFavImg.setImageResource(R.drawable.icon_vdd_do_fav_no);
         uiDislikeImg.setImageResource(R.drawable.icon_vdd_do_dislike_no);
-        if(isLiked == 1)
+        if(isLiked == 1)//赞
+        {
             uiLikeImg.setImageResource(R.drawable.icon_vdd_do_like_yes);
+            uiDislikeImg.setImageResource(R.drawable.icon_vdd_do_dislike_no);
+        }
         else if(isLiked == 2)
+        {
+            uiLikeImg.setImageResource(R.drawable.icon_vdd_do_like_no);
             uiDislikeImg.setImageResource(R.drawable.icon_vdd_do_dislike_yes);
+        }
+        else
+        {
+            uiLikeImg.setImageResource(R.drawable.icon_vdd_do_like_no);
+            uiDislikeImg.setImageResource(R.drawable.icon_vdd_do_dislike_no);
+        }
         if(isCoined > 0)
             uiCoinImg.setImageResource(R.drawable.icon_vdd_do_coin_yes);
+        else
+            uiCoinImg.setImageResource(R.drawable.icon_vdd_do_coin_no);
         if(isFaved)
             uiFavImg.setImageResource(R.drawable.icon_vdd_do_fav_yes);
+        else
+            uiFavImg.setImageResource(R.drawable.icon_vdd_do_fav_no);
     }
 
     public void clickCover(View view)
@@ -183,10 +211,68 @@ public class VideodetailsActivity extends Activity
 
     public void clickCoverLater(View view)
     {
+        new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    if(videoDetail.playLater())
+                    {
+                        Looper.prepare();
+                        Toast.makeText(ctx, "已添加至稍后再看", Toast.LENGTH_SHORT).show();
+                        Looper.loop();
+                    }
+                    else
+                    {
+                        Looper.prepare();
+                        Toast.makeText(ctx, "未成功添加至稍后观看！请检查网络再试", Toast.LENGTH_SHORT).show();
+                        Looper.loop();
+                    }
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                    Looper.prepare();
+                    Toast.makeText(ctx, "未成功添加至稍后观看！请检查网络再试", Toast.LENGTH_SHORT).show();
+                    Looper.loop();
+                }
+            }
+        }).start();
     }
 
     public void clickHistory(View view)
     {
+        new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    if(videoDetail.playHistory())
+                    {
+                        Looper.prepare();
+                        Toast.makeText(ctx, "已添加至历史记录！你可以在历史记录找到", Toast.LENGTH_SHORT).show();
+                        Looper.loop();
+                    }
+                    else
+                    {
+                        Looper.prepare();
+                        Toast.makeText(ctx, "未成功添加至历史记录！请检查网络再试", Toast.LENGTH_SHORT).show();
+                        Looper.loop();
+                    }
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                    Looper.prepare();
+                    Toast.makeText(ctx, "未成功添加至历史记录！请检查网络再试", Toast.LENGTH_SHORT).show();
+                    Looper.loop();
+                }
+            }
+        }).start();
     }
 
     public void clickLike(View view)
@@ -202,19 +288,26 @@ public class VideodetailsActivity extends Activity
                     {
                         videoDetail.likeVideo(2);
                         isLiked = 0;
+                        videoDetail.setSelfLiked(-1);
+                        Looper.prepare();
+                        Toast.makeText(ctx, "已取消喜欢...", Toast.LENGTH_SHORT).show();
                     }
                     else
                     {
                         videoDetail.likeVideo(1);
                         isLiked = 1;
+                        videoDetail.setSelfLiked(1);
+                        Looper.prepare();
+                        Toast.makeText(ctx, "已喜欢！这个视频会被更多人看到！", Toast.LENGTH_SHORT).show();
                     }
-                    setIcon();
+                    handler.post(runnableImg);
+                    Looper.loop();
                 }
                 catch (IOException e)
                 {
                     e.printStackTrace();
                     Looper.prepare();
-                    Toast.makeText(ctx, "点赞失败！请检查你的网络..", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ctx, "喜欢失败...请检查你的网络..", Toast.LENGTH_SHORT).show();
                     Looper.loop();
                 }
             }
@@ -223,10 +316,42 @@ public class VideodetailsActivity extends Activity
 
     public void clickCoin(View view)
     {
-
+        new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    if(isCoined < 2)
+                    {
+                        isCoined++;
+                        videoDetail.coinVideo(1);
+                        videoDetail.setSelfCoined(1);
+                        Looper.prepare();
+                        Toast.makeText(ctx, "你投了一个硬币！再次点击可以再次投币！", Toast.LENGTH_SHORT).show();
+                    }
+                    else
+                    {
+                        isLiked = 2;
+                        Looper.prepare();
+                        Toast.makeText(ctx, "最多投两个硬币...", Toast.LENGTH_SHORT).show();
+                    }
+                    handler.post(runnableImg);
+                    Looper.loop();
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                    Looper.prepare();
+                    Toast.makeText(ctx, "投币失败！请检查你的网络..", Toast.LENGTH_SHORT).show();
+                    Looper.loop();
+                }
+            }
+        }).start();
     }
 
-    public void clickFav(View view)
+    public void clickFav(final View view)
     {
         new Thread(new Runnable()
         {
@@ -237,15 +362,22 @@ public class VideodetailsActivity extends Activity
                 {
                     if(isFaved)
                     {
-                        videoDetail.likeVideo(4);
                         isLiked = 0;
+                        videoDetail.likeVideo(4);
+                        videoDetail.setSelfFaved(-1);
+                        Looper.prepare();
+                        Toast.makeText(ctx, "已取消收藏！", Toast.LENGTH_SHORT).show();
                     }
                     else
                     {
-                        videoDetail.likeVideo(3);
                         isLiked = 2;
+                        videoDetail.likeVideo(3);
+                        videoDetail.setSelfFaved(1);
+                        Looper.prepare();
+                        Toast.makeText(ctx, "已收藏至默认收藏夹！\n(别问我为什么不能选择别的..懒...)", Toast.LENGTH_SHORT).show();
                     }
-                    setIcon();
+                    handler.post(runnableImg);
+                    Looper.loop();
                 }
                 catch (IOException e)
                 {
@@ -271,19 +403,24 @@ public class VideodetailsActivity extends Activity
                     {
                         videoDetail.likeVideo(4);
                         isLiked = 0;
+                        Looper.prepare();
+                        Toast.makeText(ctx, "取消点踩成功！", Toast.LENGTH_SHORT).show();
                     }
                     else
                     {
                         videoDetail.likeVideo(3);
                         isLiked = 2;
+                        Looper.prepare();
+                        Toast.makeText(ctx, "点踩成功！", Toast.LENGTH_SHORT).show();
                     }
-                    setIcon();
+                    handler.post(runnableImg);
+                    Looper.loop();
                 }
                 catch (IOException e)
                 {
                     e.printStackTrace();
                     Looper.prepare();
-                    Toast.makeText(ctx, "点赞失败！请检查你的网络..", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ctx, "点踩失败！请检查你的网络..", Toast.LENGTH_SHORT).show();
                     Looper.loop();
                 }
             }

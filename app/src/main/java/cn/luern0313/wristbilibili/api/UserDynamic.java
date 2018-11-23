@@ -249,7 +249,7 @@ public class UserDynamic
             else return "0";
         }
 
-        public ArrayList<String> getImgsSrc()
+        public String[] getImgsSrc()
         {
             try
             {
@@ -257,7 +257,7 @@ public class UserDynamic
                 JSONArray pics = oriTextItemJson.getJSONArray("pictures");
                 for (int i = 0; i < pics.length(); i++)
                     picssrc.add((String) ((JSONObject) pics.get(i)).get("img_src"));
-                return picssrc;
+                return picssrc.toArray(new String[]{});
             }
             catch (JSONException e)
             {

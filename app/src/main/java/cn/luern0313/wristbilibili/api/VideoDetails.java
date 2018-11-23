@@ -40,6 +40,10 @@ public class VideoDetails
     private int isCoined;//已投个数
     private boolean isFaved;
 
+    private int beLiked;//喜欢总数
+    private int beCoined;//硬币总数
+    private int beFaved;//收藏总数
+
     public VideoDetails(String cookie, String csrf, String mid, String aid)
     {
         this.cookie = cookie;
@@ -59,6 +63,10 @@ public class VideoDetails
             isLiked = new JSONObject((String) get("https://api.bilibili.com/x/web-interface/archive/has/like?aid=" + aid, 1)).getInt("data");
             isCoined = new JSONObject((String) get("https://api.bilibili.com/x/web-interface/archive/coins?aid=" + aid, 1)).getJSONObject("data").getInt("multiply");
             isFaved = new JSONObject((String) get("https://api.bilibili.com/x/v2/fav/video/favoured?aid=" + aid, 1)).getJSONObject("data").getBoolean("favoured");
+
+            beLiked = (int) getInfoFromJson(getJsonFromJson(videoViewJson, "stat"), "like");
+            beCoined = (int) getInfoFromJson(getJsonFromJson(videoViewJson, "stat"), "coin");
+            beFaved = (int) getInfoFromJson(getJsonFromJson(videoViewJson, "stat"), "favorite");
             return true;
         }
         catch (JSONException e)
@@ -124,17 +132,17 @@ public class VideoDetails
 
     public String getVideoLike()
     {
-        return String.valueOf(getInfoFromJson(getJsonFromJson(videoViewJson, "stat"), "like"));
+        return String.valueOf(beLiked);
     }
 
     public String getVideoCoin()
     {
-        return String.valueOf(getInfoFromJson(getJsonFromJson(videoViewJson, "stat"), "coin"));
+        return String.valueOf(beCoined);
     }
 
     public String getVideoFav()
     {
-        return String.valueOf(getInfoFromJson(getJsonFromJson(videoViewJson, "stat"), "favorite"));
+        return String.valueOf(beFaved);
     }
 
     public int getSelfLiked()
@@ -150,6 +158,21 @@ public class VideoDetails
     public boolean getSelfFaved()
     {
         return isFaved;
+    }
+
+    public void setSelfLiked(int w)
+    {
+        this.beLiked += w;
+    }
+
+    public void setSelfCoined(int w)
+    {
+        this.beCoined += w;
+    }
+
+    public void setSelfFaved(int w)
+    {
+        this.beFaved += w;
     }
 
     public boolean likeVideo(int mode) throws IOException  //1好评，2取消差评，3差评，4取消差评，后一个会覆盖前一个
