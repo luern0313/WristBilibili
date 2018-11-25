@@ -36,7 +36,8 @@
         <activity android:name=".ui.OpensourceActivity" />
         <activity android:name=".ui.AboutActivity" />
         <activity android:name=".ui.QRActivity" />
-        <activity android:name=".ui.ImgActivity"></activity>
+        <activity android:name=".ui.ImgActivity" />
+        <activity android:name=".ui.LogsoffActivity"></activity>
     </application>
 
 </manifest>

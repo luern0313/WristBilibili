@@ -106,7 +106,7 @@ public class AniRemind extends Fragment
             }
         };
 
-        isLogin = !MainActivity.sharedPreferences.getString("cookies", "").equals("");
+        isLogin = MainActivity.sharedPreferences.contains("cookies");
         if(isLogin)
         {
             waveSwipeRefreshLayout.setRefreshing(true);

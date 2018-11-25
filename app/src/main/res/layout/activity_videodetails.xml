@@ -355,7 +355,6 @@
                 android:layout_marginTop="6dp"
                 android:clickable="true"
                 android:descendantFocusability="blocksDescendants"
-                android:paddingBottom="10dp"
                 app:cardCornerRadius="4dp"
                 app:cardElevation="6dp">
 
@@ -384,19 +383,23 @@
                         android:paddingTop="4dp"
                         android:text="+关注"
                         android:textColor="@color/textColor"
-                        android:textSize="13sp" />
+                        android:textSize="11sp" />
 
                     <TextView
                         android:id="@+id/vd_card_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_margin="5dp"
+                        android:layout_marginBottom="6dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="2dp"
+                        android:layout_marginTop="7dp"
                         android:layout_toLeftOf="@+id/vd_card_button"
                         android:layout_toRightOf="@+id/vd_card_head"
                         android:ellipsize="end"
                         android:maxLines="1"
                         android:text="luern0313"
                         android:textColor="@color/mainColor"
+                        android:textSize="13sp"
                         android:textStyle="bold" />
 
                     <TextView

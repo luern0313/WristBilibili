@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -32,6 +33,7 @@ import java.util.ArrayList;
 import cn.carbs.android.expandabletextview.library.ExpandableTextView;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.UserDynamic;
+import cn.luern0313.wristbilibili.ui.ImgActivity;
 import cn.luern0313.wristbilibili.ui.MainActivity;
 import cn.luern0313.wristbilibili.ui.VideodetailsActivity;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
@@ -66,7 +68,7 @@ public class Dynamic extends Fragment
         loadingView = inflater.inflate(R.layout.widget_dyloading, null);
         dyListView.addFooterView(loadingView);
 
-        isLogin = !MainActivity.sharedPreferences.getString("cookies", "").equals("");
+        isLogin = MainActivity.sharedPreferences.contains("cookies");
 
         runnableUi = new Runnable()
         {
@@ -99,6 +101,8 @@ public class Dynamic extends Fragment
             public void run()
             {
                 ((TextView) loadingView.findViewById(R.id.dyload_text)).setText("好像没有网络...\n检查下网络？");
+                loadingView.findViewById(R.id.dyload_button).setVisibility(View.VISIBLE);
+                isLoading = false;
             }
         };
 
@@ -135,6 +139,17 @@ public class Dynamic extends Fragment
             }
         });
 
+        loadingView.findViewById(R.id.dyload_button).setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                ((TextView) loadingView.findViewById(R.id.dyload_text)).setText(" 加载中. . .");
+                loadingView.findViewById(R.id.dyload_button).setVisibility(View.GONE);
+                getMoreDynamic();
+            }
+        });
+
         dyListView.setOnScrollListener(new AbsListView.OnScrollListener()
         {
             @Override public void onScrollStateChanged(AbsListView view, int scrollState) {}
@@ -145,25 +160,7 @@ public class Dynamic extends Fragment
                 if(visibleItemCount + firstVisibleItem == totalItemCount && !isLoading && isLogin)
                 {
                     isLoading = true;
-                    new Thread(new Runnable()
-                    {
-                        @Override
-                        public void run()
-                        {
-                            try
-                            {
-                                userDynamic.getHistoryDynamic();
-                                dynamicList.addAll(userDynamic.getDynamicList());
-                                isLoading = false;
-                                handler.post(runnableAddlist);
-                            }
-                            catch (IOException e)
-                            {
-                                handler.post(runnableNoWebH);
-                                e.printStackTrace();
-                            }
-                        }
-                    }).start();
+                    getMoreDynamic();
                 }
             }
         });
@@ -200,6 +197,29 @@ public class Dynamic extends Fragment
                 catch (IOException e)
                 {
                     handler.post(runnableNoWeb);
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    void getMoreDynamic()
+    {
+        new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    userDynamic.getHistoryDynamic();
+                    dynamicList.addAll(userDynamic.getDynamicList());
+                    isLoading = false;
+                    handler.post(runnableAddlist);
+                }
+                catch (IOException e)
+                {
+                    handler.post(runnableNoWebH);
                     e.printStackTrace();
                 }
             }
@@ -427,7 +447,7 @@ public class Dynamic extends Fragment
             }
             else if(type == 3)
             {
-                UserDynamic.cardOriginalText dy = (UserDynamic.cardOriginalText) dyList.get(position);
+                final UserDynamic.cardOriginalText dy = (UserDynamic.cardOriginalText) dyList.get(position);
                 viewHolderOriText.name.setText(dy.getUserName());
                 viewHolderOriText.time.setText(dy.getDynamicTime());
                 viewHolderOriText.text.setText(dy.getDynamicText());
@@ -443,6 +463,17 @@ public class Dynamic extends Fragment
                 viewHolderOriText.head.setTag(dy.getUserHead());
                 BitmapDrawable h = setImageFormWeb(dy.getUserHead());
                 if(h != null) viewHolderOriText.head.setImageDrawable(h);
+
+                viewHolderOriText.textimg.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        Intent intent = new Intent(ctx, ImgActivity.class);
+                        intent.putExtra("imgUrl", dy.getImgsSrc());
+                        startActivity(intent);
+                    }
+                });
             }
             else if(type == 2)
             {
@@ -496,8 +527,8 @@ public class Dynamic extends Fragment
             }
             else if(type == 0)
             {
-                UserDynamic.cardShareText dy = (UserDynamic.cardShareText) dyList.get(position);
-                UserDynamic.cardOriginalText sdy = (UserDynamic.cardOriginalText) userDynamic.getDynamicClass(dy.getOriginalText(), 2);
+                final UserDynamic.cardShareText dy = (UserDynamic.cardShareText) dyList.get(position);
+                final UserDynamic.cardOriginalText sdy = (UserDynamic.cardOriginalText) userDynamic.getDynamicClass(dy.getOriginalText(), 2);
                 viewHolderShaText.name.setText(dy.getUserName());
                 viewHolderShaText.time.setText(dy.getDynamicTime());
                 viewHolderShaText.text.setText(dy.getDynamicText());
@@ -519,6 +550,17 @@ public class Dynamic extends Fragment
                 BitmapDrawable o = setImageFormWeb(sdy.getUserHead());
                 if(h != null) viewHolderShaText.head.setImageDrawable(h);
                 if(o != null) viewHolderShaText.shead.setImageDrawable(o);
+
+                viewHolderShaText.stextimg.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        Intent intent = new Intent(ctx, ImgActivity.class);
+                        intent.putExtra("imgUrl", sdy.getImgsSrc());
+                        startActivity(intent);
+                    }
+                });
             }
             return convertView;
         }

@@ -20,7 +20,7 @@
             android:paddingTop="10dp">
 
             <TextView
-                android:id="@+id/main_title_title"
+                android:id="@+id/login_title_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
@@ -32,7 +32,7 @@
                 android:layout_width="12dp"
                 android:layout_height="19dp"
                 android:layout_marginLeft="2dp"
-                android:layout_toLeftOf="@id/main_title_title"
+                android:layout_toLeftOf="@id/login_title_title"
                 android:rotation="90"
                 android:src="@drawable/icon_extra" />
 

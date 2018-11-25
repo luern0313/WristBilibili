@@ -1,58 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout
-        android:id="@+id/sea_swipe"
+    <ListView
+        android:id="@+id/sea_listview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <ListView
-            android:id="@+id/sea_listview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="37dp" />
-    </jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout>
+        android:layout_height="match_parent"
+        android:divider="@color/alphe"
+        android:dividerHeight="2dp"
+        android:paddingTop="34dp"
+        android:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/sea_noweb"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/textColor"
         android:gravity="center"
         android:orientation="vertical"
-        android:paddingBottom="33dp"
+        android:paddingBottom="20dp"
         android:paddingTop="32dp"
         android:visibility="gone">
 
         <ImageView
             android:layout_width="wrap_content"
-            android:layout_height="92dp"
+            android:layout_height="108dp"
             android:padding="6dp"
-            android:src="@drawable/img_noweb" />
+            android:src="@drawable/img_search_no" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/sea_searching"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/textColor"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingBottom="20dp"
+        android:paddingTop="32dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/sea_searching_img"
+            android:layout_width="wrap_content"
+            android:layout_height="108dp"
+            android:padding="6dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/sea_nonthing"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/textColor"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingBottom="20dp"
+        android:paddingTop="32dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="94dp"
+            android:padding="6dp"
+            android:src="@drawable/img_nodata" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="好像没有网络...\n检查一下网络连接？"
-            android:textSize="13sp" />
+            android:text="什么都没找到. . ." />
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="32dp"
+        android:layout_height="30dp"
         android:layout_marginLeft="22dp"
         android:layout_marginRight="22dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="2dp"
         android:background="@drawable/shape_search"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
         <ImageView
-            android:layout_width="22dp"
-            android:layout_height="22dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:layout_marginLeft="6dp"
             android:src="@drawable/icon_search" />
 
@@ -70,6 +105,7 @@
             android:textSize="12sp" />
 
         <TextView
+            android:id="@+id/sea_seabutton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="4dp"

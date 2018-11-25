@@ -77,7 +77,7 @@ public class MenuActivity extends Activity
 
     public void setUserInfo()
     {
-        if(!sharedPreferences.getString("cookies", "").equals(""))//是否登录
+        if(sharedPreferences.contains("cookies"))//是否登录
         {
             final UserInfo userInfo = new UserInfo(sharedPreferences.getString("cookies", ""));
             runnableUi = new Runnable()

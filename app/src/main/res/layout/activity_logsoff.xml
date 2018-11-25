@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/logs_title_layout"
+        android:layout_width="match_parent"
+        android:layout_height="33dp"
+        android:background="@color/mainColor"
+        android:gravity="center_vertical"
+        android:paddingBottom="4dp"
+        android:paddingTop="10dp">
+
+        <TextView
+            android:id="@+id/logs_title_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="注销"
+            android:textColor="@color/textColor" />
+
+        <ImageView
+            android:id="@+id/logs_title_extraicon"
+            android:layout_width="12dp"
+            android:layout_height="19dp"
+            android:layout_marginLeft="2dp"
+            android:layout_toLeftOf="@id/logs_title_title"
+            android:rotation="90"
+            android:src="@drawable/icon_extra" />
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/logs_title_layout">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="22dp"
+            android:layout_marginRight="22dp"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center_horizontal"
+                android:text="如果你要登录其他账号，或看动态、收藏有问题，你应尝试注销账号重新登录\n\n点击下面的按钮会注销账号并重启应用" />
+
+            <Button
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="4dp"
+                android:onClick="clickLogsoff"
+                android:text="注销并重启应用"
+                android:textColor="@color/textColor" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/logs_nologin"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/logs_title_layout"
+        android:layout_centerInParent="true"
+        android:background="@color/activityBG"
+        android:clickable="true"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingTop="20dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="88dp"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/img_videonotfound" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="你还没登录. . ." />
+    </LinearLayout>
+
+</RelativeLayout>

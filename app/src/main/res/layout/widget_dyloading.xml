@@ -2,14 +2,25 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingBottom="14dp">
 
     <TextView
         android:id="@+id/dyload_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:paddingBottom="14dp"
         android:paddingTop="10dp"
-        android:text="加载中..." />
+        android:text=" 加载中..." />
+
+    <Button
+        android:id="@+id/dyload_button"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginLeft="60dp"
+        android:layout_marginRight="60dp"
+        android:text="重新加载"
+        android:textColor="@color/textColor"
+        android:visibility="gone" />
 </LinearLayout>

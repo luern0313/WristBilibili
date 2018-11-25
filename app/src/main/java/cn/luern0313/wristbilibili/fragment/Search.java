@@ -2,18 +2,24 @@ package cn.luern0313.wristbilibili.fragment;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
+import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.util.LruCache;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -25,9 +31,13 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.R;
-import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
+import cn.luern0313.wristbilibili.api.SearchApi;
+import cn.luern0313.wristbilibili.api.VideoDetails;
+import cn.luern0313.wristbilibili.ui.MainActivity;
+import cn.luern0313.wristbilibili.ui.VideodetailsActivity;
 
 /**
  * Created by liupe on 2018/11/16.
@@ -37,40 +47,218 @@ import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 public class Search extends Fragment
 {
     Context ctx;
+    SearchApi searchApi;
 
     View rootLayout;
     ListView seaListView;
-    WaveSwipeRefreshLayout waveSwipeRefreshLayout;
+    View loadingView;
+    EditText seaEdittext;
+    TextView seaButton;
+    ImageView seaLoadImg;
 
     Handler handler = new Handler();
+    Runnable runnableNoweb;
+    Runnable runnableUi;
+    Runnable runnableAddlist;
+    Runnable runnableNoWebH;
+    Runnable runnableNoresult;
+    Runnable runnableNomore;
+
+    ArrayList<JSONObject> searchResult;
+    mAdapter mAdapter;
+
+    boolean isLoading = true;
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         ctx = getActivity();
         rootLayout = inflater.inflate(R.layout.fragment_search, container, false);
         seaListView = rootLayout.findViewById(R.id.sea_listview);
-        waveSwipeRefreshLayout = rootLayout.findViewById(R.id.sea_swipe);
-        View loadingView = inflater.inflate(R.layout.widget_dyloading, null);
-        seaListView.addFooterView(loadingView);
+        loadingView = inflater.inflate(R.layout.widget_dyloading, null);
+        seaEdittext = rootLayout.findViewById(R.id.sea_edittext);
+        seaButton = rootLayout.findViewById(R.id.sea_seabutton);
+        seaLoadImg = rootLayout.findViewById(R.id.sea_searching_img);
 
-        waveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
-        waveSwipeRefreshLayout.setWaveColor(Color.argb(255, 250, 114, 152));
-        waveSwipeRefreshLayout.setOnRefreshListener(new WaveSwipeRefreshLayout.OnRefreshListener()
+        runnableNoweb = new Runnable()
         {
             @Override
-            public void onRefresh()
+            public void run()
             {
-                handler.post(new Runnable()
+                rootLayout.findViewById(R.id.sea_noweb).setVisibility(View.VISIBLE);
+                rootLayout.findViewById(R.id.sea_searching).setVisibility(View.GONE);
+                rootLayout.findViewById(R.id.sea_nonthing).setVisibility(View.GONE);
+                rootLayout.findViewById(R.id.sea_listview).setVisibility(View.GONE);
+            }
+        };
+
+        runnableNoWebH = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                ((TextView) loadingView.findViewById(R.id.dyload_text)).setText("好像没有网络...\n检查下网络？");
+                ((Button) loadingView.findViewById(R.id.dyload_button)).setVisibility(View.VISIBLE);
+            }
+        };
+
+        runnableUi = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                mAdapter = new mAdapter(inflater, searchResult);
+                seaListView.setAdapter(mAdapter);
+                rootLayout.findViewById(R.id.sea_noweb).setVisibility(View.GONE);
+                rootLayout.findViewById(R.id.sea_searching).setVisibility(View.GONE);
+                rootLayout.findViewById(R.id.sea_nonthing).setVisibility(View.GONE);
+                rootLayout.findViewById(R.id.sea_listview).setVisibility(View.VISIBLE);
+            }
+        };
+
+        runnableNoresult = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                rootLayout.findViewById(R.id.sea_noweb).setVisibility(View.GONE);
+                rootLayout.findViewById(R.id.sea_searching).setVisibility(View.GONE);
+                rootLayout.findViewById(R.id.sea_nonthing).setVisibility(View.VISIBLE);
+                rootLayout.findViewById(R.id.sea_listview).setVisibility(View.GONE);
+            }
+        };
+
+        runnableNomore = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                ((TextView) loadingView.findViewById(R.id.dyload_text)).setText("  没有更多了...");
+            }
+        };
+
+        runnableAddlist = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                mAdapter.notifyDataSetChanged();
+            }
+        };
+
+        loadingView.findViewById(R.id.dyload_button).setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                ((TextView) loadingView.findViewById(R.id.dyload_text)).setText(" 加载中. . .");
+                loadingView.findViewById(R.id.dyload_button).setVisibility(View.GONE);
+                getMoreSearch();
+            }
+        });
+
+        seaButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                isLoading = true;
+                searchApi = new SearchApi(MainActivity.sharedPreferences.getString("cookies", ""), seaEdittext.getText().toString());
+
+                seaLoadImg.setImageResource(R.drawable.anim_searching);
+                AnimationDrawable loadingImgAnim = (AnimationDrawable) seaLoadImg.getDrawable();
+                loadingImgAnim.start();
+
+                rootLayout.findViewById(R.id.sea_noweb).setVisibility(View.GONE);
+                rootLayout.findViewById(R.id.sea_searching).setVisibility(View.VISIBLE);
+                rootLayout.findViewById(R.id.sea_nonthing).setVisibility(View.GONE);
+                rootLayout.findViewById(R.id.sea_listview).setVisibility(View.GONE);
+                new Thread(new Runnable()
                 {
                     @Override
                     public void run()
                     {
-
+                        try
+                        {
+                            searchResult = searchApi.getSearchResult();
+                            if(searchResult != null) handler.post(runnableUi);
+                            else handler.post(runnableNoresult);
+                            isLoading = false;
+                        }
+                        catch (IOException e)
+                        {
+                            e.printStackTrace();
+                            handler.post(runnableNoweb);
+                        }
                     }
-                });
+                }).start();
             }
         });
+
+        seaListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            {
+                Intent intent = new Intent(ctx, VideodetailsActivity.class);
+                intent.putExtra("aid", String.valueOf(searchResult.get(position).optInt("aid")));
+                startActivity(intent);
+            }
+        });
+
+        seaListView.setOnScrollListener(new AbsListView.OnScrollListener()
+        {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState)
+            {
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
+            {
+                if(visibleItemCount + firstVisibleItem == totalItemCount && !isLoading)
+                {
+                    isLoading = true;
+                    //((TextView) loadingView.findViewById(R.id.dyload_text)).setText(" 加载中...");
+                    getMoreSearch();
+                }
+            }
+        });
+
+        View loadingView = inflater.inflate(R.layout.widget_dyloading, null);
+        seaListView.addFooterView(loadingView);
+
         return rootLayout;
+    }
+
+    void getMoreSearch()
+    {
+        new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    ArrayList<JSONObject> arrayList = searchApi.getSearchResult();
+                    if(arrayList.size() != 0)
+                    {
+                        searchResult.addAll(arrayList);
+                        isLoading = false;
+                        handler.post(runnableAddlist);
+                    }
+                    else
+                    {
+                        handler.post(runnableNomore);
+                    }
+                }
+                catch (IOException e)
+                {
+                    handler.post(runnableNoWebH);
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     class mAdapter extends BaseAdapter
@@ -79,9 +267,9 @@ public class Search extends Fragment
 
         private LruCache<String, BitmapDrawable> mImageCache;
 
-        private JSONArray seaList;
+        private ArrayList<JSONObject> seaList;
 
-        public mAdapter(LayoutInflater inflater, JSONArray seaList)
+        public mAdapter(LayoutInflater inflater, ArrayList<JSONObject> seaList)
         {
             mInflater = inflater;
             this.seaList = seaList;
@@ -109,7 +297,7 @@ public class Search extends Fragment
         @Override
         public int getCount()
         {
-            return seaList.length();
+            return seaList.size();
         }
 
         @Override
@@ -127,13 +315,11 @@ public class Search extends Fragment
         @Override
         public View getView(int position, View convertView, ViewGroup viewGroup)
         {
-            JSONObject v = null;
-            try {v = seaList.getJSONObject(position);}
-            catch (JSONException e) {e.printStackTrace();}
+            JSONObject v = seaList.get(position);
             ViewHolder viewHolder;
             if(convertView == null)
             {
-                convertView = mInflater.inflate(R.layout.item_aniremind, null);
+                convertView = mInflater.inflate(R.layout.item_favor_video, null);
                 viewHolder = new ViewHolder();
                 convertView.setTag(viewHolder);
                 viewHolder.img = convertView.findViewById(R.id.vid_img);
@@ -150,8 +336,8 @@ public class Search extends Fragment
             viewHolder.up.setText("UP:" + getInfoFromJson(v, "author"));
             viewHolder.play.setText("播放:" + getView((int) getInfoFromJson(v, "play")) + "  弹幕:" + getInfoFromJson(v, "video_review"));
 
-            viewHolder.img.setTag((String) getInfoFromJson(v, "pic"));
-            BitmapDrawable c = setImageFormWeb((String) getInfoFromJson(v, "pic"));
+            viewHolder.img.setTag("https:" + getInfoFromJson(v, "pic"));
+            BitmapDrawable c = setImageFormWeb("https:" + getInfoFromJson(v, "pic"));
             if(c != null) viewHolder.img.setImageDrawable(c);
             return convertView;
         }
@@ -183,6 +369,7 @@ public class Search extends Fragment
             if(view > 10000) return view / 1000 / 10.0 + "万";
             else return String.valueOf(view);
         }
+
         private Object getInfoFromJson(JSONObject json, String get)
         {
             try

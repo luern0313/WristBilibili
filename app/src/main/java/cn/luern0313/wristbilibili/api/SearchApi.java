@@ -1,6 +1,8 @@
 package cn.luern0313.wristbilibili.api;
 
 import android.graphics.BitmapFactory;
+import android.os.Looper;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -9,6 +11,8 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
@@ -25,37 +29,46 @@ import okhttp3.Response;
  * ...好像有
  */
 
-public class Search
+public class SearchApi
 {
     private String cookie;
 
     private String keyword;
     private int page;
     private JSONArray searchResultNow;
-    public Search(String cookie, String keyword)
+    public SearchApi(String cookie, String keyword)
     {
         this.cookie = cookie;
         this.keyword = keyword;
         page = 0;
     }
 
-    public JSONArray getSearchResult() throws IOException
+    public ArrayList<JSONObject> getSearchResult() throws IOException
     {
         page++;
         JSONObject data = new JSONObject();
         try
         {
-            data.put("keyword", keyword);
+            data.put("keyword", URLEncoder.encode(keyword, "UTF-8"));
             data.put("main_ver", "v3");
             data.put("order", "totalrank");
             data.put("page", page);
             data.put("pagesize", 20);
-            data.put("search_type", "video");
-            return new JSONObject(post("https://m.bilibili.com/search/searchengine", data.toString()).body().string()).getJSONObject("result").getJSONArray("video");
+            data.put("search_type", "all");
+            data.put("platform", "h5");
+            String l = post("https://m.bilibili.com/search/searchengine", data.toString()).body().string();
+            JSONArray jsonArray = new JSONObject(l)
+                    .getJSONObject("result")
+                    .getJSONArray("video");
+            ArrayList<JSONObject> arrayList = new ArrayList<>();
+            for(int i = 0; i < jsonArray.length(); i++)
+                arrayList.add(jsonArray.getJSONObject(i));
+            return arrayList;
         }
         catch (JSONException e)
         {
             e.printStackTrace();
+            page--;
         }
         return null;
     }
@@ -88,7 +101,7 @@ public class Search
         Request request;
         client = new OkHttpClient.Builder().connectTimeout(15, TimeUnit.SECONDS).readTimeout(15, TimeUnit.SECONDS).build();
         body = RequestBody.create(MediaType.parse("application/json"), data);
-        request = new Request.Builder().url(url).post(body).header("Referer", "https://www.bilibili.com/").addHeader("Accept", "*/*").addHeader("User-Agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)").addHeader("Referer", "https://www.bilibili.com").addHeader("Cookie", cookie).build();
+        request = new Request.Builder().url(url).post(body).header("Referer", "https://m.bilibili.com/").addHeader("Accept", "*/*").addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36").build();
         response = client.newCall(request).execute();
         if(response.isSuccessful())
         {

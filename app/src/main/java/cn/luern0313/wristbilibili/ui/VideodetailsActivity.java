@@ -200,6 +200,9 @@ public class VideodetailsActivity extends Activity
 
     public void clickCover(View view)
     {
+        Intent intent = new Intent(ctx, ImgActivity.class);
+        intent.putExtra("imgUrl", new String[]{videoDetail.getVideoFace()});
+        startActivity(intent);
     }
 
     public void clickPlay(View view)
@@ -333,7 +336,6 @@ public class VideodetailsActivity extends Activity
                     }
                     else
                     {
-                        isLiked = 2;
                         Looper.prepare();
                         Toast.makeText(ctx, "最多投两个硬币...", Toast.LENGTH_SHORT).show();
                     }
@@ -362,16 +364,16 @@ public class VideodetailsActivity extends Activity
                 {
                     if(isFaved)
                     {
-                        isLiked = 0;
-                        videoDetail.likeVideo(4);
+                        isFaved = false;
+                        videoDetail.favCancalVideo();
                         videoDetail.setSelfFaved(-1);
                         Looper.prepare();
                         Toast.makeText(ctx, "已取消收藏！", Toast.LENGTH_SHORT).show();
                     }
                     else
                     {
-                        isLiked = 2;
-                        videoDetail.likeVideo(3);
+                        isFaved = true;
+                        videoDetail.favVideo();
                         videoDetail.setSelfFaved(1);
                         Looper.prepare();
                         Toast.makeText(ctx, "已收藏至默认收藏夹！\n(别问我为什么不能选择别的..懒...)", Toast.LENGTH_SHORT).show();
