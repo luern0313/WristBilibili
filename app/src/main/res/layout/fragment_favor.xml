@@ -28,7 +28,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/ar_noweb"
+        android:id="@+id/fav_noweb"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
@@ -50,12 +50,12 @@
     </LinearLayout>
 
     <jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout
-        android:id="@+id/ar_swipe"
+        android:id="@+id/fav_swipe"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <ListView
-            android:id="@+id/ar_listview"
+            android:id="@+id/fav_listview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"

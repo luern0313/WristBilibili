@@ -292,7 +292,7 @@ public class AniRemind extends Fragment
             /**
              * 根据url从网络上下载图片
              *
-             * @return
+             * @return 图片
              */
             private Bitmap downloadImage() throws IOException
             {
@@ -310,6 +310,5 @@ public class AniRemind extends Fragment
                 return bitmap;
             }
         }
-
     }
 }

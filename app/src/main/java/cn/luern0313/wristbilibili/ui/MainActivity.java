@@ -17,6 +17,7 @@ import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.fragment.AniRemind;
 import cn.luern0313.wristbilibili.fragment.Download;
 import cn.luern0313.wristbilibili.fragment.Dynamic;
+import cn.luern0313.wristbilibili.fragment.Favor;
 import cn.luern0313.wristbilibili.fragment.Search;
 import cn.luern0313.wristbilibili.fragment.Setting;
 
@@ -87,6 +88,7 @@ public class MainActivity extends Activity
                     titleText.setTextSize(14);
                     break;
                 case 5:
+                    transaction.replace(R.id.main_frame, new Favor());
                     titleText.setText("收藏");
                     titleText.setTextSize(14);
                     break;
