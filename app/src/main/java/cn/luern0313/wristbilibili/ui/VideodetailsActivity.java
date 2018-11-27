@@ -149,7 +149,7 @@ public class VideodetailsActivity extends Activity
             @Override
             public void run()
             {
-                ((ImageView) findViewById(R.id.vd_coin_img)).setImageBitmap(videoUpFace);
+                ((ImageView) findViewById(R.id.vd_card_head)).setImageBitmap(videoUpFace);
             }
         };
 
