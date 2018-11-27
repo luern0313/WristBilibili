@@ -188,10 +188,4 @@ public class LoginActivity extends Activity
         stopFlag = true;
         timeoutHandler.removeCallbacks(runnableTimeout);
     }
-
-    public void loginTitle(View view)
-    {
-        finish();
-        overridePendingTransition(0, R.anim.anim_activity_out_right);
-    }
 }

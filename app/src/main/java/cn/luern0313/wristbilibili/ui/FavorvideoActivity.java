@@ -173,7 +173,7 @@ public class FavorvideoActivity extends Activity
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id)
             {
-                if(position < favorvideoList.size() - 1)
+                if(position < favorvideoList.size())
                 {
                     Intent intent = new Intent(ctx, VideodetailsActivity.class);
                     intent.putExtra("aid", String.valueOf(favorvideoList.get(position).opt("aid")));

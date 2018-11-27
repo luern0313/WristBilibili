@@ -23,11 +23,16 @@ public class OthersUser
     private String cookie;
     private String mid;
     private String csrf;
-    public OthersUser(String cookie, String mid, String csrf)
+    public OthersUser(String cookie, String csrf, String mid)
     {
         this.cookie = cookie;
         this.mid = mid;
         this.csrf = csrf;
+    }
+
+    public String getOtheruserInfo() throws IOException
+    {
+        return (String) get("https://api.bilibili.com/x/web-interface/card?mid=" + mid + "&photo=1", 1);
     }
 
     public void follow() throws IOException

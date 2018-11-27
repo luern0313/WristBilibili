@@ -1,45 +1,120 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <RelativeLayout
-        android:id="@+id/ouser_title_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/mainColor"
-        android:gravity="center_vertical"
-        android:paddingBottom="4dp"
-        android:paddingTop="10dp">
-
-        <TextView
-            android:id="@+id/ouser_title_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:text="用户"
-            android:textColor="@color/textColor" />
-
-        <ImageView
-            android:id="@+id/ouser_title_extraicon"
-            android:layout_width="12dp"
-            android:layout_height="19dp"
-            android:layout_marginLeft="2dp"
-            android:layout_toLeftOf="@+id/ouser_title_title"
-            android:rotation="90"
-            android:src="@drawable/icon_extra" />
-
-
-    </RelativeLayout>
-
-    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/ouser_title_layout"
-        android:layout_marginLeft="19dp"
-        android:layout_marginRight="19dp">
-<de.hdodenhof.circleimageview.CircleImageView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content" />
+        android:paddingBottom="34dp">
+
+        <RelativeLayout
+            android:id="@+id/ou_title_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/mainColor"
+            android:gravity="center_vertical"
+            android:paddingBottom="4dp"
+            android:paddingTop="10dp">
+
+            <TextView
+                android:id="@+id/ou_title_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="用户"
+                android:textColor="@color/textColor" />
+
+            <ImageView
+                android:id="@+id/ou_title_extraicon"
+                android:layout_width="12dp"
+                android:layout_height="19dp"
+                android:layout_marginLeft="2dp"
+                android:layout_toLeftOf="@+id/ou_title_title"
+                android:rotation="90"
+                android:src="@drawable/icon_extra" />
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/ou_title_layout"
+            android:layout_marginLeft="21dp"
+            android:layout_marginRight="21dp"
+            android:layout_marginTop="4dp">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/ou_head"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/img_default_avatar" />
+
+            <TextView
+                android:id="@+id/ou_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/ou_head"
+                android:layout_marginTop="2dp"
+                android:textColor="@color/colorAccent"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/ou_lv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/ou_name"
+                android:layout_marginTop="2dp"
+                android:background="@drawable/shape_lvbg_fme"
+                android:paddingBottom="1dp"
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp"
+                android:paddingTop="1dp"
+                android:textSize="9sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/ou_follow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignTop="@+id/ou_name"
+                android:layout_marginTop="1dp"
+                android:background="@drawable/shape_anre_followbg"
+                android:paddingBottom="4dp"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
+                android:paddingTop="4dp"
+                android:text="+关注"
+                android:textColor="@color/textColor"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/ou_anth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/ou_lv"
+                android:layout_marginTop="2dp"
+                android:textColor="@color/textcolor3"
+                android:textSize="12sp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/ou_sign"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/ou_anth"
+                android:textSize="12sp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/ou_other"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/ou_sign"
+                android:layout_marginTop="6dp" />
+
+        </RelativeLayout>
     </RelativeLayout>
-</RelativeLayout>
+</ScrollView>
