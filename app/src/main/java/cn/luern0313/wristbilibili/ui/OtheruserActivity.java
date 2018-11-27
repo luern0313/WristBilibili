@@ -6,8 +6,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -41,7 +43,9 @@ public class OtheruserActivity extends Activity
     Handler handler = new Handler();
     Runnable runnableUi;
     Runnable runnableHead;
+    Runnable runnableNoweb;
 
+    ImageView uiLoading;
     TextView uiFollow;
 
     @Override
@@ -56,6 +60,7 @@ public class OtheruserActivity extends Activity
         editor = sharedPreferences.edit();
 
         othersUser = new OthersUser(sharedPreferences.getString("cookie", ""), sharedPreferences.getString("csrf", ""), intent.getStringExtra("mid"));
+        uiLoading = findViewById(R.id.ou_loading_img);
         uiFollow = findViewById(R.id.ou_follow);
 
         runnableUi = new Runnable()
@@ -63,6 +68,9 @@ public class OtheruserActivity extends Activity
             @Override
             public void run()
             {
+                findViewById(R.id.ou_loading).setVisibility(View.GONE);
+                findViewById(R.id.ou_noweb).setVisibility(View.GONE);
+
                 ((TextView) findViewById(R.id.ou_name)).setText(otherUserCardJson.optString("name"));
                 ((TextView) findViewById(R.id.ou_lv)).setText("LV" + otherUserCardJson.optJSONObject("level_info").optInt("current_level"));
                 if(otherUserJson.optBoolean("following"))
@@ -73,7 +81,7 @@ public class OtheruserActivity extends Activity
                 }
                 ((TextView) findViewById(R.id.ou_anth)).setText(otherUserCardJson.optJSONObject("Official").optString("title"));
                 ((TextView) findViewById(R.id.ou_sign)).setText(otherUserCardJson.optString("sign"));
-                ((TextView) findViewById(R.id.ou_other)).setText("关注:" + "  粉丝:" + "\n投稿:");
+                ((TextView) findViewById(R.id.ou_other)).setText("关注:" + otherUserCardJson.optString("friend") + "  粉丝:" + otherUserCardJson.optString("fans")+ "\n投稿:" + otherUserJson.optString("archive_count"));
             }
         };
 
@@ -85,6 +93,20 @@ public class OtheruserActivity extends Activity
                 ((ImageView) findViewById(R.id.ou_head)).setImageBitmap(userHead);
             }
         };
+
+        runnableNoweb = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                findViewById(R.id.ou_loading).setVisibility(View.GONE);
+                findViewById(R.id.ou_noweb).setVisibility(View.VISIBLE);
+            }
+        };
+
+        uiLoading.setImageResource(R.drawable.anim_loading);
+        AnimationDrawable loadingImgAnim = (AnimationDrawable) uiLoading.getDrawable();
+        loadingImgAnim.start();
 
         new Thread(new Runnable()
         {

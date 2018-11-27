@@ -179,6 +179,13 @@ public class UserDynamic
             return getMinFromSec((int) getInfoFromJson(oriVideoJson, "duration"));
         }
 
+        public String getOwnerUid()
+        {
+            if(mode == 1)
+                return String.valueOf(getInfoFromJson(getJsonFromJson(oriVideoDescUser, "info"), "uid"));
+            else return String.valueOf(getInfoFromJson(getJsonFromJson(oriVideoJson, "owner"), "mid"));
+        }
+
         public String getOwnerName()
         {
             if(mode == 1)
@@ -268,6 +275,16 @@ public class UserDynamic
             return null;
         }
 
+        public String getUserUid()
+        {
+            if(mode == 1)
+                return String.valueOf(getInfoFromJson(getJsonFromJson(oriTextDescUser, "info"), "uid"));
+            else
+            {
+                return String.valueOf(getInfoFromJson(oriTextUserJson, "uid"));
+            }
+        }
+
         public String getUserName()
         {
             if(mode == 1)
@@ -324,6 +341,11 @@ public class UserDynamic
             return (String) getInfoFromJson(shareVideoItemJson, "content");
         }
 
+        public String getUserUid()
+        {
+            return String.valueOf(getInfoFromJson(getJsonFromJson(shareVideoDescUser, "info"), "uid"));
+        }
+
         public String getUserName()
         {
             return (String) getInfoFromJson(getJsonFromJson(shareVideoDescUser, "info"), "uname");
@@ -370,6 +392,11 @@ public class UserDynamic
             return (String) getInfoFromJson(shareTextItemJson, "content");
         }
 
+        public String getUserUid()
+        {
+            return String.valueOf(getInfoFromJson(getJsonFromJson(shareTextDescUser, "info"), "uid"));
+        }
+
         public String getUserName()
         {
             return (String) getInfoFromJson(getJsonFromJson(shareTextDescUser, "info"), "uname");
@@ -407,6 +434,19 @@ public class UserDynamic
             this.unknowJson = unknowJson;
             this.unknowDesc = unknowDesc;
             this.unknowDescUser = getJsonFromJson(unknowDesc, "user_profile");
+        }
+
+        public String getOwnerUid()
+        {
+            try
+            {
+                return String.valueOf(unknowDescUser.getJSONObject("info").get("uid"));
+            }
+            catch (JSONException e)
+            {
+                e.printStackTrace();
+            }
+            return "0";
         }
 
         public String getOwnerName()

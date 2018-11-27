@@ -35,6 +35,7 @@ import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.UserDynamic;
 import cn.luern0313.wristbilibili.ui.ImgActivity;
 import cn.luern0313.wristbilibili.ui.MainActivity;
+import cn.luern0313.wristbilibili.ui.OtheruserActivity;
 import cn.luern0313.wristbilibili.ui.VideodetailsActivity;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
@@ -95,6 +96,7 @@ public class Dynamic extends Fragment
                 rootLayout.findViewById(R.id.dy_noweb).setVisibility(View.VISIBLE);
                 rootLayout.findViewById(R.id.dy_nologin).setVisibility(View.GONE);
                 rootLayout.findViewById(R.id.dy_nonthing).setVisibility(View.GONE);
+                dyListView.setVisibility(View.GONE);
             }
         };
 
@@ -195,12 +197,18 @@ public class Dynamic extends Fragment
                     userDynamic = new UserDynamic(MainActivity.sharedPreferences.getString("cookies", ""), MainActivity.sharedPreferences.getString("mid", ""));
                     userDynamic.getDynamic();
                     dynamicList = userDynamic.getDynamicList();
-                    if(dynamicList != null)
+                    if(dynamicList != null && dynamicList.size() != 0)
                     {
                         isLoading = false;
                         handler.post(runnableUi);
                     }
-
+                    else
+                    {
+                        rootLayout.findViewById(R.id.dy_noweb).setVisibility(View.GONE);
+                        rootLayout.findViewById(R.id.dy_nologin).setVisibility(View.GONE);
+                        rootLayout.findViewById(R.id.dy_nonthing).setVisibility(View.VISIBLE);
+                        dyListView.setVisibility(View.GONE);
+                    }
                 }
                 catch (IOException e)
                 {
@@ -452,6 +460,17 @@ public class Dynamic extends Fragment
                     }
                 });
 
+                viewHolderOriVid.head.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        Intent intent = new Intent(ctx, OtheruserActivity.class);
+                        intent.putExtra("mid", dy.getOwnerUid());
+                        startActivity(intent);
+                    }
+                });
+
             }
             else if(type == 3)
             {
@@ -482,10 +501,21 @@ public class Dynamic extends Fragment
                         startActivity(intent);
                     }
                 });
+
+                viewHolderOriText.head.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        Intent intent = new Intent(ctx, OtheruserActivity.class);
+                        intent.putExtra("mid", dy.getUserUid());
+                        startActivity(intent);
+                    }
+                });
             }
             else if(type == 2)
             {
-                UserDynamic.cardUnknow dy = (UserDynamic.cardUnknow) dyList.get(position);
+                final UserDynamic.cardUnknow dy = (UserDynamic.cardUnknow) dyList.get(position);
                 viewHolderUnktyp.name.setText(dy.getOwnerName());
                 viewHolderUnktyp.time.setText(dy.getDynamicTime());
                 viewHolderUnktyp.head.setImageResource(R.drawable.img_default_head);
@@ -496,6 +526,17 @@ public class Dynamic extends Fragment
                     BitmapDrawable h = setImageFormWeb(dy.getOwnerHead());
                     if(h != null) viewHolderUnktyp.head.setImageDrawable(h);
                 }
+
+                viewHolderUnktyp.head.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        Intent intent = new Intent(ctx, OtheruserActivity.class);
+                        intent.putExtra("mid", dy.getOwnerUid());
+                        startActivity(intent);
+                    }
+                });
             }
             else if(type == 1)
             {
@@ -529,6 +570,28 @@ public class Dynamic extends Fragment
                     {
                         Intent intent = new Intent(ctx, VideodetailsActivity.class);
                         intent.putExtra("aid", sdy.getVideoAid());
+                        startActivity(intent);
+                    }
+                });
+
+                viewHolderShaVid.head.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        Intent intent = new Intent(ctx, OtheruserActivity.class);
+                        intent.putExtra("mid", dy.getUserUid());
+                        startActivity(intent);
+                    }
+                });
+
+                convertView.findViewById(R.id.lisv_share_user).setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        Intent intent = new Intent(ctx, OtheruserActivity.class);
+                        intent.putExtra("mid", sdy.getOwnerUid());
                         startActivity(intent);
                     }
                 });
@@ -566,6 +629,28 @@ public class Dynamic extends Fragment
                     {
                         Intent intent = new Intent(ctx, ImgActivity.class);
                         intent.putExtra("imgUrl", sdy.getImgsSrc());
+                        startActivity(intent);
+                    }
+                });
+
+                viewHolderShaText.head.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        Intent intent = new Intent(ctx, OtheruserActivity.class);
+                        intent.putExtra("mid", dy.getUserUid());
+                        startActivity(intent);
+                    }
+                });
+
+                convertView.findViewById(R.id.list_share_user).setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        Intent intent = new Intent(ctx, OtheruserActivity.class);
+                        intent.putExtra("mid", sdy.getUserUid());
                         startActivity(intent);
                     }
                 });

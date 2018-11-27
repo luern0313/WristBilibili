@@ -103,6 +103,18 @@ public class FavorBox extends Fragment
             }
         };
 
+        runnableNoWeb = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                rootLayout.findViewById(R.id.fav_nologin).setVisibility(View.GONE);
+                rootLayout.findViewById(R.id.fav_noweb).setVisibility(View.VISIBLE);
+                favListView.setVisibility(View.GONE);
+                waveSwipeRefreshLayout.setRefreshing(false);
+            }
+        };
+
         isLogin = MainActivity.sharedPreferences.contains("cookies");
         if(isLogin)
         {
@@ -148,7 +160,14 @@ public class FavorBox extends Fragment
                 {
                     favorBoxApi = new FavorBoxApi(MainActivity.sharedPreferences.getString("cookies", ""), MainActivity.sharedPreferences.getString("mid", ""));
                     favourboxArray = favorBoxApi.getFavorbox();
-                    handler.post(runnableUi);
+                    if(favourboxArray != null && favourboxArray.length() != 0)
+                    {
+                        handler.post(runnableUi);
+                    }
+                    else
+                    {
+                        handler.post(runnableNoWeb);
+                    }
                 }
                 catch (IOException e)
                 {

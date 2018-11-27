@@ -82,7 +82,12 @@ public class VideoDetails
         return (String) getInfoFromJson(videoViewJson, "title");
     }
 
-    public String getVideoUP()
+    public String getVideoUpAid()
+    {
+        return (String) getInfoFromJson(getJsonFromJson(videoUserJson, "card"), "mid");
+    }
+
+    public String getVideoUpName()
     {
         return (String) getInfoFromJson(getJsonFromJson(videoUserJson, "card"), "name");
     }

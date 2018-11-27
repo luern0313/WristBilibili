@@ -114,7 +114,7 @@ public class VideodetailsActivity extends Activity
                 ((TextView) findViewById(R.id.vd_video_play)).setText("播放:" + videoDetail.getVideoPlay() + "  弹幕:" + videoDetail.getVideoDanmaku());
                 ((TextView) findViewById(R.id.vd_video_time)).setText(videoDetail.getVideoupTime() + "  AV" + videoDetail.getVideoAid());
                 ((TextView) findViewById(R.id.vd_video_details)).setText(videoDetail.getVideoDetail());
-                ((TextView) findViewById(R.id.vd_card_name)).setText(videoDetail.getVideoUP());
+                ((TextView) findViewById(R.id.vd_card_name)).setText(videoDetail.getVideoUpName());
                 ((TextView) findViewById(R.id.vd_card_sen)).setText(videoDetail.getVideoUpSign());
                 if(videoDetail.isFollowing())
                 {
@@ -161,6 +161,17 @@ public class VideodetailsActivity extends Activity
                 findViewById(R.id.vd_novideo).setVisibility(View.VISIBLE);
             }
         };
+
+        findViewById(R.id.vd_card).setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Intent intent = new Intent(ctx, OtheruserActivity.class);
+                intent.putExtra("mid", videoDetail.getVideoUpAid());
+                startActivity(intent);
+            }
+        });
 
         new Thread(new Runnable()
         {

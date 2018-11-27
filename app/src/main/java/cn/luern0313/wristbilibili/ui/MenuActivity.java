@@ -152,11 +152,17 @@ public class MenuActivity extends Activity
 
     public void buutonUser(View view)  //个人信息/登录
     {
-        if(sharedPreferences.getString("cookies", "").equals(""))//是否登录的验证
+        if(!sharedPreferences.contains("cookies"))//是否登录的验证
         {
             Intent intent = new Intent(ctx, LoginActivity.class);
             startActivityForResult(intent, 0);
             overridePendingTransition(R.anim.anim_activity_in_left, 0);
+        }
+        else
+        {
+            Intent intent = new Intent(ctx, OtheruserActivity.class);
+            intent.putExtra("mid", sharedPreferences.getString("mid", ""));
+            startActivity(intent);
         }
     }
 
