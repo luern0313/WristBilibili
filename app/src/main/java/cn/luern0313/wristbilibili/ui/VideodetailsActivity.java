@@ -4,10 +4,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -33,8 +35,11 @@ public class VideodetailsActivity extends Activity
     Runnable runnableNoWeb;
     Runnable runnableUi;
     Runnable runnableImg;
+    Runnable runnableSetface;
+    Runnable runnableNodata;
 
     AnimationDrawable loadingImgAnim;
+    Bitmap videoUpFace;
 
     ImageView uiLoadingImg;
     LinearLayout uiLoading;
@@ -139,6 +144,24 @@ public class VideodetailsActivity extends Activity
             }
         };
 
+        runnableSetface = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                ((ImageView) findViewById(R.id.vd_coin_img)).setImageBitmap(videoUpFace);
+            }
+        };
+
+        runnableNodata = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                findViewById(R.id.vd_novideo).setVisibility(View.VISIBLE);
+            }
+        };
+
         new Thread(new Runnable()
         {
             @Override
@@ -149,10 +172,12 @@ public class VideodetailsActivity extends Activity
                     if(videoDetail.getVideoDetails())
                     {
                         handler.post(runnableUi);
+                        videoUpFace = videoDetail.getVideoUpFace();
+                        handler.post(runnableSetface);
                     }
                     else
                     {
-                        findViewById(R.id.vd_novideo).setVisibility(View.VISIBLE);
+                        handler.post(runnableNodata);
                     }
                 }
                 catch (IOException e)

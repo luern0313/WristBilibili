@@ -47,10 +47,12 @@ public class UserDynamic
         try
         {
             dynamicJsonArray = new JSONObject((String) get(DYNAMICAPIURL + "?uid=" + mid + "&type=" + DYNAMICTYPE, 1)).getJSONObject("data").getJSONArray("cards");
+            if(dynamicJsonArray.length() == 0)
+                dynamicJsonArray = null;
         }
         catch (JSONException e)
         {
-            dynamicJsonArray = new JSONArray();
+            dynamicJsonArray = null;
             e.printStackTrace();
         }
     }

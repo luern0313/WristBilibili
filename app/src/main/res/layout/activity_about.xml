@@ -8,9 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:paddingLeft="19dp"
-        android:paddingRight="19dp">
+        android:orientation="vertical">
 
         <RelativeLayout
             android:id="@+id/about_title_layout"
@@ -40,41 +38,51 @@
 
         </RelativeLayout>
 
-        <ImageView
-            android:layout_width="92dp"
-            android:layout_height="92dp"
-            android:layout_marginTop="6dp"
-            android:src="@drawable/bilibili" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="腕上哔哩"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="6dp"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:gravity="center_horizontal"
-            android:text="集成基础b站功能的非官方客户端"
-            android:textSize="12sp" />
+            android:orientation="vertical"
+            android:paddingLeft="19dp"
+            android:paddingRight="19dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:text="程序:luern0313\n图标设计制作:一佳一等于一"
-            android:textSize="12sp" />
+            <ImageView
+                android:layout_width="92dp"
+                android:layout_height="92dp"
+                android:layout_marginTop="6dp"
+                android:src="@drawable/bilibili" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="14dp"
-            android:layout_marginTop="10dp"
-            android:gravity="center_horizontal"
-            android:text="Copyright © 2014-2018 setTile luern0313.\nAll rights reserved.\n哔哩哔哩 - ( ゜- ゜)つロ 乾杯~\n另外祝杨永信及同类机构负责人\n早！日！爆！炸！"
-            android:textSize="10sp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="腕上哔哩"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
+                android:gravity="center_horizontal"
+                android:text="集成基础b站功能的非官方客户端"
+                android:textSize="12sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="程序:luern0313\n图标设计制作:一佳一等于一"
+                android:textSize="12sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="14dp"
+                android:layout_marginTop="10dp"
+                android:gravity="center_horizontal"
+                android:text="Copyright © 2014-2018 setTile luern0313.\nAll rights reserved.\n哔哩哔哩 - ( ゜- ゜)つロ 乾杯~\n另外祝杨永信及同类机构负责人\n早！日！爆！炸！"
+                android:textSize="10sp" />
+        </LinearLayout>
+
     </LinearLayout>
 </ScrollView>

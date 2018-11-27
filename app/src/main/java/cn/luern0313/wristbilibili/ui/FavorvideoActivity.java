@@ -1,27 +1,24 @@
-package cn.luern0313.wristbilibili.fragment;
+package cn.luern0313.wristbilibili.ui;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.AnimationDrawable;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.util.LruCache;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -39,61 +36,95 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.R;
-import cn.luern0313.wristbilibili.api.SearchApi;
-import cn.luern0313.wristbilibili.api.VideoDetails;
-import cn.luern0313.wristbilibili.ui.MainActivity;
-import cn.luern0313.wristbilibili.ui.VideodetailsActivity;
+import cn.luern0313.wristbilibili.api.FavorVideoApi;
+import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
-/**
- * Created by liupe on 2018/11/16.
- * 搜索。。
- */
-
-public class Search extends Fragment
+public class FavorvideoActivity extends Activity
 {
     Context ctx;
-    SearchApi searchApi;
+    Intent intent;
+    LayoutInflater inflater;
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
+    FavorVideoApi favorVideoApi;
 
-    View rootLayout;
-    ListView seaListView;
+    ArrayList<JSONObject> favorvideoList;
+    String fid;
+
+    mAdapter adapter;
+    ListView favvListView;
+    WaveSwipeRefreshLayout waveSwipeRefreshLayout;
     View loadingView;
-    EditText seaEdittext;
-    TextView seaButton;
-    ImageView seaLoadImg;
 
     Handler handler = new Handler();
-    Runnable runnableNoweb;
     Runnable runnableUi;
-    Runnable runnableAddlist;
+    Runnable runnableNoWeb;
     Runnable runnableNoWebH;
-    Runnable runnableNoresult;
+    Runnable runnableNodata;
+    Runnable runnableAddlist;
     Runnable runnableNomore;
 
-    ArrayList<JSONObject> searchResult;
-    mAdapter mAdapter;
-
+    int page = 0;
     boolean isLoading = true;
 
     @Override
-    public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    protected void onCreate(Bundle savedInstanceState)
     {
-        ctx = getActivity();
-        rootLayout = inflater.inflate(R.layout.fragment_search, container, false);
-        seaListView = rootLayout.findViewById(R.id.sea_listview);
-        loadingView = inflater.inflate(R.layout.widget_dyloading, null);
-        seaEdittext = rootLayout.findViewById(R.id.sea_edittext);
-        seaButton = rootLayout.findViewById(R.id.sea_seabutton);
-        seaLoadImg = rootLayout.findViewById(R.id.sea_searching_img);
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_favorvideo);
+        ctx = this;
+        intent = getIntent();
+        inflater = getLayoutInflater();
+        sharedPreferences = getSharedPreferences("default", Context.MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+        fid = intent.getStringExtra("fid");
 
-        runnableNoweb = new Runnable()
+        loadingView = inflater.inflate(R.layout.widget_dyloading, null);
+        favvListView = findViewById(R.id.favv_listview);
+        waveSwipeRefreshLayout = findViewById(R.id.favv_swipe);
+        waveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
+        waveSwipeRefreshLayout.setWaveColor(Color.argb(255, 250, 114, 152));
+        waveSwipeRefreshLayout.setOnRefreshListener(new WaveSwipeRefreshLayout.OnRefreshListener()
+        {
+            @Override
+            public void onRefresh()
+            {
+                handler.post(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        favvListView.setVisibility(View.GONE);
+                        getFavorVideo();
+                    }
+                });
+            }
+        });
+
+        runnableUi = new Runnable()
         {
             @Override
             public void run()
             {
-                rootLayout.findViewById(R.id.sea_noweb).setVisibility(View.VISIBLE);
-                rootLayout.findViewById(R.id.sea_searching).setVisibility(View.GONE);
-                rootLayout.findViewById(R.id.sea_nonthing).setVisibility(View.GONE);
-                rootLayout.findViewById(R.id.sea_listview).setVisibility(View.GONE);
+                isLoading = false;
+                findViewById(R.id.favv_noweb).setVisibility(View.GONE);
+                findViewById(R.id.favv_nonthing).setVisibility(View.GONE);
+                favvListView.setVisibility(View.VISIBLE);
+
+                waveSwipeRefreshLayout.setRefreshing(false);
+                adapter = new mAdapter(inflater, favorvideoList);
+                favvListView.setAdapter(adapter);
+            }
+        };
+
+        runnableNoWeb = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                findViewById(R.id.favv_noweb).setVisibility(View.VISIBLE);
+                findViewById(R.id.favv_nonthing).setVisibility(View.GONE);
+                favvListView.setVisibility(View.GONE);
             }
         };
 
@@ -104,32 +135,6 @@ public class Search extends Fragment
             {
                 ((TextView) loadingView.findViewById(R.id.dyload_text)).setText("好像没有网络...\n检查下网络？");
                 loadingView.findViewById(R.id.dyload_button).setVisibility(View.VISIBLE);
-            }
-        };
-
-        runnableUi = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                mAdapter = new mAdapter(inflater, searchResult);
-                seaListView.setAdapter(mAdapter);
-                rootLayout.findViewById(R.id.sea_noweb).setVisibility(View.GONE);
-                rootLayout.findViewById(R.id.sea_searching).setVisibility(View.GONE);
-                rootLayout.findViewById(R.id.sea_nonthing).setVisibility(View.GONE);
-                rootLayout.findViewById(R.id.sea_listview).setVisibility(View.VISIBLE);
-            }
-        };
-
-        runnableNoresult = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                rootLayout.findViewById(R.id.sea_noweb).setVisibility(View.GONE);
-                rootLayout.findViewById(R.id.sea_searching).setVisibility(View.GONE);
-                rootLayout.findViewById(R.id.sea_nonthing).setVisibility(View.VISIBLE);
-                rootLayout.findViewById(R.id.sea_listview).setVisibility(View.GONE);
             }
         };
 
@@ -147,7 +152,8 @@ public class Search extends Fragment
             @Override
             public void run()
             {
-                mAdapter.notifyDataSetChanged();
+                isLoading = false;
+                adapter.notifyDataSetChanged();
             }
         };
 
@@ -158,66 +164,25 @@ public class Search extends Fragment
             {
                 ((TextView) loadingView.findViewById(R.id.dyload_text)).setText(" 加载中. . .");
                 loadingView.findViewById(R.id.dyload_button).setVisibility(View.GONE);
-                getMoreSearch();
+                getMoreFavorVideo();
             }
         });
 
-        seaButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                InputMethodManager inputMethodManager = (InputMethodManager) ctx.getSystemService(Activity.INPUT_METHOD_SERVICE);
-                inputMethodManager.hideSoftInputFromWindow(seaEdittext.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-
-                isLoading = true;
-                searchApi = new SearchApi(MainActivity.sharedPreferences.getString("cookies", ""), seaEdittext.getText().toString());
-
-                seaLoadImg.setImageResource(R.drawable.anim_searching);
-                AnimationDrawable loadingImgAnim = (AnimationDrawable) seaLoadImg.getDrawable();
-                loadingImgAnim.start();
-
-                rootLayout.findViewById(R.id.sea_noweb).setVisibility(View.GONE);
-                rootLayout.findViewById(R.id.sea_searching).setVisibility(View.VISIBLE);
-                rootLayout.findViewById(R.id.sea_nonthing).setVisibility(View.GONE);
-                rootLayout.findViewById(R.id.sea_listview).setVisibility(View.GONE);
-                new Thread(new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        try
-                        {
-                            searchResult = searchApi.getSearchResult();
-                            if(searchResult != null && searchResult.size() != 0) handler.post(runnableUi);
-                            else handler.post(runnableNoresult);
-                            isLoading = false;
-                        }
-                        catch (IOException e)
-                        {
-                            e.printStackTrace();
-                            handler.post(runnableNoweb);
-                        }
-                    }
-                }).start();
-            }
-        });
-
-        seaListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        favvListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id)
             {
-                if(position < searchResult.size())
+                if(position < favorvideoList.size() - 1)
                 {
                     Intent intent = new Intent(ctx, VideodetailsActivity.class);
-                    intent.putExtra("aid", String.valueOf(searchResult.get(position).optInt("aid")));
+                    intent.putExtra("aid", String.valueOf(favorvideoList.get(position).opt("aid")));
                     startActivity(intent);
                 }
             }
         });
 
-        seaListView.setOnScrollListener(new AbsListView.OnScrollListener()
+        favvListView.setOnScrollListener(new AbsListView.OnScrollListener()
         {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState)
@@ -229,20 +194,21 @@ public class Search extends Fragment
             {
                 if(visibleItemCount + firstVisibleItem == totalItemCount && !isLoading)
                 {
-                    isLoading = true;
-                    //((TextView) loadingView.findViewById(R.id.dyload_text)).setText(" 加载中...");
-                    getMoreSearch();
+                    getMoreFavorVideo();
                 }
             }
         });
 
-        seaListView.addFooterView(loadingView);
-
-        return rootLayout;
+        waveSwipeRefreshLayout.setRefreshing(true);
+        favvListView.addFooterView(loadingView);
+        getFavorVideo();
     }
 
-    void getMoreSearch()
+    void getFavorVideo()
     {
+        isLoading = true;
+        favorVideoApi = new FavorVideoApi(sharedPreferences.getString("cookies", ""), sharedPreferences.getString("mid", ""), fid);
+        page = 1;
         new Thread(new Runnable()
         {
             @Override
@@ -250,20 +216,42 @@ public class Search extends Fragment
             {
                 try
                 {
-                    ArrayList<JSONObject> arrayList = searchApi.getSearchResult();
-                    if(arrayList.size() != 0)
-                    {
-                        searchResult.addAll(arrayList);
-                        isLoading = false;
-                        handler.post(runnableAddlist);
-                    }
-                    else
-                    {
-                        handler.post(runnableNomore);
-                    }
+                    favorvideoList = favorVideoApi.getFavorvideo(page);
+                    if(favorvideoList != null && favorvideoList.size() != 0)
+                        handler.post(runnableUi);
+                    else handler.post(runnableNodata);
                 }
                 catch (IOException e)
                 {
+                    handler.post(runnableNoWeb);
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    void getMoreFavorVideo()
+    {
+        isLoading = true;
+        page++;
+        new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    ArrayList<JSONObject> arrayList = favorVideoApi.getFavorvideo(page);
+                    if(arrayList != null && arrayList.size() != 0)
+                    {
+                        favorvideoList.addAll(arrayList);
+                        handler.post(runnableAddlist);
+                    }
+                    else handler.post(runnableNomore);
+                }
+                catch (IOException e)
+                {
+                    page--;
                     handler.post(runnableNoWebH);
                     e.printStackTrace();
                 }
@@ -277,12 +265,12 @@ public class Search extends Fragment
 
         private LruCache<String, BitmapDrawable> mImageCache;
 
-        private ArrayList<JSONObject> seaList;
+        private ArrayList<JSONObject> favList;
 
-        public mAdapter(LayoutInflater inflater, ArrayList<JSONObject> seaList)
+        public mAdapter(LayoutInflater inflater, ArrayList<JSONObject> favList)
         {
             mInflater = inflater;
-            this.seaList = seaList;
+            this.favList = favList;
 
             int maxCache = (int) Runtime.getRuntime().maxMemory();
             int cacheSize = maxCache / 8;
@@ -307,7 +295,7 @@ public class Search extends Fragment
         @Override
         public int getCount()
         {
-            return seaList.size();
+            return favList.size();
         }
 
         @Override
@@ -325,7 +313,7 @@ public class Search extends Fragment
         @Override
         public View getView(int position, View convertView, ViewGroup viewGroup)
         {
-            JSONObject v = seaList.get(position);
+            JSONObject v = favList.get(position);
             ViewHolder viewHolder;
             if(convertView == null)
             {
@@ -343,11 +331,11 @@ public class Search extends Fragment
             }
             viewHolder.img.setImageResource(R.drawable.img_default_vid);
             viewHolder.title.setText((String) getInfoFromJson(v, "title"));
-            viewHolder.up.setText("UP:" + getInfoFromJson(v, "author"));
-            viewHolder.play.setText("播放:" + getView((int) getInfoFromJson(v, "play")) + "  弹幕:" + getInfoFromJson(v, "video_review"));
+            viewHolder.up.setText("UP:" + getInfoFromJson(getJsonFromJson(v, "owner"), "name"));
+            viewHolder.play.setText("播放:" + getView((int) getInfoFromJson(getJsonFromJson(v, "stat"), "view")) + "  弹幕:" + getInfoFromJson(getJsonFromJson(v, "stat"), "danmaku"));
 
-            viewHolder.img.setTag("https:" + getInfoFromJson(v, "pic"));
-            BitmapDrawable c = setImageFormWeb("https:" + getInfoFromJson(v, "pic"));
+            viewHolder.img.setTag(getInfoFromJson(v, "pic"));
+            BitmapDrawable c = setImageFormWeb((String) getInfoFromJson(v, "pic"));
             if(c != null) viewHolder.img.setImageDrawable(c);
             return convertView;
         }
@@ -368,7 +356,7 @@ public class Search extends Fragment
             }
             else
             {
-                ImageTask it = new ImageTask();
+                mAdapter.ImageTask it = new mAdapter.ImageTask();
                 it.execute(url);
                 return null;
             }
@@ -393,6 +381,19 @@ public class Search extends Fragment
             return null;
         }
 
+        private JSONObject getJsonFromJson(JSONObject json, String get)
+        {
+            try
+            {
+                return json.getJSONObject(get);
+            }
+            catch (JSONException e)
+            {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
         class ImageTask extends AsyncTask<String, Void, BitmapDrawable>
         {
             private String imageUrl;
@@ -405,7 +406,7 @@ public class Search extends Fragment
                     imageUrl = params[0];
                     Bitmap bitmap = null;
                     bitmap = downloadImage();
-                    BitmapDrawable db = new BitmapDrawable(seaListView.getResources(), bitmap);
+                    BitmapDrawable db = new BitmapDrawable(favvListView.getResources(), bitmap);
                     // 如果本地还没缓存该图片，就缓存
                     if(mImageCache.get(imageUrl) == null && bitmap != null)
                     {
@@ -424,7 +425,7 @@ public class Search extends Fragment
             protected void onPostExecute(BitmapDrawable result)
             {
                 // 通过Tag找到我们需要的ImageView，如果该ImageView所在的item已被移出页面，就会直接返回null
-                ImageView iv = seaListView.findViewWithTag(imageUrl);
+                ImageView iv = favvListView.findViewWithTag(imageUrl);
                 if(iv != null && result != null)
                 {
                     iv.setImageDrawable(result);
@@ -437,7 +438,8 @@ public class Search extends Fragment
              * @param options 需要传入已经BitmapFactory.decodeStream(is, null, options);
              * @return 返回压缩的比率，最小为1
              */
-            public int getInSampleSize(BitmapFactory.Options options) {
+            public int getInSampleSize(BitmapFactory.Options options)
+            {
                 int inSampleSize = 1;
                 int realWith = 68;
                 int realHeight = 44;
@@ -446,7 +448,8 @@ public class Search extends Fragment
                 int outHeight = options.outHeight;
 
                 //获取比率最大的那个
-                if (outWidth > realWith || outHeight > realHeight) {
+                if(outWidth > realWith || outHeight > realHeight)
+                {
                     int withRadio = Math.round(outWidth / realWith);
                     int heightRadio = Math.round(outHeight / realHeight);
                     inSampleSize = withRadio > heightRadio ? withRadio : heightRadio;
@@ -456,6 +459,7 @@ public class Search extends Fragment
 
             /**
              * 根据输入流返回一个压缩的图片
+             *
              * @param input 图片的输入流
              * @return 压缩的图片
              */
@@ -495,7 +499,7 @@ public class Search extends Fragment
             /**
              * 根据url从网络上下载图片
              *
-             * @return
+             * @return 图片
              */
             private Bitmap downloadImage() throws IOException
             {
@@ -505,7 +509,7 @@ public class Search extends Fragment
                 con = (HttpURLConnection) url.openConnection();
                 con.setConnectTimeout(5 * 1000);
                 con.setReadTimeout(10 * 1000);
-                bitmap = BitmapFactory.decodeStream(con.getInputStream());
+                bitmap = getCompressBitmap(con.getInputStream());
                 if(con != null)
                 {
                     con.disconnect();

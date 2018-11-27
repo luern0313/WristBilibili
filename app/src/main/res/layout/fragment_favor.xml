@@ -60,7 +60,7 @@
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:divider="@color/alphe"
-            android:dividerHeight="3dp"
+            android:dividerHeight="1dp"
             android:paddingBottom="22dp" />
     </jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout>
 

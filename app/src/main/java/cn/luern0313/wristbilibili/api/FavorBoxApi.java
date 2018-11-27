@@ -22,12 +22,12 @@ import okhttp3.Response;
  * 收藏还不能用分p助手做好的api。。因为这个是获取自己的。。。
  */
 
-public class FavourApi
+public class FavorBoxApi
 {
     private String cookie;
     private String mid;
 
-    public FavourApi(String cookie, String mid)
+    public FavorBoxApi(String cookie, String mid)
     {
         this.cookie = cookie;
         this.mid = mid;
@@ -44,11 +44,6 @@ public class FavourApi
             e.printStackTrace();
         }
         return null;
-    }
-
-    public String getFavorvideo() throws IOException
-    {
-        return (String) get("http://api.bilibili.com/x/space/fav/arc?vmid=" + mid + "&ps=30&fid=538028&tid=0&keyword=&pn=1&order=fav_time", 1);
     }
 
     private Object get(String url, int mode) throws IOException

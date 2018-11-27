@@ -4,10 +4,10 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:descendantFocusability="blocksDescendants"
-    android:paddingBottom="1dp"
+    android:paddingBottom="2dp"
     android:paddingLeft="19dp"
     android:paddingRight="19dp"
-    android:paddingTop="1dp">
+    android:paddingTop="2dp">
 
     <ImageView
         android:id="@+id/vid_img"
@@ -30,7 +30,8 @@
             android:id="@+id/vid_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:singleLine="true"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:text="bivuivfvfvfvf"
             android:textColor="@color/textcolor3"
             android:textSize="13sp" />
@@ -46,6 +47,8 @@
             android:id="@+id/vid_play"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:text="12.3万播放"
             android:textSize="10sp" />
 

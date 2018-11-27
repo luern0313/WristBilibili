@@ -37,7 +37,9 @@
         <activity android:name=".ui.AboutActivity" />
         <activity android:name=".ui.QRActivity" />
         <activity android:name=".ui.ImgActivity" />
-        <activity android:name=".ui.LogsoffActivity"></activity>
+        <activity android:name=".ui.LogsoffActivity" />
+        <activity android:name=".ui.FavorvideoActivity" />
+        <activity android:name=".ui.OtheruserActivity"></activity>
     </application>
 
 </manifest>

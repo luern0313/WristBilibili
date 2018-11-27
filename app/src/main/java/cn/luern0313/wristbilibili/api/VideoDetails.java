@@ -1,5 +1,6 @@
 package cn.luern0313.wristbilibili.api;
 
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import org.json.JSONException;
@@ -91,9 +92,14 @@ public class VideoDetails
         return (String) getInfoFromJson(getJsonFromJson(videoUserJson, "card"), "sign");
     }
 
+    public Bitmap getVideoUpFace() throws IOException
+    {
+        return (Bitmap) get((String) getInfoFromJson(getJsonFromJson(videoUserJson, "card"), "face"), 2);
+    }
+
     public String getVideoFace()
     {
-        return (String) getInfoFromJson(getJsonFromJson(videoUserJson, "card"), "face");
+        return (String) getInfoFromJson(videoViewJson, "pic");
     }
 
     public boolean isFollowing()

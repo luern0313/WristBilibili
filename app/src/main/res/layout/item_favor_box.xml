@@ -3,17 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:paddingBottom="2dp"
     android:paddingLeft="19dp"
-    android:paddingRight="19dp">
+    android:paddingRight="19dp"
+    android:paddingTop="2dp">
 
     <ImageView
         android:id="@+id/favor_img"
-        android:layout_width="72dp"
+        android:layout_width="70dp"
         android:layout_height="48dp"
         android:background="@drawable/layer_imgshadow"
         android:paddingTop="4dp"
-        android:scaleType="fitXY"
-        android:src="#FFFFFF" />
+        android:scaleType="centerCrop"
+        android:src="@color/textColor" />
 
     <LinearLayout
         android:layout_width="26dp"
@@ -30,12 +32,12 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
             android:textColor="#e0e0e0"
-            android:textSize="12sp" />
+            android:textSize="11sp" />
 
         <ImageView
             android:layout_width="14dp"
             android:layout_height="14dp"
-            app:srcCompat="@android:drawable/ic_menu_myplaces" />
+            android:src="@android:drawable/ic_menu_myplaces" />
 
     </LinearLayout>
 
@@ -54,7 +56,7 @@
             android:layout_marginBottom="6dp"
             android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
-            android:textColor="#222222" />
+            android:textColor="@color/textcolor3" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -68,7 +70,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="6dp"
-                android:text="公开"
                 android:textSize="11sp" />
 
             <TextView

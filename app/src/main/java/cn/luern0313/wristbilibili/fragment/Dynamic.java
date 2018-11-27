@@ -77,7 +77,9 @@ public class Dynamic extends Fragment
             {
                 rootLayout.findViewById(R.id.dy_noweb).setVisibility(View.GONE);
                 rootLayout.findViewById(R.id.dy_nologin).setVisibility(View.GONE);
+                rootLayout.findViewById(R.id.dy_nonthing).setVisibility(View.GONE);
                 dyListView.setVisibility(View.VISIBLE);
+
                 waveSwipeRefreshLayout.setRefreshing(false);
                 adapter = new mAdapter(inflater, dynamicList);
                 dyListView.setAdapter(adapter);
@@ -92,6 +94,7 @@ public class Dynamic extends Fragment
                 waveSwipeRefreshLayout.setRefreshing(false);
                 rootLayout.findViewById(R.id.dy_noweb).setVisibility(View.VISIBLE);
                 rootLayout.findViewById(R.id.dy_nologin).setVisibility(View.GONE);
+                rootLayout.findViewById(R.id.dy_nonthing).setVisibility(View.GONE);
             }
         };
 
@@ -174,6 +177,7 @@ public class Dynamic extends Fragment
         {
             rootLayout.findViewById(R.id.dy_noweb).setVisibility(View.GONE);
             rootLayout.findViewById(R.id.dy_nologin).setVisibility(View.VISIBLE);
+            rootLayout.findViewById(R.id.dy_nonthing).setVisibility(View.GONE);
         }
 
         return rootLayout;
@@ -191,8 +195,12 @@ public class Dynamic extends Fragment
                     userDynamic = new UserDynamic(MainActivity.sharedPreferences.getString("cookies", ""), MainActivity.sharedPreferences.getString("mid", ""));
                     userDynamic.getDynamic();
                     dynamicList = userDynamic.getDynamicList();
-                    isLoading = false;
-                    handler.post(runnableUi);
+                    if(dynamicList != null)
+                    {
+                        isLoading = false;
+                        handler.post(runnableUi);
+                    }
+
                 }
                 catch (IOException e)
                 {

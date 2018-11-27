@@ -40,7 +40,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="34dp">
+            android:paddingBottom="28dp">
 
 
             <TextView
@@ -85,7 +85,7 @@
                 android:layout_marginTop="6dp"
                 android:text="sina 保加利亚超级天王 Azis1999年出道。他的音乐融合保加利亚名族曲风chalga和pop、rap等元素，不过他惊艳的易装秀与浮夸的角色诠释才是他最为出名的地方 Azis与众多保加利亚天王天后级歌手都有过合作."
                 android:textSize="13sp"
-                app:etv_MaxLinesOnShrink="3" />
+                app:etv_MaxLinesOnShrink="5" />
 
 
             <LinearLayout
