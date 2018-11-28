@@ -81,7 +81,6 @@ public class OtheruserActivity extends Activity
                 if(otherUserJson.optBoolean("following"))
                 {
                     uiFollow.setText("已关注");
-                    uiFollow.setTextColor(getResources().getColor(R.color.textcolor3));
                     uiFollow.setBackgroundResource(R.drawable.shape_anre_followbgyes);
                 }
                 if(!otherUserCardJson.optJSONObject("Official").optString("title").equals(""))
@@ -123,7 +122,6 @@ public class OtheruserActivity extends Activity
             public void run()
             {
                 uiFollow.setText("已关注");
-                uiFollow.setTextColor(getResources().getColor(R.color.textcolor3));
                 uiFollow.setBackgroundResource(R.drawable.shape_anre_followbgyes);
             }
         };
@@ -134,10 +132,20 @@ public class OtheruserActivity extends Activity
             public void run()
             {
                 uiFollow.setText("+关注");
-                uiFollow.setTextColor(getResources().getColor(R.color.textColor));
                 uiFollow.setBackgroundResource(R.drawable.shape_anre_followbg);
             }
         };
+
+        ((ImageView) findViewById(R.id.ou_head)).setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Intent intent = new Intent(ctx, ImgActivity.class);
+                intent.putExtra("imgUrl", new String[]{intent.getStringExtra("mid")});
+                startActivity(intent);
+            }
+        });
 
         uiFollow.setOnClickListener(new View.OnClickListener()
         {

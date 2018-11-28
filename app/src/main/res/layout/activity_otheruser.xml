@@ -96,6 +96,7 @@
                     android:paddingLeft="4dp"
                     android:paddingRight="4dp"
                     android:paddingTop="1dp"
+                    android:textColor="@color/textcolor3"
                     android:textSize="9sp"
                     android:textStyle="bold" />
 
@@ -139,7 +140,7 @@
         android:gravity="center"
         android:orientation="vertical"
         android:paddingBottom="33dp"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/ou_loading_img"
