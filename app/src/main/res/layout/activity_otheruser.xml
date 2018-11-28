@@ -47,7 +47,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginLeft="30dp"
                 android:layout_marginRight="30dp"
-                android:layout_marginTop="4dp">
+                android:layout_marginTop="5dp">
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/ou_head"
@@ -101,7 +101,6 @@
                     android:textStyle="bold" />
 
 
-
                 <TextView
                     android:id="@+id/ou_anth"
                     android:layout_width="wrap_content"
@@ -139,8 +138,7 @@
         android:background="@color/textColor"
         android:gravity="center"
         android:orientation="vertical"
-        android:paddingBottom="33dp"
-        android:visibility="gone">
+        android:paddingBottom="33dp">
 
         <ImageView
             android:id="@+id/ou_loading_img"

@@ -39,7 +39,8 @@
         <activity android:name=".ui.ImgActivity" />
         <activity android:name=".ui.LogsoffActivity" />
         <activity android:name=".ui.FavorvideoActivity" />
-        <activity android:name=".ui.OtheruserActivity"></activity>
+        <activity android:name=".ui.OtheruserActivity" />
+        <activity android:name=".ui.SueActivity"></activity>
     </application>
 
 </manifest>

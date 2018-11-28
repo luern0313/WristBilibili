@@ -136,14 +136,14 @@ public class OtheruserActivity extends Activity
             }
         };
 
-        ((ImageView) findViewById(R.id.ou_head)).setOnClickListener(new View.OnClickListener()
+        findViewById(R.id.ou_head).setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                Intent intent = new Intent(ctx, ImgActivity.class);
-                intent.putExtra("imgUrl", new String[]{intent.getStringExtra("mid")});
-                startActivity(intent);
+                Intent i = new Intent(ctx, ImgActivity.class);
+                i.putExtra("imgUrl", new String[]{intent.getStringExtra("mid")});
+                startActivity(i);
             }
         });
 
