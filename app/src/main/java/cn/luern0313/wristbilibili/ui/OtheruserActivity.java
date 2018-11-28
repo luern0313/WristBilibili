@@ -9,9 +9,12 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -44,6 +47,8 @@ public class OtheruserActivity extends Activity
     Runnable runnableUi;
     Runnable runnableHead;
     Runnable runnableNoweb;
+    Runnable runnableFollow;
+    Runnable runnableUnfollow;
 
     ImageView uiLoading;
     TextView uiFollow;
@@ -59,7 +64,7 @@ public class OtheruserActivity extends Activity
         sharedPreferences = getSharedPreferences("default", Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
 
-        othersUser = new OthersUser(sharedPreferences.getString("cookie", ""), sharedPreferences.getString("csrf", ""), intent.getStringExtra("mid"));
+        othersUser = new OthersUser(sharedPreferences.getString("cookies", ""), sharedPreferences.getString("csrf", ""), intent.getStringExtra("mid"));
         uiLoading = findViewById(R.id.ou_loading_img);
         uiFollow = findViewById(R.id.ou_follow);
 
@@ -75,13 +80,21 @@ public class OtheruserActivity extends Activity
                 ((TextView) findViewById(R.id.ou_lv)).setText("LV" + otherUserCardJson.optJSONObject("level_info").optInt("current_level"));
                 if(otherUserJson.optBoolean("following"))
                 {
-                    ((TextView) findViewById(R.id.ou_follow)).setText("已关注");
-                    ((TextView) findViewById(R.id.ou_follow)).setTextColor(getResources().getColor(R.color.textcolor3));
-                    findViewById(R.id.ou_follow).setBackgroundResource(R.drawable.shape_anre_followbgyes);
+                    uiFollow.setText("已关注");
+                    uiFollow.setTextColor(getResources().getColor(R.color.textcolor3));
+                    uiFollow.setBackgroundResource(R.drawable.shape_anre_followbgyes);
                 }
-                ((TextView) findViewById(R.id.ou_anth)).setText(otherUserCardJson.optJSONObject("Official").optString("title"));
-                ((TextView) findViewById(R.id.ou_sign)).setText(otherUserCardJson.optString("sign"));
-                ((TextView) findViewById(R.id.ou_other)).setText("关注:" + otherUserCardJson.optString("friend") + "  粉丝:" + otherUserCardJson.optString("fans")+ "\n投稿:" + otherUserJson.optString("archive_count"));
+                if(!otherUserCardJson.optJSONObject("Official").optString("title").equals(""))
+                {
+                    findViewById(R.id.ou_anth).setVisibility(View.VISIBLE);
+                    ((TextView) findViewById(R.id.ou_anth)).setText(otherUserCardJson.optJSONObject("Official").optString("title"));
+                }
+                if(!otherUserCardJson.optString("sign").equals(""))
+                {
+                    findViewById(R.id.ou_sign).setVisibility(View.VISIBLE);
+                    ((TextView) findViewById(R.id.ou_sign)).setText(otherUserCardJson.optString("sign"));
+                }
+                ((TextView) findViewById(R.id.ou_other)).setText("关注 : " + otherUserCardJson.optString("friend") + "  粉丝 : " + otherUserCardJson.optString("fans")+ "\n投稿 : " + otherUserJson.optString("archive_count"));
             }
         };
 
@@ -104,6 +117,63 @@ public class OtheruserActivity extends Activity
             }
         };
 
+        runnableFollow = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                uiFollow.setText("已关注");
+                uiFollow.setTextColor(getResources().getColor(R.color.textcolor3));
+                uiFollow.setBackgroundResource(R.drawable.shape_anre_followbgyes);
+            }
+        };
+
+        runnableUnfollow = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                uiFollow.setText("+关注");
+                uiFollow.setTextColor(getResources().getColor(R.color.textColor));
+                uiFollow.setBackgroundResource(R.drawable.shape_anre_followbg);
+            }
+        };
+
+        uiFollow.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                new Thread(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        try
+                        {
+                            if(uiFollow.getText().toString().equals("已关注"))
+                            {
+                                othersUser.unfollow();
+                                handler.post(runnableUnfollow);
+                            }
+                            else
+                            {
+                                othersUser.follow();
+                                handler.post(runnableFollow);
+                            }
+                        }
+                        catch (IOException e)
+                        {
+                            Looper.prepare();
+                            Toast.makeText(ctx, "操作失败...", Toast.LENGTH_SHORT).show();
+                            Looper.loop();
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
+            }
+        });
+
         uiLoading.setImageResource(R.drawable.anim_loading);
         AnimationDrawable loadingImgAnim = (AnimationDrawable) uiLoading.getDrawable();
         loadingImgAnim.start();
@@ -123,11 +193,14 @@ public class OtheruserActivity extends Activity
                 }
                 catch (JSONException e)
                 {
+                    Looper.prepare();
+                    Toast.makeText(ctx, "查无此人. . .", Toast.LENGTH_SHORT).show();
+                    Looper.loop();
                     e.printStackTrace();
                 }
                 catch (IOException e)
                 {
-                    e.printStackTrace();
+                    handler.post(runnableNoweb);
                     e.printStackTrace();
                 }
             }

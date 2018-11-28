@@ -116,11 +116,6 @@ public class VideodetailsActivity extends Activity
                 ((TextView) findViewById(R.id.vd_video_details)).setText(videoDetail.getVideoDetail());
                 ((TextView) findViewById(R.id.vd_card_name)).setText(videoDetail.getVideoUpName());
                 ((TextView) findViewById(R.id.vd_card_sen)).setText(videoDetail.getVideoUpSign());
-                if(videoDetail.isFollowing())
-                {
-                    ((TextView) findViewById(R.id.vd_card_button)).setText("已关注");
-                    ((TextView) findViewById(R.id.vd_card_button)).setBackgroundResource(R.drawable.shape_anre_followbgyes);
-                }
                 uiLikeText.setText(videoDetail.getVideoLike());
                 uiCoinText.setText(videoDetail.getVideoCoin());
                 uiFavText.setText(videoDetail.getVideoFav());

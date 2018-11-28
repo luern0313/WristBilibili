@@ -16,6 +16,7 @@ import okhttp3.Response;
 /**
  * Created by liupe on 2018/11/13.
  * 好像用不到了。。
+ * 谁说的！！
  */
 
 public class OthersUser
@@ -39,6 +40,12 @@ public class OthersUser
     {
         String followAPI = "https://api.bilibili.com/x/relation/modify";
         post(followAPI, "fid=" + mid + "&act=1&re_src=11&jsonp=jsonp&csrf=" + csrf);
+    }
+
+    public void unfollow() throws IOException
+    {
+        String followAPI = "https://api.bilibili.com/x/relation/modify";
+        post(followAPI, "fid=" + mid + "&act=2&re_src=11&jsonp=jsonp&csrf=" + csrf);
     }
 
     private Object get(String url, int mode) throws IOException

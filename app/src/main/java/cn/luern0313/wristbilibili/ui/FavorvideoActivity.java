@@ -331,8 +331,8 @@ public class FavorvideoActivity extends Activity
             }
             viewHolder.img.setImageResource(R.drawable.img_default_vid);
             viewHolder.title.setText((String) getInfoFromJson(v, "title"));
-            viewHolder.up.setText("UP:" + getInfoFromJson(getJsonFromJson(v, "owner"), "name"));
-            viewHolder.play.setText("播放:" + getView((int) getInfoFromJson(getJsonFromJson(v, "stat"), "view")) + "  弹幕:" + getInfoFromJson(getJsonFromJson(v, "stat"), "danmaku"));
+            viewHolder.up.setText("UP : " + getInfoFromJson(getJsonFromJson(v, "owner"), "name"));
+            viewHolder.play.setText("播放 : " + getView((int) getInfoFromJson(getJsonFromJson(v, "stat"), "view")) + "  弹幕 : " + getInfoFromJson(getJsonFromJson(v, "stat"), "danmaku"));
 
             viewHolder.img.setTag(getInfoFromJson(v, "pic"));
             BitmapDrawable c = setImageFormWeb((String) getInfoFromJson(v, "pic"));

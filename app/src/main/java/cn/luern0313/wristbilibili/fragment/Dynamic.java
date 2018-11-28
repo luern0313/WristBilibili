@@ -57,6 +57,7 @@ public class Dynamic extends Fragment
     Runnable runnableNoWeb;
     Runnable runnableNoWebH;
     Runnable runnableAddlist;
+    Runnable runnableNodata;
 
     boolean isLoading = true;
     public static boolean isLogin = false;
@@ -108,6 +109,19 @@ public class Dynamic extends Fragment
                 ((TextView) loadingView.findViewById(R.id.dyload_text)).setText("好像没有网络...\n检查下网络？");
                 loadingView.findViewById(R.id.dyload_button).setVisibility(View.VISIBLE);
                 isLoading = false;
+            }
+        };
+
+        runnableNodata = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                rootLayout.findViewById(R.id.dy_noweb).setVisibility(View.GONE);
+                rootLayout.findViewById(R.id.dy_nologin).setVisibility(View.VISIBLE);
+                rootLayout.findViewById(R.id.dy_nonthing).setVisibility(View.GONE);
+                dyListView.setVisibility(View.GONE);
+                waveSwipeRefreshLayout.setRefreshing(false);
             }
         };
 
@@ -180,6 +194,7 @@ public class Dynamic extends Fragment
             rootLayout.findViewById(R.id.dy_noweb).setVisibility(View.GONE);
             rootLayout.findViewById(R.id.dy_nologin).setVisibility(View.VISIBLE);
             rootLayout.findViewById(R.id.dy_nonthing).setVisibility(View.GONE);
+            dyListView.setVisibility(View.GONE);
         }
 
         return rootLayout;
@@ -204,10 +219,7 @@ public class Dynamic extends Fragment
                     }
                     else
                     {
-                        rootLayout.findViewById(R.id.dy_noweb).setVisibility(View.GONE);
-                        rootLayout.findViewById(R.id.dy_nologin).setVisibility(View.GONE);
-                        rootLayout.findViewById(R.id.dy_nonthing).setVisibility(View.VISIBLE);
-                        dyListView.setVisibility(View.GONE);
+                        handler.post(runnableNodata);
                     }
                 }
                 catch (IOException e)

@@ -343,8 +343,8 @@ public class Search extends Fragment
             }
             viewHolder.img.setImageResource(R.drawable.img_default_vid);
             viewHolder.title.setText((String) getInfoFromJson(v, "title"));
-            viewHolder.up.setText("UP:" + getInfoFromJson(v, "author"));
-            viewHolder.play.setText("播放:" + getView((int) getInfoFromJson(v, "play")) + "  弹幕:" + getInfoFromJson(v, "video_review"));
+            viewHolder.up.setText("UP : " + getInfoFromJson(v, "author"));
+            viewHolder.play.setText("播放 : " + getView((int) getInfoFromJson(v, "play")) + "  弹幕 : " + getInfoFromJson(v, "video_review"));
 
             viewHolder.img.setTag("https:" + getInfoFromJson(v, "pic"));
             BitmapDrawable c = setImageFormWeb("https:" + getInfoFromJson(v, "pic"));

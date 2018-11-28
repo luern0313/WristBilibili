@@ -59,6 +59,7 @@ public class FavorBox extends Fragment
     Handler handler = new Handler();
     Runnable runnableUi;
     Runnable runnableNoWeb;
+    Runnable runnableNodata;
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -97,6 +98,7 @@ public class FavorBox extends Fragment
             {
                 rootLayout.findViewById(R.id.fav_nologin).setVisibility(View.GONE);
                 rootLayout.findViewById(R.id.fav_noweb).setVisibility(View.GONE);
+                rootLayout.findViewById(R.id.fav_nonthing).setVisibility(View.GONE);
                 favListView.setAdapter(new mAdapter(inflater, favourboxArray));
                 favListView.setVisibility(View.VISIBLE);
                 waveSwipeRefreshLayout.setRefreshing(false);
@@ -110,6 +112,20 @@ public class FavorBox extends Fragment
             {
                 rootLayout.findViewById(R.id.fav_nologin).setVisibility(View.GONE);
                 rootLayout.findViewById(R.id.fav_noweb).setVisibility(View.VISIBLE);
+                rootLayout.findViewById(R.id.fav_nonthing).setVisibility(View.GONE);
+                favListView.setVisibility(View.GONE);
+                waveSwipeRefreshLayout.setRefreshing(false);
+            }
+        };
+
+        runnableNodata = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                rootLayout.findViewById(R.id.fav_nologin).setVisibility(View.GONE);
+                rootLayout.findViewById(R.id.fav_noweb).setVisibility(View.GONE);
+                rootLayout.findViewById(R.id.fav_nonthing).setVisibility(View.VISIBLE);
                 favListView.setVisibility(View.GONE);
                 waveSwipeRefreshLayout.setRefreshing(false);
             }
@@ -166,11 +182,12 @@ public class FavorBox extends Fragment
                     }
                     else
                     {
-                        handler.post(runnableNoWeb);
+                        handler.post(runnableNodata);
                     }
                 }
                 catch (IOException e)
                 {
+                    handler.post(runnableNoWeb);
                     e.printStackTrace();
                 }
             }

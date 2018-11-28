@@ -370,22 +370,6 @@
                         android:src="@drawable/img_default_animation" />
 
                     <TextView
-                        android:id="@+id/vd_card_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginRight="5dp"
-                        android:background="@drawable/shape_anre_followbg"
-                        android:paddingBottom="4dp"
-                        android:paddingLeft="6dp"
-                        android:paddingRight="6dp"
-                        android:paddingTop="4dp"
-                        android:text="+关注"
-                        android:textColor="@color/textColor"
-                        android:textSize="11sp" />
-
-                    <TextView
                         android:id="@+id/vd_card_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -393,7 +377,6 @@
                         android:layout_marginLeft="5dp"
                         android:layout_marginRight="2dp"
                         android:layout_marginTop="7dp"
-                        android:layout_toLeftOf="@+id/vd_card_button"
                         android:layout_toRightOf="@+id/vd_card_head"
                         android:ellipsize="end"
                         android:maxLines="1"
@@ -409,7 +392,6 @@
                         android:layout_below="@+id/vd_card_name"
                         android:layout_marginLeft="5dp"
                         android:layout_marginRight="2dp"
-                        android:layout_toLeftOf="@+id/vd_card_button"
                         android:layout_toRightOf="@+id/vd_card_head"
                         android:ellipsize="end"
                         android:maxLines="1"

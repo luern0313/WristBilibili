@@ -56,11 +56,32 @@
                     android:src="@drawable/img_default_avatar" />
 
                 <TextView
-                    android:id="@+id/ou_name"
+                    android:id="@+id/ou_follow"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
                     android:layout_below="@+id/ou_head"
+                    android:layout_marginTop="1dp"
+                    android:background="@drawable/shape_anre_followbg"
+                    android:paddingBottom="4dp"
+                    android:paddingLeft="6dp"
+                    android:paddingRight="6dp"
+                    android:paddingTop="4dp"
+                    android:text="+关注"
+                    android:textColor="@color/textColor"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/ou_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_below="@+id/ou_head"
+                    android:layout_marginRight="2dp"
                     android:layout_marginTop="2dp"
+                    android:layout_toLeftOf="@+id/ou_follow"
+                    android:ellipsize="end"
+                    android:maxLines="1"
                     android:textColor="@color/colorAccent"
                     android:textStyle="bold" />
 
@@ -78,21 +99,7 @@
                     android:textSize="9sp"
                     android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/ou_follow"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignTop="@+id/ou_name"
-                    android:layout_marginTop="1dp"
-                    android:background="@drawable/shape_anre_followbg"
-                    android:paddingBottom="4dp"
-                    android:paddingLeft="6dp"
-                    android:paddingRight="6dp"
-                    android:paddingTop="4dp"
-                    android:text="+关注"
-                    android:textColor="@color/textColor"
-                    android:textSize="13sp" />
+
 
                 <TextView
                     android:id="@+id/ou_anth"
@@ -131,7 +138,8 @@
         android:background="@color/textColor"
         android:gravity="center"
         android:orientation="vertical"
-        android:paddingBottom="33dp">
+        android:paddingBottom="33dp"
+        android:visibility="visible">
 
         <ImageView
             android:id="@+id/ou_loading_img"
