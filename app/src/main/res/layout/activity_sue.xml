@@ -1,9 +1,140 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="cn.luern0313.wristbilibili.ui.SueActivity">
+    android:layout_height="match_parent">
 
-</android.support.constraint.ConstraintLayout>
+    <RelativeLayout
+        android:id="@+id/dt_title_layout"
+        android:layout_width="match_parent"
+        android:layout_height="33dp"
+        android:background="@color/mainColor"
+        android:gravity="center_vertical"
+        android:paddingBottom="4dp"
+        android:paddingTop="10dp">
+
+        <TextView
+            android:id="@+id/dt_title_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="炫耀一下"
+            android:textColor="@color/textColor"
+            android:textSize="13sp" />
+
+        <ImageView
+            android:id="@+id/dt_title_extraicon"
+            android:layout_width="12dp"
+            android:layout_height="19dp"
+            android:layout_marginLeft="2dp"
+            android:layout_toLeftOf="@+id/dt_title_title"
+            android:rotation="90"
+            android:src="@drawable/icon_extra" />
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/dt_title_layout">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingBottom="22dp">
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                android:gravity="center_horizontal"
+                android:text="想不想发个动态炫耀炫耀自己在用手表刷b站？" />
+
+            <TextView
+                android:id="@+id/dt_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:background="@color/shareBG"
+                android:paddingBottom="10dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingTop="10dp"
+                android:textSize="13sp" />
+
+            <Button
+                android:id="@+id/dt_re"
+                android:layout_width="match_parent"
+                android:layout_height="38dp"
+                android:layout_marginLeft="60dp"
+                android:layout_marginRight="60dp"
+                android:layout_marginTop="6dp"
+                android:onClick="clickRe"
+                android:text="换一条"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/dt_send"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:onClick="clickSend"
+                android:text="发送"
+                android:textColor="@color/textColor" />
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/dt_nologin"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/dt_title_layout"
+        android:layout_centerInParent="true"
+        android:background="@color/activityBG"
+        android:clickable="true"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingTop="20dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="88dp"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/img_videonotfound" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="你还没登录. . ." />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/dt_loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/dt_title_layout"
+        android:layout_centerInParent="true"
+        android:clickable="true"
+        android:gravity="center"
+        android:paddingBottom="20dp"
+        android:visibility="gone">
+
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+</RelativeLayout>
+

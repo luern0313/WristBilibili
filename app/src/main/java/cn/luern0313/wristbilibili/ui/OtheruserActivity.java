@@ -76,6 +76,8 @@ public class OtheruserActivity extends Activity
                 findViewById(R.id.ou_loading).setVisibility(View.GONE);
                 findViewById(R.id.ou_noweb).setVisibility(View.GONE);
 
+                if(otherUserCardJson.optJSONObject("vip").optInt("vipStatus") == 0)
+                    ((TextView) findViewById(R.id.ou_name)).setTextColor(getResources().getColor(R.color.textcolor3));
                 ((TextView) findViewById(R.id.ou_name)).setText(otherUserCardJson.optString("name"));
                 ((TextView) findViewById(R.id.ou_lv)).setText("LV" + otherUserCardJson.optJSONObject("level_info").optInt("current_level"));
                 if(otherUserJson.optBoolean("following"))
@@ -142,7 +144,7 @@ public class OtheruserActivity extends Activity
             public void onClick(View v)
             {
                 Intent i = new Intent(ctx, ImgActivity.class);
-                i.putExtra("imgUrl", new String[]{intent.getStringExtra("mid")});
+                i.putExtra("imgUrl", new String[]{otherUserCardJson.optString("face")});
                 startActivity(i);
             }
         });

@@ -49,41 +49,37 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="21dp"
                 android:layout_marginRight="21dp"
-                android:layout_marginTop="6dp"
-                android:text="保加利亚妖王AZIS  MV视频合辑"
+                android:layout_marginTop="7dp"
                 android:textColor="@color/textcolor3" />
 
             <TextView
                 android:id="@+id/vd_video_play"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="19dp"
-                android:layout_marginRight="19dp"
+                android:layout_marginLeft="21dp"
+                android:layout_marginRight="21dp"
                 android:layout_marginTop="4dp"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="播放:156.1万  弹幕:1548"
                 android:textSize="11sp" />
 
             <TextView
                 android:id="@+id/vd_video_time"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="19dp"
-                android:layout_marginRight="19dp"
+                android:layout_marginLeft="21dp"
+                android:layout_marginRight="21dp"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="2011-11-09 22:55  AV170001"
                 android:textSize="11sp" />
 
             <cn.carbs.android.expandabletextview.library.ExpandableTextView
                 android:id="@+id/vd_video_details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="19dp"
-                android:layout_marginRight="19dp"
+                android:layout_marginLeft="21dp"
+                android:layout_marginRight="21dp"
                 android:layout_marginTop="6dp"
-                android:text="sina 保加利亚超级天王 Azis1999年出道。他的音乐融合保加利亚名族曲风chalga和pop、rap等元素，不过他惊艳的易装秀与浮夸的角色诠释才是他最为出名的地方 Azis与众多保加利亚天王天后级歌手都有过合作."
                 android:textSize="13sp"
                 app:etv_MaxLinesOnShrink="5" />
 
@@ -380,8 +376,7 @@
                         android:layout_toRightOf="@+id/vd_card_head"
                         android:ellipsize="end"
                         android:maxLines="1"
-                        android:text="luern0313"
-                        android:textColor="@color/mainColor"
+                        android:textColor="@color/textcolor3"
                         android:textSize="13sp"
                         android:textStyle="bold" />
 
@@ -395,7 +390,6 @@
                         android:layout_toRightOf="@+id/vd_card_head"
                         android:ellipsize="end"
                         android:maxLines="1"
-                        android:text="啊，seigai"
                         android:textColor="@color/textcolor3"
                         android:textSize="10sp" />
                 </RelativeLayout>
@@ -410,6 +404,7 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/vd_title_layout"
         android:background="@color/textColor"
+        android:clickable="true"
         android:gravity="center"
         android:orientation="vertical"
         android:paddingBottom="33dp"
@@ -434,6 +429,7 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/vd_title_layout"
         android:background="@color/textColor"
+        android:clickable="true"
         android:gravity="center"
         android:orientation="vertical"
         android:paddingBottom="33dp"
@@ -458,6 +454,7 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/vd_title_layout"
         android:background="@color/textColor"
+        android:clickable="true"
         android:gravity="center"
         android:orientation="vertical"
         android:paddingBottom="33dp"

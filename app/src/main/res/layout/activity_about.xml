@@ -64,24 +64,20 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="6dp"
                 android:gravity="center_horizontal"
-                android:text="集成基础b站功能的非官方客户端"
+                android:text="集成部分b站功能的非官方客户端"
                 android:textSize="12sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:text="程序:luern0313\n图标设计制作:一佳一等于一\n\n部分图标使用或修改自b站客户端和网页的资源，该部分图标版权归原作者所有\n\n本程序非商业使用，仅因兴趣所作...b站不要起诉我啊，有什么事情咱们商量着来好不好..."
+                android:text="程序 : luern0313\n图标设计制作 : 一佳一等于一\n\n部分图标使用或修改自b站客户端和网页的资源，该部分图标版权归原作者所有\n\n本程序非商业使用，仅因兴趣所作...b站不要起诉我啊，要是起诉我，我就...我就...我就哭给你看......有什么事情咱们商量着来好不好......"
                 android:textSize="12sp" />
 
-            <Button
-                android:id="@+id/button"
-                style="@style/Widget.AppCompat.Button.Colored"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:text="我是b站,我要起诉你！"
-                android:textColor="@color/textColor"
-                android:textSize="12sp" />
+            <ImageView
+                android:id="@+id/about_33"
+                android:layout_width="120dp"
+                android:layout_height="120dp" />
 
             <TextView
                 android:layout_width="wrap_content"

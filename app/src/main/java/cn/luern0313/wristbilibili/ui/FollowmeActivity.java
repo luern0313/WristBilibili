@@ -3,18 +3,29 @@ package cn.luern0313.wristbilibili.ui;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.CardView;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
 import cn.luern0313.wristbilibili.R;
+import cn.luern0313.wristbilibili.api.OthersUser;
+import cn.luern0313.wristbilibili.api.VideoDetails;
 
 /**
  * Created by liupe on 2018/11/11.
@@ -24,6 +35,12 @@ import cn.luern0313.wristbilibili.R;
 public class FollowmeActivity extends Activity
 {
     Context ctx;
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
+
+    String cookies;
+    String csrf;
+    String mid;
 
     CardView cardView;
     RelativeLayout cardViewLay;
@@ -33,6 +50,9 @@ public class FollowmeActivity extends Activity
     ImageView likeViewImg;
     ImageView coinViewImg;
 
+    OthersUser othersUser;
+    JSONArray jsonArray = null;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState)
     {
@@ -40,7 +60,13 @@ public class FollowmeActivity extends Activity
         setContentView(R.layout.activity_followme);
         ctx = this;
 
-        Toast.makeText(ctx, "这只是一个界面，不会真的关注", Toast.LENGTH_LONG).show();
+        sharedPreferences = getSharedPreferences("default", Context.MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+        cookies = sharedPreferences.getString("cookies", "");
+        csrf = sharedPreferences.getString("csrf", "");
+        mid = sharedPreferences.getString("mid", "");
+        othersUser = new OthersUser(cookies, csrf, "8014831");
+
         cardView = findViewById(R.id.fme_card);
         cardViewLay = findViewById(R.id.fme_card_lay);
         cardViewText = findViewById(R.id.fme_card_button);
@@ -59,6 +85,24 @@ public class FollowmeActivity extends Activity
                 {
                     cardViewText.setText("已关注");
                     cardViewText.setBackgroundResource(R.drawable.shape_anre_followbgyes);
+                    new Thread(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            try
+                            {
+                                othersUser.follow();
+                            }
+                            catch (Exception e)
+                            {
+                                e.printStackTrace();
+                                Looper.prepare();
+                                Toast.makeText(ctx, "关注失败...", Toast.LENGTH_SHORT).show();
+                                Looper.loop();
+                            }
+                        }
+                    }).start();
                 }
                 return true;
             }
@@ -72,6 +116,28 @@ public class FollowmeActivity extends Activity
                 if(event.getAction() == MotionEvent.ACTION_DOWN)
                 {
                     likeViewImg.setImageResource(R.drawable.icon_like_yes);
+                    new Thread(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            try
+                            {
+                                if(jsonArray == null)
+                                    jsonArray = new JSONObject(othersUser.getOtheruserVideo()).getJSONObject("data").getJSONArray("vlist");
+                                VideoDetails videoDetails = null;
+                                for(int i = 0; i < jsonArray.length(); i++)
+                                {
+                                   videoDetails = new VideoDetails(cookies, csrf, mid, String.valueOf(jsonArray.getJSONObject(i).getInt("aid")));
+                                   videoDetails.likeVideo(1);
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                e.printStackTrace();
+                            }
+                        }
+                    }).start();
                 }
                 return true;
             }
@@ -85,6 +151,28 @@ public class FollowmeActivity extends Activity
                 if(event.getAction() == MotionEvent.ACTION_DOWN)
                 {
                     coinViewImg.setImageResource(R.drawable.icon_coin_yes);
+                    new Thread(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            try
+                            {
+                                if(jsonArray == null)
+                                    jsonArray = new JSONObject(othersUser.getOtheruserVideo()).getJSONObject("data").getJSONArray("vlist");
+                                VideoDetails videoDetails = null;
+                                for(int i = 0; i < 5; i++)
+                                {
+                                    videoDetails = new VideoDetails(cookies, csrf, mid, String.valueOf(jsonArray.getJSONObject(i).getInt("aid")));
+                                    videoDetails.coinVideo(2);
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                e.printStackTrace();
+                            }
+                        }
+                    }).start();
                 }
                 return true;
             }

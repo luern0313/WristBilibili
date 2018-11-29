@@ -21,6 +21,7 @@ import cn.luern0313.wristbilibili.ui.FollowmeActivity;
 import cn.luern0313.wristbilibili.ui.JoinqqActivity;
 import cn.luern0313.wristbilibili.ui.LogsoffActivity;
 import cn.luern0313.wristbilibili.ui.OpensourceActivity;
+import cn.luern0313.wristbilibili.ui.SueActivity;
 import cn.luern0313.wristbilibili.ui.SupportActivity;
 
 /**
@@ -42,7 +43,7 @@ public class Setting extends Fragment
 
         setList = rootLayout.findViewById(R.id.set_listview);
 
-        final ArrayList<String> list = new ArrayList<String>(Arrays.asList("注销", "关注作者b站账号", "支持作者", "关于开源", "联系作者", "关于"));
+        final ArrayList<String> list = new ArrayList<String>(Arrays.asList("注销", "关注作者b站账号", "发动态炫耀一下", "支持作者", "关于开源", "联系作者", "关于"));
         mAdapter mAdapter = new mAdapter(inflater, list);
         setList.setAdapter(mAdapter);
 
@@ -59,6 +60,11 @@ public class Setting extends Fragment
                 else if(list.get(position).equals("关注作者b站账号"))
                 {
                     Intent intent = new Intent(ctx, FollowmeActivity.class);
+                    startActivity(intent);
+                }
+                else if(list.get(position).equals("发动态炫耀一下"))
+                {
+                    Intent intent = new Intent(ctx, SueActivity.class);
                     startActivity(intent);
                 }
                 else if(list.get(position).equals("支持作者"))

@@ -136,6 +136,7 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/ou_title_layout"
         android:background="@color/textColor"
+        android:clickable="true"
         android:gravity="center"
         android:orientation="vertical"
         android:paddingBottom="33dp">
@@ -159,6 +160,7 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/ou_title_layout"
         android:background="@color/textColor"
+        android:clickable="true"
         android:gravity="center"
         android:orientation="vertical"
         android:paddingBottom="33dp"

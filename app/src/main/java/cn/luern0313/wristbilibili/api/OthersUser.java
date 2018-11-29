@@ -36,6 +36,11 @@ public class OthersUser
         return (String) get("https://api.bilibili.com/x/web-interface/card?mid=" + mid + "&photo=1", 1);
     }
 
+    public String getOtheruserVideo() throws IOException
+    {
+        return (String) get("https://space.bilibili.com/ajax/member/getSubmitVideos?mid=" + mid + "&pagesize=30&tid=0&page=1&keyword=&order=pubdate", 1);
+    }
+
     public void follow() throws IOException
     {
         String followAPI = "https://api.bilibili.com/x/relation/modify";
