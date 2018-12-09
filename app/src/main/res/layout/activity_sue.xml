@@ -127,7 +127,6 @@
         android:paddingBottom="20dp"
         android:visibility="gone">
 
-
         <ProgressBar
             android:id="@+id/progressBar"
             style="?android:attr/progressBarStyle"

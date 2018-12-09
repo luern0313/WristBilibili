@@ -44,7 +44,7 @@ public class SueActivity extends Activity
         uiLoading = findViewById(R.id.dt_loading);
         uiNologin = findViewById(R.id.dt_nologin);
         sendDynamic = new SendDynamic(sharedPreferences.getString("cookies", ""), sharedPreferences.getString("mid", ""), sharedPreferences.getString("csrf", ""));
-        uiText.setText(Html.fromHtml("<font color=\"#3F51B5\">#腕上哔哩# </font>" + sendDynamic.getNextShareText()));
+        uiText.setText(Html.fromHtml("<font color=\"#3F51B5\">#腕上哔哩# #用手表上b站# </font>" + sendDynamic.getNextShareText()));
 
         if(!sharedPreferences.contains("cookies"))
             uiNologin.setVisibility(View.VISIBLE);
@@ -61,7 +61,7 @@ public class SueActivity extends Activity
 
     public void clickRe(View view)
     {
-        uiText.setText(Html.fromHtml("<font color=\"#3F51B5\">#腕上哔哩# </font>" + sendDynamic.getNextShareText()));
+        uiText.setText(Html.fromHtml("<font color=\"#3F51B5\">#腕上哔哩# #用手表上b站# </font>" + sendDynamic.getNextShareText()));
     }
 
     public void clickSend(View view)
@@ -74,15 +74,18 @@ public class SueActivity extends Activity
             {
                 try
                 {
-                    sendDynamic.shardVideo("#腕上哔哩#" + sendDynamic.getNowShareText());
+                    sendDynamic.shardVideo("#腕上哔哩# #用手表上b站# " + sendDynamic.getNowShareText());
+                    Looper.prepare();
+                    Toast.makeText(ctx, "发送成功！", Toast.LENGTH_SHORT).show();
                     handler.post(runnableUi);
+                    Looper.loop();
                 }
                 catch (IOException e)
                 {
                     Looper.prepare();
                     Toast.makeText(ctx, "好像没有网络连接呢...", Toast.LENGTH_SHORT).show();
-                    Looper.loop();
                     handler.post(runnableUi);
+                    Looper.loop();
                     e.printStackTrace();
                 }
             }

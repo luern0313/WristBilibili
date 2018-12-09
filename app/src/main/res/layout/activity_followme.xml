@@ -1,217 +1,253 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/fme_title_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/mainColor"
+        android:gravity="center_vertical"
+        android:paddingBottom="4dp"
+        android:paddingTop="10dp">
+
+        <TextView
+            android:id="@+id/fme_title_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="关注我"
+            android:textColor="@color/textColor" />
+
+        <ImageView
+            android:id="@+id/fme_title_extraicon"
+            android:layout_width="12dp"
+            android:layout_height="19dp"
+            android:layout_marginLeft="2dp"
+            android:layout_toLeftOf="@+id/fme_title_title"
+            android:rotation="90"
+            android:src="@drawable/icon_extra" />
+
+    </RelativeLayout>
+
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center_horizontal"
-        android:orientation="vertical">
+        android:layout_below="@+id/fme_title_layout">
 
-        <RelativeLayout
-            android:id="@+id/fme_title_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/mainColor"
-            android:gravity="center_vertical"
-            android:paddingBottom="4dp"
-            android:paddingTop="10dp">
 
-            <TextView
-                android:id="@+id/fme_title_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:text="关注我"
-                android:textColor="@color/textColor" />
-
-            <ImageView
-                android:id="@+id/fme_title_extraicon"
-                android:layout_width="12dp"
-                android:layout_height="19dp"
-                android:layout_marginLeft="2dp"
-                android:layout_toLeftOf="@+id/fme_title_title"
-                android:rotation="90"
-                android:src="@drawable/icon_extra" />
-
-        </RelativeLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="6dp"
-            android:text="关注软件作者小哥哥的b站账号吧~"
-            android:textSize="12sp" />
-
-        <android.support.v7.widget.CardView
-            android:id="@+id/fme_card"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="17dp"
-            android:layout_marginRight="17dp"
-            android:layout_marginTop="6dp"
-            android:clickable="true"
-            android:descendantFocusability="blocksDescendants"
-            app:cardCornerRadius="4dp"
-            app:cardElevation="6dp">
-
-            <RelativeLayout
-                android:id="@+id/fme_card_lay"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <ImageView
-                    android:id="@+id/fme_card_head"
-                    android:layout_width="52dp"
-                    android:layout_height="52dp"
-                    android:src="@drawable/img_temp" />
-
-                <TextView
-                    android:id="@+id/fme_card_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="6dp"
-                    android:layout_toRightOf="@+id/fme_card_head"
-                    android:text="luern0313"
-                    android:textColor="@color/mainColor"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/fme_card_lv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/fme_card_name"
-                    android:layout_marginLeft="6dp"
-                    android:layout_toRightOf="@+id/fme_card_head"
-                    android:background="@drawable/shape_lvbg_fme"
-                    android:paddingBottom="1dp"
-                    android:paddingLeft="4dp"
-                    android:paddingRight="4dp"
-                    android:paddingTop="1dp"
-                    android:text="LV6"
-                    android:textColor="@color/textcolor3"
-                    android:textSize="8sp" />
-
-                <TextView
-                    android:id="@+id/fme_card_video"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/fme_card_name"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginTop="-1dp"
-                    android:layout_toRightOf="@+id/fme_card_lv"
-                    android:text="投稿:15+"
-                    android:textColor="@color/textcolor3"
-                    android:textSize="10sp" />
-
-                <TextView
-                    android:id="@+id/fme_card_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="5dp"
-                    android:background="@drawable/shape_anre_followbg"
-                    android:paddingBottom="4dp"
-                    android:paddingLeft="6dp"
-                    android:paddingRight="6dp"
-                    android:paddingTop="4dp"
-                    android:text="+关注"
-                    android:textColor="@color/textColor"
-                    android:textSize="13sp" />
-            </RelativeLayout>
-
-        </android.support.v7.widget.CardView>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:text="  然后..."
-            android:textSize="13sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
 
-            <LinearLayout
-                android:id="@+id/fme_like"
-                android:layout_width="0dp"
+
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="?android:attr/selectableItemBackground"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="7dp"
+                android:text="关注软件作者小哥哥的b站账号吧~"
+                android:textSize="12sp" />
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/fme_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="7dp"
                 android:clickable="true"
                 android:descendantFocusability="blocksDescendants"
-                android:gravity="center_horizontal"
-                android:orientation="vertical"
-                android:paddingBottom="3dp"
-                android:paddingTop="3dp">
+                app:cardCornerRadius="4dp"
+                app:cardElevation="6dp">
 
-                <ImageView
-                    android:id="@+id/fme_like_img"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:src="@drawable/icon_like_no" />
+                <RelativeLayout
+                    android:id="@+id/fme_card_lay"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/fme_card_head"
+                        android:layout_width="52dp"
+                        android:layout_height="52dp"
+                        android:src="@drawable/img_temp" />
+
+                    <TextView
+                        android:id="@+id/fme_card_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="6dp"
+                        android:layout_toRightOf="@+id/fme_card_head"
+                        android:text="luern0313"
+                        android:textColor="@color/mainColor"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/fme_card_lv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/fme_card_name"
+                        android:layout_marginLeft="6dp"
+                        android:layout_toRightOf="@+id/fme_card_head"
+                        android:background="@drawable/shape_lvbg_fme"
+                        android:paddingBottom="1dp"
+                        android:paddingLeft="4dp"
+                        android:paddingRight="4dp"
+                        android:paddingTop="1dp"
+                        android:text="LV6"
+                        android:textColor="@color/textcolor3"
+                        android:textSize="8sp" />
+
+                    <TextView
+                        android:id="@+id/fme_card_video"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/fme_card_name"
+                        android:layout_marginLeft="4dp"
+                        android:layout_marginTop="-1dp"
+                        android:layout_toRightOf="@+id/fme_card_lv"
+                        android:text="投稿:15+"
+                        android:textColor="@color/textcolor3"
+                        android:textSize="10sp" />
+
+                    <TextView
+                        android:id="@+id/fme_card_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="5dp"
+                        android:background="@drawable/shape_anre_followbg"
+                        android:paddingBottom="4dp"
+                        android:paddingLeft="6dp"
+                        android:paddingRight="6dp"
+                        android:paddingTop="4dp"
+                        android:text="+关注"
+                        android:textColor="@color/textColor"
+                        android:textSize="13sp" />
+                </RelativeLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="  然后..."
+                android:textSize="13sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/fme_like"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:descendantFocusability="blocksDescendants"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:paddingBottom="4dp"
+                    android:paddingTop="4dp">
+
+                    <ImageView
+                        android:id="@+id/fme_like_img"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:src="@drawable/icon_like_no" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="点个赞"
+                        android:textSize="13sp" />
+                </LinearLayout>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="点个赞"
+                    android:layout_gravity="bottom"
+                    android:paddingBottom="3dp"
+                    android:text="再"
                     android:textSize="13sp" />
+
+                <LinearLayout
+                    android:id="@+id/fme_coin"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:descendantFocusability="blocksDescendants"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:paddingBottom="4dp"
+                    android:paddingTop="4dp">
+
+                    <ImageView
+                        android:id="@+id/fme_coin_img"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:src="@drawable/icon_coin_no" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="投个币"
+                        android:textSize="13sp" />
+
+                </LinearLayout>
             </LinearLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:paddingBottom="3dp"
-                android:text="再"
-                android:textSize="13sp" />
-
-            <LinearLayout
-                android:id="@+id/fme_coin"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="?android:attr/selectableItemBackground"
-                android:clickable="true"
-                android:descendantFocusability="blocksDescendants"
+                android:layout_marginBottom="18dp"
+                android:layout_marginTop="4dp"
                 android:gravity="center_horizontal"
-                android:orientation="vertical"
-                android:paddingBottom="3dp"
-                android:paddingTop="3dp">
-
-                <ImageView
-                    android:id="@+id/fme_coin_img"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:src="@drawable/icon_coin_no" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="投个币"
-                    android:textSize="13sp" />
-
-            </LinearLayout>
+                android:text="新大学生独立开发软件不容易...\n\n   感谢支持！"
+                android:textSize="13sp" />
         </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/fme_nologin"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/fme_title_layout"
+        android:layout_centerInParent="true"
+        android:background="@color/activityBG"
+        android:clickable="true"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingTop="20dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="88dp"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/img_videonotfound" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="18dp"
             android:layout_marginTop="4dp"
-            android:gravity="center_horizontal"
-            android:text="新大学生独立开发软件不容易...\n\n   感谢支持！"
-            android:textSize="13sp" />
+            android:text="你还没登录. . ." />
     </LinearLayout>
-</ScrollView>
+
+</RelativeLayout>

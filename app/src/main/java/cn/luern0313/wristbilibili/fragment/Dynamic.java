@@ -25,6 +25,8 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import org.json.JSONException;
+
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -221,6 +223,11 @@ public class Dynamic extends Fragment
                     {
                         handler.post(runnableNodata);
                     }
+                }
+                catch (NullPointerException e)
+                {
+                    handler.post(runnableNodata);
+                    e.printStackTrace();
                 }
                 catch (IOException e)
                 {

@@ -9,6 +9,7 @@ import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -357,18 +358,37 @@ public class VideodetailsActivity extends Activity
             {
                 try
                 {
-                    if(isCoined < 2)
+                    if(videoDetail.getVideoCopyright() == 1)  //1原创
                     {
-                        isCoined++;
-                        videoDetail.coinVideo(1);
-                        videoDetail.setSelfCoined(1);
-                        Looper.prepare();
-                        Toast.makeText(ctx, "你投了一个硬币！再次点击可以再次投币！", Toast.LENGTH_SHORT).show();
+                        if(isCoined < 2)
+                        {
+                            isCoined++;
+                            videoDetail.coinVideo(1);
+                            videoDetail.setSelfCoined(1);
+                            Looper.prepare();
+                            Toast.makeText(ctx, "你投了一个硬币！再次点击可以再次投币！", Toast.LENGTH_SHORT).show();
+                        }
+                        else
+                        {
+                            Looper.prepare();
+                            Toast.makeText(ctx, "最多投两个硬币...", Toast.LENGTH_SHORT).show();
+                        }
                     }
-                    else
+                    else  //2转载
                     {
-                        Looper.prepare();
-                        Toast.makeText(ctx, "最多投两个硬币...", Toast.LENGTH_SHORT).show();
+                        if(isCoined < 1)
+                        {
+                            isCoined++;
+                            videoDetail.coinVideo(1);
+                            videoDetail.setSelfCoined(1);
+                            Looper.prepare();
+                            Toast.makeText(ctx, "你投了一个硬币！本稿件最多投一个硬币", Toast.LENGTH_SHORT).show();
+                        }
+                        else
+                        {
+                            Looper.prepare();
+                            Toast.makeText(ctx, "本稿件最多投一个硬币...", Toast.LENGTH_SHORT).show();
+                        }
                     }
                     handler.post(runnableImg);
                     Looper.loop();

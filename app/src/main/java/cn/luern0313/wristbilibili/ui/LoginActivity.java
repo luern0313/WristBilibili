@@ -149,10 +149,14 @@ public class LoginActivity extends Activity
                             Dynamic.isLogin = true;
                             AniRemind.isLogin = true;
 
+                            Intent intent1 = new Intent(ctx, FollowmeActivity.class);
+                            startActivity(intent1);
+                            Intent intent2 = new Intent(ctx, SueActivity.class);
+                            startActivity(intent2);
                             reusltIntent.putExtra("isLogin", true);
                             setResult(0, reusltIntent);
                             finish();
-                            overridePendingTransition(0, R.anim.anim_activity_out_right);
+                            overridePendingTransition(R.anim.anim_activity_out_right, 0);
                         }
                         Thread.sleep(3000);
                     }

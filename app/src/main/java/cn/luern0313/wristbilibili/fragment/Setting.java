@@ -23,6 +23,7 @@ import cn.luern0313.wristbilibili.ui.LogsoffActivity;
 import cn.luern0313.wristbilibili.ui.OpensourceActivity;
 import cn.luern0313.wristbilibili.ui.SueActivity;
 import cn.luern0313.wristbilibili.ui.SupportActivity;
+import cn.luern0313.wristbilibili.ui.VideodetailsActivity;
 
 /**
  * Created by liupe on 2018/11/15.
@@ -36,14 +37,14 @@ public class Setting extends Fragment
     View rootLayout;
     ListView setList;
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         ctx = this.getActivity();
         rootLayout = inflater.inflate(R.layout.fragment_setting, container, false);
 
         setList = rootLayout.findViewById(R.id.set_listview);
 
-        final ArrayList<String> list = new ArrayList<String>(Arrays.asList("注销", "关注作者b站账号", "发动态炫耀一下", "支持作者", "关于开源", "联系作者", "关于"));
+        final ArrayList<String> list = new ArrayList<String>(Arrays.asList("注销", "关注作者b站账号", "发动态炫耀一下", "查看介绍视频", "支持作者", "关于开源", "联系作者", "关于"));
         mAdapter mAdapter = new mAdapter(inflater, list);
         setList.setAdapter(mAdapter);
 
@@ -65,6 +66,12 @@ public class Setting extends Fragment
                 else if(list.get(position).equals("发动态炫耀一下"))
                 {
                     Intent intent = new Intent(ctx, SueActivity.class);
+                    startActivity(intent);
+                }
+                else if(list.get(position).equals("查看介绍视频"))
+                {
+                    Intent intent = new Intent(ctx, VideodetailsActivity.class);
+                    intent.putExtra("aid", "37132444");
                     startActivity(intent);
                 }
                 else if(list.get(position).equals("支持作者"))

@@ -56,7 +56,7 @@ public class SendDynamic
 
     public void shardVideo(String text) throws IOException  //最后视频rid(aid)待补充！！！！！！
     {
-        post(URL, "csrf_token=" + csrf + "&platform=pc&uid=8014831&type=8&share_uid=" + mid + "&content=" + URLEncoder.encode(text, "UTF-8") + "&repost_code=20000&rid=33784081");
+        post(URL, "csrf_token=" + csrf + "&platform=pc&uid=8014831&type=8&share_uid=" + mid + "&content=" + URLEncoder.encode(text, "UTF-8") + "&repost_code=20000&rid=37132444");
     }
 
     private Object get(String url, int mode) throws IOException

@@ -82,6 +82,21 @@ public class VideoDetails
         return (String) getInfoFromJson(videoViewJson, "title");
     }
 
+    public int getVideoCopyright()
+    {
+        return (int) getInfoFromJson(videoViewJson, "copyright");
+    }
+
+    private String getVideoCid()
+    {
+        return String.valueOf(videoViewJson.optJSONArray("pages").optJSONObject(0).optInt("cid"));
+    }
+
+    private int getVideoDuration()
+    {
+        return videoViewJson.optInt("duration");
+    }
+
     public String getVideoUpAid()
     {
         return (String) getInfoFromJson(getJsonFromJson(videoUserJson, "card"), "mid");
@@ -265,7 +280,7 @@ public class VideoDetails
     {
         try
         {
-            if(post("https://api.bilibili.com/x/report/web/heartbeat", "aid=" + aid + "&mid=" + mid + "&csrf=" + csrf + "&played_time=0&realtime=0&start_ts=" + (System.currentTimeMillis() / 1000) + "&type=3&dt=2&play_type=1").body().string().equals("{\"code\":0,\"message\":\"0\",\"ttl\":1}"))
+            if(post("https://api.bilibili.com/x/report/web/heartbeat", "aid=" + aid + "&cid=" + getVideoCid() + "&mid=" + mid + "&csrf=" + csrf + "&played_time=0&realtime=0&start_ts=" + (System.currentTimeMillis() / 1000) + "&type=3&dt=2&play_type=1").body().string().equals("{\"code\":0,\"message\":\"0\",\"ttl\":1}"))
                 return true;
         }
         catch (NullPointerException e)

@@ -75,6 +75,29 @@ public class FollowmeActivity extends Activity
         likeViewImg = findViewById(R.id.fme_like_img);
         coinViewImg = findViewById(R.id.fme_coin_img);
 
+        if(!sharedPreferences.contains("cookies"))
+            findViewById(R.id.fme_nologin).setVisibility(View.VISIBLE);
+        else
+        {
+            new Thread(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    try
+                    {
+                        jsonArray = new JSONObject(othersUser.getOtheruserVideo()).getJSONObject("data").getJSONArray("vlist");
+                        VideoDetails videoDetail = new VideoDetails(cookies, csrf, mid, String.valueOf(jsonArray.getJSONObject(0).getInt("aid")));
+                        videoDetail.playHistory();
+                    }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+        }
+
         cardView.setOnTouchListener(new View.OnTouchListener()
         {
 
