@@ -44,7 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/qr_title_layout"
             android:gravity="center"
-            android:text="由于技术原因\n视频暂不能用手表观看"
+            android:text="点击二维码在线观看"
             android:textColor="@color/mainColor"
             android:textSize="12sp" />
 
