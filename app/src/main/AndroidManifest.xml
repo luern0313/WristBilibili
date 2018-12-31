@@ -42,6 +42,7 @@
         <activity android:name=".ui.FavorvideoActivity" />
         <activity android:name=".ui.OtheruserActivity" />
         <activity android:name=".ui.SueActivity"/>
+        <activity android:name=".ui.OnlinePlayActivity"/>
     </application>
 
 </manifest>
