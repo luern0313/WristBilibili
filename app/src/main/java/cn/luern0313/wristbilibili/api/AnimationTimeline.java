@@ -21,6 +21,7 @@ import okhttp3.Response;
 
 /**
  * Created by liupe on 2018/11/10.
+ * 番剧时间表
  */
 
 public class AnimationTimeline

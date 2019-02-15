@@ -102,9 +102,9 @@
 
             <ImageView
                 android:id="@+id/liov_likebu"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_margin="2dp"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_margin="3dp"
                 android:src="@drawable/icon_like" />
 
             <TextView

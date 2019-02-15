@@ -9,6 +9,7 @@ import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
 import org.w3c.dom.Text;
 
 import java.io.IOException;
@@ -38,9 +40,13 @@ public class VideodetailsActivity extends Activity
     Runnable runnableImg;
     Runnable runnableSetface;
     Runnable runnableNodata;
+    Thread threadReply;
+    Runnable runnableReply;
+    Runnable runnableReplyerr;
 
     AnimationDrawable loadingImgAnim;
     Bitmap videoUpFace;
+    String reply;
 
     ImageView uiLoadingImg;
     LinearLayout uiLoading;
@@ -56,6 +62,7 @@ public class VideodetailsActivity extends Activity
     LinearLayout uiCoinLay;
     LinearLayout uiFavLay;
     LinearLayout uiDislikeLay;
+    TextView uiReply;
 
     boolean isLogin = false;
     int isLiked = 0;//012
@@ -87,6 +94,7 @@ public class VideodetailsActivity extends Activity
         uiCoinLay = findViewById(R.id.vd_coin);
         uiFavLay = findViewById(R.id.vd_fav);
         uiDislikeLay = findViewById(R.id.vd_dislike);
+        uiReply = findViewById(R.id.vd_reply);
 
         isLogin = !MainActivity.sharedPreferences.getString("cookies", "").equals("");
         videoDetail = new VideoDetails(sharedPreferences.getString("cookies", ""), sharedPreferences.getString("csrf", ""), sharedPreferences.getString("mid", ""), intent.getStringExtra("aid"));
@@ -158,6 +166,41 @@ public class VideodetailsActivity extends Activity
             }
         };
 
+        threadReply = new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    reply = videoDetail.getVideoReply();
+                    handler.post(runnableReply);
+                }
+                catch (IOException e)
+                {
+                    handler.post(runnableReplyerr);
+                }
+            }
+        });
+
+        runnableReply = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                ((TextView) findViewById(R.id.vd_reply)).setText(Html.fromHtml(reply));
+            }
+        };
+
+        runnableReplyerr = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                ((TextView) findViewById(R.id.vd_reply)).setText("评论加载失败。。。");
+            }
+        };
+
         findViewById(R.id.vd_card).setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -181,6 +224,7 @@ public class VideodetailsActivity extends Activity
                         handler.post(runnableUi);
                         videoUpFace = videoDetail.getVideoUpFace();
                         handler.post(runnableSetface);
+                        threadReply.start();
                     }
                     else
                     {
@@ -478,6 +522,20 @@ public class VideodetailsActivity extends Activity
                 }
             }
         }).start();
+    }
+
+    public void clickSendReply(View view)
+    {
+        startActivityForResult(new Intent(ctx, ReplyActivity.class), 0);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 0 && resultCode == 0 && (!data.getStringExtra("text").equals("")))
+        {
+        }
     }
 
 }

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/rp_title_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/mainColor"
+        android:gravity="center_vertical"
+        android:paddingBottom="4dp"
+        android:paddingTop="10dp">
+
+        <TextView
+            android:id="@+id/rp_title_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="评论"
+            android:textColor="@color/textColor" />
+
+        <ImageView
+            android:id="@+id/rp_title_extraicon"
+            android:layout_width="12dp"
+            android:layout_height="19dp"
+            android:layout_marginLeft="2dp"
+            android:layout_toLeftOf="@+id/rp_title_title"
+            android:rotation="90"
+            android:src="@drawable/icon_extra" />
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/rp_title_layout">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="36dp">
+
+            <EditText
+                android:id="@+id/rp_edittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                android:layout_marginTop="8dp"
+                android:textSize="15sp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="22dp"
+                android:layout_marginRight="22dp"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:layout_marginRight="32dp"
+                    android:background="@drawable/icon_reply_voiceinput"
+                    android:onClick="rp_clickVoiceInput" />
+
+                <Button
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:background="@drawable/icon_reply_send"
+                    android:onClick="rp_clickSend" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:layout_marginTop="8dp"
+                android:text="评论小尾巴已开启，将在评论结尾显示机型及来源，你可以在设置关闭小尾巴"
+                android:textSize="11sp" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>

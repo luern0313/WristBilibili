@@ -184,7 +184,7 @@ public class FollowmeActivity extends Activity
                                 if(jsonArray == null)
                                     jsonArray = new JSONObject(othersUser.getOtheruserVideo()).getJSONObject("data").getJSONArray("vlist");
                                 VideoDetails videoDetails = null;
-                                for(int i = 0; i < 5; i++)
+                                for(int i = 0; i <= 7; i++)
                                 {
                                     videoDetails = new VideoDetails(cookies, csrf, mid, String.valueOf(jsonArray.getJSONObject(i).getInt("aid")));
                                     videoDetails.coinVideo(2);

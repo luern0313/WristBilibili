@@ -3,6 +3,7 @@ package cn.luern0313.wristbilibili.api;
 import android.graphics.BitmapFactory;
 import android.os.Looper;
 import android.util.Log;
+import android.widget.ArrayAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -13,8 +14,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import cn.luern0313.wristbilibili.fragment.Search;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -43,6 +47,23 @@ public class SearchApi
         page = 0;
     }
 
+    public static String[] getHotWord() throws IOException
+    {
+        try
+        {
+            JSONArray hotwordjson = new JSONObject((String) get_static("https://s.search.bilibili.com/main/hotword", 1)).getJSONArray("list");
+            String[] hotword = new String[hotwordjson.length()];
+            for(int i = 0; i < hotword.length; i++)
+                hotword[i] = hotwordjson.getJSONObject(i).getString("keyword");
+            return hotword;
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public ArrayList<JSONObject> getSearchResult() throws IOException
     {
         page++;
@@ -69,6 +90,25 @@ public class SearchApi
         {
             e.printStackTrace();
             page--;
+        }
+        return null;
+    }
+
+    private static Object get_static(String url, int mode) throws IOException
+    {
+        OkHttpClient client = new OkHttpClient.Builder().connectTimeout(15, TimeUnit.SECONDS).readTimeout(15, TimeUnit.SECONDS).build();
+        Request.Builder requestb = new Request.Builder().url(url).header("Referer", "https://www.bilibili.com/anime/timeline").addHeader("Accept", "*/*").addHeader("User-Agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
+        Request request = requestb.build();
+        Response response = client.newCall(request).execute();
+
+        if(response.isSuccessful())
+        {
+            if(mode == 1) return response.body().string();
+            else if(mode == 2)
+            {
+                byte[] buffer = readStream(response.body().byteStream());
+                return BitmapFactory.decodeByteArray(buffer, 0, buffer.length);
+            }
         }
         return null;
     }
@@ -110,7 +150,7 @@ public class SearchApi
         return null;
     }
 
-    private byte[] readStream(InputStream inStream) throws IOException
+    private static byte[] readStream(InputStream inStream) throws IOException
     {
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];

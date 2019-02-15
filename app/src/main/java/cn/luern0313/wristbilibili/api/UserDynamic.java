@@ -47,8 +47,7 @@ public class UserDynamic
         try
         {
             dynamicJsonArray = new JSONObject((String) get(DYNAMICAPIURL + "?uid=" + mid + "&type=" + DYNAMICTYPE, 1)).getJSONObject("data").getJSONArray("cards");
-            if(dynamicJsonArray.length() == 0)
-                dynamicJsonArray = null;
+            if(dynamicJsonArray.length() == 0) dynamicJsonArray = null;
         }
         catch (JSONException e)
         {
@@ -126,7 +125,7 @@ public class UserDynamic
         else return new cardUnknow(cardJson, descJson);
     }
 
-    public class cardOriginalVideo
+    public class cardOriginalVideo //原创视频
     {
         private int mode;
         private JSONObject oriVideoJson;
@@ -183,7 +182,8 @@ public class UserDynamic
         {
             if(mode == 1)
                 return String.valueOf(getInfoFromJson(getJsonFromJson(oriVideoDescUser, "info"), "uid"));
-            else return String.valueOf(getInfoFromJson(getJsonFromJson(oriVideoJson, "owner"), "mid"));
+            else
+                return String.valueOf(getInfoFromJson(getJsonFromJson(oriVideoJson, "owner"), "mid"));
         }
 
         public String getOwnerName()
@@ -197,8 +197,7 @@ public class UserDynamic
         {
             if(mode == 1)
                 return (String) getInfoFromJson(getJsonFromJson(oriVideoDescUser, "info"), "face");
-            else
-                return (String) getInfoFromJson(getJsonFromJson(oriVideoJson, "owner"), "face");
+            else return (String) getInfoFromJson(getJsonFromJson(oriVideoJson, "owner"), "face");
         }
 
         public String getDynamicTime()
@@ -221,7 +220,7 @@ public class UserDynamic
         }
     }
 
-    public class cardOriginalText
+    public class cardOriginalText //原创文字/图片
     {
         private int mode;
         private JSONObject oriTextUserJson;
@@ -293,20 +292,19 @@ public class UserDynamic
             {
                 if(getTextImgCount().equals("0"))
                     return (String) getInfoFromJson(oriTextUserJson, "uname");
-                else
-                    return (String) getInfoFromJson(oriTextUserJson, "name");
+                else return (String) getInfoFromJson(oriTextUserJson, "name");
             }
         }
 
         public String getUserHead()
         {
-            if(mode == 1) return (String) getInfoFromJson(getJsonFromJson(oriTextDescUser, "info"), "face");
+            if(mode == 1)
+                return (String) getInfoFromJson(getJsonFromJson(oriTextDescUser, "info"), "face");
             else
             {
                 if(getTextImgCount().equals("0"))
                     return (String) getInfoFromJson(oriTextUserJson, "face");
-                else
-                    return (String) getInfoFromJson(oriTextUserJson, "head_url");
+                else return (String) getInfoFromJson(oriTextUserJson, "head_url");
             }
         }
 
@@ -319,9 +317,14 @@ public class UserDynamic
         {
             return (int) getInfoFromJson(oriTextDesc, "like");
         }
+
+        public int getBeReply()
+        {
+            return oriTextItemJson.optInt("reply");
+        }
     }
 
-    public class cardShareVideo
+    public class cardShareVideo //转发视频
     {
         private JSONObject shareVideoJson;
         private JSONObject shareVideoItemJson;
@@ -370,9 +373,14 @@ public class UserDynamic
         {
             return (int) getInfoFromJson(shareVideoDesc, "like");
         }
+
+        public int getBeReply()
+        {
+            return shareVideoItemJson.optInt("reply");
+        }
     }
 
-    public class cardShareText
+    public class cardShareText //转发文字/图片
     {
         private JSONObject shareTextJson;
         private JSONObject shareTextItemJson;
@@ -421,9 +429,14 @@ public class UserDynamic
         {
             return (int) getInfoFromJson(shareTextDesc, "like");
         }
+
+        public int getBeReply()
+        {
+            return shareTextItemJson.optInt("reply");
+        }
     }
 
-    public class cardUnknow
+    public class cardUnknow //不支持的动态类型
     {
         private JSONObject unknowJson;
         private JSONObject unknowDesc;

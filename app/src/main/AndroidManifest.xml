@@ -41,8 +41,9 @@
         <activity android:name=".ui.LogsoffActivity" />
         <activity android:name=".ui.FavorvideoActivity" />
         <activity android:name=".ui.OtheruserActivity" />
-        <activity android:name=".ui.SueActivity"/>
-        <activity android:name=".ui.OnlinePlayActivity"/>
+        <activity android:name=".ui.SueActivity" />
+        <activity android:name=".ui.OnlinePlayActivity" />
+        <activity android:name=".ui.ReplyActivity" />
     </application>
 
 </manifest>

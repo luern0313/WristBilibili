@@ -185,6 +185,11 @@ public class FavorBox extends Fragment
                         handler.post(runnableNodata);
                     }
                 }
+                catch (NullPointerException e)
+                {
+                    handler.post(runnableNodata);
+                    e.printStackTrace();
+                }
                 catch (IOException e)
                 {
                     handler.post(runnableNoWeb);

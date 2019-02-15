@@ -2,7 +2,9 @@ package cn.luern0313.wristbilibili.api;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -37,6 +39,7 @@ public class VideoDetails
     private JSONObject videoJSON;
     private JSONObject videoUserJson;
     private JSONObject videoViewJson;
+    private JSONArray videoReplyJson;
     private int isLiked;//0,1喜欢,2不喜欢
     private int isCoined;//已投个数
     private boolean isFaved;
@@ -144,6 +147,28 @@ public class VideoDetails
         Date date = new Date((int) getInfoFromJson(videoViewJson, "pubdate") * 1000L);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         return format.format(date);
+    }
+
+    public String getVideoReply() throws IOException
+    {
+        try
+        {
+            videoReplyJson = videoJSON.optJSONObject("data").optJSONObject("Reply").optJSONArray("replies");
+            StringBuilder reply = new StringBuilder("<b>热门回复：</b>");
+            if(videoReplyJson.length() == 0) return "<b>暂无热门回复</b>";
+            for (int i = 0; i < videoReplyJson.length(); i++)
+            {
+                JSONObject replyJson = videoReplyJson.optJSONObject(i);
+                OthersUser othersUser = new OthersUser(cookie, csrf, String.valueOf(replyJson.optInt("mid")));
+                reply.append("<br/><br/><b>").append(new JSONObject(othersUser.getOtheruserInfo()).optJSONObject("data").optJSONObject("card").optString("name")).append("：</b>");
+                reply.append(replyJson.optJSONObject("content").optString("message"));
+            }
+            return reply.toString();
+        }
+        catch (JSONException | NullPointerException e)
+        {
+            return "<b>暂无热门回复<b/>";
+        }
     }
 
     public String getVideoAid()

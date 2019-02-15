@@ -54,7 +54,7 @@ public class ImgActivity extends Activity
         viewPager = findViewById(R.id.img_viewpager);
 
         viewList = new ArrayList<>();
-        for (int i = 0; i < imgUrlList.length; i++)
+        for(int i = 0; i < imgUrlList.length; i++)
         {
             View view = inflater.inflate(R.layout.item_imgviewpager, null);
             view.setTag(imgUrlList[i]);
@@ -234,7 +234,7 @@ public class ImgActivity extends Activity
                 /**
                  * 根据url从网络上下载图片
                  *
-                 * @return
+                 * @return 图片
                  */
                 private Bitmap downloadImage() throws IOException
                 {

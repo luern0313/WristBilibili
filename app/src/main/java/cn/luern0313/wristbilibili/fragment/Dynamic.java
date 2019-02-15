@@ -27,7 +27,10 @@ import android.widget.TextView;
 
 import org.json.JSONException;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -345,6 +348,7 @@ public class Dynamic extends Fragment
                 switch (type)
                 {
                     case 4:
+                        //原创视频
                         convertView = mInflater.inflate(R.layout.item_news_original_video, null);
                         viewHolderOriVid = new ViewHolderOriVid();
                         convertView.setTag(viewHolderOriVid);
@@ -362,6 +366,7 @@ public class Dynamic extends Fragment
                         break;
 
                     case 3:
+                        //原创文字
                         convertView = mInflater.inflate(R.layout.item_news_original_text, null);
                         viewHolderOriText = new ViewHolderOriText();
                         convertView.setTag(viewHolderOriText);
@@ -371,11 +376,14 @@ public class Dynamic extends Fragment
                         viewHolderOriText.time = convertView.findViewById(R.id.liot_time);
                         viewHolderOriText.text = convertView.findViewById(R.id.liot_text);
                         viewHolderOriText.textimg = convertView.findViewById(R.id.liot_textimg);
+                        viewHolderOriText.replybu = convertView.findViewById(R.id.liot_replybu);
+                        viewHolderOriText.reply = convertView.findViewById(R.id.liot_reply);
                         viewHolderOriText.likebu = convertView.findViewById(R.id.liot_likebu);
                         viewHolderOriText.like = convertView.findViewById(R.id.liot_like);
                         break;
 
                     case 2:
+                        //未知类型
                         convertView = mInflater.inflate(R.layout.item_news_unknowtype, null);
                         viewHolderUnktyp = new ViewHolderUnktyp();
                         convertView.setTag(viewHolderUnktyp);
@@ -386,6 +394,7 @@ public class Dynamic extends Fragment
                         break;
 
                     case 1:
+                        //转发视频
                         convertView = mInflater.inflate(R.layout.item_news_share_video, null);
                         viewHolderShaVid = new ViewHolderShaVid();
                         convertView.setTag(viewHolderShaVid);
@@ -400,11 +409,14 @@ public class Dynamic extends Fragment
                         viewHolderShaVid.simg = convertView.findViewById(R.id.lisv_share_img);
                         viewHolderShaVid.simgtext = convertView.findViewById(R.id.lisv_share_imgtext);
                         viewHolderShaVid.stitle = convertView.findViewById(R.id.lisv_share_text);
+                        viewHolderShaVid.replybu = convertView.findViewById(R.id.lisv_replybu);
+                        viewHolderShaVid.reply = convertView.findViewById(R.id.lisv_reply);
                         viewHolderShaVid.likebu = convertView.findViewById(R.id.lisv_likebu);
                         viewHolderShaVid.like = convertView.findViewById(R.id.lisv_like);
                         break;
 
                     case 0:
+                        //转发文字
                         convertView = mInflater.inflate(R.layout.item_news_share_text, null);
                         viewHolderShaText = new ViewHolderShaText();
                         convertView.setTag(viewHolderShaText);
@@ -417,6 +429,8 @@ public class Dynamic extends Fragment
                         viewHolderShaText.sname = convertView.findViewById(R.id.list_share_name);
                         viewHolderShaText.stext = convertView.findViewById(R.id.list_share_text);
                         viewHolderShaText.stextimg = convertView.findViewById(R.id.list_share_textimg);
+                        viewHolderShaText.replybu = convertView.findViewById(R.id.list_replybu);
+                        viewHolderShaText.reply = convertView.findViewById(R.id.list_reply);
                         viewHolderShaText.likebu = convertView.findViewById(R.id.list_likebu);
                         viewHolderShaText.like = convertView.findViewById(R.id.list_like);
                         break;
@@ -444,7 +458,7 @@ public class Dynamic extends Fragment
                 }
             }
 
-            if(type == 4)
+            if(type == 4) //原创视频
             {
                 final UserDynamic.cardOriginalVideo dy = (UserDynamic.cardOriginalVideo) dyList.get(position);
                 viewHolderOriVid.name.setText(Html.fromHtml("<b>" + dy.getOwnerName() + "</b>投稿了视频"));
@@ -491,7 +505,7 @@ public class Dynamic extends Fragment
                 });
 
             }
-            else if(type == 3)
+            else if(type == 3)// 原创文字
             {
                 final UserDynamic.cardOriginalText dy = (UserDynamic.cardOriginalText) dyList.get(position);
                 viewHolderOriText.name.setText(dy.getUserName());
@@ -503,6 +517,7 @@ public class Dynamic extends Fragment
                     viewHolderOriText.textimg.setText("查看共" + dy.getTextImgCount() + "张图片");
                 }
                 else viewHolderOriText.textimg.setVisibility(View.GONE);
+                viewHolderOriText.reply.setText(String.valueOf(dy.getBeReply()));
                 viewHolderOriText.like.setText(String.valueOf(dy.getBeLiked()));
                 viewHolderOriText.head.setImageResource(R.drawable.img_default_head);
 
@@ -532,7 +547,7 @@ public class Dynamic extends Fragment
                     }
                 });
             }
-            else if(type == 2)
+            else if(type == 2) //未知类型
             {
                 final UserDynamic.cardUnknow dy = (UserDynamic.cardUnknow) dyList.get(position);
                 viewHolderUnktyp.name.setText(dy.getOwnerName());
@@ -557,7 +572,7 @@ public class Dynamic extends Fragment
                     }
                 });
             }
-            else if(type == 1)
+            else if(type == 1) //转发视频
             {
                 final UserDynamic.cardShareVideo dy = (UserDynamic.cardShareVideo) dyList.get(position);
                 final UserDynamic.cardOriginalVideo sdy = (UserDynamic.cardOriginalVideo) userDynamic.getDynamicClass(dy.getOriginalVideo(), 1);
@@ -567,6 +582,7 @@ public class Dynamic extends Fragment
                 viewHolderShaVid.sname.setText(sdy.getOwnerName());
                 viewHolderShaVid.simgtext.setText(sdy.getVideoDuration() + "  " + sdy.getVideoView() + "观看");
                 viewHolderShaVid.stitle.setText(sdy.getVideoTitle());
+                viewHolderShaVid.reply.setText(String.valueOf(dy.getBeReply()));
                 viewHolderShaVid.like.setText(String.valueOf(dy.getBeLiked()));
                 viewHolderShaVid.head.setImageResource(R.drawable.img_default_head);
                 viewHolderShaVid.shead.setImageResource(R.drawable.img_default_head);
@@ -615,7 +631,7 @@ public class Dynamic extends Fragment
                     }
                 });
             }
-            else if(type == 0)
+            else if(type == 0) //转发文字
             {
                 final UserDynamic.cardShareText dy = (UserDynamic.cardShareText) dyList.get(position);
                 final UserDynamic.cardOriginalText sdy = (UserDynamic.cardOriginalText) userDynamic.getDynamicClass(dy.getOriginalText(), 2);
@@ -630,6 +646,7 @@ public class Dynamic extends Fragment
                     viewHolderShaText.stextimg.setText("查看共" + sdy.getTextImgCount() + "张图片");
                 }
                 else viewHolderShaText.stextimg.setVisibility(View.GONE);
+                viewHolderShaText.reply.setText(String.valueOf(dy.getBeReply()));
                 viewHolderShaText.like.setText(String.valueOf(dy.getBeLiked()));
                 viewHolderShaText.head.setImageResource(R.drawable.img_default_head);
                 viewHolderShaText.shead.setImageResource(R.drawable.img_default_head);
@@ -712,6 +729,8 @@ public class Dynamic extends Fragment
             TextView time;
             ExpandableTextView text;
             TextView textimg;
+            ImageView replybu;
+            TextView reply;
             ImageView likebu;
             TextView like;
         }
@@ -735,6 +754,8 @@ public class Dynamic extends Fragment
             ImageView simg;
             TextView simgtext;
             TextView stitle;
+            ImageView replybu;
+            TextView reply;
             ImageView likebu;
             TextView like;
         }
@@ -749,6 +770,8 @@ public class Dynamic extends Fragment
             TextView sname;
             ExpandableTextView stext;
             TextView stextimg;
+            ImageView replybu;
+            TextView reply;
             ImageView likebu;
             TextView like;
         }
@@ -792,9 +815,70 @@ public class Dynamic extends Fragment
             }
 
             /**
+             * 获得需要压缩的比率
+             *
+             * @param options 需要传入已经BitmapFactory.decodeStream(is, null, options);
+             * @return 返回压缩的比率，最小为1
+             */
+            public int getInSampleSize(BitmapFactory.Options options) {
+                int inSampleSize = 1;
+                int realWith = 170;
+                int realHeight = 170;
+
+                int outWidth = options.outWidth;
+                int outHeight = options.outHeight;
+
+                //获取比率最大的那个
+                if (outWidth > realWith || outHeight > realHeight) {
+                    int withRadio = Math.round(outWidth / realWith);
+                    int heightRadio = Math.round(outHeight / realHeight);
+                    inSampleSize = withRadio > heightRadio ? withRadio : heightRadio;
+                }
+                return inSampleSize;
+            }
+
+            /**
+             * 根据输入流返回一个压缩的图片
+             * @param input 图片的输入流
+             * @return 压缩的图片
+             */
+            public Bitmap getCompressBitmap(InputStream input)
+            {
+                //因为InputStream要使用两次，但是使用一次就无效了，所以需要复制两个
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                try
+                {
+                    byte[] buffer = new byte[1024];
+                    int len;
+                    while ((len = input.read(buffer)) > -1)
+                    {
+                        baos.write(buffer, 0, len);
+                    }
+                    baos.flush();
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+
+                //复制新的输入流
+                InputStream is = new ByteArrayInputStream(baos.toByteArray());
+                InputStream is2 = new ByteArrayInputStream(baos.toByteArray());
+
+                //只是获取网络图片的大小，并没有真正获取图片
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inJustDecodeBounds = true;
+                BitmapFactory.decodeStream(is, null, options);
+                //获取图片并进行压缩
+                options.inSampleSize = getInSampleSize(options);
+                options.inJustDecodeBounds = false;
+                return BitmapFactory.decodeStream(is2, null, options);
+            }
+
+            /**
              * 根据url从网络上下载图片
              *
-             * @return
+             * @return 图片
              */
             private Bitmap downloadImage() throws IOException
             {
@@ -804,7 +888,7 @@ public class Dynamic extends Fragment
                 con = (HttpURLConnection) url.openConnection();
                 con.setConnectTimeout(5 * 1000);
                 con.setReadTimeout(10 * 1000);
-                bitmap = BitmapFactory.decodeStream(con.getInputStream());
+                bitmap = getCompressBitmap(con.getInputStream());
                 if(con != null)
                 {
                     con.disconnect();

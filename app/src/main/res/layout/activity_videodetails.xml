@@ -40,7 +40,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="28dp">
+            android:paddingBottom="18dp">
 
 
             <TextView
@@ -394,6 +394,28 @@
                         android:textSize="10sp" />
                 </RelativeLayout>
             </android.support.v7.widget.CardView>
+
+            <TextView
+                android:id="@+id/vd_reply"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="25dp"
+                android:paddingRight="25dp"
+                android:text="评论加载中...."
+                android:textSize="13sp" />
+
+            <Button
+                android:id="@+id/vd_sendreply"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:layout_marginTop="6dp"
+                android:onClick="clickSendReply"
+                android:text="发送评论"
+                android:textColor="@color/textColor"
+                android:textSize="13sp" />
         </LinearLayout>
 
     </ScrollView>

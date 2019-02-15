@@ -3,10 +3,32 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <TextView
+        android:id="@+id/sea_hotwordtext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp"
+        android:paddingTop="34dp"
+        android:text="加载搜索热词中..." />
+
+    <GridView
+        android:id="@+id/sea_hotword"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/sea_hotwordtext"
+        android:clipToPadding="false"
+        android:numColumns="2"
+        android:paddingBottom="28dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:scrollbars="none" />
+
     <ListView
         android:id="@+id/sea_listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/textColor"
         android:divider="@color/alphe"
         android:dividerHeight="2dp"
         android:paddingTop="34dp"
@@ -88,17 +110,11 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginLeft="6dp"
-            android:src="@drawable/icon_search" />
-
         <EditText
             android:id="@+id/sea_edittext"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="2dp"
+            android:layout_marginLeft="8dp"
             android:layout_weight="1"
             android:background="@color/alphe"
             android:ellipsize="end"
@@ -108,17 +124,21 @@
             android:textSize="12sp" />
 
         <TextView
+            android:id="@+id/sea_inbutton"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="4dp"
+            android:background="@drawable/icon_voiceinput_search"
+            android:clickable="true" />
+
+        <TextView
             android:id="@+id/sea_seabutton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:layout_marginRight="6dp"
-            android:clickable="true"
-            android:padding="4dp"
-            android:text="搜"
-            android:textColor="@color/mainColor"
-            android:textSize="12sp"
-            android:textStyle="bold" />
+            android:background="@drawable/icon_search"
+            android:clickable="true" />
     </LinearLayout>
 
 </RelativeLayout>
