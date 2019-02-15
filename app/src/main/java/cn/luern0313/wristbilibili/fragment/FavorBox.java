@@ -39,7 +39,7 @@ import cn.luern0313.wristbilibili.ui.MainActivity;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
 /**
- * Created by liupe on 2018/11/16.
+ * 被 luern0313 创建于 2018/11/16.
  * 收藏的fragment
  * 畜生！你收藏了甚么！
  */
@@ -351,8 +351,8 @@ public class FavorBox extends Fragment
              */
             public int getInSampleSize(BitmapFactory.Options options) {
                 int inSampleSize = 1;
-                int realWith = 70;
-                int realHeight = 48;
+                int realWith = 140;
+                int realHeight = 140;
 
                 int outWidth = options.outWidth;
                 int outHeight = options.outHeight;

@@ -101,6 +101,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/liot_replybu"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -108,7 +109,6 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:id="@+id/liot_replybu"
                     android:layout_width="18dp"
                     android:layout_height="18dp"
                     android:layout_margin="3dp"

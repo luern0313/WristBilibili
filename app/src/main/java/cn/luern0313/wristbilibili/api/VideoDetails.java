@@ -316,6 +316,19 @@ public class VideoDetails
         return false;
     }
 
+    public boolean sendReply(String text) throws IOException
+    {
+        try
+        {
+            return new JSONObject(post("https://api.bilibili.com/x/v2/reply/add", "oid=" + aid + "&type=1&message=" + text + "&plat=1&jsonp=jsonp&csrf=" + csrf).body().string()).optInt("code") == 0;
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     private Object getInfoFromJson(JSONObject json, String get)
     {
         try

@@ -13,6 +13,7 @@ import cn.luern0313.wristbilibili.R;
 public class ReplyActivity extends Activity
 {
     Context ctx;
+    Intent intent;
     Intent reusltIntent = new Intent();
 
     EditText replyEditText;
@@ -22,6 +23,9 @@ public class ReplyActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reply);
         ctx = this;
+        intent = getIntent();
+        reusltIntent.putExtra("oid", intent.getStringExtra("oid"));
+        reusltIntent.putExtra("type", intent.getStringExtra("type"));
         reusltIntent.putExtra("text", "");
         setResult(0, reusltIntent);
 
@@ -48,6 +52,7 @@ public class ReplyActivity extends Activity
         {
             reusltIntent.putExtra("text", replyEditText.getText().toString());
             setResult(0, reusltIntent);
+            finish();
         }
         else
             Toast.makeText(ctx, "评论内容为空", Toast.LENGTH_SHORT).show();

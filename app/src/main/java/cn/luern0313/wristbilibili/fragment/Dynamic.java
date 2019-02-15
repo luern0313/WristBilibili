@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.util.LruCache;
 import android.os.Bundle;
 import android.text.Html;
@@ -24,6 +25,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 
@@ -41,8 +43,15 @@ import cn.luern0313.wristbilibili.api.UserDynamic;
 import cn.luern0313.wristbilibili.ui.ImgActivity;
 import cn.luern0313.wristbilibili.ui.MainActivity;
 import cn.luern0313.wristbilibili.ui.OtheruserActivity;
+import cn.luern0313.wristbilibili.ui.ReplyActivity;
 import cn.luern0313.wristbilibili.ui.VideodetailsActivity;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
+
+/**
+ * 被 luern0313 创建于 不知道什么时候.
+ * 收藏的fragment
+ * 畜生！你收藏了甚么！
+ */
 
 public class Dynamic extends Fragment
 {
@@ -205,6 +214,46 @@ public class Dynamic extends Fragment
         return rootLayout;
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, final Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 0 && resultCode == 0)
+        {
+            new Thread(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    try
+                    {
+                        //oid和type都是传过去再传回来
+                        //我王境泽传数据就是乱死！也不建多余的变量！（没有真香）
+                        if(userDynamic.sendReply(data.getStringExtra("oid"), data.getStringExtra("type"), data.getStringExtra("text")))
+                        {
+                            Looper.prepare();
+                            Toast.makeText(ctx, "发送成功！", Toast.LENGTH_SHORT).show();
+                            Looper.loop();
+                        }
+                        else
+                        {
+                            Looper.prepare();
+                            Toast.makeText(ctx, "发送失败，可能是短时间发送过多？", Toast.LENGTH_SHORT).show();
+                            Looper.loop();
+                        }
+                    }
+                    catch(IOException e)
+                    {
+                        e.printStackTrace();
+                        Looper.prepare();
+                        Toast.makeText(ctx, "发送失败，请检查网络？", Toast.LENGTH_SHORT).show();
+                        Looper.loop();
+                    }
+                }
+            }).start();
+        }
+    }
+
     void getDynamic()
     {
         new Thread(new Runnable()
@@ -214,7 +263,9 @@ public class Dynamic extends Fragment
             {
                 try
                 {
-                    userDynamic = new UserDynamic(MainActivity.sharedPreferences.getString("cookies", ""), MainActivity.sharedPreferences.getString("mid", ""));
+                    userDynamic = new UserDynamic(MainActivity.sharedPreferences.getString("cookies", ""),
+                            MainActivity.sharedPreferences.getString("csrf", ""),
+                            MainActivity.sharedPreferences.getString("mid", ""));
                     userDynamic.getDynamic();
                     dynamicList = userDynamic.getDynamicList();
                     if(dynamicList != null && dynamicList.size() != 0)
@@ -546,6 +597,18 @@ public class Dynamic extends Fragment
                         startActivity(intent);
                     }
                 });
+
+                viewHolderOriText.replybu.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        Intent intent = new Intent(ctx, ReplyActivity.class);
+                        intent.putExtra("oid", dy.getDynamicId());
+                        intent.putExtra("type", dy.getReplyType());
+                        startActivityForResult(intent, 0);
+                    }
+                });
             }
             else if(type == 2) //未知类型
             {
@@ -630,6 +693,18 @@ public class Dynamic extends Fragment
                         startActivity(intent);
                     }
                 });
+
+                viewHolderShaVid.replybu.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        Intent intent = new Intent(ctx, ReplyActivity.class);
+                        intent.putExtra("oid", dy.getDynamicId());
+                        intent.putExtra("type", dy.getReplyType());
+                        startActivityForResult(intent, 0);
+                    }
+                });
             }
             else if(type == 0) //转发文字
             {
@@ -690,6 +765,18 @@ public class Dynamic extends Fragment
                         startActivity(intent);
                     }
                 });
+
+                viewHolderShaText.replybu.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        Intent intent = new Intent(ctx, ReplyActivity.class);
+                        intent.putExtra("oid", dy.getDynamicId());
+                        intent.putExtra("type", dy.getReplyType());
+                        startActivityForResult(intent, 0);
+                    }
+                });
             }
             return convertView;
         }
@@ -729,7 +816,7 @@ public class Dynamic extends Fragment
             TextView time;
             ExpandableTextView text;
             TextView textimg;
-            ImageView replybu;
+            LinearLayout replybu;
             TextView reply;
             ImageView likebu;
             TextView like;
@@ -754,7 +841,7 @@ public class Dynamic extends Fragment
             ImageView simg;
             TextView simgtext;
             TextView stitle;
-            ImageView replybu;
+            LinearLayout replybu;
             TextView reply;
             ImageView likebu;
             TextView like;
@@ -770,7 +857,7 @@ public class Dynamic extends Fragment
             TextView sname;
             ExpandableTextView stext;
             TextView stextimg;
-            ImageView replybu;
+            LinearLayout replybu;
             TextView reply;
             ImageView likebu;
             TextView like;

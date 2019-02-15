@@ -441,8 +441,8 @@ public class FavorvideoActivity extends Activity
             public int getInSampleSize(BitmapFactory.Options options)
             {
                 int inSampleSize = 1;
-                int realWith = 68;
-                int realHeight = 44;
+                int realWith = 136;
+                int realHeight = 136;
 
                 int outWidth = options.outWidth;
                 int outHeight = options.outHeight;

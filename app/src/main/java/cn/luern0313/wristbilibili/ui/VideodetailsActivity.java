@@ -526,16 +526,47 @@ public class VideodetailsActivity extends Activity
 
     public void clickSendReply(View view)
     {
-        startActivityForResult(new Intent(ctx, ReplyActivity.class), 0);
+        Intent replyIntent = new Intent(ctx, ReplyActivity.class);
+        replyIntent.putExtra("oid", intent.getStringExtra("aid"));
+        replyIntent.putExtra("type", "1");
+        startActivityForResult(replyIntent, 0);
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    public void onActivityResult(int requestCode, int resultCode, final Intent data)
     {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == 0 && resultCode == 0 && (!data.getStringExtra("text").equals("")))
         {
+            new Thread(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    try
+                    {
+                        if(videoDetail.sendReply(data.getStringExtra("text")))
+                        {
+                            Looper.prepare();
+                            Toast.makeText(ctx, "发送成功！", Toast.LENGTH_SHORT).show();
+                            Looper.loop();
+                        }
+                        else
+                        {
+                            Looper.prepare();
+                            Toast.makeText(ctx, "发送失败，可能是短时间发送过多？", Toast.LENGTH_SHORT).show();
+                            Looper.loop();
+                        }
+                    }
+                    catch(IOException e)
+                    {
+                        e.printStackTrace();
+                        Looper.prepare();
+                        Toast.makeText(ctx, "评论发送失败。。请检查网络？", Toast.LENGTH_SHORT).show();
+                        Looper.loop();
+                    }
+                }
+            }).start();
         }
     }
-
 }

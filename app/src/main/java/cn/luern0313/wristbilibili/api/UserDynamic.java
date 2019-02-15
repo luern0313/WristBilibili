@@ -2,6 +2,7 @@ package cn.luern0313.wristbilibili.api;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,7 +23,13 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
- * Created by liupe on 2018/10/30.
+ * Created by luern0313 on 2018/10/30.
+ * 动态的api
+ * 写完这个文件我才知道为什么程序员被叫成代码民工。。
+ * 这绝对就只是个力气活啊。。
+ * 不过好在不用动脑子（滑稽）
+ * 辛苦b站程序们，动态有至少十几种
+ * 我只做了五种23333
  */
 
 public class UserDynamic
@@ -31,14 +38,16 @@ public class UserDynamic
     private final String HISTORYAPIURL = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/dynamic_history";
     private final String DYNAMICTYPE = "268435455";
     private String mid;
+    private String csrf;
     private String cookie;
     private JSONArray dynamicJsonArray;
 
     private String lastDynamicId;
 
-    public UserDynamic(String cookie, String mid)
+    public UserDynamic(String cookie, String csrf, String mid)
     {
         this.cookie = cookie;
+        this.csrf = csrf;
         this.mid = mid;
     }
 
@@ -123,6 +132,22 @@ public class UserDynamic
         else if(((int) getInfoFromJson(descJson, "type")) == 512 && ((int) getInfoFromJson(descJson, "orig_type")) == 0)//番剧，暂时不处理
             return null;
         else return new cardUnknow(cardJson, descJson);
+    }
+
+    public boolean sendReply(String oid, String type, String text) throws IOException
+    {
+        Log.i("bilibili", String.valueOf(oid));
+        Log.i("bilibili", String.valueOf(type));
+        Log.i("bilibili", String.valueOf(text));
+        try
+        {
+            return new JSONObject(post("https://api.bilibili.com/x/v2/reply/add", "oid=" + oid + "&type=" + type + "&message=" + text + "&plat=1&jsonp=jsonp&csrf=" + csrf).body().string()).getInt("code") == 0;
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public class cardOriginalVideo //原创视频
@@ -243,6 +268,14 @@ public class UserDynamic
             this.oriTextItemJson = getJsonFromJson(oriTextJson, "item");
         }
 
+        public String getDynamicId()
+        {
+            if(getTextImgCount().equals("0"))
+                return oriTextDesc.optString("dynamic_id_str");
+            else
+                return String.valueOf(oriTextItemJson.optInt("id"));
+        }
+
         public String getDynamicText()
         {
             if(getTextImgCount().equals("0"))
@@ -322,6 +355,12 @@ public class UserDynamic
         {
             return oriTextItemJson.optInt("reply");
         }
+
+        public String getReplyType()
+        {
+            if(getTextImgCount().equals("0")) return "17";
+            else return "11";
+        }
     }
 
     public class cardShareVideo //转发视频
@@ -337,6 +376,11 @@ public class UserDynamic
             this.shareVideoItemJson = getJsonFromJson(shareVideoJson, "item");
             this.shareVideoDesc = shareVideoDesc;
             this.shareVideoDescUser = getJsonFromJson(shareVideoDesc, "user_profile");
+        }
+
+        public String getDynamicId()
+        {
+            return shareVideoDesc.optString("dynamic_id_str");
         }
 
         public String getDynamicText()
@@ -378,6 +422,11 @@ public class UserDynamic
         {
             return shareVideoItemJson.optInt("reply");
         }
+
+        public String getReplyType()
+        {
+            return "17";
+        }
     }
 
     public class cardShareText //转发文字/图片
@@ -393,6 +442,11 @@ public class UserDynamic
             this.shareTextItemJson = getJsonFromJson(shareTextJson, "item");
             this.shareTextDesc = shareTextDesc;
             this.shareTextDescUser = getJsonFromJson(shareTextDesc, "user_profile");
+        }
+
+        public String getDynamicId()
+        {
+            return shareTextDesc.optString("dynamic_id_str");
         }
 
         public String getDynamicText()
@@ -433,6 +487,11 @@ public class UserDynamic
         public int getBeReply()
         {
             return shareTextItemJson.optInt("reply");
+        }
+
+        public String getReplyType()
+        {
+            return "17";
         }
     }
 
@@ -563,7 +622,7 @@ public class UserDynamic
         Request request;
         client = new OkHttpClient.Builder().connectTimeout(15, TimeUnit.SECONDS).readTimeout(15, TimeUnit.SECONDS).build();
         body = RequestBody.create(MediaType.parse("application/x-www-form-urlencoded; charset=utf-8"), data);
-        request = new Request.Builder().url(url).post(body).header("Referer", "https://www.bilibili.com/").addHeader("Accept", "*/*").addHeader("User-Agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)").addHeader("Referer", "https://passport.bilibili.com/login").addHeader("Cookie", cookie).build();
+        request = new Request.Builder().url(url).post(body).header("Referer", "https://www.bilibili.com/").addHeader("Accept", "*/*").addHeader("User-Agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)").addHeader("Cookie", cookie).build();
         response = client.newCall(request).execute();
         if(response.isSuccessful())
         {
