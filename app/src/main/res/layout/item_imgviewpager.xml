@@ -4,9 +4,10 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <ImageView
+    <me.panpf.sketch.SketchImageView
         android:id="@+id/vp_imageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:saveEnabled="true"
         android:src="@drawable/img_default_imgviewpaper" />
 </LinearLayout>

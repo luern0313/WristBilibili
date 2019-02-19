@@ -229,17 +229,20 @@ public class Dynamic extends Fragment
                     {
                         //oid和type都是传过去再传回来
                         //我王境泽传数据就是乱死！也不建多余的变量！（没有真香）
-                        if(userDynamic.sendReply(data.getStringExtra("oid"), data.getStringExtra("type"), data.getStringExtra("text")))
+                        if(!data.getStringExtra("text").equals(""))
                         {
-                            Looper.prepare();
-                            Toast.makeText(ctx, "发送成功！", Toast.LENGTH_SHORT).show();
-                            Looper.loop();
-                        }
-                        else
-                        {
-                            Looper.prepare();
-                            Toast.makeText(ctx, "发送失败，可能是短时间发送过多？", Toast.LENGTH_SHORT).show();
-                            Looper.loop();
+                            if(userDynamic.sendReply(data.getStringExtra("oid"), data.getStringExtra("type"), data.getStringExtra("text")))
+                            {
+                                Looper.prepare();
+                                Toast.makeText(ctx, "发送成功！", Toast.LENGTH_SHORT).show();
+                                Looper.loop();
+                            }
+                            else
+                            {
+                                Looper.prepare();
+                                Toast.makeText(ctx, "发送失败，可能是短时间发送过多？", Toast.LENGTH_SHORT).show();
+                                Looper.loop();
+                            }
                         }
                     }
                     catch(IOException e)

@@ -294,7 +294,7 @@ public class UserDynamic
         {
             try
             {
-                ArrayList<String> picssrc = new ArrayList<String>();
+                ArrayList<String> picssrc = new ArrayList<>();
                 JSONArray pics = oriTextItemJson.getJSONArray("pictures");
                 for (int i = 0; i < pics.length(); i++)
                     picssrc.add((String) ((JSONObject) pics.get(i)).get("img_src"));
