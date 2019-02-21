@@ -96,7 +96,7 @@
                     android:paddingLeft="4dp"
                     android:paddingRight="4dp"
                     android:paddingTop="1dp"
-                    android:textColor="@color/textcolor3"
+                    android:textColor="@color/textColor3"
                     android:textSize="9sp"
                     android:textStyle="bold" />
 
@@ -107,7 +107,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/ou_lv"
                     android:layout_marginTop="2dp"
-                    android:textColor="@color/textcolor3"
+                    android:textColor="@color/textColor3"
                     android:textSize="12sp"
                     android:visibility="gone" />
 

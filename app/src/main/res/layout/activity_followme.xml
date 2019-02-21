@@ -101,7 +101,7 @@
                         android:paddingRight="4dp"
                         android:paddingTop="1dp"
                         android:text="LV6"
-                        android:textColor="@color/textcolor3"
+                        android:textColor="@color/textColor3"
                         android:textSize="8sp" />
 
                     <TextView
@@ -113,7 +113,7 @@
                         android:layout_marginTop="-1dp"
                         android:layout_toRightOf="@+id/fme_card_lv"
                         android:text="投稿:15+"
-                        android:textColor="@color/textcolor3"
+                        android:textColor="@color/textColor3"
                         android:textSize="10sp" />
 
                     <TextView

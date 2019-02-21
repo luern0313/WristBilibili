@@ -466,7 +466,7 @@ public class VideodetailsActivity extends Activity
             {
                 viewHolder.img.setImageResource(R.drawable.img_default_avatar);
                 viewHolder.name.setText(v.getUserName());
-                viewHolder.time.setText(v.getReplyTime() + "    " + v.getReplyFloor(replyApi.isShowFloor()) + "    LV" + v.getUserLv());
+                viewHolder.time.setText(v.getReplyTime() + "   " + v.getReplyFloor(replyApi.isShowFloor()) + "   LV" + v.getUserLv());
                 viewHolder.text.setText(v.getReplyText());
                 viewHolder.liken.setText(String.valueOf(v.getReplyBeLiked()));
                 viewHolder.replyn.setText(String.valueOf(v.getReplyBeReply()));
@@ -477,7 +477,7 @@ public class VideodetailsActivity extends Activity
                     viewHolder.dislikei.setImageResource(R.drawable.icon_disliked);
                 else viewHolder.dislikei.setImageResource(R.drawable.icon_dislike);
                 if(v.getUserVip() == 2) viewHolder.name.setTextColor(getResources().getColor(R.color.mainColor));
-                else viewHolder.name.setTextColor(getResources().getColor(R.color.textColor));
+                else viewHolder.name.setTextColor(getResources().getColor(R.color.textColor4));
 
                 viewHolder.img.setTag(v.getUserHead());
                 BitmapDrawable h = setImageFormWeb(v.getUserHead());
