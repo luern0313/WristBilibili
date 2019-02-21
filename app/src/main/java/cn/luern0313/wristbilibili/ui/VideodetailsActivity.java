@@ -1,38 +1,60 @@
 package cn.luern0313.wristbilibili.ui;
 
+import android.animation.Animator;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.text.Html;
-import android.util.Log;
+import android.support.v4.util.LruCache;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONException;
-import org.w3c.dom.Text;
-
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.R;
+import cn.luern0313.wristbilibili.api.OthersUser;
+import cn.luern0313.wristbilibili.api.ReplyApi;
 import cn.luern0313.wristbilibili.api.VideoDetails;
 
 public class VideodetailsActivity extends Activity
 {
     Context ctx;
     Intent intent;
+    LayoutInflater inflater;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     VideoDetails videoDetail;
+    ReplyApi replyApi;
+    ArrayList<ReplyApi.reply> replyArrayList;
+
+    View layoutSendReply;
+    View layoutChangeMode;
+    View layoutLoading;
 
     Handler handler = new Handler();
     Runnable runnableNoWeb;
@@ -40,13 +62,13 @@ public class VideodetailsActivity extends Activity
     Runnable runnableImg;
     Runnable runnableSetface;
     Runnable runnableNodata;
-    Thread threadReply;
     Runnable runnableReply;
-    Runnable runnableReplyerr;
 
     AnimationDrawable loadingImgAnim;
     Bitmap videoUpFace;
-    String reply;
+
+    TextView titleTextView;
+    ViewPager viewPager;
 
     ImageView uiLoadingImg;
     LinearLayout uiLoading;
@@ -62,7 +84,8 @@ public class VideodetailsActivity extends Activity
     LinearLayout uiCoinLay;
     LinearLayout uiFavLay;
     LinearLayout uiDislikeLay;
-    TextView uiReply;
+
+    ListView uiRelpyListView;
 
     boolean isLogin = false;
     int isLiked = 0;//012
@@ -80,29 +103,16 @@ public class VideodetailsActivity extends Activity
         sharedPreferences = getSharedPreferences("default", Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
 
-        uiLoadingImg = findViewById(R.id.vd_loading_img);
-        uiLoading = findViewById(R.id.vd_loading);
-        uiNoWeb = findViewById(R.id.vd_noweb);
-        uiLikeText = findViewById(R.id.vd_like_text);
-        uiCoinText = findViewById(R.id.vd_coin_text);
-        uiFavText = findViewById(R.id.vd_fav_text);
-        uiLikeImg = findViewById(R.id.vd_like_img);
-        uiCoinImg = findViewById(R.id.vd_coin_img);
-        uiFavImg = findViewById(R.id.vd_fav_img);
-        uiDislikeImg = findViewById(R.id.vd_dislike_img);
-        uiLikeLay = findViewById(R.id.vd_like);
-        uiCoinLay = findViewById(R.id.vd_coin);
-        uiFavLay = findViewById(R.id.vd_fav);
-        uiDislikeLay = findViewById(R.id.vd_dislike);
-        uiReply = findViewById(R.id.vd_reply);
+        inflater = getLayoutInflater();
+        layoutSendReply = inflater.inflate(R.layout.widget_reply_sendreply, null);
+        layoutChangeMode = inflater.inflate(R.layout.widget_reply_changemode, null);
+        layoutLoading = inflater.inflate(R.layout.widget_dyloading, null);
+        titleTextView = findViewById(R.id.vd_title_title);
+        viewPager = findViewById(R.id.vd_viewpager);
 
         isLogin = !MainActivity.sharedPreferences.getString("cookies", "").equals("");
         videoDetail = new VideoDetails(sharedPreferences.getString("cookies", ""), sharedPreferences.getString("csrf", ""), sharedPreferences.getString("mid", ""), intent.getStringExtra("aid"));
-
-        uiLoadingImg.setImageResource(R.drawable.anim_loading);
-        loadingImgAnim = (AnimationDrawable) uiLoadingImg.getDrawable();
-        loadingImgAnim.start();
-        uiLoading.setVisibility(View.VISIBLE);
+        replyApi = new ReplyApi(sharedPreferences.getString("cookies", ""), sharedPreferences.getString("csrf", ""), intent.getStringExtra("aid"), "1");
 
         runnableNoWeb = new Runnable()
         {
@@ -166,78 +176,480 @@ public class VideodetailsActivity extends Activity
             }
         };
 
-        threadReply = new Thread(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                try
-                {
-                    reply = videoDetail.getVideoReply();
-                    handler.post(runnableReply);
-                }
-                catch (IOException e)
-                {
-                    handler.post(runnableReplyerr);
-                }
-            }
-        });
-
         runnableReply = new Runnable()
         {
             @Override
             public void run()
             {
-                ((TextView) findViewById(R.id.vd_reply)).setText(Html.fromHtml(reply));
+                mAdapter replyAdapter = new mAdapter(inflater, replyArrayList);
+                uiRelpyListView.setAdapter(replyAdapter);
             }
         };
 
-        runnableReplyerr = new Runnable()
+        PagerAdapter pagerAdapter = new PagerAdapter()
         {
             @Override
-            public void run()
+            public int getCount()
             {
-                ((TextView) findViewById(R.id.vd_reply)).setText("评论加载失败。。。");
+                return 2;
+            }
+
+            @Override
+            public boolean isViewFromObject(View view, Object object)
+            {
+                return view.getTag().equals(object);
+            }
+
+            @Override
+            public void destroyItem(ViewGroup container, int position, Object object)
+            {
+                container.removeView(container.findViewWithTag(object));
+            }
+
+            @Override
+            public Object instantiateItem(ViewGroup container, int position)
+            {
+                if(position == 0)
+                {
+                    View v = inflater.inflate(R.layout.viewpager_vd_vd, null);
+                    v.setTag(0);
+
+                    uiLoadingImg = v.findViewById(R.id.vd_loading_img);
+                    uiLoading = v.findViewById(R.id.vd_loading);
+                    uiNoWeb = v.findViewById(R.id.vd_noweb);
+                    uiLikeText = v.findViewById(R.id.vd_like_text);
+                    uiCoinText = v.findViewById(R.id.vd_coin_text);
+                    uiFavText = v.findViewById(R.id.vd_fav_text);
+                    uiLikeImg = v.findViewById(R.id.vd_like_img);
+                    uiCoinImg = v.findViewById(R.id.vd_coin_img);
+                    uiFavImg = v.findViewById(R.id.vd_fav_img);
+                    uiDislikeImg = v.findViewById(R.id.vd_dislike_img);
+                    uiLikeLay = v.findViewById(R.id.vd_like);
+                    uiCoinLay = v.findViewById(R.id.vd_coin);
+                    uiFavLay = v.findViewById(R.id.vd_fav);
+                    uiDislikeLay = v.findViewById(R.id.vd_dislike);
+
+                    uiLoadingImg.setImageResource(R.drawable.anim_loading);
+                    loadingImgAnim = (AnimationDrawable) uiLoadingImg.getDrawable();
+                    loadingImgAnim.start();
+                    uiLoading.setVisibility(View.VISIBLE);
+
+                    v.findViewById(R.id.vd_card).setOnClickListener(new View.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(View v)
+                        {
+                            Intent intent = new Intent(ctx, OtheruserActivity.class);
+                            intent.putExtra("mid", videoDetail.getVideoUpAid());
+                            startActivity(intent);
+                        }
+                    });
+
+                    new Thread(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            try
+                            {
+                                if(videoDetail.getVideoDetails())
+                                {
+                                    handler.post(runnableUi);
+                                    videoUpFace = videoDetail.getVideoUpFace();
+                                    handler.post(runnableSetface);
+                                }
+                                else
+                                {
+                                    handler.post(runnableNodata);
+                                }
+                            }
+                            catch (IOException e)
+                            {
+                                e.printStackTrace();
+                                handler.post(runnableNoWeb);
+                            }
+                        }
+                    }).start();
+                    container.addView(v);
+                    return 0;
+                }
+                else
+                {
+                    View v = inflater.inflate(R.layout.viewpager_vd_reply, null);
+                    v.setTag(1);
+
+                    uiRelpyListView = v.findViewById(R.id.vd_reply_listview);
+                    uiRelpyListView.addHeaderView(layoutSendReply, null, true);
+                    uiRelpyListView.addFooterView(layoutLoading, null, true);
+                    uiRelpyListView.setHeaderDividersEnabled(false);
+                    new Thread(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            try
+                            {
+                                replyArrayList = replyApi.getReply(1, "2", 5);
+                                replyArrayList.add(replyApi.new reply(1));
+                                replyArrayList.addAll(replyApi.getReply(1, "0", 0));
+                                handler.post(runnableReply);
+                            }
+                            catch (IOException e)
+                            {
+                                e.printStackTrace();
+                            }
+                        }
+                    }).start();
+                    container.addView(v);
+                    return 1;
+                }
             }
         };
 
-        findViewById(R.id.vd_card).setOnClickListener(new View.OnClickListener()
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener()
         {
             @Override
-            public void onClick(View v)
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels)
             {
-                Intent intent = new Intent(ctx, OtheruserActivity.class);
-                intent.putExtra("mid", videoDetail.getVideoUpAid());
-                startActivity(intent);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state)
+            {
+            }
+
+            @Override
+            public void onPageSelected(int position)
+            {
+                if(position == 0) titleAnim("详情");
+                else if(position == 1) titleAnim("评论");
             }
         });
 
-        new Thread(new Runnable()
+        viewPager.setAdapter(pagerAdapter);
+    }
+
+    void titleAnim(String title)
+    {
+        titleTextView.setText(title);
+        ObjectAnimator alpha = ObjectAnimator.ofFloat(titleTextView, "alpha", 1f, 0f);
+        AnimatorSet animatorSet = new AnimatorSet();
+        animatorSet.play(alpha).after(2000);
+        animatorSet.setDuration(500);
+        animatorSet.start();
+        animatorSet.addListener(new Animator.AnimatorListener()
         {
             @Override
-            public void run()
+            public void onAnimationStart(Animator animation)
+            {
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation)
+            {
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation)
+            {
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation)
+            {
+                titleTextView.setText("视频");
+                titleTextView.setAlpha(1);
+            }
+        });
+    }
+
+    class mAdapter extends BaseAdapter
+    {
+        private LayoutInflater mInflater;
+
+        private LruCache<String, BitmapDrawable> mImageCache;
+
+        private ArrayList<ReplyApi.reply> replyList;
+
+        public mAdapter(LayoutInflater inflater, ArrayList<ReplyApi.reply> replyList)
+        {
+            mInflater = inflater;
+            this.replyList = replyList;
+
+            int maxCache = (int) Runtime.getRuntime().maxMemory();
+            int cacheSize = maxCache / 8;
+            mImageCache = new LruCache<String, BitmapDrawable>(cacheSize)
+            {
+                @Override
+                protected int sizeOf(String key, BitmapDrawable value)
+                {
+                    try
+                    {
+                        return value.getBitmap().getByteCount();
+                    }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+                    return 0;
+                }
+            };
+        }
+
+        @Override
+        public int getCount()
+        {
+            return replyList.size();
+        }
+
+        @Override
+        public Object getItem(int position)
+        {
+            return position;
+        }
+
+        @Override
+        public long getItemId(int position)
+        {
+            return position;
+        }
+
+        @Override
+        public int getViewTypeCount()
+        {
+            return 2;
+        }
+
+        @Override
+        public int getItemViewType(int position)
+        {
+            return replyList.get(position).getMode();
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup viewGroup)
+        {
+            final ReplyApi.reply v = replyList.get(position);
+            ViewHolder viewHolder = null;
+            if(convertView == null)
+            {
+                switch (getItemViewType(position))
+                {
+                    case 0:
+                        convertView = mInflater.inflate(R.layout.item_vd_reply, null);
+                        viewHolder = new ViewHolder();
+                        convertView.setTag(viewHolder);
+                        viewHolder.img = convertView.findViewById(R.id.item_reply_head);
+                        viewHolder.name = convertView.findViewById(R.id.item_reply_name);
+                        viewHolder.time = convertView.findViewById(R.id.item_reply_time);
+                        viewHolder.text = convertView.findViewById(R.id.item_reply_text);
+                        viewHolder.like = convertView.findViewById(R.id.item_reply_like);
+                        viewHolder.likei = convertView.findViewById(R.id.item_reply_like_i);
+                        viewHolder.liken = convertView.findViewById(R.id.item_reply_like_n);
+                        viewHolder.dislike = convertView.findViewById(R.id.item_reply_dislike);
+                        viewHolder.dislikei = convertView.findViewById(R.id.item_reply_dislike_i);
+                        viewHolder.reply = convertView.findViewById(R.id.item_reply_reply);
+                        viewHolder.replyn = convertView.findViewById(R.id.item_reply_reply_n);
+                        break;
+
+                    case 1:
+                        convertView = mInflater.inflate(R.layout.widget_reply_changemode, null);
+                        break;
+                }
+            }
+            else
+            {
+                viewHolder = (ViewHolder) convertView.getTag();
+            }
+
+            if(getItemViewType(position) == 0)
+            {
+                viewHolder.img.setImageResource(R.drawable.img_default_avatar);
+                viewHolder.name.setText(v.getUserName());
+                viewHolder.time.setText(v.getReplyTime() + "    " + v.getReplyFloor(replyApi.isShowFloor()) + "    LV" + v.getUserLv());
+                viewHolder.text.setText(v.getReplyText());
+                viewHolder.liken.setText(String.valueOf(v.getReplyBeLiked()));
+                viewHolder.replyn.setText(String.valueOf(v.getReplyBeReply()));
+
+                if(v.isReplyLike()) viewHolder.likei.setImageResource(R.drawable.icon_liked);
+                else viewHolder.likei.setImageResource(R.drawable.icon_like);
+                if(v.isReplyDislike())
+                    viewHolder.dislikei.setImageResource(R.drawable.icon_disliked);
+                else viewHolder.dislikei.setImageResource(R.drawable.icon_dislike);
+                if(v.getUserVip() == 2) viewHolder.name.setTextColor(getResources().getColor(R.color.mainColor));
+                else viewHolder.name.setTextColor(getResources().getColor(R.color.textColor));
+
+                viewHolder.img.setTag(v.getUserHead());
+                BitmapDrawable h = setImageFormWeb(v.getUserHead());
+                if(h != null) viewHolder.img.setImageDrawable(h);
+
+                viewHolder.img.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View view)
+                    {
+                        Intent intent = new Intent(ctx, OtheruserActivity.class);
+                        intent.putExtra("mid", v.getUserMid());
+                        startActivity(intent);
+                    }
+                });
+            }
+            return convertView;
+        }
+
+        class ViewHolder
+        {
+            ImageView img;
+            TextView name;
+            TextView time;
+            TextView text;
+            LinearLayout like;
+            ImageView likei;
+            TextView liken;
+            LinearLayout dislike;
+            ImageView dislikei;
+            LinearLayout reply;
+            TextView replyn;
+        }
+
+        BitmapDrawable setImageFormWeb(String url)
+        {
+            if(mImageCache.get(url) != null)
+            {
+                return mImageCache.get(url);
+            }
+            else
+            {
+                ImageTask it = new ImageTask();
+                it.execute(url);
+                return null;
+            }
+        }
+
+        class ImageTask extends AsyncTask<String, Void, BitmapDrawable>
+        {
+            private String imageUrl;
+
+            @Override
+            protected BitmapDrawable doInBackground(String... params)
             {
                 try
                 {
-                    if(videoDetail.getVideoDetails())
+                    imageUrl = params[0];
+                    Bitmap bitmap = null;
+                    bitmap = downloadImage();
+                    BitmapDrawable db = new BitmapDrawable(getResources(), bitmap);
+                    // 如果本地还没缓存该图片，就缓存
+                    if(mImageCache.get(imageUrl) == null && bitmap != null)
                     {
-                        handler.post(runnableUi);
-                        videoUpFace = videoDetail.getVideoUpFace();
-                        handler.post(runnableSetface);
-                        threadReply.start();
+                        mImageCache.put(imageUrl, db);
                     }
-                    else
-                    {
-                        handler.post(runnableNodata);
-                    }
+                    return db;
                 }
                 catch (IOException e)
                 {
                     e.printStackTrace();
-                    handler.post(runnableNoWeb);
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(BitmapDrawable result)
+            {
+                // 通过Tag找到我们需要的ImageView，如果该ImageView所在的item已被移出页面，就会直接返回null
+                ImageView iv = uiRelpyListView.findViewWithTag(imageUrl);
+                if(iv != null && result != null)
+                {
+                    iv.setImageDrawable(result);
                 }
             }
-        }).start();
+
+            /**
+             * 获得需要压缩的比率
+             *
+             * @param options 需要传入已经BitmapFactory.decodeStream(is, null, options);
+             * @return 返回压缩的比率，最小为1
+             */
+            public int getInSampleSize(BitmapFactory.Options options)
+            {
+                int inSampleSize = 1;
+                int realWith = 136;
+                int realHeight = 136;
+
+                int outWidth = options.outWidth;
+                int outHeight = options.outHeight;
+
+                //获取比率最大的那个
+                if(outWidth > realWith || outHeight > realHeight)
+                {
+                    int withRadio = Math.round(outWidth / realWith);
+                    int heightRadio = Math.round(outHeight / realHeight);
+                    inSampleSize = withRadio > heightRadio ? withRadio : heightRadio;
+                }
+                return inSampleSize;
+            }
+
+            /**
+             * 根据输入流返回一个压缩的图片
+             *
+             * @param input 图片的输入流
+             * @return 压缩的图片
+             */
+            public Bitmap getCompressBitmap(InputStream input)
+            {
+                //因为InputStream要使用两次，但是使用一次就无效了，所以需要复制两个
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                try
+                {
+                    byte[] buffer = new byte[1024];
+                    int len;
+                    while ((len = input.read(buffer)) > -1)
+                    {
+                        baos.write(buffer, 0, len);
+                    }
+                    baos.flush();
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+
+                //复制新的输入流
+                InputStream is = new ByteArrayInputStream(baos.toByteArray());
+                InputStream is2 = new ByteArrayInputStream(baos.toByteArray());
+
+                //只是获取网络图片的大小，并没有真正获取图片
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inJustDecodeBounds = true;
+                BitmapFactory.decodeStream(is, null, options);
+                //获取图片并进行压缩
+                options.inSampleSize = getInSampleSize(options);
+                options.inJustDecodeBounds = false;
+                return BitmapFactory.decodeStream(is2, null, options);
+            }
+
+            /**
+             * 根据url从网络上下载图片
+             *
+             * @return 图片
+             */
+            private Bitmap downloadImage() throws IOException
+            {
+                HttpURLConnection con = null;
+                Bitmap bitmap = null;
+                URL url = new URL(imageUrl);
+                con = (HttpURLConnection) url.openConnection();
+                con.setConnectTimeout(5 * 1000);
+                con.setReadTimeout(10 * 1000);
+                bitmap = getCompressBitmap(con.getInputStream());
+                if(con != null)
+                {
+                    con.disconnect();
+                }
+                return bitmap;
+            }
+        }
+
     }
 
     void setIcon()
@@ -264,14 +676,10 @@ public class VideodetailsActivity extends Activity
             uiLikeImg.setImageResource(R.drawable.icon_vdd_do_like_no);
             uiDislikeImg.setImageResource(R.drawable.icon_vdd_do_dislike_no);
         }
-        if(isCoined > 0)
-            uiCoinImg.setImageResource(R.drawable.icon_vdd_do_coin_yes);
-        else
-            uiCoinImg.setImageResource(R.drawable.icon_vdd_do_coin_no);
-        if(isFaved)
-            uiFavImg.setImageResource(R.drawable.icon_vdd_do_fav_yes);
-        else
-            uiFavImg.setImageResource(R.drawable.icon_vdd_do_fav_no);
+        if(isCoined > 0) uiCoinImg.setImageResource(R.drawable.icon_vdd_do_coin_yes);
+        else uiCoinImg.setImageResource(R.drawable.icon_vdd_do_coin_no);
+        if(isFaved) uiFavImg.setImageResource(R.drawable.icon_vdd_do_fav_yes);
+        else uiFavImg.setImageResource(R.drawable.icon_vdd_do_fav_no);
     }
 
     public void clickCover(View view)
@@ -558,7 +966,7 @@ public class VideodetailsActivity extends Activity
                             Looper.loop();
                         }
                     }
-                    catch(IOException e)
+                    catch (IOException e)
                     {
                         e.printStackTrace();
                         Looper.prepare();

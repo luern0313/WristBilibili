@@ -14,18 +14,13 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.R;
-import cn.luern0313.wristbilibili.fragment.Dynamic;
 import me.panpf.sketch.SketchImageView;
 
 public class ImgActivity extends Activity
@@ -57,7 +52,7 @@ public class ImgActivity extends Activity
         viewList = new ArrayList<>();
         for(int i = 0; i < imgUrlList.length; i++)
         {
-            View view = inflater.inflate(R.layout.item_imgviewpager, null);
+            View view = inflater.inflate(R.layout.viewpager_img_img, null);
             view.setTag(imgUrlList[i]);
             viewList.add(view);
         }
