@@ -90,8 +90,7 @@
             android:id="@+id/favv_listview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:divider="@color/alphe"
-            android:dividerHeight="2dp" />
+            android:divider="@null" />
     </jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout>
 
 </RelativeLayout>
