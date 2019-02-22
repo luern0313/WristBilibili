@@ -162,17 +162,20 @@ public class VideoDetails
 
     public String getVideoLike()
     {
-        return String.valueOf(beLiked);
+        if(beLiked > 10000) return beLiked / 1000 / 10.0 + "万";
+        else return String.valueOf(beLiked);
     }
 
     public String getVideoCoin()
     {
-        return String.valueOf(beCoined);
+        if(beCoined > 10000) return beCoined / 1000 / 10.0 + "万";
+        else return String.valueOf(beCoined);
     }
 
     public String getVideoFav()
     {
-        return String.valueOf(beFaved);
+        if(beFaved > 10000) return beFaved / 1000 / 10.0 + "万";
+        else return String.valueOf(beFaved);
     }
 
     public int getSelfLiked()
