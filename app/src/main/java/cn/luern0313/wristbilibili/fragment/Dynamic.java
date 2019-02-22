@@ -218,7 +218,7 @@ public class Dynamic extends Fragment
     public void onActivityResult(int requestCode, int resultCode, final Intent data)
     {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == 0 && resultCode == 0)
+        if(requestCode == 0 && resultCode == 0 && data != null)
         {
             new Thread(new Runnable()
             {

@@ -12,6 +12,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -149,28 +150,6 @@ public class VideoDetails
         return format.format(date);
     }
 
-    public String getVideoReply() throws IOException
-    {
-        try
-        {
-            videoReplyJson = videoJSON.optJSONObject("data").optJSONObject("Reply").optJSONArray("replies");
-            StringBuilder reply = new StringBuilder("<b>热门回复：</b>");
-            if(videoReplyJson.length() == 0) return "<b>暂无热门回复</b>";
-            for (int i = 0; i < videoReplyJson.length(); i++)
-            {
-                JSONObject replyJson = videoReplyJson.optJSONObject(i);
-                OthersUser othersUser = new OthersUser(cookie, csrf, String.valueOf(replyJson.optInt("mid")));
-                reply.append("<br/><br/><b>").append(new JSONObject(othersUser.getOtheruserInfo()).optJSONObject("data").optJSONObject("card").optString("name")).append("：</b>");
-                reply.append(replyJson.optJSONObject("content").optString("message"));
-            }
-            return reply.toString();
-        }
-        catch (JSONException | NullPointerException e)
-        {
-            return "<b>暂无热门回复<b/>";
-        }
-    }
-
     public String getVideoAid()
     {
         return aid;
@@ -209,6 +188,23 @@ public class VideoDetails
     public boolean getSelfFaved()
     {
         return isFaved;
+    }
+
+    public ArrayList<ListofVideoApi> getRecommendVideos() throws IOException
+    {
+        try
+        {
+            ArrayList<ListofVideoApi> videoArrayList = new ArrayList<>();
+            JSONArray videoJson = new JSONObject((String) get("https://comment.bilibili.com/recommendnew," +  aid, 1)).getJSONArray("data");
+            for(int i = 0; i < videoJson.length(); i++)
+                videoArrayList.add(new ListofVideoApi(videoJson.getJSONObject(i)));
+            return videoArrayList;
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public void setSelfLiked(int w)

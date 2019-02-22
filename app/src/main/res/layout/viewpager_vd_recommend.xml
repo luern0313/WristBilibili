@@ -4,13 +4,15 @@
     android:layout_height="match_parent">
 
     <ListView
-        android:id="@+id/vd_reply_listview"
+        android:id="@+id/vd_recommend_listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:divider="@color/alphe" />
+        android:clipToPadding="false"
+        android:divider="@color/alphe"
+        android:paddingBottom="22dp" />
 
     <LinearLayout
-        android:id="@+id/vd_reply_nothing"
+        android:id="@+id/vd_recommend_nothing"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/textColor"

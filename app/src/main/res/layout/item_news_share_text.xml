@@ -55,7 +55,7 @@
             android:layout_marginBottom="2dp"
             android:layout_marginLeft="2dp"
             android:layout_marginRight="2dp"
-            app:etv_MaxLinesOnShrink="3"/>
+            app:etv_MaxLinesOnShrink="4" />
 
         <RelativeLayout
             android:id="@+id/list_share_lay"
@@ -101,7 +101,7 @@
                 android:layout_marginLeft="2dp"
                 android:layout_marginRight="2dp"
                 android:textSize="13sp"
-                app:etv_MaxLinesOnShrink="3" />
+                app:etv_MaxLinesOnShrink="4" />
 
             <TextView
                 android:id="@+id/list_share_textimg"

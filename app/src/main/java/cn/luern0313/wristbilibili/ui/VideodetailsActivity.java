@@ -18,9 +18,11 @@ import android.os.Looper;
 import android.support.v4.util.LruCache;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -37,6 +39,7 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.R;
+import cn.luern0313.wristbilibili.api.ListofVideoApi;
 import cn.luern0313.wristbilibili.api.OthersUser;
 import cn.luern0313.wristbilibili.api.ReplyApi;
 import cn.luern0313.wristbilibili.api.VideoDetails;
@@ -51,6 +54,7 @@ public class VideodetailsActivity extends Activity
     VideoDetails videoDetail;
     ReplyApi replyApi;
     ArrayList<ReplyApi.reply> replyArrayList;
+    ArrayList<ListofVideoApi> recommendList;
 
     View layoutSendReply;
     View layoutChangeMode;
@@ -63,6 +67,7 @@ public class VideodetailsActivity extends Activity
     Runnable runnableSetface;
     Runnable runnableNodata;
     Runnable runnableReply;
+    Runnable runnableRecommend;
 
     AnimationDrawable loadingImgAnim;
     Bitmap videoUpFace;
@@ -86,6 +91,7 @@ public class VideodetailsActivity extends Activity
     LinearLayout uiDislikeLay;
 
     ListView uiRelpyListView;
+    ListView uiRecommendListView;
 
     boolean isLogin = false;
     int isLiked = 0;//012
@@ -106,13 +112,21 @@ public class VideodetailsActivity extends Activity
         inflater = getLayoutInflater();
         layoutSendReply = inflater.inflate(R.layout.widget_reply_sendreply, null);
         layoutChangeMode = inflater.inflate(R.layout.widget_reply_changemode, null);
-        layoutLoading = inflater.inflate(R.layout.widget_dyloading, null);
         titleTextView = findViewById(R.id.vd_title_title);
         viewPager = findViewById(R.id.vd_viewpager);
+        viewPager.setOffscreenPageLimit(2);
+        uiLoadingImg = findViewById(R.id.vd_loading_img);
+        uiLoading = findViewById(R.id.vd_loading);
+        uiNoWeb = findViewById(R.id.vd_noweb);
 
         isLogin = !MainActivity.sharedPreferences.getString("cookies", "").equals("");
         videoDetail = new VideoDetails(sharedPreferences.getString("cookies", ""), sharedPreferences.getString("csrf", ""), sharedPreferences.getString("mid", ""), intent.getStringExtra("aid"));
         replyApi = new ReplyApi(sharedPreferences.getString("cookies", ""), sharedPreferences.getString("csrf", ""), intent.getStringExtra("aid"), "1");
+
+        uiLoadingImg.setImageResource(R.drawable.anim_loading);
+        loadingImgAnim = (AnimationDrawable) uiLoadingImg.getDrawable();
+        loadingImgAnim.start();
+        uiLoading.setVisibility(View.VISIBLE);
 
         runnableNoWeb = new Runnable()
         {
@@ -129,23 +143,30 @@ public class VideodetailsActivity extends Activity
             @Override
             public void run()
             {
-                ((TextView) findViewById(R.id.vd_video_title)).setText(videoDetail.getVideoTitle());
-                ((TextView) findViewById(R.id.vd_video_play)).setText("播放:" + videoDetail.getVideoPlay() + "  弹幕:" + videoDetail.getVideoDanmaku());
-                ((TextView) findViewById(R.id.vd_video_time)).setText(videoDetail.getVideoupTime() + "  AV" + videoDetail.getVideoAid());
-                ((TextView) findViewById(R.id.vd_video_details)).setText(videoDetail.getVideoDetail());
-                ((TextView) findViewById(R.id.vd_card_name)).setText(videoDetail.getVideoUpName());
-                ((TextView) findViewById(R.id.vd_card_sen)).setText(videoDetail.getVideoUpSign());
-                uiLikeText.setText(videoDetail.getVideoLike());
-                uiCoinText.setText(videoDetail.getVideoCoin());
-                uiFavText.setText(videoDetail.getVideoFav());
-                isLiked = videoDetail.getSelfLiked();
-                isCoined = videoDetail.getSelfCoined();
-                isFaved = videoDetail.getSelfFaved();
+                try
+                {
+                    ((TextView) findViewById(R.id.vd_video_title)).setText(videoDetail.getVideoTitle());
+                    ((TextView) findViewById(R.id.vd_video_play)).setText("播放:" + videoDetail.getVideoPlay() + "  弹幕:" + videoDetail.getVideoDanmaku());
+                    ((TextView) findViewById(R.id.vd_video_time)).setText(videoDetail.getVideoupTime() + "  AV" + videoDetail.getVideoAid());
+                    ((TextView) findViewById(R.id.vd_video_details)).setText(videoDetail.getVideoDetail());
+                    ((TextView) findViewById(R.id.vd_card_name)).setText(videoDetail.getVideoUpName());
+                    ((TextView) findViewById(R.id.vd_card_sen)).setText(videoDetail.getVideoUpSign());
+                    uiLikeText.setText(videoDetail.getVideoLike());
+                    uiCoinText.setText(videoDetail.getVideoCoin());
+                    uiFavText.setText(videoDetail.getVideoFav());
+                    isLiked = videoDetail.getSelfLiked();
+                    isCoined = videoDetail.getSelfCoined();
+                    isFaved = videoDetail.getSelfFaved();
 
-                setIcon();
+                    setIcon();
 
-                uiLoading.setVisibility(View.GONE);
-                uiNoWeb.setVisibility(View.GONE);
+                    uiLoading.setVisibility(View.GONE);
+                    uiNoWeb.setVisibility(View.GONE);
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
             }
         };
 
@@ -154,7 +175,14 @@ public class VideodetailsActivity extends Activity
             @Override
             public void run()
             {
-                setIcon();
+                try
+                {
+                    setIcon();
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
             }
         };
 
@@ -163,7 +191,14 @@ public class VideodetailsActivity extends Activity
             @Override
             public void run()
             {
-                ((ImageView) findViewById(R.id.vd_card_head)).setImageBitmap(videoUpFace);
+                try
+                {
+                    ((ImageView) findViewById(R.id.vd_card_head)).setImageBitmap(videoUpFace);
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
             }
         };
 
@@ -172,7 +207,14 @@ public class VideodetailsActivity extends Activity
             @Override
             public void run()
             {
-                findViewById(R.id.vd_novideo).setVisibility(View.VISIBLE);
+                try
+                {
+                    findViewById(R.id.vd_novideo).setVisibility(View.VISIBLE);
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
             }
         };
 
@@ -181,17 +223,41 @@ public class VideodetailsActivity extends Activity
             @Override
             public void run()
             {
-                mAdapter replyAdapter = new mAdapter(inflater, replyArrayList);
-                uiRelpyListView.setAdapter(replyAdapter);
+                try
+                {
+                    mAdapter replyAdapter = new mAdapter(inflater, replyArrayList);
+                    uiRelpyListView.setAdapter(replyAdapter);
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
             }
         };
 
-        PagerAdapter pagerAdapter = new PagerAdapter()
+        runnableRecommend = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    rAdapter recommendAdapter = new rAdapter(inflater, recommendList);
+                    uiRecommendListView.setAdapter(recommendAdapter);
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        final PagerAdapter pagerAdapter = new PagerAdapter()
         {
             @Override
             public int getCount()
             {
-                return 2;
+                return 3;
             }
 
             @Override
@@ -214,9 +280,6 @@ public class VideodetailsActivity extends Activity
                     View v = inflater.inflate(R.layout.viewpager_vd_vd, null);
                     v.setTag(0);
 
-                    uiLoadingImg = v.findViewById(R.id.vd_loading_img);
-                    uiLoading = v.findViewById(R.id.vd_loading);
-                    uiNoWeb = v.findViewById(R.id.vd_noweb);
                     uiLikeText = v.findViewById(R.id.vd_like_text);
                     uiCoinText = v.findViewById(R.id.vd_coin_text);
                     uiFavText = v.findViewById(R.id.vd_fav_text);
@@ -228,11 +291,6 @@ public class VideodetailsActivity extends Activity
                     uiCoinLay = v.findViewById(R.id.vd_coin);
                     uiFavLay = v.findViewById(R.id.vd_fav);
                     uiDislikeLay = v.findViewById(R.id.vd_dislike);
-
-                    uiLoadingImg.setImageResource(R.drawable.anim_loading);
-                    loadingImgAnim = (AnimationDrawable) uiLoadingImg.getDrawable();
-                    loadingImgAnim.start();
-                    uiLoading.setVisibility(View.VISIBLE);
 
                     v.findViewById(R.id.vd_card).setOnClickListener(new View.OnClickListener()
                     {
@@ -273,12 +331,13 @@ public class VideodetailsActivity extends Activity
                     container.addView(v);
                     return 0;
                 }
-                else
+                else if(position == 1)
                 {
                     View v = inflater.inflate(R.layout.viewpager_vd_reply, null);
                     v.setTag(1);
 
                     uiRelpyListView = v.findViewById(R.id.vd_reply_listview);
+                    uiRelpyListView.setEmptyView(v.findViewById(R.id.vd_reply_nothing));
                     uiRelpyListView.addHeaderView(layoutSendReply, null, true);
                     uiRelpyListView.addFooterView(layoutLoading, null, true);
                     uiRelpyListView.setHeaderDividersEnabled(false);
@@ -289,19 +348,62 @@ public class VideodetailsActivity extends Activity
                         {
                             try
                             {
-                                replyArrayList = replyApi.getReply(1, "2", 5);
+                                replyArrayList = new ArrayList<>();
                                 replyArrayList.add(replyApi.new reply(1));
+                                replyArrayList.addAll(replyApi.getReply(1, "2", 5));
+                                replyArrayList.add(replyApi.new reply(2));
                                 replyArrayList.addAll(replyApi.getReply(1, "0", 0));
                                 handler.post(runnableReply);
                             }
-                            catch (IOException e)
+                            catch (IOException | NullPointerException e)
                             {
                                 e.printStackTrace();
+                                replyArrayList = new ArrayList<>();
+                                handler.post(runnableReply);
                             }
                         }
                     }).start();
                     container.addView(v);
                     return 1;
+                }
+                else
+                {
+                    View v = inflater.inflate(R.layout.viewpager_vd_recommend, null);
+                    v.setTag(2);
+
+                    uiRecommendListView = v.findViewById(R.id.vd_recommend_listview);
+                    uiRecommendListView.setEmptyView(v.findViewById(R.id.vd_recommend_nothing));
+                    uiRecommendListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+                    {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+                        {
+                            Intent intent = new Intent(ctx, VideodetailsActivity.class);
+                            intent.putExtra("aid", String.valueOf(recommendList.get(position).getVideoAid()));
+                            startActivity(intent);
+                        }
+                    });
+
+                    new Thread(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            try
+                            {
+                                recommendList = videoDetail.getRecommendVideos();
+                                handler.post(runnableRecommend);
+                            }
+                            catch (IOException e)
+                            {
+                                e.printStackTrace();
+                                recommendList = new ArrayList<>();
+                                handler.post(runnableRecommend);
+                            }
+                        }
+                    }).start();
+                    container.addView(v);
+                    return 2;
                 }
             }
         };
@@ -323,6 +425,7 @@ public class VideodetailsActivity extends Activity
             {
                 if(position == 0) titleAnim("详情");
                 else if(position == 1) titleAnim("评论");
+                else if(position == 2) titleAnim("推荐");
             }
         });
 
@@ -417,7 +520,7 @@ public class VideodetailsActivity extends Activity
         @Override
         public int getViewTypeCount()
         {
-            return 2;
+            return 3;
         }
 
         @Override
@@ -454,6 +557,12 @@ public class VideodetailsActivity extends Activity
 
                     case 1:
                         convertView = mInflater.inflate(R.layout.widget_reply_changemode, null);
+                        ((TextView) convertView.findViewById(R.id.item_reply_sign)).setText("热门评论");
+                        break;
+
+                    case 2:
+                        convertView = mInflater.inflate(R.layout.widget_reply_changemode, null);
+                        ((TextView) convertView.findViewById(R.id.item_reply_sign)).setText("最新评论");
                         break;
                 }
             }
@@ -468,15 +577,16 @@ public class VideodetailsActivity extends Activity
                 viewHolder.name.setText(v.getUserName());
                 viewHolder.time.setText(v.getReplyTime() + "   " + v.getReplyFloor(replyApi.isShowFloor()) + "   LV" + v.getUserLv());
                 viewHolder.text.setText(v.getReplyText());
-                viewHolder.liken.setText(String.valueOf(v.getReplyBeLiked()));
-                viewHolder.replyn.setText(String.valueOf(v.getReplyBeReply()));
+                viewHolder.liken.setText(v.getReplyBeLiked());
+                viewHolder.replyn.setText(v.getReplyBeReply());
 
                 if(v.isReplyLike()) viewHolder.likei.setImageResource(R.drawable.icon_liked);
                 else viewHolder.likei.setImageResource(R.drawable.icon_like);
                 if(v.isReplyDislike())
                     viewHolder.dislikei.setImageResource(R.drawable.icon_disliked);
                 else viewHolder.dislikei.setImageResource(R.drawable.icon_dislike);
-                if(v.getUserVip() == 2) viewHolder.name.setTextColor(getResources().getColor(R.color.mainColor));
+                if(v.getUserVip() == 2)
+                    viewHolder.name.setTextColor(getResources().getColor(R.color.mainColor));
                 else viewHolder.name.setTextColor(getResources().getColor(R.color.textColor4));
 
                 viewHolder.img.setTag(v.getUserHead());
@@ -558,6 +668,237 @@ public class VideodetailsActivity extends Activity
             {
                 // 通过Tag找到我们需要的ImageView，如果该ImageView所在的item已被移出页面，就会直接返回null
                 ImageView iv = uiRelpyListView.findViewWithTag(imageUrl);
+                if(iv != null && result != null)
+                {
+                    iv.setImageDrawable(result);
+                }
+            }
+
+            /**
+             * 获得需要压缩的比率
+             *
+             * @param options 需要传入已经BitmapFactory.decodeStream(is, null, options);
+             * @return 返回压缩的比率，最小为1
+             */
+            public int getInSampleSize(BitmapFactory.Options options)
+            {
+                int inSampleSize = 1;
+                int realWith = 136;
+                int realHeight = 136;
+
+                int outWidth = options.outWidth;
+                int outHeight = options.outHeight;
+
+                //获取比率最大的那个
+                if(outWidth > realWith || outHeight > realHeight)
+                {
+                    int withRadio = Math.round(outWidth / realWith);
+                    int heightRadio = Math.round(outHeight / realHeight);
+                    inSampleSize = withRadio > heightRadio ? withRadio : heightRadio;
+                }
+                return inSampleSize;
+            }
+
+            /**
+             * 根据输入流返回一个压缩的图片
+             *
+             * @param input 图片的输入流
+             * @return 压缩的图片
+             */
+            public Bitmap getCompressBitmap(InputStream input)
+            {
+                //因为InputStream要使用两次，但是使用一次就无效了，所以需要复制两个
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                try
+                {
+                    byte[] buffer = new byte[1024];
+                    int len;
+                    while ((len = input.read(buffer)) > -1)
+                    {
+                        baos.write(buffer, 0, len);
+                    }
+                    baos.flush();
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+
+                //复制新的输入流
+                InputStream is = new ByteArrayInputStream(baos.toByteArray());
+                InputStream is2 = new ByteArrayInputStream(baos.toByteArray());
+
+                //只是获取网络图片的大小，并没有真正获取图片
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inJustDecodeBounds = true;
+                BitmapFactory.decodeStream(is, null, options);
+                //获取图片并进行压缩
+                options.inSampleSize = getInSampleSize(options);
+                options.inJustDecodeBounds = false;
+                return BitmapFactory.decodeStream(is2, null, options);
+            }
+
+            /**
+             * 根据url从网络上下载图片
+             *
+             * @return 图片
+             */
+            private Bitmap downloadImage() throws IOException
+            {
+                HttpURLConnection con = null;
+                Bitmap bitmap = null;
+                URL url = new URL(imageUrl);
+                con = (HttpURLConnection) url.openConnection();
+                con.setConnectTimeout(5 * 1000);
+                con.setReadTimeout(10 * 1000);
+                bitmap = getCompressBitmap(con.getInputStream());
+                if(con != null)
+                {
+                    con.disconnect();
+                }
+                return bitmap;
+            }
+        }
+
+    }
+
+    class rAdapter extends BaseAdapter
+    {
+        private LayoutInflater mInflater;
+
+        private LruCache<String, BitmapDrawable> mImageCache;
+
+        private ArrayList<ListofVideoApi> recommendList;
+
+        public rAdapter(LayoutInflater inflater, ArrayList<ListofVideoApi> recommendList)
+        {
+            mInflater = inflater;
+            this.recommendList = recommendList;
+
+            int maxCache = (int) Runtime.getRuntime().maxMemory();
+            int cacheSize = maxCache / 8;
+            mImageCache = new LruCache<String, BitmapDrawable>(cacheSize)
+            {
+                @Override
+                protected int sizeOf(String key, BitmapDrawable value)
+                {
+                    try
+                    {
+                        return value.getBitmap().getByteCount();
+                    }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+                    return 0;
+                }
+            };
+        }
+
+        @Override
+        public int getCount()
+        {
+            return recommendList.size();
+        }
+
+        @Override
+        public Object getItem(int position)
+        {
+            return position;
+        }
+
+        @Override
+        public long getItemId(int position)
+        {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup viewGroup)
+        {
+            final ListofVideoApi v = recommendList.get(position);
+            ViewHolder viewHolder;
+            if(convertView == null)
+            {
+                convertView = mInflater.inflate(R.layout.item_favor_video, null);
+                viewHolder = new ViewHolder();
+                convertView.setTag(viewHolder);
+                viewHolder.img = convertView.findViewById(R.id.vid_img);
+                viewHolder.title = convertView.findViewById(R.id.vid_title);
+                viewHolder.up = convertView.findViewById(R.id.vid_up);
+                viewHolder.play = convertView.findViewById(R.id.vid_play);
+            }
+            else
+            {
+                viewHolder = (ViewHolder) convertView.getTag();
+            }
+
+            viewHolder.img.setImageResource(R.drawable.img_default_vid);
+            viewHolder.title.setText(v.getVideoTitle());
+            viewHolder.up.setText("UP : " + v.getOwnerName());
+            viewHolder.play.setText("播放 : " + v.getVideoPlay() + "  弹幕 : " + v.getVideoDanmaku());
+
+            viewHolder.img.setTag(v.getVideoImg());
+            BitmapDrawable h = setImageFormWeb(v.getVideoImg());
+            if(h != null) viewHolder.img.setImageDrawable(h);
+
+            return convertView;
+        }
+
+        class ViewHolder
+        {
+            ImageView img;
+            TextView title;
+            TextView up;
+            TextView play;
+        }
+
+        BitmapDrawable setImageFormWeb(String url)
+        {
+            if(mImageCache.get(url) != null)
+            {
+                return mImageCache.get(url);
+            }
+            else
+            {
+                ImageTask it = new ImageTask();
+                it.execute(url);
+                return null;
+            }
+        }
+
+        class ImageTask extends AsyncTask<String, Void, BitmapDrawable>
+        {
+            private String imageUrl;
+
+            @Override
+            protected BitmapDrawable doInBackground(String... params)
+            {
+                try
+                {
+                    imageUrl = params[0];
+                    Bitmap bitmap = null;
+                    bitmap = downloadImage();
+                    BitmapDrawable db = new BitmapDrawable(getResources(), bitmap);
+                    // 如果本地还没缓存该图片，就缓存
+                    if(mImageCache.get(imageUrl) == null && bitmap != null)
+                    {
+                        mImageCache.put(imageUrl, db);
+                    }
+                    return db;
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(BitmapDrawable result)
+            {
+                // 通过Tag找到我们需要的ImageView，如果该ImageView所在的item已被移出页面，就会直接返回null
+                ImageView iv = uiRecommendListView.findViewWithTag(imageUrl);
                 if(iv != null && result != null)
                 {
                     iv.setImageDrawable(result);

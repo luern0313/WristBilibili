@@ -57,7 +57,7 @@
             android:layout_marginLeft="2dp"
             android:layout_marginRight="2dp"
             android:visibility="gone"
-            app:etv_MaxLinesOnShrink="3" />
+            app:etv_MaxLinesOnShrink="4" />
 
         <ImageView
             android:id="@+id/liov_share_img"
