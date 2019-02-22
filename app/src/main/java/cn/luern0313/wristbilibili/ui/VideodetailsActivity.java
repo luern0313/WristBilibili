@@ -22,6 +22,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
@@ -67,7 +68,10 @@ public class VideodetailsActivity extends Activity
     Runnable runnableSetface;
     Runnable runnableNodata;
     Runnable runnableReply;
+    Runnable runnableReplyAddlist;
     Runnable runnableRecommend;
+    Runnable runnableMoreNomore;
+    Runnable runnableMoreErr;
 
     AnimationDrawable loadingImgAnim;
     Bitmap videoUpFace;
@@ -92,11 +96,14 @@ public class VideodetailsActivity extends Activity
 
     ListView uiRelpyListView;
     ListView uiRecommendListView;
+    mAdapter replyAdapter;
 
     boolean isLogin = false;
     int isLiked = 0;//012
     int isCoined = 0;
     boolean isFaved = false;
+    int replyPage = 1;
+    boolean replyLoading = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -111,6 +118,7 @@ public class VideodetailsActivity extends Activity
 
         inflater = getLayoutInflater();
         layoutSendReply = inflater.inflate(R.layout.widget_reply_sendreply, null);
+        layoutLoading = inflater.inflate(R.layout.widget_dyloading, null);
         layoutChangeMode = inflater.inflate(R.layout.widget_reply_changemode, null);
         titleTextView = findViewById(R.id.vd_title_title);
         viewPager = findViewById(R.id.vd_viewpager);
@@ -135,6 +143,7 @@ public class VideodetailsActivity extends Activity
             {
                 uiLoading.setVisibility(View.GONE);
                 uiNoWeb.setVisibility(View.VISIBLE);
+                replyLoading = false;
             }
         };
 
@@ -159,6 +168,7 @@ public class VideodetailsActivity extends Activity
                     isFaved = videoDetail.getSelfFaved();
 
                     setIcon();
+                    replyLoading = false;
 
                     uiLoading.setVisibility(View.GONE);
                     uiNoWeb.setVisibility(View.GONE);
@@ -210,6 +220,7 @@ public class VideodetailsActivity extends Activity
                 try
                 {
                     findViewById(R.id.vd_novideo).setVisibility(View.VISIBLE);
+                    replyLoading = false;
                 }
                 catch (Exception e)
                 {
@@ -225,13 +236,22 @@ public class VideodetailsActivity extends Activity
             {
                 try
                 {
-                    mAdapter replyAdapter = new mAdapter(inflater, replyArrayList);
+                    replyAdapter = new mAdapter(inflater, replyArrayList);
                     uiRelpyListView.setAdapter(replyAdapter);
                 }
                 catch (Exception e)
                 {
                     e.printStackTrace();
                 }
+            }
+        };
+
+        runnableReplyAddlist = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                replyAdapter.notifyDataSetChanged();
             }
         };
 
@@ -251,6 +271,37 @@ public class VideodetailsActivity extends Activity
                 }
             }
         };
+
+        runnableMoreNomore = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                ((TextView) layoutLoading.findViewById(R.id.dyload_text)).setText("  没有更多了...");
+            }
+        };
+
+        runnableMoreErr = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                ((TextView) layoutLoading.findViewById(R.id.dyload_text)).setText("好像没有网络...\n检查下网络？");
+                layoutLoading.findViewById(R.id.dyload_button).setVisibility(View.VISIBLE);
+                replyLoading = false;
+            }
+        };
+
+        layoutLoading.findViewById(R.id.dyload_button).setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                ((TextView) layoutLoading.findViewById(R.id.dyload_text)).setText(" 加载中. . .");
+                layoutLoading.findViewById(R.id.dyload_button).setVisibility(View.GONE);
+                getMoreReply();
+            }
+        });
 
         final PagerAdapter pagerAdapter = new PagerAdapter()
         {
@@ -341,6 +392,20 @@ public class VideodetailsActivity extends Activity
                     uiRelpyListView.addHeaderView(layoutSendReply, null, true);
                     uiRelpyListView.addFooterView(layoutLoading, null, true);
                     uiRelpyListView.setHeaderDividersEnabled(false);
+                    uiRelpyListView.setOnScrollListener(new AbsListView.OnScrollListener()
+                    {
+                        @Override public void onScrollStateChanged(AbsListView view, int scrollState) {}
+
+                        @Override
+                        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
+                        {
+                            if(visibleItemCount + firstVisibleItem == totalItemCount && !replyLoading && isLogin)
+                            {
+                                getMoreReply();
+                            }
+                        }
+                    });
+
                     new Thread(new Runnable()
                     {
                         @Override
@@ -430,6 +495,38 @@ public class VideodetailsActivity extends Activity
         });
 
         viewPager.setAdapter(pagerAdapter);
+    }
+
+    void getMoreReply()
+    {
+        replyLoading = true;
+        replyPage++;
+        new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    ArrayList<ReplyApi.reply> r = replyApi.getReply(replyPage, "0", 0);
+                    if(r != null && r.size() != 0)
+                    {
+                        replyArrayList.addAll(r);
+                        replyLoading = false;
+                        handler.post(runnableReplyAddlist);
+                    }
+                    else
+                    {
+                        handler.post(runnableMoreNomore);
+                    }
+                }
+                catch (IOException e)
+                {
+                    handler.post(runnableMoreErr);
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     void titleAnim(String title)
