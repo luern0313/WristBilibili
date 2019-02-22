@@ -139,14 +139,18 @@ public class ReplyApi
             return replyJson.has("floor") && showfloor ? ("#" + String.valueOf(replyJson.optInt("floor"))) : "";
         }
 
-        public int getReplyBeLiked()
+        public String getReplyBeLiked()
         {
-            return replyJson.optInt("like", 0);
+            int l = replyJson.optInt("like", 0);
+            if(l > 10000) return l / 1000 / 10.0 + "万";
+            else return String.valueOf(l);
         }
 
-        public int getReplyBeReply()
+        public String getReplyBeReply()
         {
-            return replyJson.optInt("rcount", 0);
+            int r = replyJson.optInt("rcount", 0);
+            if(r > 10000) return r / 1000 / 10.0 + "万";
+            else return String.valueOf(r);
         }
 
         public boolean isReplyLike()
