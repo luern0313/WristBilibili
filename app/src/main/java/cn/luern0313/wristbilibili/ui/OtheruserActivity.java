@@ -68,6 +68,9 @@ public class OtheruserActivity extends Activity
         uiLoading = findViewById(R.id.ou_loading_img);
         uiFollow = findViewById(R.id.ou_follow);
 
+        if(sharedPreferences.getString("mid", "").equals(intent.getStringExtra("mid")))
+            findViewById(R.id.ou_follow).setVisibility(View.INVISIBLE);
+
         runnableUi = new Runnable()
         {
             @Override
