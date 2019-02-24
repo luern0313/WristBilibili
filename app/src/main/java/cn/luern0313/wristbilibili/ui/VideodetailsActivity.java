@@ -72,6 +72,7 @@ public class VideodetailsActivity extends Activity
     Runnable runnableRecommend;
     Runnable runnableMoreNomore;
     Runnable runnableMoreErr;
+    Runnable runnableReplyUpdate;
 
     AnimationDrawable loadingImgAnim;
     Bitmap videoUpFace;
@@ -292,6 +293,22 @@ public class VideodetailsActivity extends Activity
             }
         };
 
+        runnableReplyUpdate = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    replyAdapter.notifyDataSetChanged();
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        };
+
         layoutLoading.findViewById(R.id.dyload_button).setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -394,7 +411,10 @@ public class VideodetailsActivity extends Activity
                     uiRelpyListView.setHeaderDividersEnabled(false);
                     uiRelpyListView.setOnScrollListener(new AbsListView.OnScrollListener()
                     {
-                        @Override public void onScrollStateChanged(AbsListView view, int scrollState) {}
+                        @Override
+                        public void onScrollStateChanged(AbsListView view, int scrollState)
+                        {
+                        }
 
                         @Override
                         public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
@@ -697,6 +717,52 @@ public class VideodetailsActivity extends Activity
                         Intent intent = new Intent(ctx, OtheruserActivity.class);
                         intent.putExtra("mid", v.getUserMid());
                         startActivity(intent);
+                    }
+                });
+
+                viewHolder.like.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View view)
+                    {
+                        new Thread(new Runnable()
+                        {
+                            @Override
+                            public void run()
+                            {
+                                String va = v.likeReply(v.getReplyId(), v.isReplyLike() ? 0 : 1);
+                                if(va.equals("")) handler.post(runnableReplyUpdate);
+                                else
+                                {
+                                    Looper.prepare();
+                                    Toast.makeText(ctx, (v.isReplyLike() ? "取消" : "点赞") + "失败：\n" + va, Toast.LENGTH_SHORT).show();
+                                    Looper.loop();
+                                }
+                            }
+                        }).start();
+                    }
+                });
+
+                viewHolder.dislike.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View view)
+                    {
+                        new Thread(new Runnable()
+                        {
+                            @Override
+                            public void run()
+                            {
+                                String va = v.hateReply(v.getReplyId(), v.isReplyDislike() ? 0 : 1);
+                                if(va.equals("")) handler.post(runnableReplyUpdate);
+                                else
+                                {
+                                    Looper.prepare();
+                                    Toast.makeText(ctx, (v.isReplyDislike() ? "取消" : "点踩") + "失败：\n" + va, Toast.LENGTH_SHORT).show();
+                                    Looper.loop();
+                                }
+                            }
+                        }).start();
                     }
                 });
             }

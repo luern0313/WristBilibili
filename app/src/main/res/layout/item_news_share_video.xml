@@ -177,6 +177,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/lisv_likebu"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -184,7 +185,7 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:id="@+id/lisv_likebu"
+                    android:id="@+id/lisv_likei"
                     android:layout_width="18dp"
                     android:layout_height="18dp"
                     android:layout_margin="3dp"

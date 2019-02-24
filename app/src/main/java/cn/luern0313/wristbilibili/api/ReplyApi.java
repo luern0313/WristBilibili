@@ -67,15 +67,24 @@ public class ReplyApi
 
     public class reply
     {
-        JSONObject replyJson;
-        JSONObject replyUserJson;
+        private JSONObject replyJson;
+        private JSONObject replyUserJson;
 
-        int mode;
+        private boolean isLike;
+        private boolean isHate;
+        private int likeCount;
+        private int replyCount;
+
+        private int mode;
 
         reply(JSONObject replyJson)
         {
             this.replyJson = replyJson;
             this.replyUserJson = replyJson.optJSONObject("member");
+            this.isLike = replyJson.optInt("action") == 1;
+            this.isHate = replyJson.optInt("action") == 2;
+            this.likeCount = replyJson.optInt("like", 0);
+            this.replyCount = replyJson.optInt("rcount", 0);
             this.mode = 0;
         }
 
@@ -87,6 +96,11 @@ public class ReplyApi
         public int getMode()
         {
             return mode;
+        }
+
+        public String getReplyId()
+        {
+            return replyJson.optString("rpid_str");
         }
 
         public String getUserMid()
@@ -141,26 +155,77 @@ public class ReplyApi
 
         public String getReplyBeLiked()
         {
-            int l = replyJson.optInt("like", 0);
-            if(l > 10000) return l / 1000 / 10.0 + "万";
-            else return String.valueOf(l);
+            if(likeCount > 10000) return likeCount / 1000 / 10.0 + "万";
+            else return String.valueOf(likeCount);
         }
 
         public String getReplyBeReply()
         {
-            int r = replyJson.optInt("rcount", 0);
-            if(r > 10000) return r / 1000 / 10.0 + "万";
-            else return String.valueOf(r);
+            if(replyCount > 10000) return replyCount / 1000 / 10.0 + "万";
+            else return String.valueOf(replyCount);
         }
 
         public boolean isReplyLike()
         {
-            return replyJson.optInt("action") == 1;
+            return isLike;
         }
 
         public boolean isReplyDislike()
         {
-            return replyJson.optInt("action") == 2;
+            return isHate;
+        }
+
+        public String likeReply(String rpid, int action)
+        {
+            try
+            {
+                JSONObject j = new JSONObject(post("https://api.bilibili.com/x/v2/reply/action", "oid=" + oid + "&type=1&rpid=" + rpid + "&action=" + action + "&jsonp=jsonp&csrf=" + csrf).body().string());
+                if(j.getInt("code") == 0)
+                {
+                    isLike = action == 1;
+                    likeCount += action * 2 - 1;
+                    isHate = !isLike;
+                    return "";
+                }
+                else
+                    return j.getString("message");
+            }
+            catch (JSONException e)
+            {
+                e.printStackTrace();
+                return "未知问题，请重试？";
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+                return "网络错误！";
+            }
+        }
+
+        public String hateReply(String rpid, int action)
+        {
+            try
+            {
+                JSONObject j = new JSONObject(post("https://api.bilibili.com/x/v2/reply/hate", "oid=" + oid + "&type=1&rpid=" + rpid + "&action=" + action + "&jsonp=jsonp&csrf=" + csrf).body().string());
+                if(j.getInt("code") == 0)
+                {
+                    isHate = action == 1;
+                    isLike = !isHate;
+                    return "";
+                }
+                else
+                    return j.getString("message");
+            }
+            catch (JSONException e)
+            {
+                e.printStackTrace();
+                return "未知问题，请重试？";
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+                return "网络错误！";
+            }
         }
     }
 
@@ -192,7 +257,7 @@ public class ReplyApi
         Request request;
         client = new OkHttpClient.Builder().connectTimeout(15, TimeUnit.SECONDS).readTimeout(15, TimeUnit.SECONDS).build();
         body = RequestBody.create(MediaType.parse("application/x-www-form-urlencoded; charset=utf-8"), data);
-        request = new Request.Builder().url(url).post(body).header("Referer", "https://www.bilibili.com/").addHeader("Accept", "*/*").addHeader("User-Agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)").addHeader("Referer", "https://www.bilibili.com").addHeader("Cookie", cookie).build();
+        request = new Request.Builder().url(url).post(body).header("Referer", "https://www.bilibili.com/").addHeader("Accept", "*/*").addHeader("User-Agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)").addHeader("Cookie", cookie).build();
         response = client.newCall(request).execute();
         if(response.isSuccessful())
         {

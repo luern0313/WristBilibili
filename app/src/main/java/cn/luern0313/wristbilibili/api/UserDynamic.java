@@ -145,11 +145,30 @@ public class UserDynamic
         else return new cardUnknow(cardJson, descJson);
     }
 
+    public String likeDynamic(String dynamicId, String action)
+    {
+        try
+        {
+            JSONObject j = new JSONObject(post("https://api.vc.bilibili.com/dynamic_like/v1/dynamic_like/thumb", "uid=" + mid + "&dynamic_id=" + dynamicId + "&up=" + action + "&csrf_token=" + csrf).body().string());
+            if(j.getInt("code") == 0)
+                return "";
+            else
+                return j.getString("message");
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            return "网络不好，点赞失败惹。。";
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+            return "未知错误，点赞失败。。";
+        }
+    }
+
     public boolean sendReply(String oid, String type, String text) throws IOException
     {
-        Log.i("bilibili", String.valueOf(oid));
-        Log.i("bilibili", String.valueOf(type));
-        Log.i("bilibili", String.valueOf(text));
         try
         {
             return new JSONObject(post("https://api.bilibili.com/x/v2/reply/add", "oid=" + oid + "&type=" + type + "&message=" + text + "&plat=1&jsonp=jsonp&csrf=" + csrf).body().string()).getInt("code") == 0;
@@ -167,6 +186,8 @@ public class UserDynamic
         private JSONObject oriVideoJson;
         private JSONObject oriVideoDesc;
         private JSONObject oriVideoDescUser;
+        public boolean isLike;
+        private int like;
 
         cardOriginalVideo(JSONObject oriVideoJson, JSONObject oriVideoDesc)
         {
@@ -174,12 +195,19 @@ public class UserDynamic
             this.oriVideoJson = oriVideoJson;
             this.oriVideoDesc = oriVideoDesc;
             this.oriVideoDescUser = getJsonFromJson(oriVideoDesc, "user_profile");
+            this.isLike = oriVideoDesc.optInt("is_liked") == 1;
+            this.like = (int) getInfoFromJson(oriVideoDesc, "like");
         }
 
         public cardOriginalVideo(JSONObject oriVideoJson)
         {
             mode = 2;
             this.oriVideoJson = oriVideoJson;
+        }
+
+        public String getDynamicId()
+        {
+            return oriVideoDesc.optString("dynamic_id_str");
         }
 
         public String getVideoAid()
@@ -243,7 +271,12 @@ public class UserDynamic
 
         public int getBeLiked()
         {
-            return (int) getInfoFromJson(oriVideoDesc, "like");
+            return like;
+        }
+
+        public void likeDynamic(int action)
+        {
+            like += action;
         }
 
         private String getMinFromSec(int sec)
@@ -263,6 +296,8 @@ public class UserDynamic
         private JSONObject oriTextItemJson;
         private JSONObject oriTextDesc;
         private JSONObject oriTextDescUser;
+        public boolean isLike;
+        private int like;
 
         cardOriginalText(JSONObject oriTextJson, JSONObject oriTextDesc)
         {
@@ -270,6 +305,7 @@ public class UserDynamic
             this.oriTextItemJson = getJsonFromJson(oriTextJson, "item");
             this.oriTextDesc = oriTextDesc;
             this.oriTextDescUser = getJsonFromJson(oriTextDesc, "user_profile");
+            this.like = (int) getInfoFromJson(oriTextDesc, "like");
         }
 
         cardOriginalText(JSONObject oriTextJson)
@@ -357,7 +393,12 @@ public class UserDynamic
 
         public int getBeLiked()
         {
-            return (int) getInfoFromJson(oriTextDesc, "like");
+            return like;
+        }
+
+        public void likeDynamic(int action)
+        {
+            like += action;
         }
 
         public int getBeReply()
@@ -378,6 +419,8 @@ public class UserDynamic
         private JSONObject shareVideoItemJson;
         private JSONObject shareVideoDesc;
         private JSONObject shareVideoDescUser;
+        public boolean isLike;
+        private int like;
 
         cardShareVideo(JSONObject shareVideoJson, JSONObject shareVideoDesc)
         {
@@ -385,6 +428,7 @@ public class UserDynamic
             this.shareVideoItemJson = getJsonFromJson(shareVideoJson, "item");
             this.shareVideoDesc = shareVideoDesc;
             this.shareVideoDescUser = getJsonFromJson(shareVideoDesc, "user_profile");
+            this.like = (int) getInfoFromJson(shareVideoDesc, "like");
         }
 
         public String getDynamicId()
@@ -424,7 +468,12 @@ public class UserDynamic
 
         public int getBeLiked()
         {
-            return (int) getInfoFromJson(shareVideoDesc, "like");
+            return like;
+        }
+
+        public void likeDynamic(int action)
+        {
+            like += action;
         }
 
         public int getBeReply()
@@ -444,6 +493,8 @@ public class UserDynamic
         private JSONObject shareTextItemJson;
         private JSONObject shareTextDesc;
         private JSONObject shareTextDescUser;
+        public boolean isLike;
+        private int like;
 
         cardShareText(JSONObject shareTextJson, JSONObject shareTextDesc)
         {
@@ -451,6 +502,7 @@ public class UserDynamic
             this.shareTextItemJson = getJsonFromJson(shareTextJson, "item");
             this.shareTextDesc = shareTextDesc;
             this.shareTextDescUser = getJsonFromJson(shareTextDesc, "user_profile");
+            this.like = (int) getInfoFromJson(shareTextDesc, "like");
         }
 
         public String getDynamicId()
@@ -490,7 +542,12 @@ public class UserDynamic
 
         public int getBeLiked()
         {
-            return (int) getInfoFromJson(shareTextDesc, "like");
+            return like;
+        }
+
+        public void likeDynamic(int action)
+        {
+            like += action;
         }
 
         public int getBeReply()

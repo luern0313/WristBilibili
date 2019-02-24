@@ -185,7 +185,10 @@ public class Dynamic extends Fragment
 
         dyListView.setOnScrollListener(new AbsListView.OnScrollListener()
         {
-            @Override public void onScrollStateChanged(AbsListView view, int scrollState) {}
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState)
+            {
+            }
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
@@ -245,7 +248,7 @@ public class Dynamic extends Fragment
                             }
                         }
                     }
-                    catch(IOException e)
+                    catch (IOException e)
                     {
                         e.printStackTrace();
                         Looper.prepare();
@@ -266,10 +269,7 @@ public class Dynamic extends Fragment
             {
                 try
                 {
-                    userDynamic = new UserDynamic(MainActivity.sharedPreferences.getString("cookies", ""),
-                            MainActivity.sharedPreferences.getString("csrf", ""),
-                            MainActivity.sharedPreferences.getString("mid", ""),
-                            MainActivity.sharedPreferences.getString("mid", ""), true);
+                    userDynamic = new UserDynamic(MainActivity.sharedPreferences.getString("cookies", ""), MainActivity.sharedPreferences.getString("csrf", ""), MainActivity.sharedPreferences.getString("mid", ""), MainActivity.sharedPreferences.getString("mid", ""), true);
                     userDynamic.getDynamic();
                     dynamicList = userDynamic.getDynamicList();
                     if(dynamicList != null && dynamicList.size() != 0)
@@ -417,6 +417,7 @@ public class Dynamic extends Fragment
                         viewHolderOriVid.imgtext = convertView.findViewById(R.id.liov_textimg);
                         viewHolderOriVid.title = convertView.findViewById(R.id.liov_title);
                         viewHolderOriVid.likebu = convertView.findViewById(R.id.liov_likebu);
+                        viewHolderOriVid.likei = convertView.findViewById(R.id.liov_likei);
                         viewHolderOriVid.like = convertView.findViewById(R.id.liov_like);
                         break;
 
@@ -434,6 +435,7 @@ public class Dynamic extends Fragment
                         viewHolderOriText.replybu = convertView.findViewById(R.id.liot_replybu);
                         viewHolderOriText.reply = convertView.findViewById(R.id.liot_reply);
                         viewHolderOriText.likebu = convertView.findViewById(R.id.liot_likebu);
+                        viewHolderOriText.likei = convertView.findViewById(R.id.liot_likei);
                         viewHolderOriText.like = convertView.findViewById(R.id.liot_like);
                         break;
 
@@ -467,6 +469,7 @@ public class Dynamic extends Fragment
                         viewHolderShaVid.replybu = convertView.findViewById(R.id.lisv_replybu);
                         viewHolderShaVid.reply = convertView.findViewById(R.id.lisv_reply);
                         viewHolderShaVid.likebu = convertView.findViewById(R.id.lisv_likebu);
+                        viewHolderShaVid.likei = convertView.findViewById(R.id.lisv_likei);
                         viewHolderShaVid.like = convertView.findViewById(R.id.lisv_like);
                         break;
 
@@ -487,6 +490,7 @@ public class Dynamic extends Fragment
                         viewHolderShaText.replybu = convertView.findViewById(R.id.list_replybu);
                         viewHolderShaText.reply = convertView.findViewById(R.id.list_reply);
                         viewHolderShaText.likebu = convertView.findViewById(R.id.list_likebu);
+                        viewHolderShaText.likei = convertView.findViewById(R.id.list_likei);
                         viewHolderShaText.like = convertView.findViewById(R.id.list_like);
                         break;
                 }
@@ -526,13 +530,15 @@ public class Dynamic extends Fragment
                 else viewHolderOriVid.text.setVisibility(View.GONE);
                 viewHolderOriVid.imgtext.setText(dy.getVideoDuration() + "  " + dy.getVideoView() + "观看");
                 viewHolderOriVid.title.setText(dy.getVideoTitle());
+                if(dy.isLike) viewHolderOriVid.likei.setImageResource(R.drawable.icon_liked);
+                else viewHolderOriVid.likei.setImageResource(R.drawable.icon_like);
                 viewHolderOriVid.like.setText(String.valueOf(dy.getBeLiked()));
                 viewHolderOriVid.head.setImageResource(R.drawable.img_default_head);
                 viewHolderOriVid.img.setImageResource(R.drawable.img_default_vid);
 
                 viewHolderOriVid.head.setTag(dy.getOwnerHead());
                 viewHolderOriVid.img.setTag(dy.getVideoImg());
-                BitmapDrawable h = setImageFormWeb(dy.getOwnerHead());
+                final BitmapDrawable h = setImageFormWeb(dy.getOwnerHead());
                 BitmapDrawable i = setImageFormWeb(dy.getVideoImg());
                 if(h != null) viewHolderOriVid.head.setImageDrawable(h);
                 if(i != null) viewHolderOriVid.img.setImageDrawable(i);
@@ -559,6 +565,34 @@ public class Dynamic extends Fragment
                     }
                 });
 
+                viewHolderOriVid.likebu.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        new Thread(new Runnable()
+                        {
+                            @Override
+                            public void run()
+                            {
+                                String s = userDynamic.likeDynamic(dy.getDynamicId(), dy.isLike ? "2" : "1");
+                                if(s.equals(""))
+                                {
+                                    dy.isLike = !dy.isLike;
+                                    dy.likeDynamic(dy.isLike ? 1 : -1);
+                                    handler.post(runnableAddlist);
+                                }
+                                else
+                                {
+                                    Looper.prepare();
+                                    Toast.makeText(ctx, (dy.isLike ? "取消" : "点赞") + "失败：\n" + s, Toast.LENGTH_SHORT).show();
+                                    Looper.loop();
+                                }
+                            }
+                        }).start();
+                    }
+                });
+
             }
             else if(type == 3)// 原创文字
             {
@@ -573,6 +607,8 @@ public class Dynamic extends Fragment
                 }
                 else viewHolderOriText.textimg.setVisibility(View.GONE);
                 viewHolderOriText.reply.setText(String.valueOf(dy.getBeReply()));
+                if(dy.isLike) viewHolderOriText.likei.setImageResource(R.drawable.icon_liked);
+                else viewHolderOriText.likei.setImageResource(R.drawable.icon_like);
                 viewHolderOriText.like.setText(String.valueOf(dy.getBeLiked()));
                 viewHolderOriText.head.setImageResource(R.drawable.img_default_head);
 
@@ -613,6 +649,34 @@ public class Dynamic extends Fragment
                         startActivityForResult(intent, 0);
                     }
                 });
+
+                viewHolderOriText.likebu.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        new Thread(new Runnable()
+                        {
+                            @Override
+                            public void run()
+                            {
+                                String s = userDynamic.likeDynamic(dy.getDynamicId(), dy.isLike ? "2" : "1");
+                                if(s.equals(""))
+                                {
+                                    dy.isLike = !dy.isLike;
+                                    dy.likeDynamic(dy.isLike ? 1 : -1);
+                                    handler.post(runnableAddlist);
+                                }
+                                else
+                                {
+                                    Looper.prepare();
+                                    Toast.makeText(ctx, (dy.isLike ? "取消" : "点赞") + "失败：\n" + s, Toast.LENGTH_SHORT).show();
+                                    Looper.loop();
+                                }
+                            }
+                        }).start();
+                    }
+                });
             }
             else if(type == 2) //未知类型
             {
@@ -650,6 +714,8 @@ public class Dynamic extends Fragment
                 viewHolderShaVid.simgtext.setText(sdy.getVideoDuration() + "  " + sdy.getVideoView() + "观看");
                 viewHolderShaVid.stitle.setText(sdy.getVideoTitle());
                 viewHolderShaVid.reply.setText(String.valueOf(dy.getBeReply()));
+                if(dy.isLike) viewHolderShaVid.likei.setImageResource(R.drawable.icon_liked);
+                else viewHolderShaVid.likei.setImageResource(R.drawable.icon_like);
                 viewHolderShaVid.like.setText(String.valueOf(dy.getBeLiked()));
                 viewHolderShaVid.head.setImageResource(R.drawable.img_default_head);
                 viewHolderShaVid.shead.setImageResource(R.drawable.img_default_head);
@@ -709,6 +775,34 @@ public class Dynamic extends Fragment
                         startActivityForResult(intent, 0);
                     }
                 });
+
+                viewHolderShaVid.likebu.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        new Thread(new Runnable()
+                        {
+                            @Override
+                            public void run()
+                            {
+                                String s = userDynamic.likeDynamic(dy.getDynamicId(), dy.isLike ? "2" : "1");
+                                if(s.equals(""))
+                                {
+                                    dy.isLike = !dy.isLike;
+                                    dy.likeDynamic(dy.isLike ? 1 : -1);
+                                    handler.post(runnableAddlist);
+                                }
+                                else
+                                {
+                                    Looper.prepare();
+                                    Toast.makeText(ctx, (dy.isLike ? "取消" : "点赞") + "失败：\n" + s, Toast.LENGTH_SHORT).show();
+                                    Looper.loop();
+                                }
+                            }
+                        }).start();
+                    }
+                });
             }
             else if(type == 0) //转发文字
             {
@@ -726,6 +820,8 @@ public class Dynamic extends Fragment
                 }
                 else viewHolderShaText.stextimg.setVisibility(View.GONE);
                 viewHolderShaText.reply.setText(String.valueOf(dy.getBeReply()));
+                if(dy.isLike) viewHolderShaText.likei.setImageResource(R.drawable.icon_liked);
+                else viewHolderShaText.likei.setImageResource(R.drawable.icon_like);
                 viewHolderShaText.like.setText(String.valueOf(dy.getBeLiked()));
                 viewHolderShaText.head.setImageResource(R.drawable.img_default_head);
                 viewHolderShaText.shead.setImageResource(R.drawable.img_default_head);
@@ -781,6 +877,34 @@ public class Dynamic extends Fragment
                         startActivityForResult(intent, 0);
                     }
                 });
+
+                viewHolderShaText.likebu.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        new Thread(new Runnable()
+                        {
+                            @Override
+                            public void run()
+                            {
+                                String s = userDynamic.likeDynamic(dy.getDynamicId(), dy.isLike ? "2" : "1");
+                                if(s.equals(""))
+                                {
+                                    dy.isLike = !dy.isLike;
+                                    dy.likeDynamic(dy.isLike ? 1 : -1);
+                                    handler.post(runnableAddlist);
+                                }
+                                else
+                                {
+                                    Looper.prepare();
+                                    Toast.makeText(ctx, (dy.isLike ? "取消" : "点赞") + "失败：\n" + s, Toast.LENGTH_SHORT).show();
+                                    Looper.loop();
+                                }
+                            }
+                        }).start();
+                    }
+                });
             }
             return convertView;
         }
@@ -809,7 +933,8 @@ public class Dynamic extends Fragment
             ImageView img;
             TextView imgtext;
             TextView title;
-            ImageView likebu;
+            LinearLayout likebu;
+            ImageView likei;
             TextView like;
         }
 
@@ -822,7 +947,8 @@ public class Dynamic extends Fragment
             TextView textimg;
             LinearLayout replybu;
             TextView reply;
-            ImageView likebu;
+            LinearLayout likebu;
+            ImageView likei;
             TextView like;
         }
 
@@ -847,7 +973,8 @@ public class Dynamic extends Fragment
             TextView stitle;
             LinearLayout replybu;
             TextView reply;
-            ImageView likebu;
+            LinearLayout likebu;
+            ImageView likei;
             TextView like;
         }
 
@@ -863,7 +990,8 @@ public class Dynamic extends Fragment
             TextView stextimg;
             LinearLayout replybu;
             TextView reply;
-            ImageView likebu;
+            LinearLayout likebu;
+            ImageView likei;
             TextView like;
         }
 
@@ -911,7 +1039,8 @@ public class Dynamic extends Fragment
              * @param options 需要传入已经BitmapFactory.decodeStream(is, null, options);
              * @return 返回压缩的比率，最小为1
              */
-            public int getInSampleSize(BitmapFactory.Options options) {
+            public int getInSampleSize(BitmapFactory.Options options)
+            {
                 int inSampleSize = 1;
                 int realWith = 170;
                 int realHeight = 170;
@@ -920,7 +1049,8 @@ public class Dynamic extends Fragment
                 int outHeight = options.outHeight;
 
                 //获取比率最大的那个
-                if (outWidth > realWith || outHeight > realHeight) {
+                if(outWidth > realWith || outHeight > realHeight)
+                {
                     int withRadio = Math.round(outWidth / realWith);
                     int heightRadio = Math.round(outHeight / realHeight);
                     inSampleSize = withRadio > heightRadio ? withRadio : heightRadio;
@@ -930,6 +1060,7 @@ public class Dynamic extends Fragment
 
             /**
              * 根据输入流返回一个压缩的图片
+             *
              * @param input 图片的输入流
              * @return 压缩的图片
              */
