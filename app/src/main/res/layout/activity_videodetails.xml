@@ -15,10 +15,12 @@
         <TextView
             android:id="@+id/vd_title_title"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="19dp"
             android:layout_centerHorizontal="true"
-            android:text="视频"
-            android:textColor="@color/textColor" />
+            android:gravity="center_vertical"
+            android:text="视频详情"
+            android:textColor="@color/textColor"
+            android:textSize="14sp" />
 
         <ImageView
             android:id="@+id/vd_title_extraicon"

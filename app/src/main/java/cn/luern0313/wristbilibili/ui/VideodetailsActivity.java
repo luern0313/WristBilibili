@@ -103,7 +103,7 @@ public class VideodetailsActivity extends Activity
     int isCoined = 0;
     boolean isFaved = false;
     int replyPage = 1;
-    boolean replyLoading = true;
+    boolean isReplyLoading = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -143,7 +143,7 @@ public class VideodetailsActivity extends Activity
             {
                 uiLoading.setVisibility(View.GONE);
                 uiNoWeb.setVisibility(View.VISIBLE);
-                replyLoading = false;
+                isReplyLoading = false;
             }
         };
 
@@ -168,7 +168,7 @@ public class VideodetailsActivity extends Activity
                     isFaved = videoDetail.getSelfFaved();
 
                     setIcon();
-                    replyLoading = false;
+                    isReplyLoading = false;
 
                     uiLoading.setVisibility(View.GONE);
                     uiNoWeb.setVisibility(View.GONE);
@@ -220,7 +220,7 @@ public class VideodetailsActivity extends Activity
                 try
                 {
                     findViewById(R.id.vd_novideo).setVisibility(View.VISIBLE);
-                    replyLoading = false;
+                    isReplyLoading = false;
                 }
                 catch (Exception e)
                 {
@@ -288,7 +288,7 @@ public class VideodetailsActivity extends Activity
             {
                 ((TextView) layoutLoading.findViewById(R.id.dyload_text)).setText("好像没有网络...\n检查下网络？");
                 layoutLoading.findViewById(R.id.dyload_button).setVisibility(View.VISIBLE);
-                replyLoading = false;
+                isReplyLoading = false;
             }
         };
 
@@ -399,7 +399,7 @@ public class VideodetailsActivity extends Activity
                         @Override
                         public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
                         {
-                            if(visibleItemCount + firstVisibleItem == totalItemCount && !replyLoading && isLogin)
+                            if(visibleItemCount + firstVisibleItem == totalItemCount && !isReplyLoading && isLogin)
                             {
                                 getMoreReply();
                             }
@@ -488,9 +488,9 @@ public class VideodetailsActivity extends Activity
             @Override
             public void onPageSelected(int position)
             {
-                if(position == 0) titleAnim("详情");
-                else if(position == 1) titleAnim("评论");
-                else if(position == 2) titleAnim("推荐");
+                if(position == 0) titleAnim("视频详情");
+                else if(position == 1) titleAnim("视频评论");
+                else if(position == 2) titleAnim("相关推荐");
             }
         });
 
@@ -499,7 +499,7 @@ public class VideodetailsActivity extends Activity
 
     void getMoreReply()
     {
-        replyLoading = true;
+        isReplyLoading = true;
         replyPage++;
         new Thread(new Runnable()
         {
@@ -512,7 +512,7 @@ public class VideodetailsActivity extends Activity
                     if(r != null && r.size() != 0)
                     {
                         replyArrayList.addAll(r);
-                        replyLoading = false;
+                        isReplyLoading = false;
                         handler.post(runnableReplyAddlist);
                     }
                     else
@@ -529,12 +529,11 @@ public class VideodetailsActivity extends Activity
         }).start();
     }
 
-    void titleAnim(String title)
+    void titleAnim(final String title)
     {
-        titleTextView.setText(title);
         ObjectAnimator alpha = ObjectAnimator.ofFloat(titleTextView, "alpha", 1f, 0f);
         AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.play(alpha).after(2000);
+        animatorSet.play(alpha);
         animatorSet.setDuration(500);
         animatorSet.start();
         animatorSet.addListener(new Animator.AnimatorListener()
@@ -557,7 +556,7 @@ public class VideodetailsActivity extends Activity
             @Override
             public void onAnimationEnd(Animator animation)
             {
-                titleTextView.setText("视频");
+                titleTextView.setText(title);
                 titleTextView.setAlpha(1);
             }
         });

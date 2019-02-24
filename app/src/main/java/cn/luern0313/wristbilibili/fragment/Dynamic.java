@@ -268,7 +268,8 @@ public class Dynamic extends Fragment
                 {
                     userDynamic = new UserDynamic(MainActivity.sharedPreferences.getString("cookies", ""),
                             MainActivity.sharedPreferences.getString("csrf", ""),
-                            MainActivity.sharedPreferences.getString("mid", ""));
+                            MainActivity.sharedPreferences.getString("mid", ""),
+                            MainActivity.sharedPreferences.getString("mid", ""), true);
                     userDynamic.getDynamic();
                     dynamicList = userDynamic.getDynamicList();
                     if(dynamicList != null && dynamicList.size() != 0)

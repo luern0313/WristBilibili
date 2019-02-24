@@ -23,7 +23,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
- * Created by luern0313 on 2018/10/30.
+ * 被 luern0313 创建于 2018/10/30.
  * 动态的api
  * 写完这个文件我才知道为什么程序员被叫成代码民工。。
  * 这绝对就只是个力气活啊。。
@@ -34,28 +34,36 @@ import okhttp3.Response;
 
 public class UserDynamic
 {
-    private final String DYNAMICAPIURL = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/dynamic_new";
-    private final String HISTORYAPIURL = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/dynamic_history";
+    private final String DYNAMICAPIURL_SELF = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/dynamic_new";
+    private final String DYNAMICAPIURL_OTHER = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/space_history";
+    private final String HISTORYAPIURL_SELF = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/dynamic_history";
     private final String DYNAMICTYPE = "268435455";
+    private String selfMid;
     private String mid;
     private String csrf;
     private String cookie;
-    private JSONArray dynamicJsonArray;
+    public JSONArray dynamicJsonArray;
+    public boolean isSelf;
 
     private String lastDynamicId;
 
-    public UserDynamic(String cookie, String csrf, String mid)
+    public UserDynamic(String cookie, String csrf, String selfMid, String mid, boolean isSelf)
     {
         this.cookie = cookie;
         this.csrf = csrf;
+        this.selfMid = selfMid;
         this.mid = mid;
+        this.isSelf = isSelf;
     }
 
     public void getDynamic() throws IOException
     {
         try
         {
-            dynamicJsonArray = new JSONObject((String) get(DYNAMICAPIURL + "?uid=" + mid + "&type=" + DYNAMICTYPE, 1)).getJSONObject("data").getJSONArray("cards");
+            if(isSelf)
+                dynamicJsonArray = new JSONObject((String) get(DYNAMICAPIURL_SELF + "?uid=" + mid + "&type=" + DYNAMICTYPE, 1)).getJSONObject("data").getJSONArray("cards");
+            else
+                dynamicJsonArray = new JSONObject((String) get(DYNAMICAPIURL_OTHER + "?isitor_uid=" + selfMid + "&host_uid=" + mid + "&offset_dynamic_id=0", 1)).getJSONObject("data").getJSONArray("cards");
             if(dynamicJsonArray.length() == 0) dynamicJsonArray = null;
         }
         catch (JSONException e)
@@ -69,7 +77,10 @@ public class UserDynamic
     {
         try
         {
-            dynamicJsonArray = new JSONObject((String) get(HISTORYAPIURL + "?uid=" + mid + "&offset_dynamic_id=" + lastDynamicId + "&type=" + DYNAMICTYPE, 1)).getJSONObject("data").getJSONArray("cards");
+            if(isSelf)
+                dynamicJsonArray = new JSONObject((String) get(HISTORYAPIURL_SELF + "?uid=" + mid + "&offset_dynamic_id=" + lastDynamicId + "&type=" + DYNAMICTYPE, 1)).getJSONObject("data").getJSONArray("cards");
+            else
+                dynamicJsonArray = new JSONObject((String) get(DYNAMICAPIURL_OTHER + "?isitor_uid=" + selfMid + "&host_uid=" + mid + "&offset_dynamic_id=" +lastDynamicId, 1)).getJSONObject("data").getJSONArray("cards");
         }
         catch (JSONException e)
         {
@@ -270,10 +281,8 @@ public class UserDynamic
 
         public String getDynamicId()
         {
-            if(getTextImgCount().equals("0"))
-                return oriTextDesc.optString("dynamic_id_str");
-            else
-                return String.valueOf(oriTextItemJson.optInt("id"));
+            if(getTextImgCount().equals("0")) return oriTextDesc.optString("dynamic_id_str");
+            else return String.valueOf(oriTextItemJson.optInt("id"));
         }
 
         public String getDynamicText()
