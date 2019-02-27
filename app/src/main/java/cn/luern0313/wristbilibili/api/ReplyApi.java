@@ -1,6 +1,7 @@
 package cn.luern0313.wristbilibili.api;
 
 import android.graphics.BitmapFactory;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,11 +43,12 @@ public class ReplyApi
         this.type = type;
     }
 
-    public ArrayList<reply> getReply(int page, String sort, int limit) throws IOException
+    public ArrayList<reply> getReply(int page, String sort, int limit, String root) throws IOException
     {
         try
         {
-            replyJson = new JSONObject((String) get("https://api.bilibili.com/x/v2/reply?pn=" + page + "&type=" + type + "&oid=" + oid + "&sort=" + sort, 1)).getJSONObject("data");
+            Log.i("bilibili", "https://api.bilibili.com/x/v2/reply?pn=" + page + "&type=" + type + "&oid=" + oid + "&sort=" + sort + (root.equals("") ? "" : ("&root=" + root)));
+            replyJson = new JSONObject((String) get("https://api.bilibili.com/x/v2" + (root.equals("") ? "" : "/reply") + "/reply?pn=" + page + "&type=" + type + "&oid=" + oid + "&sort=" + sort + (root.equals("") ? "" : ("&root=" + root)), 1)).getJSONObject("data");
             JSONArray replyJsonArray = replyJson.getJSONArray("replies");
             ArrayList<reply> replyArrayList = new ArrayList<>();
             for (int i = 0; i < (limit != 0 ? Math.min(limit, replyJsonArray.length()) : replyJsonArray.length()); i++)
@@ -57,6 +59,28 @@ public class ReplyApi
         {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    public String sendReply(String rpid, String text)
+    {
+        try
+        {
+            JSONObject j = new JSONObject(post("https://api.bilibili.com/x/v2/reply/add", "oid=" + oid + "&type=" + type + (rpid.equals("") ? "" : ("&root=" + rpid + "&parent=" + rpid)) + "&message=" + text + "&jsonp=jsonp&csrf=" + csrf).body().string());
+            if(j.getInt("code") == 0)
+                return "";
+            else
+                return j.getString("message");
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+            return "未知问题，请重试？";
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            return "网络错误！";
         }
     }
 
@@ -175,11 +199,11 @@ public class ReplyApi
             return isHate;
         }
 
-        public String likeReply(String rpid, int action)
+        public String likeReply(String rpid, int action, String type)
         {
             try
             {
-                JSONObject j = new JSONObject(post("https://api.bilibili.com/x/v2/reply/action", "oid=" + oid + "&type=1&rpid=" + rpid + "&action=" + action + "&jsonp=jsonp&csrf=" + csrf).body().string());
+                JSONObject j = new JSONObject(post("https://api.bilibili.com/x/v2/reply/action", "oid=" + oid + "&type=" + type + "&rpid=" + rpid + "&action=" + action + "&jsonp=jsonp&csrf=" + csrf).body().string());
                 if(j.getInt("code") == 0)
                 {
                     isLike = action == 1;
@@ -202,11 +226,11 @@ public class ReplyApi
             }
         }
 
-        public String hateReply(String rpid, int action)
+        public String hateReply(String rpid, int action, String type)
         {
             try
             {
-                JSONObject j = new JSONObject(post("https://api.bilibili.com/x/v2/reply/hate", "oid=" + oid + "&type=1&rpid=" + rpid + "&action=" + action + "&jsonp=jsonp&csrf=" + csrf).body().string());
+                JSONObject j = new JSONObject(post("https://api.bilibili.com/x/v2/reply/hate", "oid=" + oid + "&type=" + type + "&rpid=" + rpid + "&action=" + action + "&jsonp=jsonp&csrf=" + csrf).body().string());
                 if(j.getInt("code") == 0)
                 {
                     isHate = action == 1;

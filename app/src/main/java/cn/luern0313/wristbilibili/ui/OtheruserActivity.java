@@ -284,7 +284,7 @@ public class OtheruserActivity extends Activity
             @Override
             public int getCount()
             {
-                return 3;
+                return 2;
             }
 
             @Override
@@ -395,11 +395,11 @@ public class OtheruserActivity extends Activity
                     container.addView(v);
                     return 0;
                 }
-                else if(position == 1)
+                else
                 {
-                    View v = inflater.inflate(R.layout.fragment_dynamic, null);
+                    View v = inflater.inflate(R.layout.viewpager_ou_dynamic, null);
                     v.setTag(1);
-                    uiDynamicListView = v.findViewById(R.id.dy_listview);
+                    uiDynamicListView = v.findViewById(R.id.ou_dy_listview);
                     uiDynamicListView.setEmptyView(v.findViewById(R.id.ou_dy_nonthing));
                     uiDynamicListView.addFooterView(layoutLoading);
 
@@ -447,15 +447,6 @@ public class OtheruserActivity extends Activity
                     container.addView(v);
                     return 1;
                 }
-                else
-                {
-                    View v = inflater.inflate(R.layout.viewpager_vd_recommend, null);
-                    v.setTag(2);
-
-
-                    container.addView(v);
-                    return 2;
-                }
             }
         };
 
@@ -476,7 +467,6 @@ public class OtheruserActivity extends Activity
             {
                 if(position == 0) titleAnim("用户");
                 else if(position == 1) titleAnim("动态");
-                else if(position == 2) titleAnim("投稿");
             }
         });
         uiViewpager.setAdapter(pagerAdapter);
@@ -617,11 +607,11 @@ public class OtheruserActivity extends Activity
         @Override
         public View getView(int position, View convertView, ViewGroup viewGroup)
         {
-            mAdapter.ViewHolderOriText viewHolderOriText = null;
-            mAdapter.ViewHolderOriVid viewHolderOriVid = null;
-            mAdapter.ViewHolderShaText viewHolderShaText = null;
-            mAdapter.ViewHolderShaVid viewHolderShaVid = null;
-            mAdapter.ViewHolderUnktyp viewHolderUnktyp = null;
+            ViewHolderOriText viewHolderOriText = null;
+            ViewHolderOriVid viewHolderOriVid = null;
+            ViewHolderShaText viewHolderShaText = null;
+            ViewHolderShaVid viewHolderShaVid = null;
+            ViewHolderUnktyp viewHolderUnktyp = null;
             int type = getItemViewType(position);
 
             // 若无可重用的 view 则进行加载
@@ -632,7 +622,7 @@ public class OtheruserActivity extends Activity
                     case 4:
                         //原创视频
                         convertView = mInflater.inflate(R.layout.item_news_original_video, null);
-                        viewHolderOriVid = new mAdapter.ViewHolderOriVid();
+                        viewHolderOriVid = new ViewHolderOriVid();
                         convertView.setTag(viewHolderOriVid);
 
                         viewHolderOriVid.lay = convertView.findViewById(R.id.liov_lay);
@@ -644,13 +634,14 @@ public class OtheruserActivity extends Activity
                         viewHolderOriVid.imgtext = convertView.findViewById(R.id.liov_textimg);
                         viewHolderOriVid.title = convertView.findViewById(R.id.liov_title);
                         viewHolderOriVid.likebu = convertView.findViewById(R.id.liov_likebu);
+                        viewHolderOriVid.likei = convertView.findViewById(R.id.liov_likei);
                         viewHolderOriVid.like = convertView.findViewById(R.id.liov_like);
                         break;
 
                     case 3:
                         //原创文字
                         convertView = mInflater.inflate(R.layout.item_news_original_text, null);
-                        viewHolderOriText = new mAdapter.ViewHolderOriText();
+                        viewHolderOriText = new ViewHolderOriText();
                         convertView.setTag(viewHolderOriText);
 
                         viewHolderOriText.head = convertView.findViewById(R.id.liot_head);
@@ -661,13 +652,14 @@ public class OtheruserActivity extends Activity
                         viewHolderOriText.replybu = convertView.findViewById(R.id.liot_replybu);
                         viewHolderOriText.reply = convertView.findViewById(R.id.liot_reply);
                         viewHolderOriText.likebu = convertView.findViewById(R.id.liot_likebu);
+                        viewHolderOriText.likei = convertView.findViewById(R.id.liot_likei);
                         viewHolderOriText.like = convertView.findViewById(R.id.liot_like);
                         break;
 
                     case 2:
                         //未知类型
                         convertView = mInflater.inflate(R.layout.item_news_unknowtype, null);
-                        viewHolderUnktyp = new mAdapter.ViewHolderUnktyp();
+                        viewHolderUnktyp = new ViewHolderUnktyp();
                         convertView.setTag(viewHolderUnktyp);
 
                         viewHolderUnktyp.head = convertView.findViewById(R.id.liuk_head);
@@ -678,7 +670,7 @@ public class OtheruserActivity extends Activity
                     case 1:
                         //转发视频
                         convertView = mInflater.inflate(R.layout.item_news_share_video, null);
-                        viewHolderShaVid = new mAdapter.ViewHolderShaVid();
+                        viewHolderShaVid = new ViewHolderShaVid();
                         convertView.setTag(viewHolderShaVid);
 
                         viewHolderShaVid.head = convertView.findViewById(R.id.lisv_head);
@@ -694,13 +686,14 @@ public class OtheruserActivity extends Activity
                         viewHolderShaVid.replybu = convertView.findViewById(R.id.lisv_replybu);
                         viewHolderShaVid.reply = convertView.findViewById(R.id.lisv_reply);
                         viewHolderShaVid.likebu = convertView.findViewById(R.id.lisv_likebu);
+                        viewHolderShaVid.likei = convertView.findViewById(R.id.lisv_likei);
                         viewHolderShaVid.like = convertView.findViewById(R.id.lisv_like);
                         break;
 
                     case 0:
                         //转发文字
                         convertView = mInflater.inflate(R.layout.item_news_share_text, null);
-                        viewHolderShaText = new mAdapter.ViewHolderShaText();
+                        viewHolderShaText = new ViewHolderShaText();
                         convertView.setTag(viewHolderShaText);
 
                         viewHolderShaText.head = convertView.findViewById(R.id.list_head);
@@ -714,6 +707,7 @@ public class OtheruserActivity extends Activity
                         viewHolderShaText.replybu = convertView.findViewById(R.id.list_replybu);
                         viewHolderShaText.reply = convertView.findViewById(R.id.list_reply);
                         viewHolderShaText.likebu = convertView.findViewById(R.id.list_likebu);
+                        viewHolderShaText.likei = convertView.findViewById(R.id.list_likei);
                         viewHolderShaText.like = convertView.findViewById(R.id.list_like);
                         break;
                 }
@@ -723,19 +717,19 @@ public class OtheruserActivity extends Activity
                 switch (type)
                 {
                     case 4:
-                        viewHolderOriVid = (mAdapter.ViewHolderOriVid) convertView.getTag();
+                        viewHolderOriVid = (ViewHolderOriVid) convertView.getTag();
                         break;
                     case 3:
-                        viewHolderOriText = (mAdapter.ViewHolderOriText) convertView.getTag();
+                        viewHolderOriText = (ViewHolderOriText) convertView.getTag();
                         break;
                     case 2:
-                        viewHolderUnktyp = (mAdapter.ViewHolderUnktyp) convertView.getTag();
+                        viewHolderUnktyp = (ViewHolderUnktyp) convertView.getTag();
                         break;
                     case 1:
-                        viewHolderShaVid = (mAdapter.ViewHolderShaVid) convertView.getTag();
+                        viewHolderShaVid = (ViewHolderShaVid) convertView.getTag();
                         break;
                     case 0:
-                        viewHolderShaText = (mAdapter.ViewHolderShaText) convertView.getTag();
+                        viewHolderShaText = (ViewHolderShaText) convertView.getTag();
                         break;
                 }
             }
@@ -753,13 +747,15 @@ public class OtheruserActivity extends Activity
                 else viewHolderOriVid.text.setVisibility(View.GONE);
                 viewHolderOriVid.imgtext.setText(dy.getVideoDuration() + "  " + dy.getVideoView() + "观看");
                 viewHolderOriVid.title.setText(dy.getVideoTitle());
+                if(dy.isLike) viewHolderOriVid.likei.setImageResource(R.drawable.icon_liked);
+                else viewHolderOriVid.likei.setImageResource(R.drawable.icon_like);
                 viewHolderOriVid.like.setText(String.valueOf(dy.getBeLiked()));
                 viewHolderOriVid.head.setImageResource(R.drawable.img_default_head);
                 viewHolderOriVid.img.setImageResource(R.drawable.img_default_vid);
 
                 viewHolderOriVid.head.setTag(dy.getOwnerHead());
                 viewHolderOriVid.img.setTag(dy.getVideoImg());
-                BitmapDrawable h = setImageFormWeb(dy.getOwnerHead());
+                final BitmapDrawable h = setImageFormWeb(dy.getOwnerHead());
                 BitmapDrawable i = setImageFormWeb(dy.getVideoImg());
                 if(h != null) viewHolderOriVid.head.setImageDrawable(h);
                 if(i != null) viewHolderOriVid.img.setImageDrawable(i);
@@ -786,6 +782,34 @@ public class OtheruserActivity extends Activity
                     }
                 });
 
+                viewHolderOriVid.likebu.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        new Thread(new Runnable()
+                        {
+                            @Override
+                            public void run()
+                            {
+                                String s = userDynamic.likeDynamic(dy.getDynamicId(), dy.isLike ? "2" : "1");
+                                if(s.equals(""))
+                                {
+                                    dy.isLike = !dy.isLike;
+                                    dy.likeDynamic(dy.isLike ? 1 : -1);
+                                    handler.post(runnableDynamicAddlist);
+                                }
+                                else
+                                {
+                                    Looper.prepare();
+                                    Toast.makeText(ctx, (dy.isLike ? "取消" : "点赞") + "失败：\n" + s, Toast.LENGTH_SHORT).show();
+                                    Looper.loop();
+                                }
+                            }
+                        }).start();
+                    }
+                });
+
             }
             else if(type == 3)// 原创文字
             {
@@ -800,6 +824,8 @@ public class OtheruserActivity extends Activity
                 }
                 else viewHolderOriText.textimg.setVisibility(View.GONE);
                 viewHolderOriText.reply.setText(String.valueOf(dy.getBeReply()));
+                if(dy.isLike) viewHolderOriText.likei.setImageResource(R.drawable.icon_liked);
+                else viewHolderOriText.likei.setImageResource(R.drawable.icon_like);
                 viewHolderOriText.like.setText(String.valueOf(dy.getBeLiked()));
                 viewHolderOriText.head.setImageResource(R.drawable.img_default_head);
 
@@ -835,9 +861,38 @@ public class OtheruserActivity extends Activity
                     public void onClick(View v)
                     {
                         Intent intent = new Intent(ctx, ReplyActivity.class);
-                        intent.putExtra("oid", dy.getDynamicId());
+                        intent.putExtra("oid", dy.getDynamicId(1));
                         intent.putExtra("type", dy.getReplyType());
+                        intent.putExtra("root", "");
                         startActivityForResult(intent, 0);
+                    }
+                });
+
+                viewHolderOriText.likebu.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        new Thread(new Runnable()
+                        {
+                            @Override
+                            public void run()
+                            {
+                                String s = userDynamic.likeDynamic(dy.getDynamicId(2), dy.isLike ? "2" : "1");
+                                if(s.equals(""))
+                                {
+                                    dy.isLike = !dy.isLike;
+                                    dy.likeDynamic(dy.isLike ? 1 : -1);
+                                    handler.post(runnableDynamicAddlist);
+                                }
+                                else
+                                {
+                                    Looper.prepare();
+                                    Toast.makeText(ctx, (dy.isLike ? "取消" : "点赞") + "失败：\n" + s, Toast.LENGTH_SHORT).show();
+                                    Looper.loop();
+                                }
+                            }
+                        }).start();
                     }
                 });
             }
@@ -877,6 +932,8 @@ public class OtheruserActivity extends Activity
                 viewHolderShaVid.simgtext.setText(sdy.getVideoDuration() + "  " + sdy.getVideoView() + "观看");
                 viewHolderShaVid.stitle.setText(sdy.getVideoTitle());
                 viewHolderShaVid.reply.setText(String.valueOf(dy.getBeReply()));
+                if(dy.isLike) viewHolderShaVid.likei.setImageResource(R.drawable.icon_liked);
+                else viewHolderShaVid.likei.setImageResource(R.drawable.icon_like);
                 viewHolderShaVid.like.setText(String.valueOf(dy.getBeLiked()));
                 viewHolderShaVid.head.setImageResource(R.drawable.img_default_head);
                 viewHolderShaVid.shead.setImageResource(R.drawable.img_default_head);
@@ -933,7 +990,36 @@ public class OtheruserActivity extends Activity
                         Intent intent = new Intent(ctx, ReplyActivity.class);
                         intent.putExtra("oid", dy.getDynamicId());
                         intent.putExtra("type", dy.getReplyType());
+                        intent.putExtra("root", "");
                         startActivityForResult(intent, 0);
+                    }
+                });
+
+                viewHolderShaVid.likebu.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        new Thread(new Runnable()
+                        {
+                            @Override
+                            public void run()
+                            {
+                                String s = userDynamic.likeDynamic(dy.getDynamicId(), dy.isLike ? "2" : "1");
+                                if(s.equals(""))
+                                {
+                                    dy.isLike = !dy.isLike;
+                                    dy.likeDynamic(dy.isLike ? 1 : -1);
+                                    handler.post(runnableDynamicAddlist);
+                                }
+                                else
+                                {
+                                    Looper.prepare();
+                                    Toast.makeText(ctx, (dy.isLike ? "取消" : "点赞") + "失败：\n" + s, Toast.LENGTH_SHORT).show();
+                                    Looper.loop();
+                                }
+                            }
+                        }).start();
                     }
                 });
             }
@@ -953,6 +1039,8 @@ public class OtheruserActivity extends Activity
                 }
                 else viewHolderShaText.stextimg.setVisibility(View.GONE);
                 viewHolderShaText.reply.setText(String.valueOf(dy.getBeReply()));
+                if(dy.isLike) viewHolderShaText.likei.setImageResource(R.drawable.icon_liked);
+                else viewHolderShaText.likei.setImageResource(R.drawable.icon_like);
                 viewHolderShaText.like.setText(String.valueOf(dy.getBeLiked()));
                 viewHolderShaText.head.setImageResource(R.drawable.img_default_head);
                 viewHolderShaText.shead.setImageResource(R.drawable.img_default_head);
@@ -1005,7 +1093,36 @@ public class OtheruserActivity extends Activity
                         Intent intent = new Intent(ctx, ReplyActivity.class);
                         intent.putExtra("oid", dy.getDynamicId());
                         intent.putExtra("type", dy.getReplyType());
+                        intent.putExtra("root", "");
                         startActivityForResult(intent, 0);
+                    }
+                });
+
+                viewHolderShaText.likebu.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        new Thread(new Runnable()
+                        {
+                            @Override
+                            public void run()
+                            {
+                                String s = userDynamic.likeDynamic(dy.getDynamicId(), dy.isLike ? "2" : "1");
+                                if(s.equals(""))
+                                {
+                                    dy.isLike = !dy.isLike;
+                                    dy.likeDynamic(dy.isLike ? 1 : -1);
+                                    handler.post(runnableDynamicAddlist);
+                                }
+                                else
+                                {
+                                    Looper.prepare();
+                                    Toast.makeText(ctx, (dy.isLike ? "取消" : "点赞") + "失败：\n" + s, Toast.LENGTH_SHORT).show();
+                                    Looper.loop();
+                                }
+                            }
+                        }).start();
                     }
                 });
             }
@@ -1036,7 +1153,8 @@ public class OtheruserActivity extends Activity
             ImageView img;
             TextView imgtext;
             TextView title;
-            ImageView likebu;
+            LinearLayout likebu;
+            ImageView likei;
             TextView like;
         }
 
@@ -1049,7 +1167,8 @@ public class OtheruserActivity extends Activity
             TextView textimg;
             LinearLayout replybu;
             TextView reply;
-            ImageView likebu;
+            LinearLayout likebu;
+            ImageView likei;
             TextView like;
         }
 
@@ -1074,7 +1193,8 @@ public class OtheruserActivity extends Activity
             TextView stitle;
             LinearLayout replybu;
             TextView reply;
-            ImageView likebu;
+            LinearLayout likebu;
+            ImageView likei;
             TextView like;
         }
 
@@ -1090,7 +1210,8 @@ public class OtheruserActivity extends Activity
             TextView stextimg;
             LinearLayout replybu;
             TextView reply;
-            ImageView likebu;
+            LinearLayout likebu;
+            ImageView likei;
             TextView like;
         }
 

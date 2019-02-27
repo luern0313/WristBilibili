@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -29,14 +30,78 @@
             android:layout_toLeftOf="@+id/tail_title_title"
             android:rotation="90"
             android:src="@drawable/icon_extra" />
+
     </RelativeLayout>
 
-    <Switch
-        android:id="@+id/tail_switch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tail_title_layout"
-        android:layout_centerHorizontal="true"
-        android:paddingTop="8dp"
-        android:text="小尾巴开关" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/tail_title_layout">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Switch
+                android:id="@+id/tail_switch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tail_title_layout"
+                android:paddingBottom="6dp"
+                android:paddingLeft="44dp"
+                android:paddingRight="44dp"
+                android:paddingTop="8dp"
+                android:text="小尾巴开关" />
+
+            <TextView
+                android:id="@+id/tail_preview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tail_switch"
+                android:background="@color/shareBG"
+                android:paddingBottom="6dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingTop="6dp" />
+
+            <LinearLayout
+                android:id="@+id/tail_preetlay"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/tail_preview"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingLeft="22dp"
+                android:paddingRight="22dp"
+                android:paddingTop="4dp">
+
+                <EditText
+                    android:id="@+id/tail_preet"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="添加机型前缀"
+                    android:textSize="14sp"
+                    android:maxLength="10"/>
+
+                <ImageView
+                    android:id="@+id/tail_voice"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/icon_voiceinput_search" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tail_exp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tail_preetlay"
+                android:paddingBottom="30dp"
+                android:paddingLeft="32dp"
+                android:paddingRight="32dp"
+                android:text="最多十个字符\n\n例如：\n三玖送的\n被五等分的\n抢来的\n充话费送的\n菲尔普斯专用山寨防水" />
+        </LinearLayout>
+    </ScrollView>
 </RelativeLayout>

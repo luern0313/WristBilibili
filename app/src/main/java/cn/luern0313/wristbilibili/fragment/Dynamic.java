@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import cn.carbs.android.expandabletextview.library.ExpandableTextView;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.UserDynamic;
+import cn.luern0313.wristbilibili.ui.CheckreplyActivity;
 import cn.luern0313.wristbilibili.ui.ImgActivity;
 import cn.luern0313.wristbilibili.ui.MainActivity;
 import cn.luern0313.wristbilibili.ui.OtheruserActivity;
@@ -643,10 +644,11 @@ public class Dynamic extends Fragment
                     @Override
                     public void onClick(View v)
                     {
-                        Intent intent = new Intent(ctx, ReplyActivity.class);
-                        intent.putExtra("oid", dy.getDynamicId());
+                        Intent intent = new Intent(ctx, CheckreplyActivity.class);
+                        intent.putExtra("oid", dy.getDynamicId(1));
                         intent.putExtra("type", dy.getReplyType());
-                        startActivityForResult(intent, 0);
+                        intent.putExtra("root", "");
+                        startActivity(intent);
                     }
                 });
 
@@ -660,7 +662,7 @@ public class Dynamic extends Fragment
                             @Override
                             public void run()
                             {
-                                String s = userDynamic.likeDynamic(dy.getDynamicId(), dy.isLike ? "2" : "1");
+                                String s = userDynamic.likeDynamic(dy.getDynamicId(2), dy.isLike ? "2" : "1");
                                 if(s.equals(""))
                                 {
                                     dy.isLike = !dy.isLike;
@@ -769,10 +771,11 @@ public class Dynamic extends Fragment
                     @Override
                     public void onClick(View v)
                     {
-                        Intent intent = new Intent(ctx, ReplyActivity.class);
+                        Intent intent = new Intent(ctx, CheckreplyActivity.class);
                         intent.putExtra("oid", dy.getDynamicId());
                         intent.putExtra("type", dy.getReplyType());
-                        startActivityForResult(intent, 0);
+                        intent.putExtra("root", "");
+                        startActivity(intent);
                     }
                 });
 
@@ -871,10 +874,11 @@ public class Dynamic extends Fragment
                     @Override
                     public void onClick(View v)
                     {
-                        Intent intent = new Intent(ctx, ReplyActivity.class);
+                        Intent intent = new Intent(ctx, CheckreplyActivity.class);
                         intent.putExtra("oid", dy.getDynamicId());
                         intent.putExtra("type", dy.getReplyType());
-                        startActivityForResult(intent, 0);
+                        intent.putExtra("root", "");
+                        startActivity(intent);
                     }
                 });
 

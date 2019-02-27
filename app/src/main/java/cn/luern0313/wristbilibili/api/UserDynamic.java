@@ -315,10 +315,17 @@ public class UserDynamic
             this.oriTextItemJson = getJsonFromJson(oriTextJson, "item");
         }
 
-        public String getDynamicId()
+        public String getDynamicId(int mode)
         {
-            if(getTextImgCount().equals("0")) return oriTextDesc.optString("dynamic_id_str");
-            else return String.valueOf(oriTextItemJson.optInt("id"));
+            if(mode == 1)
+            {
+                if(getTextImgCount().equals("0")) return oriTextDesc.optString("dynamic_id_str");
+                else return String.valueOf(oriTextItemJson.optInt("id"));
+            }
+            else
+            {
+                return oriTextDesc.optString("dynamic_id_str");
+            }
         }
 
         public String getDynamicText()

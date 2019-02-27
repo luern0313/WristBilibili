@@ -435,9 +435,9 @@ public class VideodetailsActivity extends Activity
                             {
                                 replyArrayList = new ArrayList<>();
                                 replyArrayList.add(replyApi.new reply(1));
-                                replyArrayList.addAll(replyApi.getReply(1, "2", 5));
+                                replyArrayList.addAll(replyApi.getReply(1, "2", 5, ""));
                                 replyArrayList.add(replyApi.new reply(2));
-                                replyArrayList.addAll(replyApi.getReply(1, "0", 0));
+                                replyArrayList.addAll(replyApi.getReply(1, "0", 0, ""));
                                 handler.post(runnableReply);
                             }
                             catch (IOException | NullPointerException e)
@@ -528,7 +528,7 @@ public class VideodetailsActivity extends Activity
             {
                 try
                 {
-                    ArrayList<ReplyApi.reply> r = replyApi.getReply(replyPage, "0", 0);
+                    ArrayList<ReplyApi.reply> r = replyApi.getReply(replyPage, "0", 0, "");
                     if(r != null && r.size() != 0)
                     {
                         replyArrayList.addAll(r);
@@ -730,7 +730,7 @@ public class VideodetailsActivity extends Activity
                             @Override
                             public void run()
                             {
-                                String va = v.likeReply(v.getReplyId(), v.isReplyLike() ? 0 : 1);
+                                String va = v.likeReply(v.getReplyId(), v.isReplyLike() ? 0 : 1, "1");
                                 if(va.equals("")) handler.post(runnableReplyUpdate);
                                 else
                                 {
@@ -753,7 +753,7 @@ public class VideodetailsActivity extends Activity
                             @Override
                             public void run()
                             {
-                                String va = v.hateReply(v.getReplyId(), v.isReplyDislike() ? 0 : 1);
+                                String va = v.hateReply(v.getReplyId(), v.isReplyDislike() ? 0 : 1, "1");
                                 if(va.equals("")) handler.post(runnableReplyUpdate);
                                 else
                                 {
@@ -763,6 +763,19 @@ public class VideodetailsActivity extends Activity
                                 }
                             }
                         }).start();
+                    }
+                });
+
+                viewHolder.reply.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View view)
+                    {
+                        Intent rintent = new Intent(ctx, CheckreplyActivity.class);
+                        rintent.putExtra("oid", intent.getStringExtra("aid"));
+                        rintent.putExtra("type", "1");
+                        rintent.putExtra("root", v.getReplyId());
+                        startActivity(rintent);
                     }
                 });
             }

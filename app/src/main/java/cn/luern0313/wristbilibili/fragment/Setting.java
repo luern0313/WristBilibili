@@ -23,6 +23,8 @@ import cn.luern0313.wristbilibili.ui.LogsoffActivity;
 import cn.luern0313.wristbilibili.ui.OpensourceActivity;
 import cn.luern0313.wristbilibili.ui.SueActivity;
 import cn.luern0313.wristbilibili.ui.SupportActivity;
+import cn.luern0313.wristbilibili.ui.TailActivity;
+import cn.luern0313.wristbilibili.ui.TextActivity;
 import cn.luern0313.wristbilibili.ui.VideodetailsActivity;
 
 /**
@@ -44,7 +46,7 @@ public class Setting extends Fragment
 
         setList = rootLayout.findViewById(R.id.set_listview);
 
-        final ArrayList<String> list = new ArrayList<String>(Arrays.asList("注销", "关注作者b站账号", "发动态炫耀一下", "查看介绍视频", "支持作者", "关于开源", "联系作者", "关于"));
+        final ArrayList<String> list = new ArrayList<String>(Arrays.asList("注销", "关注作者b站账号", "发动态炫耀一下", "查看介绍视频", "评论小尾巴设置", "支持作者", "关于开源", "更新日志", "联系作者", "关于"));
         mAdapter mAdapter = new mAdapter(inflater, list);
         setList.setAdapter(mAdapter);
 
@@ -74,6 +76,11 @@ public class Setting extends Fragment
                     intent.putExtra("aid", "37132444");
                     startActivity(intent);
                 }
+                else if(list.get(position).equals("评论小尾巴设置"))
+                {
+                    Intent intent = new Intent(ctx, TailActivity.class);
+                    startActivity(intent);
+                }
                 else if(list.get(position).equals("支持作者"))
                 {
                     Intent intent = new Intent(ctx, SupportActivity.class);
@@ -82,6 +89,13 @@ public class Setting extends Fragment
                 else if(list.get(position).equals("关于开源"))
                 {
                     Intent intent = new Intent(ctx, OpensourceActivity.class);
+                    startActivity(intent);
+                }
+                else if(list.get(position).equals("更新日志"))
+                {
+                    Intent intent = new Intent(ctx, TextActivity.class);
+                    intent.putExtra("title", "更新日志");
+                    intent.putExtra("text", getResources().getString(R.string.update));
                     startActivity(intent);
                 }
                 else if(list.get(position).equals("联系作者"))

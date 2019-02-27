@@ -3,6 +3,7 @@ package cn.luern0313.wristbilibili.ui;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -15,6 +16,8 @@ public class ReplyActivity extends Activity
     Context ctx;
     Intent intent;
     Intent reusltIntent = new Intent();
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
 
     EditText replyEditText;
     @Override
@@ -28,6 +31,11 @@ public class ReplyActivity extends Activity
         reusltIntent.putExtra("type", intent.getStringExtra("type"));
         reusltIntent.putExtra("text", "");
         setResult(0, reusltIntent);
+        sharedPreferences = getSharedPreferences("default", Context.MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+
+        if(!sharedPreferences.getBoolean("tail", true))
+            findViewById(R.id.rp_tail).setVisibility(View.GONE);
 
         replyEditText = findViewById(R.id.rp_edittext);
     }
@@ -50,7 +58,10 @@ public class ReplyActivity extends Activity
     {
         if(!replyEditText.getText().toString().equals(""))
         {
-            reusltIntent.putExtra("text", replyEditText.getText().toString());
+            String s = replyEditText.getText().toString();
+            if(sharedPreferences.getBoolean("tail", true))
+                s += "\n\n" + TailActivity.getTail(sharedPreferences);
+            reusltIntent.putExtra("text", s);
             setResult(0, reusltIntent);
             finish();
         }

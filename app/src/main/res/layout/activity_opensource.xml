@@ -60,7 +60,7 @@
             android:layout_marginLeft="26dp"
             android:layout_marginRight="26dp"
             android:layout_marginTop="6dp"
-            android:text="--------------------------\n本应用使用了以下开源库，向这些开源库的作者致以敬意！\n--------------------------\nCircleImageView\nhdodenhof\nhttps://github.com/hdodenhof/CircleImageView\n--------------------------\nExpandableTextView\nCarbs0126\nhttps://github.com/Carbs0126/ExpandableTextView\n--------------------------\nWaveSwipeRefreshLayout\nrecruit-lifestyle\nhttps://github.com/recruit-lifestyle/WaveSwipeRefreshLayout\n--------------------------"
+            android:text="--------------------------\n本应用使用了以下开源库，向这些开源库的作者致以敬意！\n--------------------------\nCircleImageView\nhdodenhof\nhttps://github.com/hdodenhof/CircleImageView\n--------------------------\nExpandableTextView\nCarbs0126\nhttps://github.com/Carbs0126/ExpandableTextView\n--------------------------\nWaveSwipeRefreshLayout\nrecruit-lifestyle\nhttps://github.com/recruit-lifestyle/WaveSwipeRefreshLayout\n--------------------------\nsketch\npanpf\nhttps://github.com/panpf/sketch\n--------------------------"
             android:textSize="12sp" />
 
     </LinearLayout>

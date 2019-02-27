@@ -6,12 +6,16 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.fragment.AniRemind;
@@ -55,6 +59,26 @@ public class MainActivity extends Activity
 
         titleText = findViewById(R.id.main_title_title);
         titleImg = findViewById(R.id.main_title_extraicon);
+
+        //新版本更新
+        try
+        {
+            PackageManager pm = ctx.getPackageManager();
+            PackageInfo pi = pm.getPackageInfo(ctx.getPackageName(), 0);
+            if(sharedPreferences.getInt("ver", 0) < pi.versionCode)
+            {
+                editor.putInt("ver", pi.versionCode);
+                editor.commit();
+                Intent intent = new Intent(ctx, TextActivity.class);
+                intent.putExtra("title", "更新日志");
+                intent.putExtra("text", getResources().getString(R.string.update));
+                startActivity(intent);
+            }
+        }
+        catch (PackageManager.NameNotFoundException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     @Override

@@ -44,7 +44,9 @@
         <activity android:name=".ui.SueActivity" />
         <activity android:name=".ui.OnlinePlayActivity" />
         <activity android:name=".ui.ReplyActivity" />
-        <activity android:name=".ui.TailActivity"></activity>
+        <activity android:name=".ui.TailActivity" />
+        <activity android:name=".ui.TextActivity" />
+        <activity android:name=".ui.CheckreplyActivity"></activity>
     </application>
 
 </manifest>
