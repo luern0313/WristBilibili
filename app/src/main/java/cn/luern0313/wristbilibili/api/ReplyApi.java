@@ -208,7 +208,7 @@ public class ReplyApi
                 {
                     isLike = action == 1;
                     likeCount += action * 2 - 1;
-                    isHate = !isLike;
+                    isHate = false;
                     return "";
                 }
                 else
@@ -233,8 +233,12 @@ public class ReplyApi
                 JSONObject j = new JSONObject(post("https://api.bilibili.com/x/v2/reply/hate", "oid=" + oid + "&type=" + type + "&rpid=" + rpid + "&action=" + action + "&jsonp=jsonp&csrf=" + csrf).body().string());
                 if(j.getInt("code") == 0)
                 {
+                    if(isLike)
+                    {
+                        likeCount--;
+                        isLike = false;
+                    }
                     isHate = action == 1;
-                    isLike = !isHate;
                     return "";
                 }
                 else

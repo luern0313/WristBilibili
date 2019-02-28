@@ -173,7 +173,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="6dp"
-                                android:text="历史纪录"
+                                android:text="历史记录"
                                 android:textSize="12sp" />
 
                         </LinearLayout>

@@ -33,9 +33,9 @@ public class QRActivity extends Activity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qr);
-        initData();
+        //initData();
         initView();
-        qrImageView.setOnClickListener(new View.OnClickListener() {
+        /*qrImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(TextUtils.isEmpty(onlineWatchApi.getPlayURL())) {
@@ -61,23 +61,21 @@ public class QRActivity extends Activity
                     QRActivity.this.finish();
                 }
             }
-        });
+        });*/
     }
 
     /*初始化基本数据*/
-    private void initData(){
+    private void initData()
+    {
         ctx = this;
-        Intent intent = getIntent();
-        url = intent.getStringExtra("url");
         sharedPreferences = getSharedPreferences("default", Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
-        getOnlineWatchUrlThread = new Thread(new Runnable() {
+        getOnlineWatchUrlThread = new Thread(new Runnable()
+        {
             @Override
-            public void run() {
-                onlineWatchApi = new OnlineWatchApi(sharedPreferences.getString("cookies", ""),
-                        sharedPreferences.getString("csrf", ""),
-                        sharedPreferences.getString("mid", ""),
-                        url);
+            public void run()
+            {
+                onlineWatchApi = new OnlineWatchApi(sharedPreferences.getString("cookies", ""), sharedPreferences.getString("csrf", ""), sharedPreferences.getString("mid", ""), url);
                 Log.d("视频在线播放", onlineWatchApi.toString());
             }
         });
@@ -85,7 +83,10 @@ public class QRActivity extends Activity
     }
 
     /*初始化View并绑定控件*/
-    private void initView(){
+    private void initView()
+    {
+        Intent intent = getIntent();
+        url = intent.getStringExtra("url");
         qrImageView = findViewById(R.id.qr_qr);
         qrImageView.setImageBitmap(QRCodeUtil.createQRCodeBitmap(url, 96, 96));
     }

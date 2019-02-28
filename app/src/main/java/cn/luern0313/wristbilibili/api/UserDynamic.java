@@ -305,6 +305,7 @@ public class UserDynamic
             this.oriTextItemJson = getJsonFromJson(oriTextJson, "item");
             this.oriTextDesc = oriTextDesc;
             this.oriTextDescUser = getJsonFromJson(oriTextDesc, "user_profile");
+            this.isLike = oriTextDesc.optInt("is_liked") == 1;
             this.like = (int) getInfoFromJson(oriTextDesc, "like");
         }
 
@@ -435,6 +436,7 @@ public class UserDynamic
             this.shareVideoItemJson = getJsonFromJson(shareVideoJson, "item");
             this.shareVideoDesc = shareVideoDesc;
             this.shareVideoDescUser = getJsonFromJson(shareVideoDesc, "user_profile");
+            this.isLike = shareVideoDesc.optInt("is_liked") == 1;
             this.like = (int) getInfoFromJson(shareVideoDesc, "like");
         }
 
@@ -509,6 +511,7 @@ public class UserDynamic
             this.shareTextItemJson = getJsonFromJson(shareTextJson, "item");
             this.shareTextDesc = shareTextDesc;
             this.shareTextDescUser = getJsonFromJson(shareTextDesc, "user_profile");
+            this.isLike = shareTextDesc.optInt("is_liked") == 1;
             this.like = (int) getInfoFromJson(shareTextDesc, "like");
         }
 

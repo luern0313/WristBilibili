@@ -19,7 +19,7 @@
         android:layout_below="@+id/sea_hotwordtext"
         android:clipToPadding="false"
         android:numColumns="2"
-        android:paddingBottom="28dp"
+        android:paddingBottom="26dp"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
         android:scrollbars="none" />
@@ -136,7 +136,7 @@
             android:id="@+id/sea_seabutton"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_marginRight="6dp"
+            android:layout_marginRight="10dp"
             android:background="@drawable/icon_search"
             android:clickable="true" />
     </LinearLayout>

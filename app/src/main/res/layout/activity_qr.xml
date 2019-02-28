@@ -44,7 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/qr_title_layout"
             android:gravity="center"
-            android:text="点击二维码在线观看"
+            android:text="  下一版本就更视频播放。。"
             android:textColor="@color/mainColor"
             android:textSize="12sp" />
 
