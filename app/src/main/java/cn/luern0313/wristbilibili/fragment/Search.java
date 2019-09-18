@@ -21,11 +21,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
-import android.widget.GridLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -90,7 +88,7 @@ public class Search extends Fragment
         seaHotWordText = rootLayout.findViewById(R.id.sea_hotwordtext);
         seaHotWordList = rootLayout.findViewById(R.id.sea_hotword);
         seaListView = rootLayout.findViewById(R.id.sea_listview);
-        loadingView = inflater.inflate(R.layout.widget_dyloading, null);
+        loadingView = inflater.inflate(R.layout.widget_dy_loading, null);
         seaEdittext = rootLayout.findViewById(R.id.sea_edittext);
         inButton = rootLayout.findViewById(R.id.sea_inbutton);
         seaButton = rootLayout.findViewById(R.id.sea_seabutton);
@@ -133,8 +131,8 @@ public class Search extends Fragment
             @Override
             public void run()
             {
-                ((TextView) loadingView.findViewById(R.id.dyload_text)).setText("好像没有网络...\n检查下网络？");
-                loadingView.findViewById(R.id.dyload_button).setVisibility(View.VISIBLE);
+                ((TextView) loadingView.findViewById(R.id.wid_dy_load_text)).setText("好像没有网络...\n检查下网络？");
+                loadingView.findViewById(R.id.wid_dy_load_button).setVisibility(View.VISIBLE);
             }
         };
 
@@ -169,7 +167,7 @@ public class Search extends Fragment
             @Override
             public void run()
             {
-                ((TextView) loadingView.findViewById(R.id.dyload_text)).setText("  没有更多了...");
+                ((TextView) loadingView.findViewById(R.id.wid_dy_load_text)).setText("  没有更多了...");
             }
         };
 
@@ -182,13 +180,13 @@ public class Search extends Fragment
             }
         };
 
-        loadingView.findViewById(R.id.dyload_button).setOnClickListener(new View.OnClickListener()
+        loadingView.findViewById(R.id.wid_dy_load_button).setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                ((TextView) loadingView.findViewById(R.id.dyload_text)).setText(" 加载中. . .");
-                loadingView.findViewById(R.id.dyload_button).setVisibility(View.GONE);
+                ((TextView) loadingView.findViewById(R.id.wid_dy_load_text)).setText(" 加载中. . .");
+                loadingView.findViewById(R.id.wid_dy_load_button).setVisibility(View.GONE);
                 getMoreSearch();
             }
         });

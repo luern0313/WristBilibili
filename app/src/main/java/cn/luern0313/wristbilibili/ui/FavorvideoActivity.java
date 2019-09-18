@@ -18,12 +18,10 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -79,7 +77,7 @@ public class FavorvideoActivity extends Activity
         editor = sharedPreferences.edit();
         fid = intent.getStringExtra("fid");
 
-        loadingView = inflater.inflate(R.layout.widget_dyloading, null);
+        loadingView = inflater.inflate(R.layout.widget_dy_loading, null);
         favvListView = findViewById(R.id.favv_listview);
         waveSwipeRefreshLayout = findViewById(R.id.favv_swipe);
         waveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
@@ -133,8 +131,8 @@ public class FavorvideoActivity extends Activity
             @Override
             public void run()
             {
-                ((TextView) loadingView.findViewById(R.id.dyload_text)).setText("好像没有网络...\n检查下网络？");
-                loadingView.findViewById(R.id.dyload_button).setVisibility(View.VISIBLE);
+                ((TextView) loadingView.findViewById(R.id.wid_dy_load_text)).setText("好像没有网络...\n检查下网络？");
+                loadingView.findViewById(R.id.wid_dy_load_button).setVisibility(View.VISIBLE);
             }
         };
 
@@ -143,7 +141,7 @@ public class FavorvideoActivity extends Activity
             @Override
             public void run()
             {
-                ((TextView) loadingView.findViewById(R.id.dyload_text)).setText("  没有更多了...");
+                ((TextView) loadingView.findViewById(R.id.wid_dy_load_text)).setText("  没有更多了...");
             }
         };
 
@@ -157,13 +155,13 @@ public class FavorvideoActivity extends Activity
             }
         };
 
-        loadingView.findViewById(R.id.dyload_button).setOnClickListener(new View.OnClickListener()
+        loadingView.findViewById(R.id.wid_dy_load_button).setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                ((TextView) loadingView.findViewById(R.id.dyload_text)).setText(" 加载中. . .");
-                loadingView.findViewById(R.id.dyload_button).setVisibility(View.GONE);
+                ((TextView) loadingView.findViewById(R.id.wid_dy_load_text)).setText(" 加载中. . .");
+                loadingView.findViewById(R.id.wid_dy_load_button).setVisibility(View.GONE);
                 getMoreFavorVideo();
             }
         });

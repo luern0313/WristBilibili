@@ -81,7 +81,7 @@
                 android:layout_marginLeft="30dp"
                 android:layout_marginRight="30dp"
                 android:layout_marginTop="8dp"
-                android:text="评论小尾巴已开启，将在评论结尾显示机型及来源，你可以在设置关闭小尾巴"
+                android:text="小尾巴已开启，将在评论结尾显示自定义小尾巴，你可以在设置自定义或关闭小尾巴"
                 android:textSize="11sp" />
 
         </LinearLayout>

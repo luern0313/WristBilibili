@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -118,5 +119,49 @@
             android:layout_height="wrap_content"
             android:text="视频不见了. . .\n可能是没有登录？"
             android:textSize="13sp" />
+
     </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/vd_tip"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/vd_title_layout"
+        android:background="@color/tipBG"
+        android:clickable="true"
+        android:onClick="clickVdTip"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            android:layout_marginTop="-2dp"
+            android:scaleType="fitStart"
+            android:src="@drawable/img_vd_tip" />
+
+        <TextView
+            android:id="@+id/vd_tip_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="28dp"
+            android:layout_marginRight="28dp"
+            android:gravity="center"
+            android:paddingTop="14dp"
+            android:text="当标题栏出现左右两个箭头时，代表这个页面是可以左右滑动的！"
+            android:textColor="@color/textColor"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/vd_tip_text"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="18dp"
+            android:text="轻触不再显示"
+            android:textColor="@color/textColor"
+            android:textSize="12sp" />
+    </RelativeLayout>
 </RelativeLayout>

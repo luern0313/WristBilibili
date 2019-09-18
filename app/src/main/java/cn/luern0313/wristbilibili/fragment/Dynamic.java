@@ -4,16 +4,14 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.util.LruCache;
-import android.os.Bundle;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,25 +25,20 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONException;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 
 import cn.carbs.android.expandabletextview.library.ExpandableTextView;
 import cn.luern0313.wristbilibili.R;
-import cn.luern0313.wristbilibili.api.UserDynamic;
+import cn.luern0313.wristbilibili.api.SendDynamicApi;
+import cn.luern0313.wristbilibili.api.UserDynamicApi;
 import cn.luern0313.wristbilibili.ui.CheckreplyActivity;
 import cn.luern0313.wristbilibili.ui.ImgActivity;
 import cn.luern0313.wristbilibili.ui.MainActivity;
 import cn.luern0313.wristbilibili.ui.OtheruserActivity;
-import cn.luern0313.wristbilibili.ui.ReplyActivity;
+import cn.luern0313.wristbilibili.ui.SendDynamicActivity;
 import cn.luern0313.wristbilibili.ui.VideodetailsActivity;
+import cn.luern0313.wristbilibili.widget.ImageDownloader;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
 /**
@@ -58,12 +51,15 @@ public class Dynamic extends Fragment
 {
     Context ctx;
 
-    UserDynamic userDynamic;
+    UserDynamicApi userDynamicApi;
+    SendDynamicApi sendDynamicApi;
     ArrayList<Object> dynamicList;
 
     View rootLayout;
     ListView dyListView;
     WaveSwipeRefreshLayout waveSwipeRefreshLayout;
+    View sendDynamicView;
+    Button sendDynamicButton;
     View loadingView;
     mAdapter adapter;
 
@@ -82,10 +78,18 @@ public class Dynamic extends Fragment
         ctx = getActivity();
         rootLayout = inflater.inflate(R.layout.fragment_dynamic, container, false);
         dyListView = rootLayout.findViewById(R.id.dy_listview);
-        loadingView = inflater.inflate(R.layout.widget_dyloading, null);
+        loadingView = inflater.inflate(R.layout.widget_dy_loading, null);
+        sendDynamicView = inflater.inflate(R.layout.widget_dy_senddynamic, null);
+        sendDynamicButton = sendDynamicView.findViewById(R.id.wid_dy_senddynamic);
+        dyListView.addHeaderView(sendDynamicView);
         dyListView.addFooterView(loadingView);
+        dyListView.setHeaderDividersEnabled(false);
 
         isLogin = MainActivity.sharedPreferences.contains("cookies");
+
+        sendDynamicApi = new SendDynamicApi(MainActivity.sharedPreferences.getString("cookies", ""),
+                MainActivity.sharedPreferences.getString("mid", ""),
+                MainActivity.sharedPreferences.getString("csrf", ""));
 
         runnableUi = new Runnable()
         {
@@ -121,8 +125,8 @@ public class Dynamic extends Fragment
             @Override
             public void run()
             {
-                ((TextView) loadingView.findViewById(R.id.dyload_text)).setText("好像没有网络...\n检查下网络？");
-                loadingView.findViewById(R.id.dyload_button).setVisibility(View.VISIBLE);
+                ((TextView) loadingView.findViewById(R.id.wid_dy_load_button)).setText("好像没有网络...\n检查下网络？");
+                loadingView.findViewById(R.id.wid_dy_load_button).setVisibility(View.VISIBLE);
                 isLoading = false;
             }
         };
@@ -173,13 +177,13 @@ public class Dynamic extends Fragment
             }
         });
 
-        loadingView.findViewById(R.id.dyload_button).setOnClickListener(new View.OnClickListener()
+        loadingView.findViewById(R.id.wid_dy_load_button).setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                ((TextView) loadingView.findViewById(R.id.dyload_text)).setText(" 加载中. . .");
-                loadingView.findViewById(R.id.dyload_button).setVisibility(View.GONE);
+                ((TextView) loadingView.findViewById(R.id.wid_dy_load_button)).setText(" 加载中. . .");
+                loadingView.findViewById(R.id.wid_dy_load_button).setVisibility(View.GONE);
                 getMoreDynamic();
             }
         });
@@ -199,6 +203,17 @@ public class Dynamic extends Fragment
                     isLoading = true;
                     getMoreDynamic();
                 }
+            }
+        });
+
+        sendDynamicButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Intent intent = new Intent(ctx, SendDynamicActivity.class);
+                intent.putExtra("is_share", false);
+                startActivityForResult(intent, 0);
             }
         });
 
@@ -222,6 +237,8 @@ public class Dynamic extends Fragment
     public void onActivityResult(int requestCode, int resultCode, final Intent data)
     {
         super.onActivityResult(requestCode, resultCode, data);
+        //dyid都是传过去再传回来
+        //我王境泽传数据就是乱死！也不建多余的变量！（没有真香）
         if(requestCode == 0 && resultCode == 0 && data != null)
         {
             new Thread(new Runnable()
@@ -231,20 +248,24 @@ public class Dynamic extends Fragment
                 {
                     try
                     {
-                        //oid和type都是传过去再传回来
-                        //我王境泽传数据就是乱死！也不建多余的变量！（没有真香）
                         if(!data.getStringExtra("text").equals(""))
                         {
-                            if(userDynamic.sendReply(data.getStringExtra("oid"), data.getStringExtra("type"), data.getStringExtra("text")))
+                            String result;
+                            if(!data.getBooleanExtra("is_share", false))
+                                result = sendDynamicApi.sendDynamic(data.getStringExtra("text"));
+                            else
+                                result = sendDynamicApi.sendDynamicWithDynamic(data.getStringExtra("share_dyid"), data.getStringExtra("text"));
+                            if(result.equals(""))
                             {
                                 Looper.prepare();
                                 Toast.makeText(ctx, "发送成功！", Toast.LENGTH_SHORT).show();
                                 Looper.loop();
+                                getDynamic();
                             }
                             else
                             {
                                 Looper.prepare();
-                                Toast.makeText(ctx, "发送失败，可能是短时间发送过多？", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ctx, "发送失败，" + result, Toast.LENGTH_SHORT).show();
                                 Looper.loop();
                             }
                         }
@@ -270,9 +291,9 @@ public class Dynamic extends Fragment
             {
                 try
                 {
-                    userDynamic = new UserDynamic(MainActivity.sharedPreferences.getString("cookies", ""), MainActivity.sharedPreferences.getString("csrf", ""), MainActivity.sharedPreferences.getString("mid", ""), MainActivity.sharedPreferences.getString("mid", ""), true);
-                    userDynamic.getDynamic();
-                    dynamicList = userDynamic.getDynamicList();
+                    userDynamicApi = new UserDynamicApi(MainActivity.sharedPreferences.getString("cookies", ""), MainActivity.sharedPreferences.getString("csrf", ""), MainActivity.sharedPreferences.getString("mid", ""), MainActivity.sharedPreferences.getString("mid", ""), true);
+                    userDynamicApi.getDynamic();
+                    dynamicList = userDynamicApi.getDynamicList();
                     if(dynamicList != null && dynamicList.size() != 0)
                     {
                         isLoading = false;
@@ -306,8 +327,8 @@ public class Dynamic extends Fragment
             {
                 try
                 {
-                    userDynamic.getHistoryDynamic();
-                    dynamicList.addAll(userDynamic.getDynamicList());
+                    userDynamicApi.getHistoryDynamic();
+                    dynamicList.addAll(userDynamicApi.getDynamicList());
                     isLoading = false;
                     handler.post(runnableAddlist);
                 }
@@ -380,11 +401,11 @@ public class Dynamic extends Fragment
         @Override
         public int getItemViewType(int position)
         {
-            if(dyList.get(position) instanceof UserDynamic.cardOriginalVideo) return 4;
-            else if(dyList.get(position) instanceof UserDynamic.cardOriginalText) return 3;
-            else if(dyList.get(position) instanceof UserDynamic.cardUnknow) return 2;
-            else if(dyList.get(position) instanceof UserDynamic.cardShareVideo) return 1;
-            else if(dyList.get(position) instanceof UserDynamic.cardShareText) return 0;
+            if(dyList.get(position) instanceof UserDynamicApi.cardOriginalVideo) return 4;
+            else if(dyList.get(position) instanceof UserDynamicApi.cardOriginalText) return 3;
+            else if(dyList.get(position) instanceof UserDynamicApi.cardUnknow) return 2;
+            else if(dyList.get(position) instanceof UserDynamicApi.cardShareVideo) return 1;
+            else if(dyList.get(position) instanceof UserDynamicApi.cardShareText) return 0;
             return 2;
         }
 
@@ -432,6 +453,7 @@ public class Dynamic extends Fragment
                         viewHolderOriText.name = convertView.findViewById(R.id.liot_name);
                         viewHolderOriText.time = convertView.findViewById(R.id.liot_time);
                         viewHolderOriText.text = convertView.findViewById(R.id.liot_text);
+                        viewHolderOriText.sharei = convertView.findViewById(R.id.liot_sharei);
                         viewHolderOriText.textimg = convertView.findViewById(R.id.liot_textimg);
                         viewHolderOriText.replybu = convertView.findViewById(R.id.liot_replybu);
                         viewHolderOriText.reply = convertView.findViewById(R.id.liot_reply);
@@ -467,6 +489,7 @@ public class Dynamic extends Fragment
                         viewHolderShaVid.simg = convertView.findViewById(R.id.lisv_share_img);
                         viewHolderShaVid.simgtext = convertView.findViewById(R.id.lisv_share_imgtext);
                         viewHolderShaVid.stitle = convertView.findViewById(R.id.lisv_share_text);
+                        viewHolderShaVid.sharei = convertView.findViewById(R.id.lisv_sharei);
                         viewHolderShaVid.replybu = convertView.findViewById(R.id.lisv_replybu);
                         viewHolderShaVid.reply = convertView.findViewById(R.id.lisv_reply);
                         viewHolderShaVid.likebu = convertView.findViewById(R.id.lisv_likebu);
@@ -488,6 +511,7 @@ public class Dynamic extends Fragment
                         viewHolderShaText.sname = convertView.findViewById(R.id.list_share_name);
                         viewHolderShaText.stext = convertView.findViewById(R.id.list_share_text);
                         viewHolderShaText.stextimg = convertView.findViewById(R.id.list_share_textimg);
+                        viewHolderShaText.sharei = convertView.findViewById(R.id.list_sharei);
                         viewHolderShaText.replybu = convertView.findViewById(R.id.list_replybu);
                         viewHolderShaText.reply = convertView.findViewById(R.id.list_reply);
                         viewHolderShaText.likebu = convertView.findViewById(R.id.list_likebu);
@@ -520,7 +544,7 @@ public class Dynamic extends Fragment
 
             if(type == 4) //原创视频
             {
-                final UserDynamic.cardOriginalVideo dy = (UserDynamic.cardOriginalVideo) dyList.get(position);
+                final UserDynamicApi.cardOriginalVideo dy = (UserDynamicApi.cardOriginalVideo) dyList.get(position);
                 viewHolderOriVid.name.setText(Html.fromHtml("<b>" + dy.getOwnerName() + "</b>投稿了视频"));
                 viewHolderOriVid.time.setText(dy.getDynamicTime());
                 if(!dy.getDynamic().equals(""))
@@ -576,7 +600,7 @@ public class Dynamic extends Fragment
                             @Override
                             public void run()
                             {
-                                String s = userDynamic.likeDynamic(dy.getDynamicId(), dy.isLike ? "2" : "1");
+                                String s = userDynamicApi.likeDynamic(dy.getDynamicId(), dy.isLike ? "2" : "1");
                                 if(s.equals(""))
                                 {
                                     dy.isLike = !dy.isLike;
@@ -597,7 +621,7 @@ public class Dynamic extends Fragment
             }
             else if(type == 3)// 原创文字
             {
-                final UserDynamic.cardOriginalText dy = (UserDynamic.cardOriginalText) dyList.get(position);
+                final UserDynamicApi.cardOriginalText dy = (UserDynamicApi.cardOriginalText) dyList.get(position);
                 viewHolderOriText.name.setText(dy.getUserName());
                 viewHolderOriText.time.setText(dy.getDynamicTime());
                 viewHolderOriText.text.setText(dy.getDynamicText());
@@ -639,6 +663,21 @@ public class Dynamic extends Fragment
                     }
                 });
 
+                viewHolderOriText.sharei.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        Intent intent = new Intent(ctx, SendDynamicActivity.class);
+                        intent.putExtra("is_share", true);
+                        intent.putExtra("share_up", dy.getUserName());
+                        intent.putExtra("share_img", Integer.valueOf(dy.getTextImgCount()) == 0 ? "" : dy.getImgsSrc()[0]);
+                        intent.putExtra("share_title", dy.getDynamicText());
+                        intent.putExtra("share_dyid", dy.getDynamicId(2));
+                        startActivityForResult(intent, 0);
+                    }
+                });
+
                 viewHolderOriText.replybu.setOnClickListener(new View.OnClickListener()
                 {
                     @Override
@@ -662,7 +701,7 @@ public class Dynamic extends Fragment
                             @Override
                             public void run()
                             {
-                                String s = userDynamic.likeDynamic(dy.getDynamicId(2), dy.isLike ? "2" : "1");
+                                String s = userDynamicApi.likeDynamic(dy.getDynamicId(2), dy.isLike ? "2" : "1");
                                 if(s.equals(""))
                                 {
                                     dy.isLike = !dy.isLike;
@@ -682,7 +721,7 @@ public class Dynamic extends Fragment
             }
             else if(type == 2) //未知类型
             {
-                final UserDynamic.cardUnknow dy = (UserDynamic.cardUnknow) dyList.get(position);
+                final UserDynamicApi.cardUnknow dy = (UserDynamicApi.cardUnknow) dyList.get(position);
                 viewHolderUnktyp.name.setText(dy.getOwnerName());
                 viewHolderUnktyp.time.setText(dy.getDynamicTime());
                 viewHolderUnktyp.head.setImageResource(R.drawable.img_default_head);
@@ -707,8 +746,8 @@ public class Dynamic extends Fragment
             }
             else if(type == 1) //转发视频
             {
-                final UserDynamic.cardShareVideo dy = (UserDynamic.cardShareVideo) dyList.get(position);
-                final UserDynamic.cardOriginalVideo sdy = (UserDynamic.cardOriginalVideo) userDynamic.getDynamicClass(dy.getOriginalVideo(), 1);
+                final UserDynamicApi.cardShareVideo dy = (UserDynamicApi.cardShareVideo) dyList.get(position);
+                final UserDynamicApi.cardOriginalVideo sdy = (UserDynamicApi.cardOriginalVideo) userDynamicApi.getDynamicClass(dy.getOriginalVideo(), 1);
                 viewHolderShaVid.name.setText(dy.getUserName());
                 viewHolderShaVid.time.setText(dy.getDynamicTime());
                 viewHolderShaVid.text.setText(dy.getDynamicText());
@@ -766,6 +805,22 @@ public class Dynamic extends Fragment
                     }
                 });
 
+                viewHolderShaVid.sharei.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        Intent intent = new Intent(ctx, SendDynamicActivity.class);
+                        intent.putExtra("is_share", true);
+                        intent.putExtra("share_text", "//@" + dy.getUserName() + ":" + dy.getDynamicText());
+                        intent.putExtra("share_up", sdy.getOwnerName());
+                        intent.putExtra("share_img", sdy.getVideoImg());
+                        intent.putExtra("share_title", sdy.getVideoTitle());
+                        intent.putExtra("share_dyid", dy.getDynamicId());
+                        startActivityForResult(intent, 0);
+                    }
+                });
+
                 viewHolderShaVid.replybu.setOnClickListener(new View.OnClickListener()
                 {
                     @Override
@@ -789,7 +844,7 @@ public class Dynamic extends Fragment
                             @Override
                             public void run()
                             {
-                                String s = userDynamic.likeDynamic(dy.getDynamicId(), dy.isLike ? "2" : "1");
+                                String s = userDynamicApi.likeDynamic(dy.getDynamicId(), dy.isLike ? "2" : "1");
                                 if(s.equals(""))
                                 {
                                     dy.isLike = !dy.isLike;
@@ -809,8 +864,8 @@ public class Dynamic extends Fragment
             }
             else if(type == 0) //转发文字
             {
-                final UserDynamic.cardShareText dy = (UserDynamic.cardShareText) dyList.get(position);
-                final UserDynamic.cardOriginalText sdy = (UserDynamic.cardOriginalText) userDynamic.getDynamicClass(dy.getOriginalText(), 2);
+                final UserDynamicApi.cardShareText dy = (UserDynamicApi.cardShareText) dyList.get(position);
+                final UserDynamicApi.cardOriginalText sdy = (UserDynamicApi.cardOriginalText) userDynamicApi.getDynamicClass(dy.getOriginalText(), 2);
                 viewHolderShaText.name.setText(dy.getUserName());
                 viewHolderShaText.time.setText(dy.getDynamicTime());
                 viewHolderShaText.text.setText(dy.getDynamicText());
@@ -869,6 +924,22 @@ public class Dynamic extends Fragment
                     }
                 });
 
+                viewHolderShaText.sharei.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        Intent intent = new Intent(ctx, SendDynamicActivity.class);
+                        intent.putExtra("is_share", true);
+                        intent.putExtra("share_text", "//@" + dy.getUserName() + ":" + dy.getDynamicText());
+                        intent.putExtra("share_up", sdy.getUserName());
+                        intent.putExtra("share_img", Integer.valueOf(sdy.getTextImgCount()) == 0 ? "" : sdy.getImgsSrc()[0]);
+                        intent.putExtra("share_title", sdy.getDynamicText());
+                        intent.putExtra("share_dyid", dy.getDynamicId());
+                        startActivityForResult(intent, 0);
+                    }
+                });
+
                 viewHolderShaText.replybu.setOnClickListener(new View.OnClickListener()
                 {
                     @Override
@@ -892,7 +963,7 @@ public class Dynamic extends Fragment
                             @Override
                             public void run()
                             {
-                                String s = userDynamic.likeDynamic(dy.getDynamicId(), dy.isLike ? "2" : "1");
+                                String s = userDynamicApi.likeDynamic(dy.getDynamicId(), dy.isLike ? "2" : "1");
                                 if(s.equals(""))
                                 {
                                     dy.isLike = !dy.isLike;
@@ -915,7 +986,7 @@ public class Dynamic extends Fragment
 
         BitmapDrawable setImageFormWeb(String url)
         {
-            if(mImageCache.get(url) != null)
+            if(url != null && mImageCache.get(url) != null)
             {
                 return mImageCache.get(url);
             }
@@ -949,6 +1020,7 @@ public class Dynamic extends Fragment
             TextView time;
             ExpandableTextView text;
             TextView textimg;
+            ImageView sharei;
             LinearLayout replybu;
             TextView reply;
             LinearLayout likebu;
@@ -975,6 +1047,7 @@ public class Dynamic extends Fragment
             ImageView simg;
             TextView simgtext;
             TextView stitle;
+            ImageView sharei;
             LinearLayout replybu;
             TextView reply;
             LinearLayout likebu;
@@ -992,6 +1065,7 @@ public class Dynamic extends Fragment
             TextView sname;
             ExpandableTextView stext;
             TextView stextimg;
+            ImageView sharei;
             LinearLayout replybu;
             TextView reply;
             LinearLayout likebu;
@@ -1010,7 +1084,7 @@ public class Dynamic extends Fragment
                 {
                     imageUrl = params[0];
                     Bitmap bitmap = null;
-                    bitmap = downloadImage();
+                    bitmap = ImageDownloader.downloadImage(imageUrl);
                     BitmapDrawable db = new BitmapDrawable(dyListView.getResources(), bitmap);
                     // 如果本地还没缓存该图片，就缓存
                     if(mImageCache.get(imageUrl) == null && bitmap != null)
@@ -1036,92 +1110,6 @@ public class Dynamic extends Fragment
                     iv.setImageDrawable(result);
                 }
             }
-
-            /**
-             * 获得需要压缩的比率
-             *
-             * @param options 需要传入已经BitmapFactory.decodeStream(is, null, options);
-             * @return 返回压缩的比率，最小为1
-             */
-            public int getInSampleSize(BitmapFactory.Options options)
-            {
-                int inSampleSize = 1;
-                int realWith = 170;
-                int realHeight = 170;
-
-                int outWidth = options.outWidth;
-                int outHeight = options.outHeight;
-
-                //获取比率最大的那个
-                if(outWidth > realWith || outHeight > realHeight)
-                {
-                    int withRadio = Math.round(outWidth / realWith);
-                    int heightRadio = Math.round(outHeight / realHeight);
-                    inSampleSize = withRadio > heightRadio ? withRadio : heightRadio;
-                }
-                return inSampleSize;
-            }
-
-            /**
-             * 根据输入流返回一个压缩的图片
-             *
-             * @param input 图片的输入流
-             * @return 压缩的图片
-             */
-            public Bitmap getCompressBitmap(InputStream input)
-            {
-                //因为InputStream要使用两次，但是使用一次就无效了，所以需要复制两个
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                try
-                {
-                    byte[] buffer = new byte[1024];
-                    int len;
-                    while ((len = input.read(buffer)) > -1)
-                    {
-                        baos.write(buffer, 0, len);
-                    }
-                    baos.flush();
-                }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
-                }
-
-                //复制新的输入流
-                InputStream is = new ByteArrayInputStream(baos.toByteArray());
-                InputStream is2 = new ByteArrayInputStream(baos.toByteArray());
-
-                //只是获取网络图片的大小，并没有真正获取图片
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inJustDecodeBounds = true;
-                BitmapFactory.decodeStream(is, null, options);
-                //获取图片并进行压缩
-                options.inSampleSize = getInSampleSize(options);
-                options.inJustDecodeBounds = false;
-                return BitmapFactory.decodeStream(is2, null, options);
-            }
-
-            /**
-             * 根据url从网络上下载图片
-             *
-             * @return 图片
-             */
-            private Bitmap downloadImage() throws IOException
-            {
-                HttpURLConnection con = null;
-                Bitmap bitmap = null;
-                URL url = new URL(imageUrl);
-                con = (HttpURLConnection) url.openConnection();
-                con.setConnectTimeout(5 * 1000);
-                con.setReadTimeout(10 * 1000);
-                bitmap = getCompressBitmap(con.getInputStream());
-                if(con != null)
-                {
-                    con.disconnect();
-                }
-                return bitmap;
-            }
         }
-
     }
 }

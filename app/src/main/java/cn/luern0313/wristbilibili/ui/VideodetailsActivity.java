@@ -4,8 +4,10 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,11 +16,12 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Looper;
 import android.support.v4.util.LruCache;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,9 +44,10 @@ import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.ListofVideoApi;
-import cn.luern0313.wristbilibili.api.OthersUser;
+import cn.luern0313.wristbilibili.api.OnlineVideoApi;
 import cn.luern0313.wristbilibili.api.ReplyApi;
-import cn.luern0313.wristbilibili.api.VideoDetails;
+import cn.luern0313.wristbilibili.api.VideoDetailsApi;
+import cn.luern0313.wristbilibili.service.DownloadService;
 
 public class VideodetailsActivity extends Activity
 {
@@ -52,7 +56,8 @@ public class VideodetailsActivity extends Activity
     LayoutInflater inflater;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
-    VideoDetails videoDetail;
+    VideoDetailsApi videoDetail;
+    OnlineVideoApi onlineVideoApi;
     ReplyApi replyApi;
     ArrayList<ReplyApi.reply> replyArrayList;
     ArrayList<ListofVideoApi> recommendList;
@@ -95,6 +100,7 @@ public class VideodetailsActivity extends Activity
     LinearLayout uiFavLay;
     LinearLayout uiDislikeLay;
 
+    LinearLayout uiVideoPartLayout;
     ListView uiRelpyListView;
     ListView uiRecommendListView;
     mAdapter replyAdapter;
@@ -105,6 +111,22 @@ public class VideodetailsActivity extends Activity
     boolean isFaved = false;
     int replyPage = 1;
     boolean isReplyLoading = true;
+
+    private DownloadService.MyBinder myBinder;
+    private ServiceConnection connection = new ServiceConnection()
+    {
+
+        @Override
+        public void onServiceDisconnected(ComponentName name)
+        {
+        }
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service)
+        {
+            myBinder = (DownloadService.MyBinder) service;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -119,7 +141,7 @@ public class VideodetailsActivity extends Activity
 
         inflater = getLayoutInflater();
         layoutSendReply = inflater.inflate(R.layout.widget_reply_sendreply, null);
-        layoutLoading = inflater.inflate(R.layout.widget_dyloading, null);
+        layoutLoading = inflater.inflate(R.layout.widget_dy_loading, null);
         layoutChangeMode = inflater.inflate(R.layout.widget_reply_changemode, null);
         titleTextView = findViewById(R.id.vd_title_title);
         viewPager = findViewById(R.id.vd_viewpager);
@@ -128,14 +150,20 @@ public class VideodetailsActivity extends Activity
         uiLoading = findViewById(R.id.vd_loading);
         uiNoWeb = findViewById(R.id.vd_noweb);
 
-        isLogin = !MainActivity.sharedPreferences.getString("cookies", "").equals("");
-        videoDetail = new VideoDetails(sharedPreferences.getString("cookies", ""), sharedPreferences.getString("csrf", ""), sharedPreferences.getString("mid", ""), intent.getStringExtra("aid"));
-        replyApi = new ReplyApi(sharedPreferences.getString("cookies", ""), sharedPreferences.getString("csrf", ""), intent.getStringExtra("aid"), "1");
+        isLogin = !sharedPreferences.getString("cookies", "").equals("");
+        videoDetail = new VideoDetailsApi(sharedPreferences.getString("cookies", ""),
+                sharedPreferences.getString("csrf", ""), sharedPreferences.getString("mid", ""),
+                intent.getStringExtra("aid"));
+        replyApi = new ReplyApi(sharedPreferences.getString("cookies", ""),
+                sharedPreferences.getString("csrf", ""), intent.getStringExtra("aid"), "1");
 
         uiLoadingImg.setImageResource(R.drawable.anim_loading);
         loadingImgAnim = (AnimationDrawable) uiLoadingImg.getDrawable();
         loadingImgAnim.start();
         uiLoading.setVisibility(View.VISIBLE);
+
+        if(sharedPreferences.getBoolean("tip_vd", true))
+            findViewById(R.id.vd_tip).setVisibility(View.VISIBLE);
 
         runnableNoWeb = new Runnable()
         {
@@ -167,6 +195,14 @@ public class VideodetailsActivity extends Activity
                     isLiked = videoDetail.getSelfLiked();
                     isCoined = videoDetail.getSelfCoined();
                     isFaved = videoDetail.getSelfFaved();
+
+                    if(videoDetail.getVideoPartSize() > 1)
+                    {
+                        findViewById(R.id.vd_bt_play).setVisibility(View.GONE);
+                        for (VideoDetailsApi.VideoPart i : videoDetail.getVideoPartList())
+                            uiVideoPartLayout.addView(getVideoPartButton(i));
+                    }
+                    else uiVideoPartLayout.setVisibility(View.GONE);
 
                     setIcon();
                     isReplyLoading = false;
@@ -278,7 +314,8 @@ public class VideodetailsActivity extends Activity
             @Override
             public void run()
             {
-                ((TextView) layoutLoading.findViewById(R.id.dyload_text)).setText("  没有更多了...");
+                ((TextView) layoutLoading.findViewById(R.id.wid_dy_load_text))
+                        .setText("  没有更多了...");
             }
         };
 
@@ -287,8 +324,9 @@ public class VideodetailsActivity extends Activity
             @Override
             public void run()
             {
-                ((TextView) layoutLoading.findViewById(R.id.dyload_text)).setText("好像没有网络...\n检查下网络？");
-                layoutLoading.findViewById(R.id.dyload_button).setVisibility(View.VISIBLE);
+                ((TextView) layoutLoading.findViewById(R.id.wid_dy_load_text))
+                        .setText("好像没有网络...\n检查下网络？");
+                layoutLoading.findViewById(R.id.wid_dy_load_button).setVisibility(View.VISIBLE);
                 isReplyLoading = false;
             }
         };
@@ -309,16 +347,19 @@ public class VideodetailsActivity extends Activity
             }
         };
 
-        layoutLoading.findViewById(R.id.dyload_button).setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                ((TextView) layoutLoading.findViewById(R.id.dyload_text)).setText(" 加载中. . .");
-                layoutLoading.findViewById(R.id.dyload_button).setVisibility(View.GONE);
-                getMoreReply();
-            }
-        });
+        layoutLoading.findViewById(R.id.wid_dy_load_button)
+                .setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        ((TextView) layoutLoading.findViewById(R.id.wid_dy_load_text))
+                                .setText(" 加载中. . .");
+                        layoutLoading.findViewById(R.id.wid_dy_load_button)
+                                .setVisibility(View.GONE);
+                        getMoreReply();
+                    }
+                });
 
         final PagerAdapter pagerAdapter = new PagerAdapter()
         {
@@ -359,6 +400,7 @@ public class VideodetailsActivity extends Activity
                     uiCoinLay = v.findViewById(R.id.vd_coin);
                     uiFavLay = v.findViewById(R.id.vd_fav);
                     uiDislikeLay = v.findViewById(R.id.vd_dislike);
+                    uiVideoPartLayout = v.findViewById(R.id.vd_video_part);
 
                     v.findViewById(R.id.vd_card).setOnClickListener(new View.OnClickListener()
                     {
@@ -464,7 +506,8 @@ public class VideodetailsActivity extends Activity
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id)
                         {
                             Intent intent = new Intent(ctx, VideodetailsActivity.class);
-                            intent.putExtra("aid", String.valueOf(recommendList.get(position).getVideoAid()));
+                            intent.putExtra("aid",
+                                    String.valueOf(recommendList.get(position).getVideoAid()));
                             startActivity(intent);
                         }
                     });
@@ -515,6 +558,35 @@ public class VideodetailsActivity extends Activity
         });
 
         viewPager.setAdapter(pagerAdapter);
+    }
+
+    TextView getVideoPartButton(final VideoDetailsApi.VideoPart part)
+    {
+        TextView textView = new TextView(ctx);
+        textView.setWidth(170);
+        textView.setBackgroundResource(R.drawable.selector_bg_vd_videopart);
+        textView.setPadding(12, 6, 12, 6);
+        textView.setText(part.getPartName());
+        textView.setLines(2);
+        textView.setEllipsize(TextUtils.TruncateAt.END);
+        textView.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Intent intent = new Intent(ctx, PlayerActivity.class);
+                intent.putExtra("title", part.getPartName() + " - " + videoDetail.getVideoTitle());
+                intent.putExtra("aid", videoDetail.getVideoAid());
+                intent.putExtra("part", String.valueOf(part.getPartNum()));
+                intent.putExtra("cid", String.valueOf(part.getPartCid()));
+                startActivity(intent);
+            }
+        });
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+        lp.setMargins(0, 0, 4, 0);
+        textView.setLayoutParams(lp);
+        return textView;
     }
 
     void getMoreReply()
@@ -580,6 +652,13 @@ public class VideodetailsActivity extends Activity
                 titleTextView.setAlpha(1);
             }
         });
+    }
+
+    public void clickVdTip(View view)
+    {
+        findViewById(R.id.vd_tip).setVisibility(View.GONE);
+        editor.putBoolean("tip_vd", false);
+        editor.commit();
     }
 
     class mAdapter extends BaseAdapter
@@ -691,7 +770,8 @@ public class VideodetailsActivity extends Activity
             {
                 viewHolder.img.setImageResource(R.drawable.img_default_avatar);
                 viewHolder.name.setText(v.getUserName());
-                viewHolder.time.setText(v.getReplyTime() + "   " + v.getReplyFloor(replyApi.isShowFloor()) + "   LV" + v.getUserLv());
+                viewHolder.time.setText(v.getReplyTime() + "   " + v
+                        .getReplyFloor(replyApi.isShowFloor()) + "   LV" + v.getUserLv());
                 viewHolder.text.setText(v.getReplyText());
                 viewHolder.liken.setText(v.getReplyBeLiked());
                 viewHolder.replyn.setText(v.getReplyBeReply());
@@ -730,12 +810,15 @@ public class VideodetailsActivity extends Activity
                             @Override
                             public void run()
                             {
-                                String va = v.likeReply(v.getReplyId(), v.isReplyLike() ? 0 : 1, "1");
+                                String va = v
+                                        .likeReply(v.getReplyId(), v.isReplyLike() ? 0 : 1, "1");
                                 if(va.equals("")) handler.post(runnableReplyUpdate);
                                 else
                                 {
                                     Looper.prepare();
-                                    Toast.makeText(ctx, (v.isReplyLike() ? "取消" : "点赞") + "失败：\n" + va, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(ctx,
+                                            (v.isReplyLike() ? "取消" : "点赞") + "失败：\n" + va,
+                                            Toast.LENGTH_SHORT).show();
                                     Looper.loop();
                                 }
                             }
@@ -753,12 +836,15 @@ public class VideodetailsActivity extends Activity
                             @Override
                             public void run()
                             {
-                                String va = v.hateReply(v.getReplyId(), v.isReplyDislike() ? 0 : 1, "1");
+                                String va = v
+                                        .hateReply(v.getReplyId(), v.isReplyDislike() ? 0 : 1, "1");
                                 if(va.equals("")) handler.post(runnableReplyUpdate);
                                 else
                                 {
                                     Looper.prepare();
-                                    Toast.makeText(ctx, (v.isReplyDislike() ? "取消" : "点踩") + "失败：\n" + va, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(ctx,
+                                            (v.isReplyDislike() ? "取消" : "点踩") + "失败：\n" + va,
+                                            Toast.LENGTH_SHORT).show();
                                     Looper.loop();
                                 }
                             }
@@ -1198,6 +1284,7 @@ public class VideodetailsActivity extends Activity
         else uiFavImg.setImageResource(R.drawable.icon_vdd_do_fav_no);
     }
 
+
     public void clickCover(View view)
     {
         Intent intent = new Intent(ctx, ImgActivity.class);
@@ -1207,9 +1294,45 @@ public class VideodetailsActivity extends Activity
 
     public void clickPlay(View view)
     {
-        Intent intent = new Intent(ctx, QRActivity.class);
-        intent.putExtra("url", "https://www.bilibili.com/video/av" + videoDetail.getVideoAid());
+        Intent intent = new Intent(ctx, PlayerActivity.class);
+        intent.putExtra("title", videoDetail.getVideoTitle());
+        intent.putExtra("aid", videoDetail.getVideoAid());
+        intent.putExtra("part", "1");
+        intent.putExtra("cid", videoDetail.getVideoCid());
         startActivity(intent);
+    }
+
+    public void clickDownload(View view)
+    {
+        new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    onlineVideoApi = new OnlineVideoApi(sharedPreferences.getString("cookies", ""),
+                            sharedPreferences.getString("csrf", ""),
+                            sharedPreferences.getString("mid", ""), videoDetail.getVideoAid(), "1",
+                            videoDetail.getVideoCid());
+                    onlineVideoApi.connectionVideoUrl();
+                    Intent intent = new Intent(ctx, DownloadService.class);
+                    bindService(intent, connection, Context.BIND_AUTO_CREATE);
+                    myBinder.startDownload(videoDetail.getVideoAid(), videoDetail.getVideoCid(),
+                            onlineVideoApi.getVideoUrl(), onlineVideoApi.getDanmakuUrl());
+                    Looper.prepare();
+                    Toast.makeText(ctx, "已添加至下载列表", Toast.LENGTH_SHORT).show();
+                    Looper.loop();
+                }
+                catch(IOException e)
+                {
+                    e.printStackTrace();
+                    Looper.prepare();
+                    Toast.makeText(ctx, "网络连接失败，请检查网络", Toast.LENGTH_SHORT).show();
+                    Looper.loop();
+                }
+            }
+        }).start();
     }
 
     public void clickCoverLater(View view)
@@ -1276,6 +1399,17 @@ public class VideodetailsActivity extends Activity
                 }
             }
         }).start();
+    }
+
+    public void clickShare(View view)
+    {
+        Intent intent = new Intent(ctx, SendDynamicActivity.class);
+        intent.putExtra("is_share", true);
+        intent.putExtra("share_dyid", videoDetail.getVideoAid());
+        intent.putExtra("share_up", videoDetail.getVideoUpName());
+        intent.putExtra("share_img", videoDetail.getVideoFace());
+        intent.putExtra("share_title", videoDetail.getVideoTitle());
+        startActivityForResult(intent, 1);
     }
 
     public void clickLike(View view)
@@ -1395,7 +1529,8 @@ public class VideodetailsActivity extends Activity
                         videoDetail.favVideo();
                         videoDetail.setSelfFaved(1);
                         Looper.prepare();
-                        Toast.makeText(ctx, "已收藏至默认收藏夹！\n(别问我为什么不能选择别的..懒...)", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ctx, "已收藏至默认收藏夹！\n(别问我为什么不能选择别的..懒...)", Toast.LENGTH_SHORT)
+                                .show();
                     }
                     handler.post(runnableImg);
                     Looper.loop();
@@ -1487,6 +1622,38 @@ public class VideodetailsActivity extends Activity
                         e.printStackTrace();
                         Looper.prepare();
                         Toast.makeText(ctx, "评论发送失败。。请检查网络？", Toast.LENGTH_SHORT).show();
+                        Looper.loop();
+                    }
+                }
+            }).start();
+        }
+        else if(requestCode == 1 && resultCode == 0 && (!data.getStringExtra("text").equals("")))
+        {
+            new Thread(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    try
+                    {
+                        if(videoDetail.shareVideo(data.getStringExtra("text")))
+                        {
+                            Looper.prepare();
+                            Toast.makeText(ctx, "发送成功！", Toast.LENGTH_SHORT).show();
+                            Looper.loop();
+                        }
+                        else
+                        {
+                            Looper.prepare();
+                            Toast.makeText(ctx, "发送失败，可能是短时间发送过多？", Toast.LENGTH_SHORT).show();
+                            Looper.loop();
+                        }
+                    }
+                    catch (IOException e)
+                    {
+                        e.printStackTrace();
+                        Looper.prepare();
+                        Toast.makeText(ctx, "分享视频失败。。请检查网络？", Toast.LENGTH_SHORT).show();
                         Looper.loop();
                     }
                 }

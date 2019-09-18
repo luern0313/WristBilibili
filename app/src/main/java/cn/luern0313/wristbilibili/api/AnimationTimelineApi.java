@@ -1,15 +1,15 @@
 package cn.luern0313.wristbilibili.api;
 
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
@@ -19,99 +19,69 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
- * Created by liupe on 2018/10/5.
- * emmmm.....
+ * Created by liupe on 2018/11/10.
+ * 番剧时间表
  */
 
-public class UserInfo
+public class AnimationTimelineApi
 {
+    private final String TIMELINEAPI = "https://bangumi.bilibili.com/web_api/timeline_global";
     private String cookie;
-
-    private JSONObject userInfoJson;
-
-    public UserInfo(String cookie)
+    private JSONArray timelineJson;
+    public AnimationTimelineApi(String cookie)
     {
         this.cookie = cookie;
     }
 
-    public void getUserInfo() throws IOException
+    public ArrayList<Anim> getAnimTimelineList() throws IOException
     {
         try
         {
-            userInfoJson = new JSONObject((String) get("https://api.bilibili.com/x/web-interface/nav", 1));
-        } catch (JSONException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    public String getUserName()
-    {
-        try
-        {
-            return (String) userInfoJson.getJSONObject("data").get("uname");
-        } catch (JSONException e)
-        {
-            e.printStackTrace();
-        }
-        return "";
-    }
-
-    public String getUserCoin()
-    {
-        try
-        {
-            return String.valueOf(userInfoJson.getJSONObject("data").get("money"));
-        } catch (JSONException e)
-        {
-            e.printStackTrace();
-        }
-        return "0";
-    }
-
-    public int getUserLV()
-    {
-        try
-        {
-            return (int) userInfoJson.getJSONObject("data").getJSONObject("level_info").get("current_level");
-        } catch (JSONException e)
-        {
-            e.printStackTrace();
-        }
-        return 0;
-    }
-
-    public boolean isVip()
-    {
-        try
-        {
-            return ((int) userInfoJson.getJSONObject("data").get("vipStatus")) == 1;
+            timelineJson = new JSONObject((String) get(TIMELINEAPI, 1)).getJSONArray("result");
+            int nowTime = (int) (System.currentTimeMillis() / 1000);
+            ArrayList<Anim> anims = new ArrayList<>();
+            for(int i = 6; i >= 0; i--)
+            {
+                JSONArray dailyAnims = timelineJson.getJSONObject(i).getJSONArray("seasons");
+                String day = "";
+                if(timelineJson.getJSONObject(i).getInt("is_today") == 0) day = timelineJson.getJSONObject(i).getString("date") + " ";
+                for(int j = dailyAnims.length() - 1; j >= 0; j--)
+                {
+                    JSONObject anim = dailyAnims.getJSONObject(j);
+                    if(anim.getInt("pub_ts") <= nowTime && anim.getInt("is_published") == 1)
+                        anims.add(new Anim(anim.getString("title"), anim.getString("square_cover"), anim.getString("pub_index"), (int) anim.get("follow"), day + anim.getString("pub_time")));
+                }
+            }
+            return anims;
         }
         catch (JSONException e)
-        {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    public Bitmap getUserHead() throws IOException
-    {
-        try
-        {
-            return (Bitmap) get((String) userInfoJson.getJSONObject("data").get("face"), 2);
-        } catch (JSONException e)
         {
             e.printStackTrace();
         }
         return null;
     }
 
+    public class Anim
+    {
+        public String name;
+        public String coverUrl;
+        public String lastEpisode;
+        public int isfollow;
+        public String time;
+        Anim(String n, String c, String l, int f, String t)
+        {
+            name = n;
+            coverUrl = c;
+            lastEpisode = l;
+            isfollow = f;
+            time = t;
+        }
+    }
+
     private Object get(String url, int mode) throws IOException
     {
-        OkHttpClient client = new OkHttpClient.Builder().connectTimeout(15, TimeUnit.SECONDS)//设置连接超时时间
-                .readTimeout(15, TimeUnit.SECONDS)//设置读取超时时间
-                .build();
-        Request.Builder requestb = new Request.Builder().url(url).header("Referer", "https://www.bilibili.com/").addHeader("Accept", "*/*").addHeader("User-Agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
+        OkHttpClient client = new OkHttpClient.Builder().connectTimeout(15, TimeUnit.SECONDS).readTimeout(15, TimeUnit.SECONDS).build();
+        Request.Builder requestb = new Request.Builder().url(url).header("Referer", "https://www.bilibili.com/anime/timeline").addHeader("Accept", "*/*").addHeader("User-Agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
         if(!cookie.equals("")) requestb.addHeader("Cookie", cookie);
         Request request = requestb.build();
         Response response = client.newCall(request).execute();
@@ -134,10 +104,7 @@ public class UserInfo
         OkHttpClient client;
         RequestBody body;
         Request request;
-        client = new OkHttpClient.Builder().connectTimeout(15, TimeUnit.SECONDS)//设置连接超时时间
-                .readTimeout(15, TimeUnit.SECONDS)//设置读取超时时间
-                .build();
-        //参数传递
+        client = new OkHttpClient.Builder().connectTimeout(15, TimeUnit.SECONDS).readTimeout(15, TimeUnit.SECONDS).build();
         body = RequestBody.create(MediaType.parse("application/x-www-form-urlencoded; charset=utf-8"), data);
         request = new Request.Builder().url(url).post(body).header("Referer", "https://www.bilibili.com/").addHeader("Accept", "*/*").addHeader("User-Agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)").addHeader("Referer", "https://passport.bilibili.com/login").addHeader("Cookie", cookie).build();
         response = client.newCall(request).execute();
@@ -161,5 +128,4 @@ public class UserInfo
         inStream.close();
         return outStream.toByteArray();
     }
-
 }

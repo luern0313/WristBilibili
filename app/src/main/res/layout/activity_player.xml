@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black">
+
+    <TextView
+        android:id="@+id/player_history"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="同步观看进度中...请稍后\n\n（你也可以右滑来返回）"
+        android:textColor="@color/textColor"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/player_loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/textColor"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/player_loadingimg"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:src="@drawable/img_tvshake_1" />
+
+        <TextView
+            android:id="@+id/player_loadingtip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="  解析连接中..." />
+    </LinearLayout>
+
+</RelativeLayout>

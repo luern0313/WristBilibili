@@ -3,7 +3,6 @@ package cn.luern0313.wristbilibili.fragment;
 import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
@@ -18,19 +17,14 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import org.json.JSONArray;
-import org.w3c.dom.Text;
-
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.R;
-import cn.luern0313.wristbilibili.api.AnimationTimeline;
-import cn.luern0313.wristbilibili.api.AnimationTimeline.*;
+import cn.luern0313.wristbilibili.api.AnimationTimelineApi;
+import cn.luern0313.wristbilibili.api.AnimationTimelineApi.Anim;
 import cn.luern0313.wristbilibili.ui.MainActivity;
-import de.hdodenhof.circleimageview.CircleImageView;
+import cn.luern0313.wristbilibili.widget.ImageDownloader;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
 /**
@@ -45,7 +39,7 @@ public class AniRemind extends Fragment
     WaveSwipeRefreshLayout waveSwipeRefreshLayout;
 
     public static boolean isLogin;
-    AnimationTimeline animationTimeline;
+    AnimationTimelineApi animationTimelineApi;
     ArrayList<Anim> animationTimelineList;
 
     Handler handler = new Handler();
@@ -130,8 +124,8 @@ public class AniRemind extends Fragment
             {
                 try
                 {
-                    animationTimeline = new AnimationTimeline(MainActivity.sharedPreferences.getString("cookies", ""));
-                    animationTimelineList = animationTimeline.getAnimTimelineList();
+                    animationTimelineApi = new AnimationTimelineApi(MainActivity.sharedPreferences.getString("cookies", ""));
+                    animationTimelineList = animationTimelineApi.getAnimTimelineList();
                     handler.post(runnableUi);
                 }
                 catch (IOException e)
@@ -262,7 +256,7 @@ public class AniRemind extends Fragment
                 {
                     imageUrl = params[0];
                     Bitmap bitmap = null;
-                    bitmap = downloadImage();
+                    bitmap = ImageDownloader.downloadImage(imageUrl);
                     BitmapDrawable db = new BitmapDrawable(arListView.getResources(), bitmap);
                     // 如果本地还没缓存该图片，就缓存
                     if(mImageCache.get(imageUrl) == null && bitmap != null)
@@ -276,38 +270,6 @@ public class AniRemind extends Fragment
                     e.printStackTrace();
                 }
                 return null;
-            }
-
-            @Override
-            protected void onPostExecute(BitmapDrawable result)
-            {
-                // 通过Tag找到我们需要的ImageView，如果该ImageView所在的item已被移出页面，就会直接返回null
-                ImageView iv = arListView.findViewWithTag(imageUrl);
-                if(iv != null && result != null)
-                {
-                    iv.setImageDrawable(result);
-                }
-            }
-
-            /**
-             * 根据url从网络上下载图片
-             *
-             * @return 图片
-             */
-            private Bitmap downloadImage() throws IOException
-            {
-                HttpURLConnection con = null;
-                Bitmap bitmap = null;
-                URL url = new URL(imageUrl);
-                con = (HttpURLConnection) url.openConnection();
-                con.setConnectTimeout(5 * 1000);
-                con.setReadTimeout(10 * 1000);
-                bitmap = BitmapFactory.decodeStream(con.getInputStream());
-                if(con != null)
-                {
-                    con.disconnect();
-                }
-                return bitmap;
             }
         }
     }

@@ -7,7 +7,7 @@
         android:id="@+id/vd_reply_listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:divider="@color/alphe" />
+        android:divider="@color/alpha" />
 
     <LinearLayout
         android:id="@+id/vd_reply_nothing"

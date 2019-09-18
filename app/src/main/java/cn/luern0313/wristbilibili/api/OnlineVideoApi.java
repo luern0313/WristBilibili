@@ -1,16 +1,13 @@
 package cn.luern0313.wristbilibili.api;
 
 import android.graphics.BitmapFactory;
-import android.widget.TextView;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
@@ -20,70 +17,86 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
- * Created by liupe on 2018/11/10.
- * 番剧时间表
+ * 被 luern0313 创建于 2019/2/28.
+ * 播放视频相关
  */
 
-public class AnimationTimeline
+public class OnlineVideoApi
 {
-    private final String TIMELINEAPI = "https://bangumi.bilibili.com/web_api/timeline_global";
     private String cookie;
-    private JSONArray timelineJson;
-    public AnimationTimeline(String cookie)
+    private String csrf;
+    private String mid;
+    private String aid;
+    private String part;
+    private String cid;
+
+    private JSONObject playUrlJson;
+
+    public OnlineVideoApi(String cookie, String csrf, String mid, String aid, String part, String cid)
     {
         this.cookie = cookie;
+        this.csrf = csrf;
+        this.mid = mid;
+        this.aid = aid;
+        this.part = part;
+        this.cid = cid;
     }
 
-    public ArrayList<Anim> getAnimTimelineList() throws IOException
+    public void connectionVideoUrl() throws IOException
     {
         try
         {
-            timelineJson = new JSONObject((String) get(TIMELINEAPI, 1)).getJSONArray("result");
-            int nowTime = (int) (System.currentTimeMillis() / 1000);
-            ArrayList<Anim> anims = new ArrayList<>();
-            for(int i = 6; i >= 0; i--)
-            {
-                JSONArray dailyAnims = timelineJson.getJSONObject(i).getJSONArray("seasons");
-                String day = "";
-                if(timelineJson.getJSONObject(i).getInt("is_today") == 0) day = timelineJson.getJSONObject(i).getString("date") + " ";
-                for(int j = dailyAnims.length() - 1; j >= 0; j--)
-                {
-                    JSONObject anim = dailyAnims.getJSONObject(j);
-                    if(anim.getInt("pub_ts") <= nowTime && anim.getInt("is_published") == 1)
-                        anims.add(new Anim(anim.getString("title"), anim.getString("square_cover"), anim.getString("pub_index"), (int) anim.get("follow"), day + anim.getString("pub_time")));
-                }
-            }
-            return anims;
+            playUrlJson = new JSONObject((String) get("http://api.bilibili.com/playurl?aid=" + aid + "&page=" + part + "&platform=html5", 1));
         }
         catch (JSONException e)
         {
             e.printStackTrace();
         }
-        return null;
     }
 
-    public class Anim
+    public String getVideoUrl()
     {
-        public String name;
-        public String coverUrl;
-        public String lastEpisode;
-        public int isfollow;
-        public String time;
-        Anim(String n, String c, String l, int f, String t)
+        try
         {
-            name = n;
-            coverUrl = c;
-            lastEpisode = l;
-            isfollow = f;
-            time = t;
+            return playUrlJson.getJSONArray("durl").getJSONObject(0).getString("url");
         }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
+    public boolean playHistory(int playTime, boolean isFin) throws IOException
+    {
+        try
+        {
+            if(!isFin)
+                if(post("https://api.bilibili.com/x/report/web/heartbeat", "aid=" + aid + "&cid=" + cid + "&mid=" + mid + "&csrf=" + csrf + "&played_time=" + playTime + "&realtime=" + playTime + "&start_ts=" + (((int) System.currentTimeMillis() / 1000) - playTime) + "&type=3&dt=2&play_type=1").body().string().equals("{\"code\":0,\"message\":\"0\",\"ttl\":1}"))
+                    return true;
+            else
+                if(post("https://api.bilibili.com/x/report/web/heartbeat", "aid=" + aid + "&cid=" + cid + "&mid=" + mid + "&csrf=" + csrf + "&played_time=-1&realtime=" + playTime + "&start_ts=" + (((int) System.currentTimeMillis() / 1000) - playTime) + "&type=3&dt=2&play_type=4").body().string().equals("{\"code\":0,\"message\":\"0\",\"ttl\":1}"))
+                    return true;
+        }
+        catch (NullPointerException e)
+        {
+            e.printStackTrace();
+            return false;
+        }
+        return false;
+    }
+
+    public String getDanmakuUrl()
+    {
+        return playUrlJson.optString("cid", "");
     }
 
     private Object get(String url, int mode) throws IOException
     {
         OkHttpClient client = new OkHttpClient.Builder().connectTimeout(15, TimeUnit.SECONDS).readTimeout(15, TimeUnit.SECONDS).build();
-        Request.Builder requestb = new Request.Builder().url(url).header("Referer", "https://www.bilibili.com/anime/timeline").addHeader("Accept", "*/*").addHeader("User-Agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
-        if(!cookie.equals("")) requestb.addHeader("Cookie", cookie);
+        Request.Builder requestb = new Request.Builder().url(url).addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36");
+        if(!cookie.equals(""))
+            requestb.addHeader("Cookie", "buvid3=FE09F518-E432-414C-AF62-4493C27AD0366147infoc" + cookie);
         Request request = requestb.build();
         Response response = client.newCall(request).execute();
 

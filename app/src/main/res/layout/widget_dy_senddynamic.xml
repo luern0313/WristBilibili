@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/wid_dy_senddynamic"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="120dp"
+        android:layout_height="36dp"
+        android:layout_centerHorizontal="true"
+        android:text="发动态"
+        android:textColor="@color/textColor"
+        android:textSize="13sp" />
+</RelativeLayout>

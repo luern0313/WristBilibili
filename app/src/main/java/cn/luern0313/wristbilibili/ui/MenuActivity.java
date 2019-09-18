@@ -8,9 +8,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,7 +21,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import cn.luern0313.wristbilibili.R;
-import cn.luern0313.wristbilibili.api.UserInfo;
+import cn.luern0313.wristbilibili.api.UserInfoApi;
 
 public class MenuActivity extends Activity
 {
@@ -77,24 +79,24 @@ public class MenuActivity extends Activity
 
     public void setUserInfo()
     {
-        if(sharedPreferences.contains("cookies"))//是否登录
+        if(sharedPreferences.contains("cookies")) //是否登录（←错错错错错错错错！！cookie有时限！！！！）
         {
-            final UserInfo userInfo = new UserInfo(sharedPreferences.getString("cookies", ""));
+            final UserInfoApi userInfoApi = new UserInfoApi(sharedPreferences.getString("cookies", ""));
             runnableUi = new Runnable()
             {
                 @Override
                 public void run()
                 {
-                    uiUserName.setText(userInfo.getUserName());
-                    uiUserCoin.setText("硬币 : " + userInfo.getUserCoin());
-                    uiUserLV.setText("LV" + userInfo.getUserLV());
+                    uiUserName.setText(userInfoApi.getUserName());
+                    uiUserCoin.setText("硬币 : " + userInfoApi.getUserCoin());
+                    uiUserLV.setText("LV" + userInfoApi.getUserLV());
                     uiUserHead.setImageBitmap(head);
-                    uiUserVip.setVisibility(userInfo.isVip() ? View.VISIBLE : View.GONE);
+                    uiUserVip.setVisibility(userInfoApi.isVip() ? View.VISIBLE : View.GONE);
 
-                    editor.putString("userName", userInfo.getUserName());
-                    editor.putString("userCoin", userInfo.getUserCoin());
-                    editor.putInt("userLV", userInfo.getUserLV());
-                    editor.putBoolean("userVip", userInfo.isVip());
+                    editor.putString("userName", userInfoApi.getUserName());
+                    editor.putString("userCoin", userInfoApi.getUserCoin());
+                    editor.putInt("userLV", userInfoApi.getUserLV());
+                    editor.putBoolean("userVip", userInfoApi.isVip());
                     editor.commit();
                 }
             };
@@ -105,10 +107,22 @@ public class MenuActivity extends Activity
                 {
                     try
                     {
-                        userInfo.getUserInfo();
-                        head = userInfo.getUserHead();
-                        saveBitmap(head);
-                        handler.post(runnableUi);
+                        int stat = userInfoApi.getUserInfo();
+                        //0正常，-1网络问题，-2登录过期
+                        if(stat == 0)
+                        {
+                            head = userInfoApi.getUserHead();
+                            saveBitmap(head);
+                            handler.post(runnableUi);
+                        }
+                        else if(stat == -2)
+                        {
+                            Looper.prepare();
+                            Toast.makeText(getApplicationContext(), "您的登录信息已过期，请注销后重新登录", Toast.LENGTH_LONG).show();
+                            Intent i = new Intent(ctx, LogsoffActivity.class);
+                            startActivity(i);
+                            Looper.loop();
+                        }
                     }
                     catch (IOException e)
                     {
@@ -206,9 +220,17 @@ public class MenuActivity extends Activity
         overridePendingTransition(0, R.anim.anim_activity_out_up);
     }
 
-    public void buttonSetting(View view)
+    public void buttonWatchlater(View view)
     {
         intent.putExtra("activity", 6);
+        setResult(0, intent);
+        finish();
+        overridePendingTransition(0, R.anim.anim_activity_out_up);
+    }
+
+    public void buttonSetting(View view)
+    {
+        intent.putExtra("activity", 7);
         setResult(0, intent);
         finish();
         overridePendingTransition(0, R.anim.anim_activity_out_up);

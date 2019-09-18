@@ -52,46 +52,47 @@
                 android:paddingLeft="44dp"
                 android:paddingRight="44dp"
                 android:paddingTop="8dp"
-                android:text="小尾巴开关" />
+                android:text="小尾巴开关"
+                android:textSize="14sp" />
 
-            <TextView
-                android:id="@+id/tail_preview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tail_switch"
-                android:background="@color/shareBG"
-                android:paddingBottom="6dp"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp"
-                android:paddingTop="6dp" />
 
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/tail_preetlay"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@+id/tail_preview"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingLeft="22dp"
                 android:paddingRight="22dp"
-                android:paddingTop="4dp">
+                android:paddingTop="4dp"
+                android:background="@color/shareBG">
 
-                <EditText
-                    android:id="@+id/tail_preet"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="添加机型前缀"
-                    android:textSize="14sp"
-                    android:maxLength="10"/>
+                <TextView
+                    android:id="@+id/tail_pretext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:paddingLeft="4dp"
+                    android:text="编辑小尾巴："/>
 
                 <ImageView
                     android:id="@+id/tail_voice"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
+                    android:layout_alignParentRight="true"
                     android:src="@drawable/icon_voiceinput_search" />
 
-            </LinearLayout>
+                <EditText
+                    android:id="@+id/tail_preview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tail_pretext"
+                    android:layout_marginTop="0dp"
+                    android:maxLength="50"
+                    android:inputType="textMultiLine"
+                    android:paddingTop="0dp"
+                    android:textSize="14dp" />
+
+            </RelativeLayout>
 
             <TextView
                 android:id="@+id/tail_exp"
@@ -101,7 +102,9 @@
                 android:paddingBottom="30dp"
                 android:paddingLeft="32dp"
                 android:paddingRight="32dp"
-                android:text="最多十个字符\n\n例如：\n三玖送的\n被五等分的\n抢来的\n充话费送的\n菲尔普斯专用山寨防水" />
+                android:paddingTop="6dp"
+                android:text="小尾巴最多50个字符\n\n在小尾巴中可以插入以下预置字符串\n{{device}}机型数据\n{{appname}}应用名称\n{{appauthor}}应用作者\n{{videoid}}软件介绍视频av号"
+                android:textSize="12dp" />
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>

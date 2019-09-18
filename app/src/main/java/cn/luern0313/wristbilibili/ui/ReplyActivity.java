@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Editable;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -14,21 +15,21 @@ import cn.luern0313.wristbilibili.R;
 public class ReplyActivity extends Activity
 {
     Context ctx;
-    Intent intent;
+    Intent inIntent;
     Intent reusltIntent = new Intent();
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
 
-    EditText replyEditText;
+    EditText uiEditText;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reply);
         ctx = this;
-        intent = getIntent();
-        reusltIntent.putExtra("oid", intent.getStringExtra("oid"));
-        reusltIntent.putExtra("type", intent.getStringExtra("type"));
+        inIntent = getIntent();
+        reusltIntent.putExtra("oid", inIntent.getStringExtra("oid"));
+        reusltIntent.putExtra("type", inIntent.getStringExtra("type"));
         reusltIntent.putExtra("text", "");
         setResult(0, reusltIntent);
         sharedPreferences = getSharedPreferences("default", Context.MODE_PRIVATE);
@@ -37,7 +38,7 @@ public class ReplyActivity extends Activity
         if(!sharedPreferences.getBoolean("tail", true))
             findViewById(R.id.rp_tail).setVisibility(View.GONE);
 
-        replyEditText = findViewById(R.id.rp_edittext);
+        uiEditText = findViewById(R.id.rp_edittext);
     }
 
     public void rp_clickVoiceInput(View view)
@@ -56,11 +57,11 @@ public class ReplyActivity extends Activity
 
     public void rp_clickSend(View view)
     {
-        if(!replyEditText.getText().toString().equals(""))
+        if(!uiEditText.getText().toString().equals(""))
         {
-            String s = replyEditText.getText().toString();
+            String s = uiEditText.getText().toString();
             if(sharedPreferences.getBoolean("tail", true))
-                s += "\n\n" + TailActivity.getTail(sharedPreferences);
+                s += "\n\n" + TailActivity.getTail(sharedPreferences, editor, true);
             reusltIntent.putExtra("text", s);
             setResult(0, reusltIntent);
             finish();
@@ -79,7 +80,9 @@ public class ReplyActivity extends Activity
             {
                 String result = data.getExtras().getString("speech_content");
                 if(result.endsWith("。")) result = result.substring(0, result.length() - 1);
-                replyEditText.setText(replyEditText.getText().toString() + result);
+                int index = uiEditText.getSelectionStart();
+                Editable editable = uiEditText.getText();
+                editable.insert(index, result);
             }
             else
                 Toast.makeText(ctx, "识别失败，请重试", Toast.LENGTH_SHORT).show();

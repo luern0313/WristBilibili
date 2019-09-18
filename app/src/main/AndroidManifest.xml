@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <uses-feature android:name="android.hardware.type.watch" />
 
@@ -18,6 +19,10 @@
         <meta-data
             android:name="com.google.android.wearable.standalone"
             android:value="true" />
+
+        <service
+            android:name=".service.DownloadService"
+            android:exported="false" />
 
         <activity
             android:name=".ui.MainActivity"
@@ -42,11 +47,12 @@
         <activity android:name=".ui.FavorvideoActivity" />
         <activity android:name=".ui.OtheruserActivity" />
         <activity android:name=".ui.SueActivity" />
-        <activity android:name=".ui.OnlinePlayActivity" />
         <activity android:name=".ui.ReplyActivity" />
         <activity android:name=".ui.TailActivity" />
         <activity android:name=".ui.TextActivity" />
-        <activity android:name=".ui.CheckreplyActivity"></activity>
+        <activity android:name=".ui.CheckreplyActivity" />
+        <activity android:name=".ui.PlayerActivity" />
+        <activity android:name=".ui.SendDynamicActivity" />
     </application>
 
 </manifest>

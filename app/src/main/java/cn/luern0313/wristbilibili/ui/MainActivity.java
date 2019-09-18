@@ -3,19 +3,20 @@ package cn.luern0313.wristbilibili.ui;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.fragment.AniRemind;
@@ -24,6 +25,8 @@ import cn.luern0313.wristbilibili.fragment.Dynamic;
 import cn.luern0313.wristbilibili.fragment.FavorBox;
 import cn.luern0313.wristbilibili.fragment.Search;
 import cn.luern0313.wristbilibili.fragment.Setting;
+import cn.luern0313.wristbilibili.fragment.Watchlater;
+import cn.luern0313.wristbilibili.service.DownloadService;
 
 /**
  * Created by liupe on 2018/10/25.
@@ -42,6 +45,24 @@ public class MainActivity extends Activity
     TextView titleText;
     ImageView titleImg;
 
+    private DownloadService.MyBinder myBinder;
+    private ServiceConnection connection = new ServiceConnection()
+    {
+
+        @Override
+        public void onServiceDisconnected(ComponentName name)
+        {
+        }
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service)
+        {
+            myBinder = (DownloadService.MyBinder) service;
+            //myBinder.startDownload();
+        }
+    };
+
+    //TODO 稍后再看，一键三连
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState)
     {
@@ -117,6 +138,11 @@ public class MainActivity extends Activity
                     titleText.setTextSize(14);
                     break;
                 case 6:
+                    transaction.replace(R.id.main_frame, new Watchlater());
+                    titleText.setText("稍后再看");
+                    titleText.setTextSize(13);
+                    break;
+                case 7:
                     transaction.replace(R.id.main_frame, new Setting());
                     titleText.setText("设置");
                     titleText.setTextSize(14);

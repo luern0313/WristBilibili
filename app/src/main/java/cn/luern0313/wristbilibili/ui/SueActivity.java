@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.Html;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,14 +15,14 @@ import android.widget.Toast;
 import java.io.IOException;
 
 import cn.luern0313.wristbilibili.R;
-import cn.luern0313.wristbilibili.api.SendDynamic;
+import cn.luern0313.wristbilibili.api.SendDynamicApi;
 
 public class SueActivity extends Activity
 {
     Context ctx;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
-    SendDynamic sendDynamic;
+    SendDynamicApi sendDynamicApi;
 
     TextView uiText;
     LinearLayout uiLoading;
@@ -43,8 +42,8 @@ public class SueActivity extends Activity
         uiText = findViewById(R.id.dt_text);
         uiLoading = findViewById(R.id.dt_loading);
         uiNologin = findViewById(R.id.dt_nologin);
-        sendDynamic = new SendDynamic(sharedPreferences.getString("cookies", ""), sharedPreferences.getString("mid", ""), sharedPreferences.getString("csrf", ""));
-        uiText.setText(Html.fromHtml("<font color=\"#3F51B5\">#腕上哔哩# #用手表上b站# </font>" + sendDynamic.getNextShareText()));
+        sendDynamicApi = new SendDynamicApi(sharedPreferences.getString("cookies", ""), sharedPreferences.getString("mid", ""), sharedPreferences.getString("csrf", ""));
+        uiText.setText(Html.fromHtml("<font color=\"#3F51B5\">#腕上哔哩# #用手表上b站# </font>" + sendDynamicApi.getNextShareText()));
 
         if(!sharedPreferences.contains("cookies"))
             uiNologin.setVisibility(View.VISIBLE);
@@ -61,7 +60,7 @@ public class SueActivity extends Activity
 
     public void clickRe(View view)
     {
-        uiText.setText(Html.fromHtml("<font color=\"#3F51B5\">#腕上哔哩# #用手表上b站# </font>" + sendDynamic.getNextShareText()));
+        uiText.setText(Html.fromHtml("<font color=\"#3F51B5\">#腕上哔哩# #用手表上b站# </font>" + sendDynamicApi.getNextShareText()));
     }
 
     public void clickSend(View view)
@@ -74,7 +73,7 @@ public class SueActivity extends Activity
             {
                 try
                 {
-                    sendDynamic.shardVideo("#腕上哔哩# #用手表上b站# " + sendDynamic.getNowShareText());
+                    sendDynamicApi.shareVideo("#腕上哔哩# #用手表上b站# " + sendDynamicApi.getNowShareText());
                     Looper.prepare();
                     Toast.makeText(ctx, "发送成功！", Toast.LENGTH_SHORT).show();
                     handler.post(runnableUi);

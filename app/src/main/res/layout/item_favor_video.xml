@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:descendantFocusability="blocksDescendants"
@@ -17,6 +18,16 @@
         android:adjustViewBounds="true"
         android:scaleType="centerCrop"
         android:src="@drawable/img_default_vid" />
+
+    <ProgressBar
+        android:id="@+id/vid_pro"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="68dp"
+        android:layout_height="3dp"
+        android:layout_alignBottom="@+id/vid_img"
+        android:layout_marginBottom="-2dp"
+        android:progressDrawable="@drawable/layer_wl_progress"
+        android:visibility="gone" />
 
     <LinearLayout
         android:layout_width="match_parent"

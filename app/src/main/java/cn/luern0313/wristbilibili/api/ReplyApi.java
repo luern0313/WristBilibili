@@ -47,7 +47,6 @@ public class ReplyApi
     {
         try
         {
-            Log.i("bilibili", "https://api.bilibili.com/x/v2/reply?pn=" + page + "&type=" + type + "&oid=" + oid + "&sort=" + sort + (root.equals("") ? "" : ("&root=" + root)));
             replyJson = new JSONObject((String) get("https://api.bilibili.com/x/v2" + (root.equals("") ? "" : "/reply") + "/reply?pn=" + page + "&type=" + type + "&oid=" + oid + "&sort=" + sort + (root.equals("") ? "" : ("&root=" + root)), 1)).getJSONObject("data");
             JSONArray replyJsonArray = replyJson.getJSONArray("replies");
             ArrayList<reply> replyArrayList = new ArrayList<>();

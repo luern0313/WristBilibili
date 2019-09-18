@@ -29,7 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/textColor"
-        android:divider="@color/alphe"
+        android:divider="@color/alpha"
         android:dividerHeight="2dp"
         android:paddingTop="34dp"
         android:visibility="gone" />
@@ -116,7 +116,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
             android:layout_weight="1"
-            android:background="@color/alphe"
+            android:background="@color/alpha"
             android:ellipsize="end"
             android:hint="点这里输入~"
             android:inputType="text"

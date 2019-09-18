@@ -225,9 +225,40 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/menu_watchlaterlay"
             android:layout_width="match_parent"
             android:layout_height="46dp"
             android:layout_below="@+id/menu_collectlay"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:gravity="center_vertical"
+            android:onClick="buttonWatchlater"
+            android:orientation="horizontal"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp">
+
+            <ImageView
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginRight="6dp"
+                android:background="@drawable/shape_menuiconbg"
+                android:padding="7dp"
+                android:paddingLeft="2dp"
+                android:paddingTop="2dp"
+                android:src="@drawable/icon_menu_watchlater" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="稍后再看"
+                android:textColor="@color/textColor" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/menu_setting"
+            android:layout_width="match_parent"
+            android:layout_height="46dp"
+            android:layout_below="@+id/menu_watchlaterlay"
             android:background="?android:attr/selectableItemBackground"
             android:clickable="true"
             android:gravity="center_vertical"

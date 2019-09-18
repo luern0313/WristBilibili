@@ -8,13 +8,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,7 +25,7 @@ public class TailActivity extends Activity
     SharedPreferences.Editor editor;
 
     Switch uiSwitch;
-    EditText uiEdittext;
+    EditText uiEditText;
     ImageView uiVoice;
 
     @Override
@@ -41,11 +38,10 @@ public class TailActivity extends Activity
         editor = sharedPreferences.edit();
 
         uiSwitch = findViewById(R.id.tail_switch);
-        uiEdittext = findViewById(R.id.tail_preet);
+        uiEditText = findViewById(R.id.tail_preview);
         uiVoice = findViewById(R.id.tail_voice);
         ((Switch) findViewById(R.id.tail_switch)).setChecked(sharedPreferences.getBoolean("tail", true));
-        ((TextView) findViewById(R.id.tail_preview)).setText("小尾巴预览：\n\n" + getTail(sharedPreferences));
-        uiEdittext.setText(sharedPreferences.getString("tailModel", ""));
+        ((TextView) findViewById(R.id.tail_preview)).setText(getTail(sharedPreferences, editor, false));
 
         uiVoice.setOnClickListener(new View.OnClickListener()
         {
@@ -65,6 +61,22 @@ public class TailActivity extends Activity
             }
         });
 
+        uiEditText.addTextChangedListener(new TextWatcher()
+        {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count)
+            {
+                editor.putString("tailCustom", uiEditText.getText().toString());
+                editor.apply();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+
         uiSwitch.setChecked(sharedPreferences.getBoolean("tail", true));
         uiSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
         {
@@ -73,20 +85,6 @@ public class TailActivity extends Activity
             {
                 editor.putBoolean("tail", isChecked);
                 editor.commit();
-            }
-        });
-
-        uiEdittext.addTextChangedListener(new TextWatcher()
-        {
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override public void afterTextChanged(Editable s) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count)
-            {
-                editor.putString("tailModel", s.toString());
-                editor.commit();
-                ((TextView) findViewById(R.id.tail_preview)).setText("小尾巴预览：\n\n" + getTail(sharedPreferences));
             }
         });
     }
@@ -101,7 +99,7 @@ public class TailActivity extends Activity
             {
                 String result = data.getExtras().getString("speech_content");
                 if(result.endsWith("。")) result = result.substring(0, result.length() - 1);
-                uiEdittext.setText(result);
+                uiEditText.setText(uiEditText.getText().toString() + result);
             }
             else
             {
@@ -110,8 +108,23 @@ public class TailActivity extends Activity
         }
     }
 
-    public static String getTail(SharedPreferences sharedPreferences)
+    public static String getTail(SharedPreferences sharedPreferences, SharedPreferences.Editor editor, boolean isChange)
     {
-        return "————该评论来自" + sharedPreferences.getString("tailModel", "") + Build.MODEL + "端腕上哔哩，@luern0313 av37132444";
+        if(!sharedPreferences.contains("tailCustom"))
+        {
+            editor.putString("tailCustom", "————该评论来自" + sharedPreferences.getString("tailModel", "") + "{{device}}端{{appname}}" + (sharedPreferences.getBoolean("tailAuthor", true) ? "，{{appauthor}} {{videoid}}" : ""));
+            editor.remove("tailModel");
+            editor.remove("tailAuthor");
+            editor.commit();
+        }
+        String tail = sharedPreferences.getString("tailCustom", "");
+        if(isChange)
+        {
+            tail = tail.replace("{{device}}", Build.MODEL);
+            tail = tail.replace("{{appname}}", "腕上哔哩");
+            tail = tail.replace("{{appauthor}}", "@luern0313 ");
+            tail = tail.replace("{{videoid}}", "av37132444 ");
+        }
+        return tail;
     }
 }

@@ -32,7 +32,6 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.zip.Inflater;
 
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.ReplyApi;
@@ -80,7 +79,7 @@ public class CheckreplyActivity extends Activity
         replyApi = new ReplyApi(sharedPreferences.getString("cookies", ""), sharedPreferences.getString("csrf", ""), intent.getStringExtra("oid"), intent.getStringExtra("type"));
 
         layoutSendReply = inflater.inflate(R.layout.widget_reply_sendreply, null);
-        layoutLoading = inflater.inflate(R.layout.widget_dyloading, null);
+        layoutLoading = inflater.inflate(R.layout.widget_dy_loading, null);
         uiLoading = findViewById(R.id.cr_loading);
         uiLoadingImg = findViewById(R.id.cr_loading_img);
         uiListview = findViewById(R.id.cr_reply_listview);
@@ -126,7 +125,7 @@ public class CheckreplyActivity extends Activity
             @Override
             public void run()
             {
-                ((TextView) layoutLoading.findViewById(R.id.dyload_text)).setText("  没有更多了...");
+                ((TextView) layoutLoading.findViewById(R.id.wid_dy_load_text)).setText("  没有更多了...");
             }
         };
 
@@ -135,13 +134,13 @@ public class CheckreplyActivity extends Activity
             @Override
             public void run()
             {
-                ((TextView) layoutLoading.findViewById(R.id.dyload_text)).setText("好像没有网络...\n检查下网络？");
-                layoutLoading.findViewById(R.id.dyload_button).setVisibility(View.VISIBLE);
+                ((TextView) layoutLoading.findViewById(R.id.wid_dy_load_text)).setText("好像没有网络...\n检查下网络？");
+                layoutLoading.findViewById(R.id.wid_dy_load_button).setVisibility(View.VISIBLE);
                 isReplyLoading = false;
             }
         };
 
-        uiListview.setEmptyView(findViewById(R.id.cr_reply_nothing));
+        //uiListview.setEmptyView(findViewById(R.id.cr_reply_nothing));
         uiListview.addHeaderView(layoutSendReply, null, true);
         uiListview.addFooterView(layoutLoading, null, true);
         uiListview.setHeaderDividersEnabled(false);

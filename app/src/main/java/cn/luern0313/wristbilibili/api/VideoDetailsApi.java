@@ -2,7 +2,6 @@ package cn.luern0313.wristbilibili.api;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -11,6 +10,7 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -30,7 +30,7 @@ import okhttp3.Response;
  * ...我错了，有这个api，我自罚重写
  */
 
-public class VideoDetails
+public class VideoDetailsApi
 {
     private String cookie;
     private String csrf;
@@ -40,7 +40,7 @@ public class VideoDetails
     private JSONObject videoJSON;
     private JSONObject videoUserJson;
     private JSONObject videoViewJson;
-    private JSONArray videoReplyJson;
+    private JSONArray videoPartJson;
     private int isLiked;//0,1喜欢,2不喜欢
     private int isCoined;//已投个数
     private boolean isFaved;
@@ -49,7 +49,7 @@ public class VideoDetails
     private int beCoined;//硬币总数
     private int beFaved;//收藏总数
 
-    public VideoDetails(String cookie, String csrf, String mid, String aid)
+    public VideoDetailsApi(String cookie, String csrf, String mid, String aid)
     {
         this.cookie = cookie;
         this.csrf = csrf;
@@ -72,6 +72,8 @@ public class VideoDetails
             beLiked = (int) getInfoFromJson(getJsonFromJson(videoViewJson, "stat"), "like");
             beCoined = (int) getInfoFromJson(getJsonFromJson(videoViewJson, "stat"), "coin");
             beFaved = (int) getInfoFromJson(getJsonFromJson(videoViewJson, "stat"), "favorite");
+
+            videoPartJson = new JSONObject((String) get("https://api.bilibili.com/x/player/pagelist?aid=" + aid, 1)).getJSONArray("data");
             return true;
         }
         catch (JSONException e)
@@ -79,6 +81,43 @@ public class VideoDetails
             e.printStackTrace();
         }
         return false;
+    }
+
+    public class VideoPart
+    {
+        private JSONObject videoPartJson;
+        public VideoPart(JSONObject json)
+        {
+            videoPartJson = json;
+        }
+
+        public int getPartCid()
+        {
+            return videoPartJson.optInt("cid", 0);
+        }
+
+        public int getPartNum()
+        {
+            return videoPartJson.optInt("page", 0);
+        }
+
+        public String getPartName()
+        {
+            return videoPartJson.optString("part", "P" + getPartNum());
+        }
+    }
+
+    public ArrayList<VideoPart> getVideoPartList()
+    {
+        ArrayList<VideoPart> vp = new ArrayList<>();
+        for(int i = 0; i < videoPartJson.length(); i++)
+            vp.add(new VideoPart(videoPartJson.optJSONObject(i)));
+        return vp;
+    }
+
+    public int getVideoPartSize()
+    {
+        return videoPartJson.length();
     }
 
     public String getVideoTitle()
@@ -91,7 +130,7 @@ public class VideoDetails
         return (int) getInfoFromJson(videoViewJson, "copyright");
     }
 
-    private String getVideoCid()
+    public String getVideoCid()
     {
         return String.valueOf(videoViewJson.optJSONArray("pages").optJSONObject(0).optInt("cid"));
     }
@@ -310,7 +349,21 @@ public class VideoDetails
         catch (NullPointerException e)
         {
             e.printStackTrace();
-            return false;
+        }
+        return false;
+    }
+
+    public boolean shareVideo(String text) throws IOException
+    {
+        try
+        {
+            String result = post("https://api.vc.bilibili.com/dynamic_repost/v1/dynamic_repost/share", "csrf_token=" + csrf + "&platform=pc&uid=" + getVideoUpAid() + "&type=8&share_uid=" + mid + "&content=" + URLEncoder.encode(text, "UTF-8") + "&repost_code=20000&rid=" + getVideoAid()).body().string();
+            if(new JSONObject(result).getInt("code") == 0)
+                return true;
+        }
+        catch (NullPointerException | JSONException e)
+        {
+            e.printStackTrace();
         }
         return false;
     }

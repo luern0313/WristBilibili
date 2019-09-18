@@ -15,7 +15,7 @@
         android:background="@drawable/layer_imgshadow"
         android:paddingTop="4dp"
         android:scaleType="centerCrop"
-        android:src="@color/textColor" />
+        android:src="@drawable/img_default_vid" />
 
     <LinearLayout
         android:layout_width="26dp"
@@ -72,13 +72,13 @@
                 android:id="@+id/favor_see"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="6dp"
+                android:layout_marginEnd="3dp"
                 android:textSize="11sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="6dp"
+                android:layout_marginEnd="3dp"
                 android:text="·"
                 android:textSize="11sp"
                 android:textStyle="bold" />

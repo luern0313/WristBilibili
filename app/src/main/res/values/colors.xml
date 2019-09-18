@@ -11,13 +11,13 @@
     <color name="textColor4">#000000</color>
 
     <color name="black">#000000</color>
+    <color name="alpha">#00000000</color>
 
     <color name="shareBG">#DADADA</color>
     <color name="shareBGs">#BBB</color>
-
     <color name="shareText">#126845</color>
 
     <color name="activityBG">#fafafa</color>
 
-    <color name="alphe">#00000000</color>
+    <color name="tipBG">#88000000</color>
 </resources>

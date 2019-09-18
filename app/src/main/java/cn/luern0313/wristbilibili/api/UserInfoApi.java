@@ -3,12 +3,13 @@ package cn.luern0313.wristbilibili.api;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
-
-import org.json.JSONObject;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -16,40 +17,102 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import cn.luern0313.wristbilibili.widget.*;
-
 /**
- * Created by liupe on 2018/10/6.
+ * Created by liupe on 2018/10/5.
+ * emmmm.....
  */
 
-public class UserLogin
+public class UserInfoApi
 {
-    private String oauthKey;
-    private String sid;
+    private String cookie;
 
-    public UserLogin()
+    private JSONObject userInfoJson;
+
+    public UserInfoApi(String cookie)
     {
-        sid = String.valueOf(Math.round(Math.random() * 100000000));
+        this.cookie = cookie;
     }
 
-    public Bitmap getLoginQR() throws Exception
+    public int getUserInfo() throws IOException
     {
-        JSONObject loginUrlJson = new JSONObject((String) get("https://passport.bilibili.com/qrcode/getLoginUrl", "sid=" + sid, 1)).getJSONObject("data");
-        oauthKey = (String) loginUrlJson.get("oauthKey");
-        return QRCodeUtil.createQRCodeBitmap((String) loginUrlJson.get("url"), 120, 120);
+        try
+        {
+            userInfoJson = new JSONObject((String) get("https://api.bilibili.com/x/web-interface/nav", 1));
+            return userInfoJson.optInt("code") == -101 ? -2 : 0;
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+            return -1;
+        }
     }
 
-    public Response getLoginState() throws IOException
+    public String getUserName()
     {
-        return post("https://passport.bilibili.com/qrcode/getLoginInfo", "oauthKey=" + oauthKey + "&gourl=https://www.bilibili.com/");
+        try
+        {
+            return (String) userInfoJson.getJSONObject("data").get("uname");
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+        return "";
     }
 
-    public String getOauthKey()
+    public String getUserCoin()
     {
-        return oauthKey;
+        try
+        {
+            return String.valueOf(userInfoJson.getJSONObject("data").get("money"));
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+        return "0";
     }
 
-    private Object get(String url, String cookie, int mode) throws Exception
+    public int getUserLV()
+    {
+        try
+        {
+            return (int) userInfoJson.getJSONObject("data").getJSONObject("level_info").get("current_level");
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public boolean isVip()
+    {
+        try
+        {
+            return ((int) userInfoJson.getJSONObject("data").get("vipStatus")) == 1;
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public Bitmap getUserHead() throws IOException
+    {
+        try
+        {
+            return (Bitmap) get((String) userInfoJson.getJSONObject("data").get("face"), 2);
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private Object get(String url, int mode) throws IOException
     {
         OkHttpClient client = new OkHttpClient.Builder().connectTimeout(15, TimeUnit.SECONDS)//设置连接超时时间
                 .readTimeout(15, TimeUnit.SECONDS)//设置读取超时时间
@@ -73,7 +136,6 @@ public class UserLogin
 
     private Response post(String url, String data) throws IOException
     {
-
         Response response;
         OkHttpClient client;
         RequestBody body;
@@ -83,7 +145,7 @@ public class UserLogin
                 .build();
         //参数传递
         body = RequestBody.create(MediaType.parse("application/x-www-form-urlencoded; charset=utf-8"), data);
-        request = new Request.Builder().url(url).post(body).header("Referer", "https://www.bilibili.com/").addHeader("Accept", "*/*").addHeader("User-Agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)").addHeader("Referer", "https://passport.bilibili.com/login").addHeader("Cookie", "sid:" + sid).build();
+        request = new Request.Builder().url(url).post(body).header("Referer", "https://www.bilibili.com/").addHeader("Accept", "*/*").addHeader("User-Agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)").addHeader("Referer", "https://passport.bilibili.com/login").addHeader("Cookie", cookie).build();
         response = client.newCall(request).execute();
         if(response.isSuccessful())
         {
@@ -92,8 +154,7 @@ public class UserLogin
         return null;
     }
 
-
-    private byte[] readStream(InputStream inStream) throws Exception
+    private byte[] readStream(InputStream inStream) throws IOException
     {
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];
@@ -106,4 +167,5 @@ public class UserLogin
         inStream.close();
         return outStream.toByteArray();
     }
+
 }

@@ -276,9 +276,16 @@ public class FavorBox extends Fragment
             viewHolder.see.setText(box.optInt("state") % 2 == 0 ? "公开" : "私有");
             viewHolder.count.setText(String.valueOf(box.optInt("cur_count")) + "个视频");
 
-            viewHolder.img.setTag(box.optJSONArray("cover").optJSONObject(0).opt("pic"));
-            BitmapDrawable c = setImageFormWeb((String) box.optJSONArray("cover").optJSONObject(0).opt("pic"));
-            if(c != null) viewHolder.img.setImageDrawable(c);
+            try
+            {
+                viewHolder.img.setTag(box.optJSONArray("cover").optJSONObject(0).opt("pic"));
+                BitmapDrawable c = setImageFormWeb((String) box.optJSONArray("cover").optJSONObject(0).opt("pic"));
+                if(c != null) viewHolder.img.setImageDrawable(c);
+            }
+            catch (Exception e)
+            {
+                viewHolder.img.setImageResource(R.drawable.img_default_vid);
+            }
             return convertView;
         }
 
@@ -349,7 +356,8 @@ public class FavorBox extends Fragment
              * @param options 需要传入已经BitmapFactory.decodeStream(is, null, options);
              * @return 返回压缩的比率，最小为1
              */
-            public int getInSampleSize(BitmapFactory.Options options) {
+            public int getInSampleSize(BitmapFactory.Options options)
+            {
                 int inSampleSize = 1;
                 int realWith = 140;
                 int realHeight = 140;
@@ -358,7 +366,8 @@ public class FavorBox extends Fragment
                 int outHeight = options.outHeight;
 
                 //获取比率最大的那个
-                if (outWidth > realWith || outHeight > realHeight) {
+                if(outWidth > realWith || outHeight > realHeight)
+                {
                     int withRadio = Math.round(outWidth / realWith);
                     int heightRadio = Math.round(outHeight / realHeight);
                     inSampleSize = withRadio > heightRadio ? withRadio : heightRadio;
@@ -368,6 +377,7 @@ public class FavorBox extends Fragment
 
             /**
              * 根据输入流返回一个压缩的图片
+             *
              * @param input 图片的输入流
              * @return 压缩的图片
              */

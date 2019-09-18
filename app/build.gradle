@@ -6,12 +6,10 @@ android {
         applicationId "cn.luern0313.wristbilibili"
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 4
-        versionName "1.4"
+        versionCode 7
+        versionName "2.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
-
-
     }
     //compileOptions {
     //    sourceCompatibility JavaVersion.VERSION_1_8
@@ -48,5 +46,6 @@ dependencies {
     implementation 'org.jsoup:jsoup:1.11.3'//jsoup解析网页
     //implementation 'com.ticwear:mobvoi-api:1.1.1'//ticwear
     implementation 'me.panpf:sketch:2.7.0'//photoview
+    implementation 'com.liulishuo.filedownloader:library:1.7.6'//下载服务
 
 }

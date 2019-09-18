@@ -1,8 +1,6 @@
 package cn.luern0313.wristbilibili.api;
 
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,7 +30,7 @@ import okhttp3.Response;
  * 我只做了五种23333
  */
 
-public class UserDynamic
+public class UserDynamicApi
 {
     private final String DYNAMICAPIURL_SELF = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/dynamic_new";
     private final String DYNAMICAPIURL_OTHER = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/space_history";
@@ -47,7 +45,7 @@ public class UserDynamic
 
     private String lastDynamicId;
 
-    public UserDynamic(String cookie, String csrf, String selfMid, String mid, boolean isSelf)
+    public UserDynamicApi(String cookie, String csrf, String selfMid, String mid, boolean isSelf)
     {
         this.cookie = cookie;
         this.csrf = csrf;
@@ -80,11 +78,12 @@ public class UserDynamic
             if(isSelf)
                 dynamicJsonArray = new JSONObject((String) get(HISTORYAPIURL_SELF + "?uid=" + mid + "&offset_dynamic_id=" + lastDynamicId + "&type=" + DYNAMICTYPE, 1)).getJSONObject("data").getJSONArray("cards");
             else
-                dynamicJsonArray = new JSONObject((String) get(DYNAMICAPIURL_OTHER + "?isitor_uid=" + selfMid + "&host_uid=" + mid + "&offset_dynamic_id=" +lastDynamicId, 1)).getJSONObject("data").getJSONArray("cards");
+                dynamicJsonArray = new JSONObject((String) get(DYNAMICAPIURL_OTHER + "?visitor_uid=" + selfMid + "&host_uid=" + mid + "&offset_dynamic_id=" + lastDynamicId, 1)).getJSONObject("data").getJSONArray("cards");
         }
         catch (JSONException e)
         {
             e.printStackTrace();
+            dynamicJsonArray = new JSONArray();
         }
     }
 
@@ -99,15 +98,15 @@ public class UserDynamic
                 Object d = getDynamicClass(new JSONObject((String) dy.get("card")), dy.getJSONObject("desc"));
                 if(d != null) dynamicList.add(d);
                 if(i == dynamicJsonArray.length() - 1)
-                    lastDynamicId = String.valueOf(dy.getJSONObject("desc").get("dynamic_id"));
+                    lastDynamicId = dy.getJSONObject("desc").getString("dynamic_id_str");
             }
             return dynamicList;
         }
-        catch (JSONException e)
+        catch (Exception e)
         {
             e.printStackTrace();
         }
-        return null;
+        return new ArrayList<>();
     }
 
     public Object getDynamicClass(String cardJson, int which)

@@ -24,7 +24,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -35,23 +34,19 @@ import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
-import java.util.zip.Inflater;
 
 import cn.carbs.android.expandabletextview.library.ExpandableTextView;
 import cn.luern0313.wristbilibili.R;
-import cn.luern0313.wristbilibili.api.OthersUser;
-import cn.luern0313.wristbilibili.api.UserDynamic;
-import cn.luern0313.wristbilibili.fragment.Dynamic;
+import cn.luern0313.wristbilibili.api.OthersUserApi;
+import cn.luern0313.wristbilibili.api.UserDynamicApi;
+import cn.luern0313.wristbilibili.widget.ImageDownloader;
+import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -69,9 +64,9 @@ public class OtheruserActivity extends Activity
     LayoutInflater inflater;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
-    UserDynamic userDynamic;
+    UserDynamicApi userDynamicApi;
 
-    OthersUser othersUser;
+    OthersUserApi othersUserApi;
     JSONObject otherUserJson;
     JSONObject otherUserCardJson;
     Bitmap userHead;
@@ -83,14 +78,24 @@ public class OtheruserActivity extends Activity
     Runnable runnableFollow;
     Runnable runnableUnfollow;
     Runnable runnableDynamic;
+    Runnable runnableFollowUi;
+    Runnable runnableFansUi;
     Runnable runnableDynamicAddlist;
-    Runnable runnableMoreNomore;
-    Runnable runnableMoreErr;
+    Runnable runnableFollowAddlist;
+    Runnable runnableFansAddlist;
+    Runnable runnableDynamicMoreNomore;
+    Runnable runnableFollowMoreNomore;
+    Runnable runnableFansMoreNomore;
+    Runnable runnableDynamicMoreErr;
+    Runnable runnableFollowMoreErr;
+    Runnable runnableFansMoreErr;
 
     TextView uiTitleTextView;
     ViewPager uiViewpager;
     ImageView uiLoading;
-    View layoutLoading;
+    View dynamicLayoutLoading;
+    View followLayoutLoading;
+    View fansLayoutLoading;
 
     ImageView uiImg;
     TextView uiName;
@@ -98,13 +103,22 @@ public class OtheruserActivity extends Activity
     TextView uiLv;
     TextView uiAnth;
     TextView uiSign;
+    TextView uiHowFans;
+    TextView uiHowFollow;
     TextView uiOther;
     ListView uiDynamicListView;
+    ListView uiPeopleListView;
 
-    ArrayList<Object> dynamicArrayList;
+    ArrayList<Object> dynamicArrayList = new ArrayList<>();
+    ArrayList<OthersUserApi.People> followArrayList = new ArrayList<>();
+    ArrayList<OthersUserApi.People> fansArrayList = new ArrayList<>();
     mAdapter mAdapter;
+    pAdapter followAdapter;
+    pAdapter fansAdapter;
 
     boolean isDynamicLoading = true;
+    boolean isFollowLoading = true;
+    boolean isFansLoading = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -118,11 +132,15 @@ public class OtheruserActivity extends Activity
         sharedPreferences = getSharedPreferences("default", Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
 
-        othersUser = new OthersUser(sharedPreferences.getString("cookies", ""), sharedPreferences.getString("csrf", ""), intent.getStringExtra("mid"));
+        othersUserApi = new OthersUserApi(sharedPreferences.getString("cookies", ""), sharedPreferences.getString("csrf", ""), intent.getStringExtra("mid"));
         uiTitleTextView = findViewById(R.id.ou_title_title);
         uiViewpager = findViewById(R.id.ou_viewpager);
         uiLoading = findViewById(R.id.ou_loading_img);
-        layoutLoading = inflater.inflate(R.layout.widget_dyloading, null);
+        dynamicLayoutLoading = inflater.inflate(R.layout.widget_dy_loading, null);
+        followLayoutLoading = inflater.inflate(R.layout.widget_dy_loading, null);
+        fansLayoutLoading = inflater.inflate(R.layout.widget_dy_loading, null);
+
+        uiViewpager.setOffscreenPageLimit(3);
 
         runnableUi = new Runnable()
         {
@@ -153,7 +171,9 @@ public class OtheruserActivity extends Activity
                         uiSign.setVisibility(View.VISIBLE);
                         uiSign.setText(otherUserCardJson.optString("sign"));
                     }
-                    uiOther.setText("关注 : " + otherUserCardJson.optString("friend") + "  粉丝 : " + otherUserCardJson.optString("fans") + "\n投稿 : " + otherUserJson.optString("archive_count"));
+                    uiHowFans.setText("粉丝：" + getView(otherUserCardJson.optString("fans")));
+                    uiHowFollow.setText("关注：" + getView(otherUserCardJson.optString("friend")));
+                    uiOther.setText("投稿：" + otherUserJson.optString("archive_count"));
                 }
                 catch (Exception e)
                 {
@@ -222,7 +242,7 @@ public class OtheruserActivity extends Activity
                     uiFollow.setText("+关注");
                     uiFollow.setBackgroundResource(R.drawable.shape_anre_followbg);
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     e.printStackTrace();
                 }
@@ -241,7 +261,39 @@ public class OtheruserActivity extends Activity
                 }
                 catch (Exception e)
                 {
+                    e.printStackTrace();
+                }
+            }
+        };
 
+        runnableFollowUi = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    ((ListView) uiViewpager.findViewWithTag(2).findViewById(R.id.ou_pp_listview)).setAdapter(followAdapter);
+                }
+                catch(Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        runnableFansUi = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    ((ListView) uiViewpager.findViewWithTag(3).findViewById(R.id.ou_pp_listview)).setAdapter(fansAdapter);
+                }
+                catch(Exception e)
+                {
+                    e.printStackTrace();
                 }
             }
         };
@@ -251,27 +303,151 @@ public class OtheruserActivity extends Activity
             @Override
             public void run()
             {
-                mAdapter.notifyDataSetChanged();
+                try
+                {
+                    mAdapter.notifyDataSetChanged();
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
             }
         };
 
-        runnableMoreNomore = new Runnable()
+        runnableFollowAddlist = new Runnable()
         {
             @Override
             public void run()
             {
-                ((TextView) layoutLoading.findViewById(R.id.dyload_text)).setText("  没有更多了...");
+                try
+                {
+                    followAdapter.notifyDataSetChanged();
+                }
+                catch(Exception e)
+                {
+                    e.printStackTrace();
+                }
             }
         };
 
-        runnableMoreErr = new Runnable()
+        runnableFansAddlist = new Runnable()
         {
             @Override
             public void run()
             {
-                ((TextView) layoutLoading.findViewById(R.id.dyload_text)).setText("好像没有网络...\n检查下网络？");
-                layoutLoading.findViewById(R.id.dyload_button).setVisibility(View.VISIBLE);
-                isDynamicLoading = false;
+                try
+                {
+                    fansAdapter.notifyDataSetChanged();
+                }
+                catch(Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        runnableDynamicMoreNomore = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    Log.i("bilibili", "123");
+                    ((TextView) dynamicLayoutLoading.findViewById(R.id.wid_dy_load_text)).setText("  没有更多了...");
+                }
+                catch(Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        runnableFollowMoreNomore = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    ((TextView) followLayoutLoading.findViewById(R.id.wid_dy_load_text)).setText("无法查看更多了");
+                    isFollowLoading = true;
+                }
+                catch(Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        runnableFansMoreNomore = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    ((TextView) fansLayoutLoading.findViewById(R.id.wid_dy_load_text)).setText("无法查看更多了");
+                    isFansLoading = true;
+                }
+                catch(Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        runnableDynamicMoreErr = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    ((TextView) dynamicLayoutLoading.findViewById(R.id.wid_dy_load_button)).setText("好像没有网络...\n检查下网络？");
+                    dynamicLayoutLoading.findViewById(R.id.wid_dy_load_button).setVisibility(View.VISIBLE);
+                    isDynamicLoading = false;
+                }
+                catch(Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        runnableFollowMoreErr = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    ((TextView) followLayoutLoading.findViewById(R.id.wid_dy_load_button)).setText("好像没有网络...\n检查下网络？");
+                    followLayoutLoading.findViewById(R.id.wid_dy_load_button).setVisibility(View.VISIBLE);
+                    isFollowLoading = false;
+                }
+                catch(Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        runnableFansMoreErr = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    ((TextView) fansLayoutLoading.findViewById(R.id.wid_dy_load_button)).setText("好像没有网络...\n检查下网络？");
+                    fansLayoutLoading.findViewById(R.id.wid_dy_load_button).setVisibility(View.VISIBLE);
+                    isFansLoading = false;
+                }
+                catch(Exception e)
+                {
+                    e.printStackTrace();
+                }
             }
         };
 
@@ -284,7 +460,7 @@ public class OtheruserActivity extends Activity
             @Override
             public int getCount()
             {
-                return 2;
+                return 4;
             }
 
             @Override
@@ -300,7 +476,7 @@ public class OtheruserActivity extends Activity
             }
 
             @Override
-            public Object instantiateItem(ViewGroup container, int position)
+            public Object instantiateItem(ViewGroup container, final int position)
             {
                 if(position == 0)
                 {
@@ -313,6 +489,8 @@ public class OtheruserActivity extends Activity
                     uiLv = v.findViewById(R.id.ou_lv);
                     uiAnth = v.findViewById(R.id.ou_anth);
                     uiSign = v.findViewById(R.id.ou_sign);
+                    uiHowFans = v.findViewById(R.id.ou_howfans);
+                    uiHowFollow = v.findViewById(R.id.ou_howfollow);
                     uiOther = v.findViewById(R.id.ou_other);
 
                     if(sharedPreferences.getString("mid", "").equals(intent.getStringExtra("mid")))
@@ -326,6 +504,33 @@ public class OtheruserActivity extends Activity
                             Intent i = new Intent(ctx, ImgActivity.class);
                             i.putExtra("imgUrl", new String[]{otherUserCardJson.optString("face")});
                             startActivity(i);
+                        }
+                    });
+
+                    uiHowFollow.setOnClickListener(new View.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(View v)
+                        {
+                            uiViewpager.setCurrentItem(2, true);
+                        }
+                    });
+
+                    uiHowFans.setOnClickListener(new View.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(View v)
+                        {
+                            uiViewpager.setCurrentItem(3, true);
+                        }
+                    });
+
+                    uiOther.setOnClickListener(new View.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(View v)
+                        {
+                            uiViewpager.setCurrentItem(1, true);
                         }
                     });
 
@@ -343,12 +548,12 @@ public class OtheruserActivity extends Activity
                                     {
                                         if(uiFollow.getText().toString().equals("已关注"))
                                         {
-                                            othersUser.unfollow();
+                                            othersUserApi.unfollow();
                                             handler.post(runnableUnfollow);
                                         }
                                         else
                                         {
-                                            othersUser.follow();
+                                            othersUserApi.follow();
                                             handler.post(runnableFollow);
                                         }
                                     }
@@ -371,7 +576,7 @@ public class OtheruserActivity extends Activity
                         {
                             try
                             {
-                                otherUserJson = new JSONObject(othersUser.getOtheruserInfo()).getJSONObject("data");
+                                otherUserJson = new JSONObject(othersUserApi.getOtheruserInfo()).getJSONObject("data");
                                 otherUserCardJson = otherUserJson.getJSONObject("card");
                                 handler.post(runnableUi);
                                 userHead = (Bitmap) get(otherUserCardJson.optString("face"), 2);
@@ -395,13 +600,13 @@ public class OtheruserActivity extends Activity
                     container.addView(v);
                     return 0;
                 }
-                else
+                else if(position == 1)
                 {
                     View v = inflater.inflate(R.layout.viewpager_ou_dynamic, null);
                     v.setTag(1);
                     uiDynamicListView = v.findViewById(R.id.ou_dy_listview);
                     uiDynamicListView.setEmptyView(v.findViewById(R.id.ou_dy_nonthing));
-                    uiDynamicListView.addFooterView(layoutLoading);
+                    uiDynamicListView.addFooterView(dynamicLayoutLoading);
 
                     uiDynamicListView.setOnScrollListener(new AbsListView.OnScrollListener()
                     {
@@ -414,13 +619,12 @@ public class OtheruserActivity extends Activity
                         public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
                         {
                             if(visibleItemCount + firstVisibleItem == totalItemCount && !isDynamicLoading)
-                            {
                                 getMoreDynamic();
-                            }
                         }
                     });
 
-                    userDynamic = new UserDynamic(MainActivity.sharedPreferences.getString("cookies", ""), MainActivity.sharedPreferences.getString("csrf", ""), MainActivity.sharedPreferences.getString("mid", ""), intent.getStringExtra("mid"), false);
+                    userDynamicApi = new UserDynamicApi(MainActivity.sharedPreferences.getString("cookies", ""), MainActivity.sharedPreferences.getString("csrf", ""), MainActivity.sharedPreferences.getString("mid", ""), intent.getStringExtra("mid"), false);
+                    isDynamicLoading = true;
                     new Thread(new Runnable()
                     {
                         @Override
@@ -428,8 +632,8 @@ public class OtheruserActivity extends Activity
                         {
                             try
                             {
-                                userDynamic.getDynamic();
-                                dynamicArrayList = userDynamic.getDynamicList();
+                                userDynamicApi.getDynamic();
+                                dynamicArrayList = userDynamicApi.getDynamicList();
                                 isDynamicLoading = false;
                                 handler.post(runnableDynamic);
                             }
@@ -446,6 +650,75 @@ public class OtheruserActivity extends Activity
 
                     container.addView(v);
                     return 1;
+                }
+                else
+                {
+                    View v = inflater.inflate(R.layout.viewpager_ou_people, null);
+                    v.setTag(position);
+                    uiPeopleListView = v.findViewById(R.id.ou_pp_listview);
+                    uiPeopleListView.setEmptyView(v.findViewById(R.id.ou_pp_nonthing));
+                    uiPeopleListView.addFooterView(position == 2 ? followLayoutLoading : fansLayoutLoading);
+
+                    uiPeopleListView.setOnScrollListener(new AbsListView.OnScrollListener()
+                    {
+                        @Override
+                        public void onScrollStateChanged(AbsListView view, int scrollState)
+                        {
+                        }
+
+                        @Override
+                        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
+                        {
+                            if(visibleItemCount + firstVisibleItem == totalItemCount && (uiViewpager.getCurrentItem() == 2 ? !isFollowLoading : !isFansLoading))
+                                if(uiViewpager.getCurrentItem() == 2)
+                                    getMoreFollow();
+                                else
+                                    getMoreFans();
+                        }
+                    });
+
+                    new Thread(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            try
+                            {
+                                if(position == 2)
+                                {
+                                    isFollowLoading = true;
+                                    followArrayList.addAll(othersUserApi.getUserFollow());
+                                    followAdapter = new pAdapter(inflater, followArrayList, 2);
+                                    isFollowLoading = false;
+                                    handler.post(runnableFollowUi);
+                                }
+                                else
+                                {
+                                    isFansLoading = true;
+                                    fansArrayList.addAll(othersUserApi.getUserFans());
+                                    fansAdapter = new pAdapter(inflater, fansArrayList, 3);
+                                    isFansLoading = false;
+                                    handler.post(runnableFansUi);
+                                }
+                            }
+                            catch (IOException e)
+                            {
+                                e.printStackTrace();
+                                if(position == 2)
+                                {
+                                    isFollowLoading = false;
+                                    followArrayList = new ArrayList<>();
+                                }
+                                else
+                                {
+                                    isFansLoading = false;
+                                }
+                            }
+                        }
+                    }).start();
+
+                    container.addView(v);
+                    return position;
                 }
             }
         };
@@ -467,6 +740,8 @@ public class OtheruserActivity extends Activity
             {
                 if(position == 0) titleAnim("用户");
                 else if(position == 1) titleAnim("动态");
+                else if(position == 2) titleAnim("关注");
+                else if(position == 3) titleAnim("粉丝");
             }
         });
         uiViewpager.setAdapter(pagerAdapter);
@@ -482,8 +757,8 @@ public class OtheruserActivity extends Activity
             {
                 try
                 {
-                    userDynamic.getHistoryDynamic();
-                    ArrayList<Object> d = userDynamic.getDynamicList();
+                    userDynamicApi.getHistoryDynamic();
+                    ArrayList<Object> d = userDynamicApi.getDynamicList();
                     isDynamicLoading = false;
                     if(d != null && d.size() != 0)
                     {
@@ -492,12 +767,81 @@ public class OtheruserActivity extends Activity
                     }
                     else
                     {
-                        handler.post(runnableMoreNomore);
+                        handler.post(runnableDynamicMoreNomore);
                     }
                 }
-                catch(IOException e)
+                catch (IOException e)
                 {
                     e.printStackTrace();
+                    handler.post(runnableDynamicMoreErr);
+                }
+            }
+        }).start();
+    }
+
+    void getMoreFollow()
+    {
+        isFollowLoading = true;
+        new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    ArrayList<OthersUserApi.People> followList = othersUserApi.getUserFollow();
+                    isFollowLoading = false;
+                    if(followList != null && followList.size() != 0)
+                    {
+                        followArrayList.addAll(followList);
+                        handler.post(runnableFollowAddlist);
+                    }
+                    else
+                        handler.post(runnableFollowMoreNomore);
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                    handler.post(runnableFollowMoreErr);
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                    handler.post(runnableFollowMoreNomore);
+                }
+            }
+        }).start();
+    }
+
+    void getMoreFans()
+    {
+        isFansLoading = true;
+        new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    ArrayList<OthersUserApi.People> fansList = othersUserApi.getUserFans();
+                    isFansLoading = false;
+                    if(fansList != null && fansList.size() != 0)
+                    {
+                        fansArrayList.addAll(fansList);
+                        handler.post(runnableFansAddlist);
+                    }
+                    else
+                        handler.post(runnableFansMoreNomore);
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                    handler.post(runnableFansMoreErr);
+                }
+                catch (NullPointerException e)
+                {
+                    e.printStackTrace();
+                    handler.post(runnableFansMoreNomore);
                 }
             }
         }).start();
@@ -534,6 +878,13 @@ public class OtheruserActivity extends Activity
                 uiTitleTextView.setAlpha(1);
             }
         });
+    }
+
+    private String getView(String v)
+    {
+        int view = Integer.valueOf(v);
+        if(view > 10000) return view / 1000 / 10.0 + "万";
+        else return String.valueOf(view);
     }
 
     class mAdapter extends BaseAdapter
@@ -596,11 +947,11 @@ public class OtheruserActivity extends Activity
         @Override
         public int getItemViewType(int position)
         {
-            if(dyList.get(position) instanceof UserDynamic.cardOriginalVideo) return 4;
-            else if(dyList.get(position) instanceof UserDynamic.cardOriginalText) return 3;
-            else if(dyList.get(position) instanceof UserDynamic.cardUnknow) return 2;
-            else if(dyList.get(position) instanceof UserDynamic.cardShareVideo) return 1;
-            else if(dyList.get(position) instanceof UserDynamic.cardShareText) return 0;
+            if(dyList.get(position) instanceof UserDynamicApi.cardOriginalVideo) return 4;
+            else if(dyList.get(position) instanceof UserDynamicApi.cardOriginalText) return 3;
+            else if(dyList.get(position) instanceof UserDynamicApi.cardUnknow) return 2;
+            else if(dyList.get(position) instanceof UserDynamicApi.cardShareVideo) return 1;
+            else if(dyList.get(position) instanceof UserDynamicApi.cardShareText) return 0;
             return 2;
         }
 
@@ -648,6 +999,7 @@ public class OtheruserActivity extends Activity
                         viewHolderOriText.name = convertView.findViewById(R.id.liot_name);
                         viewHolderOriText.time = convertView.findViewById(R.id.liot_time);
                         viewHolderOriText.text = convertView.findViewById(R.id.liot_text);
+                        viewHolderOriText.sharei = convertView.findViewById(R.id.liot_sharei);
                         viewHolderOriText.textimg = convertView.findViewById(R.id.liot_textimg);
                         viewHolderOriText.replybu = convertView.findViewById(R.id.liot_replybu);
                         viewHolderOriText.reply = convertView.findViewById(R.id.liot_reply);
@@ -683,6 +1035,7 @@ public class OtheruserActivity extends Activity
                         viewHolderShaVid.simg = convertView.findViewById(R.id.lisv_share_img);
                         viewHolderShaVid.simgtext = convertView.findViewById(R.id.lisv_share_imgtext);
                         viewHolderShaVid.stitle = convertView.findViewById(R.id.lisv_share_text);
+                        viewHolderShaVid.sharei = convertView.findViewById(R.id.lisv_sharei);
                         viewHolderShaVid.replybu = convertView.findViewById(R.id.lisv_replybu);
                         viewHolderShaVid.reply = convertView.findViewById(R.id.lisv_reply);
                         viewHolderShaVid.likebu = convertView.findViewById(R.id.lisv_likebu);
@@ -704,6 +1057,7 @@ public class OtheruserActivity extends Activity
                         viewHolderShaText.sname = convertView.findViewById(R.id.list_share_name);
                         viewHolderShaText.stext = convertView.findViewById(R.id.list_share_text);
                         viewHolderShaText.stextimg = convertView.findViewById(R.id.list_share_textimg);
+                        viewHolderShaText.sharei = convertView.findViewById(R.id.list_sharei);
                         viewHolderShaText.replybu = convertView.findViewById(R.id.list_replybu);
                         viewHolderShaText.reply = convertView.findViewById(R.id.list_reply);
                         viewHolderShaText.likebu = convertView.findViewById(R.id.list_likebu);
@@ -736,7 +1090,7 @@ public class OtheruserActivity extends Activity
 
             if(type == 4) //原创视频
             {
-                final UserDynamic.cardOriginalVideo dy = (UserDynamic.cardOriginalVideo) dyList.get(position);
+                final UserDynamicApi.cardOriginalVideo dy = (UserDynamicApi.cardOriginalVideo) dyList.get(position);
                 viewHolderOriVid.name.setText(Html.fromHtml("<b>" + dy.getOwnerName() + "</b>投稿了视频"));
                 viewHolderOriVid.time.setText(dy.getDynamicTime());
                 if(!dy.getDynamic().equals(""))
@@ -792,7 +1146,7 @@ public class OtheruserActivity extends Activity
                             @Override
                             public void run()
                             {
-                                String s = userDynamic.likeDynamic(dy.getDynamicId(), dy.isLike ? "2" : "1");
+                                String s = userDynamicApi.likeDynamic(dy.getDynamicId(), dy.isLike ? "2" : "1");
                                 if(s.equals(""))
                                 {
                                     dy.isLike = !dy.isLike;
@@ -813,7 +1167,7 @@ public class OtheruserActivity extends Activity
             }
             else if(type == 3)// 原创文字
             {
-                final UserDynamic.cardOriginalText dy = (UserDynamic.cardOriginalText) dyList.get(position);
+                final UserDynamicApi.cardOriginalText dy = (UserDynamicApi.cardOriginalText) dyList.get(position);
                 viewHolderOriText.name.setText(dy.getUserName());
                 viewHolderOriText.time.setText(dy.getDynamicTime());
                 viewHolderOriText.text.setText(dy.getDynamicText());
@@ -855,16 +1209,31 @@ public class OtheruserActivity extends Activity
                     }
                 });
 
+                viewHolderOriText.sharei.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        Intent intent = new Intent(ctx, SendDynamicActivity.class);
+                        intent.putExtra("is_share", true);
+                        intent.putExtra("share_up", dy.getUserName());
+                        intent.putExtra("share_img", Integer.valueOf(dy.getTextImgCount()) == 0 ? "" : dy.getImgsSrc()[0]);
+                        intent.putExtra("share_title", dy.getDynamicText());
+                        intent.putExtra("share_dyid", dy.getDynamicId(2));
+                        startActivityForResult(intent, 0);
+                    }
+                });
+
                 viewHolderOriText.replybu.setOnClickListener(new View.OnClickListener()
                 {
                     @Override
                     public void onClick(View v)
                     {
-                        Intent intent = new Intent(ctx, ReplyActivity.class);
+                        Intent intent = new Intent(ctx, CheckreplyActivity.class);
                         intent.putExtra("oid", dy.getDynamicId(1));
                         intent.putExtra("type", dy.getReplyType());
                         intent.putExtra("root", "");
-                        startActivityForResult(intent, 0);
+                        startActivity(intent);
                     }
                 });
 
@@ -878,7 +1247,7 @@ public class OtheruserActivity extends Activity
                             @Override
                             public void run()
                             {
-                                String s = userDynamic.likeDynamic(dy.getDynamicId(2), dy.isLike ? "2" : "1");
+                                String s = userDynamicApi.likeDynamic(dy.getDynamicId(2), dy.isLike ? "2" : "1");
                                 if(s.equals(""))
                                 {
                                     dy.isLike = !dy.isLike;
@@ -898,7 +1267,7 @@ public class OtheruserActivity extends Activity
             }
             else if(type == 2) //未知类型
             {
-                final UserDynamic.cardUnknow dy = (UserDynamic.cardUnknow) dyList.get(position);
+                final UserDynamicApi.cardUnknow dy = (UserDynamicApi.cardUnknow) dyList.get(position);
                 viewHolderUnktyp.name.setText(dy.getOwnerName());
                 viewHolderUnktyp.time.setText(dy.getDynamicTime());
                 viewHolderUnktyp.head.setImageResource(R.drawable.img_default_head);
@@ -923,8 +1292,8 @@ public class OtheruserActivity extends Activity
             }
             else if(type == 1) //转发视频
             {
-                final UserDynamic.cardShareVideo dy = (UserDynamic.cardShareVideo) dyList.get(position);
-                final UserDynamic.cardOriginalVideo sdy = (UserDynamic.cardOriginalVideo) userDynamic.getDynamicClass(dy.getOriginalVideo(), 1);
+                final UserDynamicApi.cardShareVideo dy = (UserDynamicApi.cardShareVideo) dyList.get(position);
+                final UserDynamicApi.cardOriginalVideo sdy = (UserDynamicApi.cardOriginalVideo) userDynamicApi.getDynamicClass(dy.getOriginalVideo(), 1);
                 viewHolderShaVid.name.setText(dy.getUserName());
                 viewHolderShaVid.time.setText(dy.getDynamicTime());
                 viewHolderShaVid.text.setText(dy.getDynamicText());
@@ -982,16 +1351,32 @@ public class OtheruserActivity extends Activity
                     }
                 });
 
+                viewHolderShaVid.sharei.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        Intent intent = new Intent(ctx, SendDynamicActivity.class);
+                        intent.putExtra("is_share", true);
+                        intent.putExtra("share_text", "//@" + dy.getUserName() + ":" + dy.getDynamicText());
+                        intent.putExtra("share_up", sdy.getOwnerName());
+                        intent.putExtra("share_img", sdy.getVideoImg());
+                        intent.putExtra("share_title", sdy.getVideoTitle());
+                        intent.putExtra("share_dyid", dy.getDynamicId());
+                        startActivityForResult(intent, 0);
+                    }
+                });
+
                 viewHolderShaVid.replybu.setOnClickListener(new View.OnClickListener()
                 {
                     @Override
                     public void onClick(View v)
                     {
-                        Intent intent = new Intent(ctx, ReplyActivity.class);
+                        Intent intent = new Intent(ctx, CheckreplyActivity.class);
                         intent.putExtra("oid", dy.getDynamicId());
                         intent.putExtra("type", dy.getReplyType());
                         intent.putExtra("root", "");
-                        startActivityForResult(intent, 0);
+                        startActivity(intent);
                     }
                 });
 
@@ -1005,7 +1390,7 @@ public class OtheruserActivity extends Activity
                             @Override
                             public void run()
                             {
-                                String s = userDynamic.likeDynamic(dy.getDynamicId(), dy.isLike ? "2" : "1");
+                                String s = userDynamicApi.likeDynamic(dy.getDynamicId(), dy.isLike ? "2" : "1");
                                 if(s.equals(""))
                                 {
                                     dy.isLike = !dy.isLike;
@@ -1025,8 +1410,8 @@ public class OtheruserActivity extends Activity
             }
             else if(type == 0) //转发文字
             {
-                final UserDynamic.cardShareText dy = (UserDynamic.cardShareText) dyList.get(position);
-                final UserDynamic.cardOriginalText sdy = (UserDynamic.cardOriginalText) userDynamic.getDynamicClass(dy.getOriginalText(), 2);
+                final UserDynamicApi.cardShareText dy = (UserDynamicApi.cardShareText) dyList.get(position);
+                final UserDynamicApi.cardOriginalText sdy = (UserDynamicApi.cardOriginalText) userDynamicApi.getDynamicClass(dy.getOriginalText(), 2);
                 viewHolderShaText.name.setText(dy.getUserName());
                 viewHolderShaText.time.setText(dy.getDynamicTime());
                 viewHolderShaText.text.setText(dy.getDynamicText());
@@ -1085,16 +1470,32 @@ public class OtheruserActivity extends Activity
                     }
                 });
 
+                viewHolderShaText.sharei.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        Intent intent = new Intent(ctx, SendDynamicActivity.class);
+                        intent.putExtra("is_share", true);
+                        intent.putExtra("share_text", "//@" + dy.getUserName() + ":" + dy.getDynamicText());
+                        intent.putExtra("share_up", sdy.getUserName());
+                        intent.putExtra("share_img", Integer.valueOf(sdy.getTextImgCount()) == 0 ? "" : sdy.getImgsSrc()[0]);
+                        intent.putExtra("share_title", sdy.getDynamicText());
+                        intent.putExtra("share_dyid", dy.getDynamicId());
+                        startActivityForResult(intent, 0);
+                    }
+                });
+
                 viewHolderShaText.replybu.setOnClickListener(new View.OnClickListener()
                 {
                     @Override
                     public void onClick(View v)
                     {
-                        Intent intent = new Intent(ctx, ReplyActivity.class);
+                        Intent intent = new Intent(ctx, CheckreplyActivity.class);
                         intent.putExtra("oid", dy.getDynamicId());
                         intent.putExtra("type", dy.getReplyType());
                         intent.putExtra("root", "");
-                        startActivityForResult(intent, 0);
+                        startActivity(intent);
                     }
                 });
 
@@ -1108,7 +1509,7 @@ public class OtheruserActivity extends Activity
                             @Override
                             public void run()
                             {
-                                String s = userDynamic.likeDynamic(dy.getDynamicId(), dy.isLike ? "2" : "1");
+                                String s = userDynamicApi.likeDynamic(dy.getDynamicId(), dy.isLike ? "2" : "1");
                                 if(s.equals(""))
                                 {
                                     dy.isLike = !dy.isLike;
@@ -1131,13 +1532,13 @@ public class OtheruserActivity extends Activity
 
         BitmapDrawable setImageFormWeb(String url)
         {
-            if(mImageCache.get(url) != null)
+            if(url != null && mImageCache.get(url) != null)
             {
                 return mImageCache.get(url);
             }
             else
             {
-                mAdapter.ImageTask it = new mAdapter.ImageTask();
+                ImageTask it = new ImageTask();
                 it.execute(url);
                 return null;
             }
@@ -1165,6 +1566,7 @@ public class OtheruserActivity extends Activity
             TextView time;
             ExpandableTextView text;
             TextView textimg;
+            ImageView sharei;
             LinearLayout replybu;
             TextView reply;
             LinearLayout likebu;
@@ -1191,6 +1593,7 @@ public class OtheruserActivity extends Activity
             ImageView simg;
             TextView simgtext;
             TextView stitle;
+            ImageView sharei;
             LinearLayout replybu;
             TextView reply;
             LinearLayout likebu;
@@ -1208,6 +1611,7 @@ public class OtheruserActivity extends Activity
             TextView sname;
             ExpandableTextView stext;
             TextView stextimg;
+            ImageView sharei;
             LinearLayout replybu;
             TextView reply;
             LinearLayout likebu;
@@ -1226,7 +1630,7 @@ public class OtheruserActivity extends Activity
                 {
                     imageUrl = params[0];
                     Bitmap bitmap = null;
-                    bitmap = downloadImage();
+                    bitmap = ImageDownloader.downloadImage(imageUrl);
                     BitmapDrawable db = new BitmapDrawable(uiDynamicListView.getResources(), bitmap);
                     // 如果本地还没缓存该图片，就缓存
                     if(mImageCache.get(imageUrl) == null && bitmap != null)
@@ -1252,90 +1656,191 @@ public class OtheruserActivity extends Activity
                     iv.setImageDrawable(result);
                 }
             }
+        }
+    }
 
-            /**
-             * 获得需要压缩的比率
-             *
-             * @param options 需要传入已经BitmapFactory.decodeStream(is, null, options);
-             * @return 返回压缩的比率，最小为1
-             */
-            public int getInSampleSize(BitmapFactory.Options options) {
-                int inSampleSize = 1;
-                int realWith = 170;
-                int realHeight = 170;
+    class pAdapter extends BaseAdapter
+    {
+        private LayoutInflater mInflater;
 
-                int outWidth = options.outWidth;
-                int outHeight = options.outHeight;
+        private LruCache<String, BitmapDrawable> mImageCache;
 
-                //获取比率最大的那个
-                if (outWidth > realWith || outHeight > realHeight) {
-                    int withRadio = Math.round(outWidth / realWith);
-                    int heightRadio = Math.round(outHeight / realHeight);
-                    inSampleSize = withRadio > heightRadio ? withRadio : heightRadio;
+        private ArrayList<OthersUserApi.People> ppList;
+        private int mode;
+
+        public pAdapter(LayoutInflater inflater, ArrayList<OthersUserApi.People> ppList, int mode)
+        {
+            mInflater = inflater;
+            this.ppList = ppList;
+            this.mode = mode;
+
+            int maxCache = (int) Runtime.getRuntime().maxMemory();
+            int cacheSize = maxCache / 6;
+            mImageCache = new LruCache<String, BitmapDrawable>(cacheSize)
+            {
+                @Override
+                protected int sizeOf(String key, BitmapDrawable value)
+                {
+                    try
+                    {
+                        return value.getBitmap().getByteCount();
+                    }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+                    return 0;
                 }
-                return inSampleSize;
+            };
+        }
+
+        @Override
+        public int getCount()
+        {
+            return ppList.size();
+        }
+
+        @Override
+        public Object getItem(int position)
+        {
+            return position;
+        }
+
+        @Override
+        public long getItemId(int position)
+        {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup viewGroup)
+        {
+            ViewHolder viewHolder = null;
+            if(convertView == null)
+            {
+                convertView = mInflater.inflate(R.layout.item_ou_people, null);
+                viewHolder = new ViewHolder();
+                convertView.setTag(viewHolder);
+
+                viewHolder.lay = convertView.findViewById(R.id.oupp_lay);
+                viewHolder.img = convertView.findViewById(R.id.oupp_face);
+                viewHolder.name = convertView.findViewById(R.id.oupp_name);
+                viewHolder.sign = convertView.findViewById(R.id.oupp_sign);
+                viewHolder.time = convertView.findViewById(R.id.oupp_time);
+            }
+            else
+            {
+                viewHolder = (ViewHolder) convertView.getTag();
             }
 
-            /**
-             * 根据输入流返回一个压缩的图片
-             * @param input 图片的输入流
-             * @return 压缩的图片
-             */
-            public Bitmap getCompressBitmap(InputStream input)
+            final OthersUserApi.People pp = ppList.get(position);
+            viewHolder.img.setImageResource(R.drawable.img_default_head);
+            viewHolder.name.setText(pp.nmae);
+            if(pp.vip == 2)
+                viewHolder.name.setTextColor(getResources().getColor(R.color.textColor3));
+            else
+                viewHolder.name.setTextColor(getResources().getColor(R.color.colorAccent));
+            String s = pp.verifyName.equals("") ? pp.sign : pp.verifyName;
+            if(!s.equals(""))
             {
-                //因为InputStream要使用两次，但是使用一次就无效了，所以需要复制两个
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                viewHolder.sign.setVisibility(View.VISIBLE);
+                viewHolder.sign.setText(s);
+            }
+            else
+                viewHolder.sign.setVisibility(View.GONE);
+            viewHolder.time.setText((mode == 2 ? "关注于：" : "被粉于：") + pp.mtime);
+            switch (pp.verifyType)
+            {
+                case "0":
+                    convertView.findViewById(R.id.oupp_ver_1).setVisibility(View.VISIBLE);
+                    convertView.findViewById(R.id.oupp_ver_2).setVisibility(View.GONE);
+                    break;
+                case "1":
+                    convertView.findViewById(R.id.oupp_ver_1).setVisibility(View.GONE);
+                    convertView.findViewById(R.id.oupp_ver_2).setVisibility(View.VISIBLE);
+                    break;
+                default:
+                    convertView.findViewById(R.id.oupp_ver_1).setVisibility(View.GONE);
+                    convertView.findViewById(R.id.oupp_ver_2).setVisibility(View.GONE);
+                    break;
+            }
+            viewHolder.img.setTag(pp.face);
+            BitmapDrawable f = setImageFormWeb(pp.face);
+            if(f != null) viewHolder.img.setImageDrawable(f);
+
+            viewHolder.lay.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
+                {
+                    Intent intent = new Intent(ctx, OtheruserActivity.class);
+                    intent.putExtra("mid", pp.uid);
+                    startActivity(intent);
+                }
+            });
+
+            return convertView;
+        }
+
+        BitmapDrawable setImageFormWeb(String url)
+        {
+            if(url != null && mImageCache.get(url) != null)
+            {
+                return mImageCache.get(url);
+            }
+            else
+            {
+                ImageTask it = new ImageTask();
+                it.execute(url);
+                return null;
+            }
+        }
+
+        class ViewHolder
+        {
+            RelativeLayout lay;
+            CircleImageView img;
+            TextView name;
+            TextView sign;
+            TextView time;
+        }
+
+        class ImageTask extends AsyncTask<String, Void, BitmapDrawable>
+        {
+            private String imageUrl;
+
+            @Override
+            protected BitmapDrawable doInBackground(String... params)
+            {
                 try
                 {
-                    byte[] buffer = new byte[1024];
-                    int len;
-                    while ((len = input.read(buffer)) > -1)
+                    imageUrl = params[0];
+                    Bitmap bitmap = null;
+                    bitmap = ImageDownloader.downloadImage(imageUrl);
+                    BitmapDrawable db = new BitmapDrawable(uiViewpager.findViewWithTag(mode).findViewById(R.id.ou_pp_listview).getResources(), bitmap);
+                    if(mImageCache.get(imageUrl) == null && bitmap != null)
                     {
-                        baos.write(buffer, 0, len);
+                        mImageCache.put(imageUrl, db);
                     }
-                    baos.flush();
+                    return db;
                 }
                 catch (IOException e)
                 {
                     e.printStackTrace();
                 }
-
-                //复制新的输入流
-                InputStream is = new ByteArrayInputStream(baos.toByteArray());
-                InputStream is2 = new ByteArrayInputStream(baos.toByteArray());
-
-                //只是获取网络图片的大小，并没有真正获取图片
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inJustDecodeBounds = true;
-                BitmapFactory.decodeStream(is, null, options);
-                //获取图片并进行压缩
-                options.inSampleSize = getInSampleSize(options);
-                options.inJustDecodeBounds = false;
-                return BitmapFactory.decodeStream(is2, null, options);
+                return null;
             }
 
-            /**
-             * 根据url从网络上下载图片
-             *
-             * @return 图片
-             */
-            private Bitmap downloadImage() throws IOException
+            @Override
+            protected void onPostExecute(BitmapDrawable result)
             {
-                HttpURLConnection con = null;
-                Bitmap bitmap = null;
-                URL url = new URL(imageUrl);
-                con = (HttpURLConnection) url.openConnection();
-                con.setConnectTimeout(5 * 1000);
-                con.setReadTimeout(10 * 1000);
-                bitmap = getCompressBitmap(con.getInputStream());
-                if(con != null)
+                ImageView iv = (uiViewpager.findViewWithTag(mode).findViewById(R.id.ou_pp_listview).findViewWithTag(imageUrl));
+                if(iv != null && result != null)
                 {
-                    con.disconnect();
+                    iv.setImageDrawable(result);
                 }
-                return bitmap;
             }
         }
-
     }
 
     private Object get(String url, int mode) throws IOException

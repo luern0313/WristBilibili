@@ -6,7 +6,7 @@
     android:paddingBottom="12dp">
 
     <TextView
-        android:id="@+id/dyload_text"
+        android:id="@+id/wid_dy_load_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -15,7 +15,7 @@
         android:textSize="13sp" />
 
     <Button
-        android:id="@+id/dyload_button"
+        android:id="@+id/wid_dy_load_button"
         style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="match_parent"
         android:layout_height="40dp"

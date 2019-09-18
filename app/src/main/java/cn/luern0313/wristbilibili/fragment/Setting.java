@@ -46,7 +46,7 @@ public class Setting extends Fragment
 
         setList = rootLayout.findViewById(R.id.set_listview);
 
-        final ArrayList<String> list = new ArrayList<String>(Arrays.asList("注销", "关注作者b站账号", "发动态炫耀一下", "查看介绍视频", "评论小尾巴设置", "支持作者", "关于开源", "更新日志", "联系作者", "关于"));
+        final ArrayList<String> list = new ArrayList<String>(Arrays.asList("注销", "关注作者b站账号", "小尾巴设置", "发动态炫耀一下", "查看介绍视频", "支持作者", "关于开源", "更新日志", "联系作者", "关于"));
         mAdapter mAdapter = new mAdapter(inflater, list);
         setList.setAdapter(mAdapter);
 
@@ -65,6 +65,11 @@ public class Setting extends Fragment
                     Intent intent = new Intent(ctx, FollowmeActivity.class);
                     startActivity(intent);
                 }
+                else if(list.get(position).equals("小尾巴设置"))
+                {
+                    Intent intent = new Intent(ctx, TailActivity.class);
+                    startActivity(intent);
+                }
                 else if(list.get(position).equals("发动态炫耀一下"))
                 {
                     Intent intent = new Intent(ctx, SueActivity.class);
@@ -74,11 +79,6 @@ public class Setting extends Fragment
                 {
                     Intent intent = new Intent(ctx, VideodetailsActivity.class);
                     intent.putExtra("aid", "37132444");
-                    startActivity(intent);
-                }
-                else if(list.get(position).equals("评论小尾巴设置"))
-                {
-                    Intent intent = new Intent(ctx, TailActivity.class);
                     startActivity(intent);
                 }
                 else if(list.get(position).equals("支持作者"))
