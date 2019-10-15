@@ -3,22 +3,24 @@ package cn.luern0313.wristbilibili.ui;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.liulishuo.filedownloader.FileDownloader;
+
+import java.io.IOException;
+
 import cn.luern0313.wristbilibili.R;
+import cn.luern0313.wristbilibili.api.StatisticsApi;
 import cn.luern0313.wristbilibili.fragment.AniRemind;
 import cn.luern0313.wristbilibili.fragment.Download;
 import cn.luern0313.wristbilibili.fragment.Dynamic;
@@ -38,6 +40,7 @@ public class MainActivity extends Activity
     Context ctx;
     public static SharedPreferences sharedPreferences;
     public static SharedPreferences.Editor editor;
+    Intent serviceIntent;
     private FragmentManager fm;
     private FragmentTransaction transaction;
     DisplayMetrics dm;
@@ -45,24 +48,7 @@ public class MainActivity extends Activity
     TextView titleText;
     ImageView titleImg;
 
-    private DownloadService.MyBinder myBinder;
-    private ServiceConnection connection = new ServiceConnection()
-    {
-
-        @Override
-        public void onServiceDisconnected(ComponentName name)
-        {
-        }
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service)
-        {
-            myBinder = (DownloadService.MyBinder) service;
-            //myBinder.startDownload();
-        }
-    };
-
-    //TODO 稍后再看，一键三连
+    //TODO 一键三连
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState)
     {
@@ -81,6 +67,8 @@ public class MainActivity extends Activity
         titleText = findViewById(R.id.main_title_title);
         titleImg = findViewById(R.id.main_title_extraicon);
 
+        FileDownloader.setup(this);
+
         //新版本更新
         try
         {
@@ -89,7 +77,7 @@ public class MainActivity extends Activity
             if(sharedPreferences.getInt("ver", 0) < pi.versionCode)
             {
                 editor.putInt("ver", pi.versionCode);
-                editor.commit();
+                editor.apply();
                 Intent intent = new Intent(ctx, TextActivity.class);
                 intent.putExtra("title", "更新日志");
                 intent.putExtra("text", getResources().getString(R.string.update));
@@ -100,6 +88,28 @@ public class MainActivity extends Activity
         {
             e.printStackTrace();
         }
+
+        if(sharedPreferences.contains("mid") && (!sharedPreferences.getString("mid", "").equals("")))
+        {
+            new Thread(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    try
+                    {
+                        StatisticsApi.Statistics(sharedPreferences.getString("mid", "no login"));
+                    }
+                    catch (IOException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+        }
+
+        serviceIntent = new Intent(this, DownloadService.class);
+        startService(serviceIntent);
     }
 
     @Override
@@ -157,5 +167,12 @@ public class MainActivity extends Activity
         Intent intent = new Intent(ctx, MenuActivity.class);
         startActivityForResult(intent, 0);
         overridePendingTransition(R.anim.anim_activity_in_down, 0);
+    }
+
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+        stopService(serviceIntent);
     }
 }

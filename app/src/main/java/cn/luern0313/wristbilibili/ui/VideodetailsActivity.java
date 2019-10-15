@@ -125,6 +125,13 @@ public class VideodetailsActivity extends Activity
         public void onServiceConnected(ComponentName name, IBinder service)
         {
             myBinder = (DownloadService.MyBinder) service;
+            String result = myBinder.startDownload(videoDetail.getVideoAid(), videoDetail.getVideoCid(),
+                                   videoDetail.getVideoTitle(), videoDetail.getVideoFace(),
+                                   onlineVideoApi.getVideoUrl(), onlineVideoApi.getDanmakuUrl());
+            if(result.equals(""))
+                Toast.makeText(ctx, "已添加至下载列表", Toast.LENGTH_SHORT).show();
+            else
+                Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
         }
     };
 
@@ -152,18 +159,20 @@ public class VideodetailsActivity extends Activity
 
         isLogin = !sharedPreferences.getString("cookies", "").equals("");
         videoDetail = new VideoDetailsApi(sharedPreferences.getString("cookies", ""),
-                sharedPreferences.getString("csrf", ""), sharedPreferences.getString("mid", ""),
-                intent.getStringExtra("aid"));
+                                          sharedPreferences.getString("csrf", ""),
+                                          sharedPreferences.getString("mid", ""),
+                                          intent.getStringExtra("aid"));
         replyApi = new ReplyApi(sharedPreferences.getString("cookies", ""),
-                sharedPreferences.getString("csrf", ""), intent.getStringExtra("aid"), "1");
+                                sharedPreferences.getString("csrf", ""),
+                                intent.getStringExtra("aid"), "1");
 
         uiLoadingImg.setImageResource(R.drawable.anim_loading);
         loadingImgAnim = (AnimationDrawable) uiLoadingImg.getDrawable();
         loadingImgAnim.start();
         uiLoading.setVisibility(View.VISIBLE);
 
-        if(sharedPreferences.getBoolean("tip_vd", true))
-            findViewById(R.id.vd_tip).setVisibility(View.VISIBLE);
+        if(sharedPreferences.getBoolean("tip_vd", true)) findViewById(R.id.vd_tip).setVisibility(
+                View.VISIBLE);
 
         runnableNoWeb = new Runnable()
         {
@@ -314,8 +323,7 @@ public class VideodetailsActivity extends Activity
             @Override
             public void run()
             {
-                ((TextView) layoutLoading.findViewById(R.id.wid_dy_load_text))
-                        .setText("  没有更多了...");
+                ((TextView) layoutLoading.findViewById(R.id.wid_dy_load_text)).setText("  没有更多了...");
             }
         };
 
@@ -324,8 +332,7 @@ public class VideodetailsActivity extends Activity
             @Override
             public void run()
             {
-                ((TextView) layoutLoading.findViewById(R.id.wid_dy_load_text))
-                        .setText("好像没有网络...\n检查下网络？");
+                ((TextView) layoutLoading.findViewById(R.id.wid_dy_load_text)).setText("好像没有网络...\n检查下网络？");
                 layoutLoading.findViewById(R.id.wid_dy_load_button).setVisibility(View.VISIBLE);
                 isReplyLoading = false;
             }
@@ -347,16 +354,14 @@ public class VideodetailsActivity extends Activity
             }
         };
 
-        layoutLoading.findViewById(R.id.wid_dy_load_button)
-                .setOnClickListener(new View.OnClickListener()
+        layoutLoading.findViewById(R.id.wid_dy_load_button).setOnClickListener(
+                new View.OnClickListener()
                 {
                     @Override
                     public void onClick(View v)
                     {
-                        ((TextView) layoutLoading.findViewById(R.id.wid_dy_load_text))
-                                .setText(" 加载中. . .");
-                        layoutLoading.findViewById(R.id.wid_dy_load_button)
-                                .setVisibility(View.GONE);
+                        ((TextView) layoutLoading.findViewById(R.id.wid_dy_load_text)).setText(" 加载中. . .");
+                        layoutLoading.findViewById(R.id.wid_dy_load_button).setVisibility(View.GONE);
                         getMoreReply();
                     }
                 });
@@ -506,8 +511,8 @@ public class VideodetailsActivity extends Activity
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id)
                         {
                             Intent intent = new Intent(ctx, VideodetailsActivity.class);
-                            intent.putExtra("aid",
-                                    String.valueOf(recommendList.get(position).getVideoAid()));
+                            intent.putExtra("aid", String.valueOf(
+                                    recommendList.get(position).getVideoAid()));
                             startActivity(intent);
                         }
                     });
@@ -778,11 +783,11 @@ public class VideodetailsActivity extends Activity
 
                 if(v.isReplyLike()) viewHolder.likei.setImageResource(R.drawable.icon_liked);
                 else viewHolder.likei.setImageResource(R.drawable.icon_like);
-                if(v.isReplyDislike())
-                    viewHolder.dislikei.setImageResource(R.drawable.icon_disliked);
+                if(v.isReplyDislike()) viewHolder.dislikei.setImageResource(
+                        R.drawable.icon_disliked);
                 else viewHolder.dislikei.setImageResource(R.drawable.icon_dislike);
-                if(v.getUserVip() == 2)
-                    viewHolder.name.setTextColor(getResources().getColor(R.color.mainColor));
+                if(v.getUserVip() == 2) viewHolder.name.setTextColor(
+                        getResources().getColor(R.color.mainColor));
                 else viewHolder.name.setTextColor(getResources().getColor(R.color.textColor4));
 
                 viewHolder.img.setTag(v.getUserHead());
@@ -810,15 +815,15 @@ public class VideodetailsActivity extends Activity
                             @Override
                             public void run()
                             {
-                                String va = v
-                                        .likeReply(v.getReplyId(), v.isReplyLike() ? 0 : 1, "1");
+                                String va = v.likeReply(v.getReplyId(), v.isReplyLike() ? 0 : 1,
+                                                        "1");
                                 if(va.equals("")) handler.post(runnableReplyUpdate);
                                 else
                                 {
                                     Looper.prepare();
                                     Toast.makeText(ctx,
-                                            (v.isReplyLike() ? "取消" : "点赞") + "失败：\n" + va,
-                                            Toast.LENGTH_SHORT).show();
+                                                   (v.isReplyLike() ? "取消" : "点赞") + "失败：\n" + va,
+                                                   Toast.LENGTH_SHORT).show();
                                     Looper.loop();
                                 }
                             }
@@ -836,15 +841,15 @@ public class VideodetailsActivity extends Activity
                             @Override
                             public void run()
                             {
-                                String va = v
-                                        .hateReply(v.getReplyId(), v.isReplyDislike() ? 0 : 1, "1");
+                                String va = v.hateReply(v.getReplyId(), v.isReplyDislike() ? 0 : 1,
+                                                        "1");
                                 if(va.equals("")) handler.post(runnableReplyUpdate);
                                 else
                                 {
                                     Looper.prepare();
                                     Toast.makeText(ctx,
-                                            (v.isReplyDislike() ? "取消" : "点踩") + "失败：\n" + va,
-                                            Toast.LENGTH_SHORT).show();
+                                                   (v.isReplyDislike() ? "取消" : "点踩") + "失败：\n" + va,
+                                                   Toast.LENGTH_SHORT).show();
                                     Looper.loop();
                                 }
                             }
@@ -1312,19 +1317,15 @@ public class VideodetailsActivity extends Activity
                 try
                 {
                     onlineVideoApi = new OnlineVideoApi(sharedPreferences.getString("cookies", ""),
-                            sharedPreferences.getString("csrf", ""),
-                            sharedPreferences.getString("mid", ""), videoDetail.getVideoAid(), "1",
-                            videoDetail.getVideoCid());
+                                                        sharedPreferences.getString("csrf", ""),
+                                                        sharedPreferences.getString("mid", ""),
+                                                        videoDetail.getVideoAid(), "1",
+                                                        videoDetail.getVideoCid());
                     onlineVideoApi.connectionVideoUrl();
                     Intent intent = new Intent(ctx, DownloadService.class);
                     bindService(intent, connection, Context.BIND_AUTO_CREATE);
-                    myBinder.startDownload(videoDetail.getVideoAid(), videoDetail.getVideoCid(),
-                            onlineVideoApi.getVideoUrl(), onlineVideoApi.getDanmakuUrl());
-                    Looper.prepare();
-                    Toast.makeText(ctx, "已添加至下载列表", Toast.LENGTH_SHORT).show();
-                    Looper.loop();
                 }
-                catch(IOException e)
+                catch (IOException e)
                 {
                     e.printStackTrace();
                     Looper.prepare();
@@ -1658,6 +1659,20 @@ public class VideodetailsActivity extends Activity
                     }
                 }
             }).start();
+        }
+    }
+
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+        try
+        {
+            unbindService(connection);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
         }
     }
 }

@@ -6,8 +6,8 @@ android {
         applicationId "cn.luern0313.wristbilibili"
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 7
-        versionName "2.0"
+        versionCode 9
+        versionName "2.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
@@ -40,12 +40,10 @@ dependencies {
     implementation 'com.google.zxing:core:3.3.0'//二维码
     implementation 'de.hdodenhof:circleimageview:2.2.0'//圆形imageview
     implementation 'cn.carbs.android:ExpandableTextView:1.0.3'//折叠textview
-    implementation 'tyrant:heartlayout:1.0.1'//heart泡泡
     implementation 'com.github.recruit-lifestyle:WaveSwipeRefreshLayout:1.6'//水滴状下拉刷新
     implementation 'com.android.support:cardview-v7:26.1.0'//cardview
     implementation 'org.jsoup:jsoup:1.11.3'//jsoup解析网页
     //implementation 'com.ticwear:mobvoi-api:1.1.1'//ticwear
     implementation 'me.panpf:sketch:2.7.0'//photoview
-    implementation 'com.liulishuo.filedownloader:library:1.7.6'//下载服务
-
+    implementation 'com.liulishuo.filedownloader:library:1.7.7'//下载服务
 }

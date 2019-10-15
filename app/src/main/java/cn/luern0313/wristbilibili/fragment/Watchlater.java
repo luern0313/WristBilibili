@@ -2,6 +2,7 @@ package cn.luern0313.wristbilibili.fragment;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
@@ -12,6 +13,7 @@ import android.support.v4.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -24,6 +26,7 @@ import java.util.ArrayList;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.WatchLaterApi;
 import cn.luern0313.wristbilibili.ui.MainActivity;
+import cn.luern0313.wristbilibili.ui.VideodetailsActivity;
 import cn.luern0313.wristbilibili.widget.ImageDownloader;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
@@ -117,6 +120,17 @@ public class Watchlater extends Fragment
                 rootLayout.findViewById(R.id.wl_nologin).setVisibility(View.GONE);
             }
         };
+
+        wlListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            {
+                Intent intent = new Intent(ctx, VideodetailsActivity.class);
+                intent.putExtra("aid", watchLaterVideoArrayList.get(position).aid);
+                startActivity(intent);
+            }
+        });
 
         isLogin = MainActivity.sharedPreferences.contains("cookies");
         if(isLogin)

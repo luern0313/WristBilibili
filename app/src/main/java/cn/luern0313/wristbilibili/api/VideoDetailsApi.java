@@ -368,6 +368,21 @@ public class VideoDetailsApi
         return false;
     }
 
+    public boolean scoreVideo(int score) throws IOException
+    {
+        try
+        {
+            String result = post("https://api.bilibili.com/x/stein/mark", "aid=" + aid + "&mark=" + score + "&csrf=" + csrf).body().string();
+            if(new JSONObject(result).getInt("code") == 0)
+                return true;
+        }
+        catch (NullPointerException | JSONException e)
+        {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public boolean sendReply(String text) throws IOException
     {
         try

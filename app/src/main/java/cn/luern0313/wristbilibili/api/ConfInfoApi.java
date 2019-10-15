@@ -10,9 +10,9 @@ import java.util.HashMap;
  * 绝 · 密 · 档 · 案
  */
 
-class ConfInfoApi
+public class ConfInfoApi
 {
-    static String getConf(String key)
+    public static String getConf(String key)
     {
         HashMap<String, String> conf =new HashMap<String, String>(){{
             put("appkey", "1d8b6e7d45233436");
@@ -26,7 +26,7 @@ class ConfInfoApi
         return conf.get(key);
     }
 
-    static String calc_sign(String str)
+    public static String calc_sign(String str)
     {
         str += getConf("app_secret");
         return md5(str);

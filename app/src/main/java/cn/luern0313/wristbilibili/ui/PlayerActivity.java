@@ -119,6 +119,7 @@ public class PlayerActivity extends Activity
                 try
                 {
                     onlineVideoApi.connectionVideoUrl();
+                    onlineVideoApi.playHistory(0, false);
                     url = onlineVideoApi.getVideoUrl();
                     danmaku = onlineVideoApi.getDanmakuUrl();
                     handler.post(runnLoading);
@@ -150,7 +151,6 @@ public class PlayerActivity extends Activity
                         {
                             Looper.prepare();
                             Toast.makeText(getApplicationContext(), "历史记录同步失败...", Toast.LENGTH_SHORT).show();
-                            Looper.loop();
                         }
                     }
                     catch (Exception e)

@@ -1748,7 +1748,7 @@ public class OtheruserActivity extends Activity
             }
             else
                 viewHolder.sign.setVisibility(View.GONE);
-            viewHolder.time.setText((mode == 2 ? "关注于：" : "被粉于：") + pp.mtime);
+            viewHolder.time.setText((mode == 2 ? "关注于：" : "粉于：") + pp.mtime);
             switch (pp.verifyType)
             {
                 case "0":

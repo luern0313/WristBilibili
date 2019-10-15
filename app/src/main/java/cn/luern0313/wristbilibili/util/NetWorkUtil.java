@@ -1,0 +1,86 @@
+package cn.luern0313.wristbilibili.util;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.concurrent.TimeUnit;
+import java.util.zip.Inflater;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
+
+/**
+ * 被 luern0313 创建于 2019/10/13.
+ */
+
+public class NetWorkUtil
+{
+    public static ResponseBody get(String url) throws IOException
+    {
+        OkHttpClient client = new OkHttpClient.Builder().connectTimeout(15, TimeUnit.SECONDS).readTimeout(15, TimeUnit.SECONDS).build();
+        Request.Builder requestb = new Request.Builder().url(url).header("Referer", "https://www.bilibili.com/").addHeader("Accept", "*/*").addHeader("User-Agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
+        Request request = requestb.build();
+        Response response = client.newCall(request).execute();
+
+        if(response.isSuccessful())
+            return response.body();
+        return null;
+    }
+
+    public static Response post(String url, String data) throws IOException
+    {
+        Response response;
+        OkHttpClient client;
+        RequestBody body;
+        Request request;
+        client = new OkHttpClient.Builder().connectTimeout(15, TimeUnit.SECONDS).readTimeout(15, TimeUnit.SECONDS).build();
+        body = RequestBody.create(MediaType.parse("application/x-www-form-urlencoded; charset=utf-8"), data);
+        request = new Request.Builder().url(url).post(body).header("Referer", "https://www.bilibili.com/watchlater/").addHeader("Accept", "*/*").addHeader("User-Agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)").build();
+        response = client.newCall(request).execute();
+        if(response.isSuccessful())
+        {
+            return response;
+        }
+        return null;
+    }
+
+    public static byte[] readStream(InputStream inStream) throws IOException
+    {
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        int len = 0;
+        while ((len = inStream.read(buffer)) != -1)
+        {
+            outStream.write(buffer, 0, len);
+        }
+        outStream.close();
+        inStream.close();
+        return outStream.toByteArray();
+    }
+
+    public static byte[] uncompress(byte[] inputByte) throws IOException
+    {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(inputByte.length);
+        try
+        {
+            Inflater inflater = new Inflater(true);
+            inflater.setInput(inputByte);
+            byte[] buffer = new byte[4 * 1024];
+            while (!inflater.finished()) {
+                int count = inflater.inflate(buffer);
+                outputStream.write(buffer, 0, count);
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        byte[] output = outputStream.toByteArray();
+        outputStream.close();
+        return output;
+    }
+}

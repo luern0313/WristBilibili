@@ -37,22 +37,18 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/fme_title_layout">
 
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center_horizontal"
             android:orientation="vertical"
-            android:paddingBottom="10dp">
-
+            android:paddingBottom="26dp">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginTop="7dp"
-                android:text="关注软件作者小哥哥的b站账号吧~"
+                android:layout_marginTop="4dp"
+                android:gravity="center_horizontal"
+                android:text="↓ ↓ 来个关注~ ↓ ↓"
                 android:textSize="12sp" />
 
             <android.support.v7.widget.CardView
@@ -113,7 +109,7 @@
                         android:layout_marginLeft="4dp"
                         android:layout_marginTop="-1dp"
                         android:layout_toRightOf="@+id/fme_card_lv"
-                        android:text="投稿:20+"
+                        android:text=""
                         android:textColor="@color/textColor3"
                         android:textSize="10sp" />
 
@@ -136,6 +132,143 @@
 
             </android.support.v7.widget.CardView>
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center_horizontal"
+                android:text="↓ ↓ 最新投稿 ↓ ↓"
+                android:textSize="12sp" />
+
+            <RelativeLayout
+                android:id="@+id/fme_video"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_marginTop="7dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:descendantFocusability="blocksDescendants">
+
+                <ImageView
+                    android:id="@+id/fme_video_img"
+                    android:layout_width="68dp"
+                    android:layout_height="44dp"
+                    android:layout_centerVertical="true"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/img_default_vid" />
+
+                <TextView
+                    android:id="@+id/fme_video_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_toRightOf="@id/fme_video_img"
+                    android:ellipsize="end"
+                    android:maxLines="3"
+                    android:text="请稍后..."
+                    android:textSize="12sp" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/fme_star"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:layout_marginTop="2dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:orientation="vertical"
+                android:paddingBottom="2dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingTop="2dp"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/fme_star_rating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:clickable="false"
+                    android:src="@drawable/img_fme_star_no" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"
+                    android:gravity="center_horizontal"
+                    android:text="  点个五星~" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/fme_lc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:id="@+id/fme_like"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:descendantFocusability="blocksDescendants"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:paddingBottom="4dp"
+                    android:paddingTop="4dp">
+
+                    <ImageView
+                        android:id="@+id/fme_like_img"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:src="@drawable/icon_like_no" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="给这个视频点赞"
+                        android:textSize="11sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/fme_coin"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:descendantFocusability="blocksDescendants"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:paddingBottom="4dp"
+                    android:paddingTop="4dp">
+
+                    <ImageView
+                        android:id="@+id/fme_coin_img"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:src="@drawable/icon_coin_no" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="给这个视频投币"
+                        android:textSize="11sp" />
+
+                </LinearLayout>
+            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>

@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dling_lay"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground"
     android:descendantFocusability="blocksDescendants"
-    android:paddingBottom="1dp"
+    android:paddingBottom="4dp"
     android:paddingLeft="19dp"
     android:paddingRight="19dp"
     android:paddingTop="1dp">
@@ -12,8 +14,7 @@
         android:id="@+id/dling_img"
         android:layout_width="64dp"
         android:layout_height="40dp"
-        android:layout_centerVertical="false"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="3dp"
         android:adjustViewBounds="true"
         android:scaleType="centerCrop"
         android:src="@drawable/img_default_vid" />
@@ -21,7 +22,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
         android:layout_marginLeft="4dp"
         android:layout_toRightOf="@+id/dling_img"
         android:orientation="vertical">
@@ -34,9 +34,33 @@
             android:layout_alignParentTop="true"
             android:ellipsize="end"
             android:maxLines="2"
-            android:text="biuebviubwenoisdvbniovhiosdhvodfbnobnpweonbponweprnvpoesnpbvnpornewb"
             android:textColor="@color/textColor3"
             android:textSize="13sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/dling_size"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/textColor3"
+                android:textSize="9sp" />
+
+            <TextView
+                android:id="@+id/dling_speed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:gravity="right"
+                android:textColor="@color/textColor3"
+                android:textSize="9sp" />
+
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -44,33 +68,29 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/dling_size"
+                android:id="@+id/dling_progress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="500M"
-                android:textSize="10sp" />
+                android:layout_weight="1"
+                android:textColor="@color/textColor3"
+                android:textSize="9sp" />
 
             <TextView
                 android:id="@+id/dling_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:ellipsize="end"
                 android:gravity="right"
-                android:maxLines="1"
-                android:text="3天5小时"
-                android:textSize="10sp" />
+                android:textColor="@color/textColor3"
+                android:textSize="9sp" />
 
         </LinearLayout>
 
         <ProgressBar
             android:id="@+id/dling_prog"
-            style="?android:attr/progressBarStyleHorizontal"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:maxHeight="18dp"
-            android:minHeight="2dp"
-            android:progress="60" />
+            android:layout_height="9dp" />
 
     </LinearLayout>
 
