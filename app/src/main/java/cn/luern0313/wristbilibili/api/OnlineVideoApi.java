@@ -49,7 +49,7 @@ public class OnlineVideoApi
         try
         {
             playUrlJson = new JSONObject((String) get(
-                    "https://api.bilibili.com/x/player/playurl?avid=" + aid + "&cid=" + cid + "&qn=80&type=mp4", 1));
+                    "https://api.bilibili.com/x/player/playurl?avid=" + aid + "&cid=" + cid + "&qn=16&type=mp4", 1));
         }
         catch (JSONException e)
         {
