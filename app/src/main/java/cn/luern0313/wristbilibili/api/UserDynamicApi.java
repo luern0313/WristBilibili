@@ -589,7 +589,7 @@ public class UserDynamicApi
             {
                 return String.valueOf(unknowDescUser.getJSONObject("info").get("uid"));
             }
-            catch (JSONException e)
+            catch (Exception e)
             {
                 e.printStackTrace();
             }
@@ -602,7 +602,7 @@ public class UserDynamicApi
             {
                 return (String) unknowDescUser.getJSONObject("info").get("uname");
             }
-            catch (JSONException e)
+            catch (Exception e)
             {
                 e.printStackTrace();
             }
@@ -611,7 +611,15 @@ public class UserDynamicApi
 
         public String getOwnerHead()
         {
-            return (String) getInfoFromJson(getJsonFromJson(unknowDescUser, "info"), "face");
+            try
+            {
+                return (String) getInfoFromJson(getJsonFromJson(unknowDescUser, "info"), "face");
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+            return "";
         }
 
         public String getDynamicTime()
@@ -620,7 +628,7 @@ public class UserDynamicApi
             {
                 return getTime((int) unknowDesc.get("timestamp"));
             }
-            catch (JSONException e)
+            catch (Exception e)
             {
                 e.printStackTrace();
             }
