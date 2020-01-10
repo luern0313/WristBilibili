@@ -1,9 +1,6 @@
 package cn.luern0313.wristbilibili.api;
 
 import android.graphics.BitmapFactory;
-import android.os.Looper;
-import android.util.Log;
-import android.widget.ArrayAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -14,11 +11,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import cn.luern0313.wristbilibili.fragment.Search;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;

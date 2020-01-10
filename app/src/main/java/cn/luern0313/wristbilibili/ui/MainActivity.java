@@ -21,13 +21,13 @@ import java.io.IOException;
 
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.StatisticsApi;
-import cn.luern0313.wristbilibili.fragment.AniRemind;
-import cn.luern0313.wristbilibili.fragment.Download;
-import cn.luern0313.wristbilibili.fragment.Dynamic;
-import cn.luern0313.wristbilibili.fragment.FavorBox;
-import cn.luern0313.wristbilibili.fragment.Search;
-import cn.luern0313.wristbilibili.fragment.Setting;
-import cn.luern0313.wristbilibili.fragment.Watchlater;
+import cn.luern0313.wristbilibili.fragment.AniRemindFragment;
+import cn.luern0313.wristbilibili.fragment.DownloadFragment;
+import cn.luern0313.wristbilibili.fragment.DynamicFragment;
+import cn.luern0313.wristbilibili.fragment.FavorBoxFragment;
+import cn.luern0313.wristbilibili.fragment.SearchFragment;
+import cn.luern0313.wristbilibili.fragment.SettingFragment;
+import cn.luern0313.wristbilibili.fragment.WatchlaterFragment;
 import cn.luern0313.wristbilibili.service.DownloadService;
 
 /**
@@ -61,7 +61,7 @@ public class MainActivity extends Activity
         dm = getResources().getDisplayMetrics();
         fm = getFragmentManager();
         transaction = fm.beginTransaction();
-        transaction.replace(R.id.main_frame, new Dynamic());
+        transaction.replace(R.id.main_frame, new DynamicFragment());
         transaction.commit();
 
         titleText = findViewById(R.id.main_title_title);
@@ -78,6 +78,8 @@ public class MainActivity extends Activity
             {
                 editor.putInt("ver", pi.versionCode);
                 editor.apply();
+                if(sharedPreferences.contains("cookies"))
+                    startActivity(new Intent(ctx, FollowmeActivity.class));
                 Intent intent = new Intent(ctx, TextActivity.class);
                 intent.putExtra("title", "更新日志");
                 intent.putExtra("text", getResources().getString(R.string.update));
@@ -123,37 +125,37 @@ public class MainActivity extends Activity
             switch (data.getIntExtra("activity", 0))
             {
                 case 1:
-                    transaction.replace(R.id.main_frame, new Dynamic());
+                    transaction.replace(R.id.main_frame, new DynamicFragment());
                     titleText.setText("动态");
                     titleText.setTextSize(14);
                     break;
                 case 2:
-                    transaction.replace(R.id.main_frame, new AniRemind());
+                    transaction.replace(R.id.main_frame, new AniRemindFragment());
                     titleText.setText("追番提醒");
                     titleText.setTextSize(13);
                     break;
                 case 3:
-                    transaction.replace(R.id.main_frame, new Download());
+                    transaction.replace(R.id.main_frame, new DownloadFragment());
                     titleText.setText("离线缓存");
                     titleText.setTextSize(13);
                     break;
                 case 4:
-                    transaction.replace(R.id.main_frame, new Search());
+                    transaction.replace(R.id.main_frame, new SearchFragment());
                     titleText.setText("搜索");
                     titleText.setTextSize(14);
                     break;
                 case 5:
-                    transaction.replace(R.id.main_frame, new FavorBox());
+                    transaction.replace(R.id.main_frame, new FavorBoxFragment());
                     titleText.setText("收藏");
                     titleText.setTextSize(14);
                     break;
                 case 6:
-                    transaction.replace(R.id.main_frame, new Watchlater());
+                    transaction.replace(R.id.main_frame, new WatchlaterFragment());
                     titleText.setText("稍后再看");
                     titleText.setTextSize(13);
                     break;
                 case 7:
-                    transaction.replace(R.id.main_frame, new Setting());
+                    transaction.replace(R.id.main_frame, new SettingFragment());
                     titleText.setText("设置");
                     titleText.setTextSize(14);
                     break;

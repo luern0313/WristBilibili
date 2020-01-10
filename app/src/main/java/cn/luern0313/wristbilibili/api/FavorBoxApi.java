@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
@@ -33,17 +34,38 @@ public class FavorBoxApi
         this.mid = mid;
     }
 
-    public JSONArray getFavorbox() throws IOException
+    public ArrayList<FavorBox> getFavorbox() throws IOException
     {
         try
         {
-            return new JSONObject((String) get("http://api.bilibili.com/x/space/fav/nav?mid=" + mid, 1)).getJSONObject("data").getJSONArray("archive");
+            ArrayList<FavorBox> favorBoxArrayList = new ArrayList<FavorBox>();
+            JSONArray favorboxJSONArray = new JSONObject((String) get("https://api.bilibili.com/medialist/gateway/base/created?pn=1&ps=100&is_space=0&up_mid=" + mid, 1)).getJSONObject("data").getJSONArray("list");
+            for(int i = 0; i < favorboxJSONArray.length(); i++)
+                favorBoxArrayList.add(new FavorBox(favorboxJSONArray.getJSONObject(i)));
+            return favorBoxArrayList;
         }
         catch (JSONException e)
         {
             e.printStackTrace();
         }
-        return null;
+        return new ArrayList<>();
+    }
+
+    public class FavorBox
+    {
+        public String title;
+        public String count;
+        public boolean see;
+        public String fid;
+        public String id;
+        FavorBox(JSONObject box)
+        {
+            title = box.optString("title");
+            count = String.valueOf(box.optInt("media_count"));
+            see = box.optInt("state") % 2 == 0;
+            fid = String.valueOf(box.opt("fid"));
+            id = String.valueOf(box.opt("id"));
+        }
     }
 
     private Object get(String url, int mode) throws IOException
@@ -74,7 +96,7 @@ public class FavorBoxApi
         Request request;
         client = new OkHttpClient.Builder().connectTimeout(15, TimeUnit.SECONDS).readTimeout(15, TimeUnit.SECONDS).build();
         body = RequestBody.create(MediaType.parse("application/x-www-form-urlencoded; charset=utf-8"), data);
-        request = new Request.Builder().url(url).post(body).header("Referer", "https://www.bilibili.com/").addHeader("Accept", "*/*").addHeader("User-Agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)").addHeader("Referer", "https://www.bilibili.com").addHeader("Cookie", cookie).build();
+        request = new Request.Builder().url(url).post(body).header("Referer", "https://www.bilibili.com/").addHeader("Accept", "*/*").addHeader("User-Agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)").addHeader("Cookie", cookie).build();
         response = client.newCall(request).execute();
         if(response.isSuccessful())
         {

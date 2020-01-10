@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:paddingLeft="32dp"
     android:paddingRight="32dp">
 
@@ -13,5 +13,14 @@
         android:layout_height="wrap_content"
         android:paddingBottom="14dp"
         android:paddingTop="14dp" />
+
+    <TextView
+        android:id="@+id/si_redpoint"
+        android:layout_width="6dp"
+        android:layout_height="6dp"
+        android:layout_marginBottom="6dp"
+        android:layout_marginLeft="4dp"
+        android:background="@drawable/shape_redpoint"
+        android:visibility="gone" />
 
 </LinearLayout>

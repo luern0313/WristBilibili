@@ -43,7 +43,7 @@ import cn.luern0313.wristbilibili.widget.ImageDownloader;
  * 搜索。。
  */
 
-public class Search extends Fragment
+public class SearchFragment extends Fragment
 {
     Context ctx;
     SearchApi searchApi;
@@ -283,7 +283,6 @@ public class Search extends Fragment
 
         MyListener listener = new MyListener();
 
-        //重载getView函数，等于说该函数完全接管ArrayAdapter的设置TextView操作
         @Override
         public View getView(int position, View convertView, ViewGroup parent)
         {
@@ -293,9 +292,9 @@ public class Search extends Fragment
                 convertView = LayoutInflater.from(getContext()).inflate(android.R.layout.simple_list_item_1, parent, false);
             }
             TextView tv = convertView.findViewById(android.R.id.text1);
-            tv.setText(str);//设置TextView中的字符串
-            tv.setTextSize(12);//设置大小
-            tv.setOnClickListener(listener);//为每个TextView加载监听函数
+            tv.setText(str);
+            tv.setTextSize(12);
+            tv.setOnClickListener(listener);
             return convertView;
         }
 

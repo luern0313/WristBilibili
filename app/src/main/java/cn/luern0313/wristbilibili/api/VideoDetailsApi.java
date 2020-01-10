@@ -294,19 +294,16 @@ public class VideoDetailsApi
         return false;
     }
 
-    public boolean favVideo() throws IOException
+    public String favVideo(String favId) throws IOException
     {
         try
         {
-            if(post("https://api.bilibili.com/x/v2/fav/video/add", "aid=" + aid + "&csrf=" + csrf).body().string().equals("{\"code\":0,\"message\":\"0\",\"ttl\":1}"))
-                return true;
+            return new JSONObject(post("https://api.bilibili.com/medialist/gateway/coll/resource/deal", "rid=" + aid + "&type=2&add_media_ids=" + favId + "&del_media_ids=&csrf=" + csrf).body().string()).optString("message");
         }
-        catch (NullPointerException e)
+        catch (Exception e)
         {
-            e.printStackTrace();
-            return false;
+            return e.getMessage();
         }
-        return false;
     }
 
     public boolean favCancalVideo() throws IOException
@@ -450,7 +447,7 @@ public class VideoDetailsApi
         Request request;
         client = new OkHttpClient.Builder().connectTimeout(15, TimeUnit.SECONDS).readTimeout(15, TimeUnit.SECONDS).build();
         body = RequestBody.create(MediaType.parse("application/x-www-form-urlencoded; charset=utf-8"), data);
-        request = new Request.Builder().url(url).post(body).header("Referer", "https://www.bilibili.com/").addHeader("Accept", "*/*").addHeader("User-Agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)").addHeader("Referer", "https://passport.bilibili.com/login").addHeader("Cookie", cookie).build();
+        request = new Request.Builder().url(url).post(body).header("Referer", "https://www.bilibili.com/").addHeader("Accept", "*/*").addHeader("User-Agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)").addHeader("Cookie", cookie).build();
         response = client.newCall(request).execute();
         if(response.isSuccessful())
         {

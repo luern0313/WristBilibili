@@ -31,6 +31,7 @@ public class PlayerActivity extends Activity
     String part;
     String cid;
     String url;
+    String[] url_backup;
     String danmaku;
     Handler handler = new Handler();
     Runnable runnLoading;
@@ -77,6 +78,7 @@ public class PlayerActivity extends Activity
                     intent.setComponent(new ComponentName("cn.luern0313.wristvideoplayer", "cn.luern0313.wristvideoplayer.ui.PlayerActivity"));
                     intent.putExtra("mode", 1);
                     intent.putExtra("url", url);
+                    intent.putExtra("url_backup", url_backup);
                     intent.putExtra("danmaku", danmaku);
                     intent.putExtra("title", title);
                     startActivityForResult(intent, 0);
@@ -89,6 +91,7 @@ public class PlayerActivity extends Activity
                         intent.setComponent(new ComponentName("cn.luern0313.wristvideoplayer_free", "cn.luern0313.wristvideoplayer_free.ui.PlayerActivity"));
                         intent.putExtra("mode", 1);
                         intent.putExtra("url", url);
+                        intent.putExtra("url_backup", url_backup);
                         intent.putExtra("danmaku", danmaku);
                         intent.putExtra("title", title);
                         startActivityForResult(intent, 0);
@@ -121,6 +124,7 @@ public class PlayerActivity extends Activity
                     onlineVideoApi.connectionVideoUrl();
                     onlineVideoApi.playHistory(0, false);
                     url = onlineVideoApi.getVideoUrl();
+                    url_backup = onlineVideoApi.getVideoBackupUrl();
                     danmaku = onlineVideoApi.getDanmakuUrl();
                     handler.post(runnLoading);
                 }

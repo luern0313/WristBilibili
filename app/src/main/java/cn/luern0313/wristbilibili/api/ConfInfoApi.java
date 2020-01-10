@@ -3,6 +3,7 @@ package cn.luern0313.wristbilibili.api;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -12,7 +13,12 @@ import java.util.HashMap;
 
 public class ConfInfoApi
 {
-    public static String getConf(String key)
+    private static ArrayList<String> defaultHeaders = new ArrayList<String>(){{
+        add("Referer"); add("https://www.bilibili.com/");
+        add("User-Agent");add("Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
+    }};
+
+    static String getConf(String key)
     {
         HashMap<String, String> conf =new HashMap<String, String>(){{
             put("appkey", "1d8b6e7d45233436");
@@ -26,10 +32,23 @@ public class ConfInfoApi
         return conf.get(key);
     }
 
-    public static String calc_sign(String str)
+    static String calc_sign(String str)
     {
         str += getConf("app_secret");
         return md5(str);
+    }
+
+    static ArrayList<String> getHeaders(String cookies)
+    {
+        ArrayList<String> arrayList = (ArrayList<String>) defaultHeaders.clone();
+        arrayList.add("Cookie");
+        arrayList.add(cookies);
+        return arrayList;
+    }
+
+    static ArrayList<String> getHeaders()
+    {
+        return defaultHeaders;
     }
 
     private static String md5(String plainText) {

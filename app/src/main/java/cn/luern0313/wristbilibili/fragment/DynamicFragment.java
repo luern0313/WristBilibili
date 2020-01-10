@@ -47,7 +47,7 @@ import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
  * 畜生！你收藏了甚么！
  */
 
-public class Dynamic extends Fragment
+public class DynamicFragment extends Fragment
 {
     Context ctx;
 
@@ -291,7 +291,10 @@ public class Dynamic extends Fragment
             {
                 try
                 {
-                    userDynamicApi = new UserDynamicApi(MainActivity.sharedPreferences.getString("cookies", ""), MainActivity.sharedPreferences.getString("csrf", ""), MainActivity.sharedPreferences.getString("mid", ""), MainActivity.sharedPreferences.getString("mid", ""), true);
+                    userDynamicApi = new UserDynamicApi(MainActivity.sharedPreferences.getString("cookies", ""),
+                                                        MainActivity.sharedPreferences.getString("csrf", ""),
+                                                        MainActivity.sharedPreferences.getString("mid", ""),
+                                                        MainActivity.sharedPreferences.getString("mid", ""), true);
                     userDynamicApi.getDynamic();
                     dynamicList = userDynamicApi.getDynamicList();
                     if(dynamicList != null && dynamicList.size() != 0)

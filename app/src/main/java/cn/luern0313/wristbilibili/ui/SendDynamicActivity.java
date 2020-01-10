@@ -53,10 +53,7 @@ public class SendDynamicActivity extends Activity
         inIntent = getIntent();
         sharedPreferences = getSharedPreferences("default", Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
-        reusltIntent.putExtra("is_share", inIntent.getBooleanExtra("is_share", false));
-        reusltIntent.putExtra("share_dyid", inIntent.getStringExtra("share_dyid"));
-        reusltIntent.putExtra("text", "");
-        setResult(0, reusltIntent);
+        setResult(-1, reusltIntent);
 
         uiEdittext = findViewById(R.id.senddy_edittext);
 

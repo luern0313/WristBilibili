@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/sp_title_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/mainColor"
+        android:gravity="center_vertical"
+        android:paddingBottom="4dp"
+        android:paddingTop="10dp">
+
+        <TextView
+            android:id="@+id/sp_title_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="请选择"
+            android:textColor="@color/textColor" />
+
+        <ImageView
+            android:id="@+id/sp_title_extraicon"
+            android:layout_width="12dp"
+            android:layout_height="19dp"
+            android:layout_marginLeft="2dp"
+            android:layout_toLeftOf="@+id/sp_title_title"
+            android:rotation="90"
+            android:src="@drawable/icon_extra" />
+    </RelativeLayout>
+
+    <ListView
+        android:id="@+id/sp_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/sp_title_layout"
+        android:clipToPadding="false"
+        android:divider="@color/alpha"
+        android:paddingBottom="30dp" />
+
+</RelativeLayout>

@@ -45,7 +45,7 @@
             android:layout_marginRight="22dp"
             android:layout_marginTop="6dp"
             android:gravity="center_horizontal"
-            android:text="如果您发现了产品的bug，或对产品有任何建议\n(或者只是单纯想来吹水)\n欢迎加入我们的QQ群！\n群号：680497357"
+            android:text="如果您发现了产品的bug，或对产品有任何建议\n(或者只是单纯想来吹水)\n欢迎加入我们的QQ群！\n一群群号：680497357（群满）"
             android:textSize="12sp" />
 
         <ImageView
@@ -53,5 +53,21 @@
             android:layout_height="128dp"
             android:layout_marginBottom="16dp"
             android:src="@drawable/img_qq" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="22dp"
+            android:layout_marginRight="22dp"
+            android:layout_marginTop="6dp"
+            android:gravity="center_horizontal"
+            android:text="二群群号：302277714"
+            android:textSize="12sp" />
+
+        <ImageView
+            android:layout_width="128dp"
+            android:layout_height="128dp"
+            android:layout_marginBottom="16dp"
+            android:src="@drawable/img_qq2" />
     </LinearLayout>
 </ScrollView>

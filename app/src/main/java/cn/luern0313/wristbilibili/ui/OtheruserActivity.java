@@ -44,6 +44,7 @@ import java.util.concurrent.TimeUnit;
 import cn.carbs.android.expandabletextview.library.ExpandableTextView;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.OthersUserApi;
+import cn.luern0313.wristbilibili.api.SendDynamicApi;
 import cn.luern0313.wristbilibili.api.UserDynamicApi;
 import cn.luern0313.wristbilibili.widget.ImageDownloader;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -65,6 +66,7 @@ public class OtheruserActivity extends Activity
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     UserDynamicApi userDynamicApi;
+    SendDynamicApi sendDynamicApi;
 
     OthersUserApi othersUserApi;
     JSONObject otherUserJson;
@@ -132,7 +134,12 @@ public class OtheruserActivity extends Activity
         sharedPreferences = getSharedPreferences("default", Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
 
-        othersUserApi = new OthersUserApi(sharedPreferences.getString("cookies", ""), sharedPreferences.getString("csrf", ""), intent.getStringExtra("mid"));
+        othersUserApi = new OthersUserApi(sharedPreferences.getString("cookies", ""),
+                                          sharedPreferences.getString("csrf", ""),
+                                          intent.getStringExtra("mid"));
+        sendDynamicApi = new SendDynamicApi(MainActivity.sharedPreferences.getString("cookies", ""),
+                                            MainActivity.sharedPreferences.getString("mid", ""),
+                                            MainActivity.sharedPreferences.getString("csrf", ""));
         uiTitleTextView = findViewById(R.id.ou_title_title);
         uiViewpager = findViewById(R.id.ou_viewpager);
         uiLoading = findViewById(R.id.ou_loading_img);
@@ -885,6 +892,54 @@ public class OtheruserActivity extends Activity
         int view = Integer.valueOf(v);
         if(view > 10000) return view / 1000 / 10.0 + "万";
         else return String.valueOf(view);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, final Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        //dyid都是传过去再传回来
+        //我王境泽传数据就是乱死！也不建多余的变量！（没有真香）
+        if(requestCode == 0 && resultCode == 0 && data != null)
+        {
+            new Thread(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    try
+                    {
+                        if(!data.getStringExtra("text").equals(""))
+                        {
+                            String result;
+                            if(!data.getBooleanExtra("is_share", false))
+                                result = sendDynamicApi.sendDynamic(data.getStringExtra("text"));
+                            else
+                                result = sendDynamicApi.sendDynamicWithDynamic(data.getStringExtra("share_dyid"), data.getStringExtra("text"));
+                            if(result.equals(""))
+                            {
+                                Looper.prepare();
+                                Toast.makeText(ctx, "发送成功！", Toast.LENGTH_SHORT).show();
+                                Looper.loop();
+                            }
+                            else
+                            {
+                                Looper.prepare();
+                                Toast.makeText(ctx, "发送失败，" + result, Toast.LENGTH_SHORT).show();
+                                Looper.loop();
+                            }
+                        }
+                    }
+                    catch (IOException e)
+                    {
+                        e.printStackTrace();
+                        Looper.prepare();
+                        Toast.makeText(ctx, "发送失败，请检查网络？", Toast.LENGTH_SHORT).show();
+                        Looper.loop();
+                    }
+                }
+            }).start();
+        }
     }
 
     class mAdapter extends BaseAdapter

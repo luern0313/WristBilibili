@@ -19,11 +19,6 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -31,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.FavorBoxApi;
@@ -44,11 +40,11 @@ import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
  * 畜生！你收藏了甚么！
  */
 
-public class FavorBox extends Fragment
+public class FavorBoxFragment extends Fragment
 {
     Context ctx;
     FavorBoxApi favorBoxApi;
-    JSONArray favourboxArray;
+    ArrayList<FavorBoxApi.FavorBox> favourboxArrayList;
 
     View rootLayout;
     ListView favListView;
@@ -99,7 +95,7 @@ public class FavorBox extends Fragment
                 rootLayout.findViewById(R.id.fav_nologin).setVisibility(View.GONE);
                 rootLayout.findViewById(R.id.fav_noweb).setVisibility(View.GONE);
                 rootLayout.findViewById(R.id.fav_nonthing).setVisibility(View.GONE);
-                favListView.setAdapter(new mAdapter(inflater, favourboxArray));
+                favListView.setAdapter(new mAdapter(inflater, favourboxArrayList));
                 favListView.setVisibility(View.VISIBLE);
                 waveSwipeRefreshLayout.setRefreshing(false);
             }
@@ -148,17 +144,9 @@ public class FavorBox extends Fragment
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id)
             {
-                try
-                {
-                    Intent intent = new Intent(ctx, FavorvideoActivity.class);
-                    intent.putExtra("fid", String.valueOf(favourboxArray.getJSONObject(position).get("fid")));
-                    startActivity(intent);
-                }
-                catch (JSONException e)
-                {
-                    e.printStackTrace();
-                    Toast.makeText(ctx, "打开收藏夹错误. . .", Toast.LENGTH_SHORT).show();
-                }
+                Intent intent = new Intent(ctx, FavorvideoActivity.class);
+                intent.putExtra("fid", favourboxArrayList.get(position).fid);
+                startActivity(intent);
             }
         });
 
@@ -175,8 +163,8 @@ public class FavorBox extends Fragment
                 try
                 {
                     favorBoxApi = new FavorBoxApi(MainActivity.sharedPreferences.getString("cookies", ""), MainActivity.sharedPreferences.getString("mid", ""));
-                    favourboxArray = favorBoxApi.getFavorbox();
-                    if(favourboxArray != null && favourboxArray.length() != 0)
+                    favourboxArrayList = favorBoxApi.getFavorbox();
+                    if(favourboxArrayList != null && favourboxArrayList.size() != 0)
                     {
                         handler.post(runnableUi);
                     }
@@ -205,9 +193,9 @@ public class FavorBox extends Fragment
 
         private LruCache<String, BitmapDrawable> mImageCache;
 
-        private JSONArray favList;
+        private ArrayList<FavorBoxApi.FavorBox> favList;
 
-        public mAdapter(LayoutInflater inflater, JSONArray favList)
+        public mAdapter(LayoutInflater inflater, ArrayList<FavorBoxApi.FavorBox> favList)
         {
             mInflater = inflater;
             this.favList = favList;
@@ -235,7 +223,7 @@ public class FavorBox extends Fragment
         @Override
         public int getCount()
         {
-            return favList.length();
+            return favList.size();
         }
 
         @Override
@@ -253,7 +241,7 @@ public class FavorBox extends Fragment
         @Override
         public View getView(int position, View convertView, ViewGroup viewGroup)
         {
-            JSONObject box = favourboxArray.optJSONObject(position);
+            FavorBoxApi.FavorBox box = favList.get(position);
             ViewHolder viewHolder;
             if(convertView == null)
             {
@@ -270,13 +258,13 @@ public class FavorBox extends Fragment
             {
                 viewHolder = (ViewHolder) convertView.getTag();
             }
-            viewHolder.img.setImageResource(R.color.textColor);
-            viewHolder.countt.setText(String.valueOf(box.optInt("cur_count")));
-            viewHolder.title.setText(box.optString("name"));
-            viewHolder.see.setText(box.optInt("state") % 2 == 0 ? "公开" : "私有");
-            viewHolder.count.setText(String.valueOf(box.optInt("cur_count")) + "个视频");
+            //viewHolder.img.setImageResource(R.color.textColor);
+            viewHolder.countt.setText(box.count);
+            viewHolder.title.setText(box.title);
+            viewHolder.see.setText(box.see ? "公开" : "私有");
+            viewHolder.count.setText(box.count + "个视频");
 
-            try
+            /*try
             {
                 viewHolder.img.setTag(box.optJSONArray("cover").optJSONObject(0).opt("pic"));
                 BitmapDrawable c = setImageFormWeb((String) box.optJSONArray("cover").optJSONObject(0).opt("pic"));
@@ -285,7 +273,7 @@ public class FavorBox extends Fragment
             catch (Exception e)
             {
                 viewHolder.img.setImageResource(R.drawable.img_default_vid);
-            }
+            }*/
             return convertView;
         }
 

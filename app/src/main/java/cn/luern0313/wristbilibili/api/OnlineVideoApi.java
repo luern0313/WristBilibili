@@ -3,12 +3,14 @@ package cn.luern0313.wristbilibili.api;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
@@ -69,6 +71,24 @@ public class OnlineVideoApi
         {
             e.printStackTrace();
             return "";
+        }
+    }
+
+    public String[] getVideoBackupUrl()
+    {
+        try
+        {
+            Log.i("bilibili", playUrlJson.toString());
+            JSONArray backUpUrl = playUrlJson.getJSONObject("data").getJSONArray("durl").getJSONObject(0).getJSONArray("backup_url");
+            ArrayList<String> backUpUrlList = new ArrayList<>();
+            for(int i = 0; i < backUpUrl.length(); i++)
+                backUpUrlList.add(backUpUrl.optString(i));
+            return backUpUrlList.toArray(new String[]{});
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+            return new String[]{};
         }
     }
 

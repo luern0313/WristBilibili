@@ -1,16 +1,8 @@
 package cn.luern0313.wristbilibili;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Test;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
-import java.util.zip.Inflater;
-
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-import okhttp3.ResponseBody;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -22,47 +14,62 @@ public class ExampleUnitTest
     @Test
     public void test() throws InterruptedException
     {
-        try
-        {
-            System.out.println(get("https://comment.bilibili.com/1548861.xml", 1));
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
+
     }
 
-    public static Object get(String url, int mode) throws IOException
+    public class Student
     {
-        OkHttpClient client = new OkHttpClient.Builder().connectTimeout(15, TimeUnit.SECONDS)
-                .readTimeout(15, TimeUnit.SECONDS).build();
-        Request.Builder requestb = new Request.Builder().url(url).header("Accept-Encoding", "gzip, deflate, flate").addHeader("Accept-Language", "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7,zh-TW;q=0.6");
-        Request request = requestb.build();
-        Response response = client.newCall(request).execute();
-        ResponseBody responseBody = response.body();
+        String stuNo;
+        public String stuName;
+        public JSONObject score;
+        public double total;
+        public double avg;
 
-        return new String(uncompress(responseBody.bytes()), "UTF-8");
-    }
-
-    private static byte[] uncompress(byte[] inputByte) throws IOException
-    {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(inputByte.length);
-        try
+        public Student(String stuNo, String stuName, double chinese, double math, double english)
         {
-            Inflater inflater = new Inflater(true);
-            inflater.setInput(inputByte);
-            byte[] buffer = new byte[4 * 1024];
-            while (!inflater.finished()) {
-                int count = inflater.inflate(buffer);
-                outputStream.write(buffer, 0, count);
+            try
+            {
+                this.stuNo = stuNo;
+                this.stuName = stuName;
+                this.score.put("chinese", chinese);
+                this.score.put("math", math);
+                this.score.put("english", english);
+                this.total = chinese + math + english;
+                this.avg = Math.round(this.total / 3 * 100) / 100.0;
+            }
+            catch (JSONException e)
+            {
+                e.printStackTrace();
             }
         }
-        catch (Exception e)
+    }
+
+    public static class SortTools
+    {
+        public static void sort(Student[] students, String type)
         {
-            e.printStackTrace();
+            for (int i = 0; i < students.length - 1; i++)
+            {
+                for (int j = 0; j < students.length - 1 - i; j++)
+                {
+                    if(students[j].score.optDouble(type) < students[j + 1].score.optDouble(type))
+                    {
+                        Student temp = students[j];
+                        students[j] = students[j + 1];
+                        students[j + 1] = temp;
+                    }
+                }
+            }
         }
-        byte[] output = outputStream.toByteArray();
-        outputStream.close();
-        return output;
+    }
+
+    public static void display(Student[] students)
+    {
+        System.out.println("学号\t\t姓名\t语文\t数学\t英语\t总分\t平均分");
+        for (Student student : students)
+        {
+            System.out.println(student.stuNo + "\t" + student.stuName + "\t" + student.score.optDouble("chinese") + "\t" + student.score.optDouble("math") + "\t" +
+                                       student.score.optDouble("english") + "\t" + student.total + "\t" + student.avg);
+        }
     }
 }

@@ -48,8 +48,7 @@
             android:paddingBottom="4dp"
             android:paddingTop="4dp"
             android:text="账号密码登录 >"
-            android:textColor="@color/textColor"
-            android:visibility="gone" />
+            android:textColor="@color/textColor" />
 
         <RelativeLayout
             android:layout_width="match_parent"

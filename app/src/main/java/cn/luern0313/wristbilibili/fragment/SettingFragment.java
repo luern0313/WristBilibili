@@ -32,7 +32,7 @@ import cn.luern0313.wristbilibili.ui.VideodetailsActivity;
  * 说是设置。。好像没有真的可以设置的东西。。
  */
 
-public class Setting extends Fragment
+public class SettingFragment extends Fragment
 {
     Context ctx;
 

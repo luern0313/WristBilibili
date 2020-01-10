@@ -25,6 +25,7 @@ import java.io.IOException;
 
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.OthersUserApi;
+import cn.luern0313.wristbilibili.api.StatisticsApi;
 import cn.luern0313.wristbilibili.api.VideoDetailsApi;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
 
@@ -53,6 +54,8 @@ public class FollowmeActivity extends Activity
     RelativeLayout uiVideo;
     ImageView uiVideoImg;
     TextView uiVideoTitle;
+    LinearLayout uiVoteLin;
+    TextView uiVote;
     LinearLayout uiVideoStarLin;
     ImageView uiVideoStar;
     LinearLayout uiVideoLC;
@@ -65,6 +68,7 @@ public class FollowmeActivity extends Activity
     VideoDetailsApi videoDetail;
     JSONObject videoJson = null;
     Bitmap videoCover;
+    String showVoteAid = "";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState)
@@ -86,6 +90,8 @@ public class FollowmeActivity extends Activity
         uiVideo = findViewById(R.id.fme_video);
         uiVideoImg = findViewById(R.id.fme_video_img);
         uiVideoTitle = findViewById(R.id.fme_video_title);
+        uiVoteLin = findViewById(R.id.fme_vote);
+        uiVote = findViewById(R.id.fme_vote_button);
         uiVideoStarLin = findViewById(R.id.fme_star);
         uiVideoStar = findViewById(R.id.fme_star_rating);
         uiVideoLC = findViewById(R.id.fme_lc);
@@ -104,6 +110,8 @@ public class FollowmeActivity extends Activity
                     uiVideoTitle.setText(videoJson.optString("title", ""));
                     if(videoJson.optString("title").startsWith("【互动"))
                         uiVideoStarLin.setVisibility(View.VISIBLE);
+                    if(showVoteAid.equals("1"))
+                        uiVoteLin.setVisibility(View.VISIBLE);
                     uiVideoLC.setVisibility(View.VISIBLE);
                 }
                 catch (Exception e)
@@ -143,6 +151,7 @@ public class FollowmeActivity extends Activity
                         JSONArray jsonArray = new JSONObject(othersUserApi.getOtheruserVideo()).getJSONObject("data").getJSONArray("vlist");
                         videoJson = jsonArray.getJSONObject(0);
                         videoDetail = new VideoDetailsApi(cookies, csrf, mid, String.valueOf(videoJson.getInt("aid")));
+                        showVoteAid = StatisticsApi.isShowVideoVote();
                         handler.post(runnVideo);
 
                         byte[] picByte = NetWorkUtil.readStream(NetWorkUtil.get("http:" + videoJson.optString("pic", "")).byteStream());
@@ -196,6 +205,32 @@ public class FollowmeActivity extends Activity
                     intent.putExtra("aid", videoDetail.getVideoAid());
                     startActivity(intent);
                 }
+            }
+        });
+
+        uiVote.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                uiVote.setText("感谢投票~");
+                uiVote.setBackgroundResource(R.drawable.shape_anre_followbgyes);
+                new Thread(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        try
+                        {
+                            videoDetail.scoreVideo(5);
+                            StatisticsApi.voteHudongGameVideo(csrf, cookies);
+                        }
+                        catch (IOException e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
             }
         });
 

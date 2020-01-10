@@ -16,6 +16,7 @@ import java.net.URLEncoder;
 import java.security.KeyFactory;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import javax.crypto.Cipher;
@@ -52,7 +53,7 @@ public class UserLoginApi
 
     public Response getLoginState() throws IOException
     {
-        return post("https://passport.bilibili.com/qrcode/getLoginInfo", "oauthKey=" + oauthKey + "&gourl=https://www.bilibili.com/", 1);
+        return post("https://passport.bilibili.com/qrcode/getLoginInfo", "oauthKey=" + oauthKey + "&gourl=https://www.bilibili.com/", ConfInfoApi.getHeaders());
     }
 
     public String Login(String name, String pw)
@@ -60,19 +61,23 @@ public class UserLoginApi
         try
         {
             JSONObject value = getRequestKey();
-            //String key = value.optString("key");
-            //String hash = value.optString("hash");
-            String key = "-----BEGIN PUBLIC KEY-----\n" + "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDjb4V7EidX/ym28t2ybo0U6t0n\n" + "6p4ej8VjqKHg100va6jkNbNTrLQqMCQCAYtXMXXp2Fwkk6WR+12N9zknLjf+C9sx\n" + "/+l48mjUU8RqahiFD1XT/u2e0m2EN029OhCgkHx3Fc/KlFSIbak93EH/XlYis0w+\n" + "Xl69GV6klzgxW6d2xQIDAQAB\n" + "-----END PUBLIC KEY-----\n";
-            String hash = "84875218f2deaa1c";
+            String key = value.optString("key");
+            String hash = value.optString("hash");
+            //String key = "-----BEGIN PUBLIC KEY-----\n" + "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDjb4V7EidX/ym28t2ybo0U6t0n\n" + "6p4ej8VjqKHg100va6jkNbNTrLQqMCQCAYtXMXXp2Fwkk6WR+12N9zknLjf+C9sx\n" + "/+l48mjUU8RqahiFD1XT/u2e0m2EN029OhCgkHx3Fc/KlFSIbak93EH/XlYis0w+\n" + "Xl69GV6klzgxW6d2xQIDAQAB\n" + "-----END PUBLIC KEY-----\n";
+            //String hash = "84875218f2deaa1c";
             pw = encrypt(hash + pw, key);
             name = URLEncoder.encode(name, "UTF-8");
             pw = URLEncoder.encode(pw, "UTF-8");
 
+            ArrayList<String> headers = new ArrayList<String>(){{
+                add("Referer");add("http://www.bilibili.com/");
+                add("Cookie");add("sid=" + sid);
+                add("User-Agent");add("");
+            }};
+
             String temp_params = "appkey=" + ConfInfoApi.getConf("appkey") + "&password=" + pw + "&username=" + name;
-            Log.i("bilibili", name);
-            Log.i("bilibili", pw);
             String sign = ConfInfoApi.calc_sign(temp_params);
-            JSONObject loginResult = new JSONObject(post("https://passport.bilibili.com/api/v2/oauth2/login", temp_params + "&sign=" + sign, 0).body().string());
+            JSONObject loginResult = new JSONObject(post("https://passport.bilibili.com/api/oauth2/login", temp_params + "&sign=" + sign, headers).body().string());
             if(loginResult.getInt("code") == -629)
                 return "账号或密码错误";
             else if(loginResult.getInt("code") != 0)
@@ -80,6 +85,7 @@ public class UserLoginApi
                 Log.i("bilibili", loginResult.toString());
                 return loginResult.getInt("code") + "错误，请使用扫码登录";
             }
+            Log.i("bilibili", loginResult.toString());
 
             JSONArray cookieJsonArray = loginResult.optJSONObject("data").optJSONObject("cookie_info").optJSONArray("cookies");
             StringBuilder cookie = new StringBuilder();
@@ -128,10 +134,17 @@ public class UserLoginApi
     {
         try
         {
+            ArrayList<String> headers = new ArrayList<String>(){{
+                add("Referer");add("https://passport.bilibili.com/login");
+                add("User-Agent");add("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36");
+            }};
+
             String url = "https://passport.bilibili.com/api/oauth2/getKey";
             String temp_per = "appkey=" + ConfInfoApi.getConf("appkey");
             String sign = ConfInfoApi.calc_sign(temp_per);
-            return new JSONObject(post(url, "appkey=" + ConfInfoApi.getConf("appkey") + "&sign=" + sign, 2).body().string()).getJSONObject("data");
+            Response response = post(url, "appkey=" + ConfInfoApi.getConf("appkey") + "&sign=" + sign, headers);
+            sid = response.header("set-header");
+            return new JSONObject(response.body().string()).getJSONObject("data");
         }
         catch (JSONException e)
         {
@@ -167,7 +180,7 @@ public class UserLoginApi
         return null;
     }
 
-    private Response post(String url, String data, int mode) throws IOException
+    private Response post(String url, String data, ArrayList<String> headers) throws IOException
     {
         Request.Builder requestBuilder;
         OkHttpClient client = new OkHttpClient.Builder().connectTimeout(15, TimeUnit.SECONDS)//设置连接超时时间
@@ -176,7 +189,8 @@ public class UserLoginApi
         //参数传递
         RequestBody body = RequestBody.create(MediaType.parse("application/x-www-form-urlencoded; charset=utf-8"), data);
         requestBuilder = new Request.Builder().url(url).post(body);
-        if(mode == 1) requestBuilder.addHeader("Cookie", "sid:" + sid).addHeader("User-Agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)").addHeader("Accept", "*/*").addHeader("Referer", "https://passport.bilibili.com/login");
+        for(int i = 0; i < headers.size(); i+=2)
+            requestBuilder = requestBuilder.addHeader(headers.get(i), headers.get(i+1));
         Request request = requestBuilder.build();
         Response response = client.newCall(request).execute();
         if(response.isSuccessful()) return response;

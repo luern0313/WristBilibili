@@ -42,7 +42,7 @@ import cn.luern0313.wristbilibili.service.DownloadService;
 import cn.luern0313.wristbilibili.util.FileUtil;
 import cn.luern0313.wristbilibili.widget.ImageDownloader;
 
-public class Download extends Fragment
+public class DownloadFragment extends Fragment
 {
     Context ctx;
     View rootLayout;
@@ -62,7 +62,6 @@ public class Download extends Fragment
     private DownloadService myBinder;
     private ServiceConnection connection = new ServiceConnection()
     {
-
         @Override
         public void onServiceDisconnected(ComponentName name)
         {

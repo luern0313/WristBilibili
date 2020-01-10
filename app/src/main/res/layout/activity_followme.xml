@@ -174,6 +174,47 @@
             </RelativeLayout>
 
             <LinearLayout
+                android:id="@+id/fme_vote"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/tipBG"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:paddingBottom="4dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingTop="4dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"
+                    android:gravity="center_horizontal"
+                    android:text="这个视频参加了“互动游戏开发大赛”，点击按钮为这个作品投一票~\n（之后一定要去亲自玩玩看！）"
+                    android:textColor="@color/textColor"
+                    android:textSize="10dp" />
+
+                <TextView
+                    android:id="@+id/fme_vote_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginTop="4dp"
+                    android:background="@drawable/shape_anre_followbg"
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
+                    android:paddingTop="5dp"
+                    android:text="+1 票"
+                    android:textColor="@color/textColor"
+                    android:textSize="12sp" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/fme_star"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -202,15 +243,16 @@
                     android:layout_height="wrap_content"
                     android:clickable="false"
                     android:gravity="center_horizontal"
-                    android:text="  点个五星~" />
+                    android:text="给这个互动视频五星~"
+                    android:textSize="11sp" />
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/fme_lc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
                 android:orientation="horizontal"
                 android:visibility="gone">
 

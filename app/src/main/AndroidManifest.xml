@@ -53,6 +53,7 @@
         <activity android:name=".ui.CheckreplyActivity" />
         <activity android:name=".ui.PlayerActivity" />
         <activity android:name=".ui.SendDynamicActivity" />
+        <activity android:name=".ui.SelectPartActivity"></activity>
     </application>
 
 </manifest>

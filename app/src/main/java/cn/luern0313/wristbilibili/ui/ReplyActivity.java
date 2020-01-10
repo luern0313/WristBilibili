@@ -28,12 +28,9 @@ public class ReplyActivity extends Activity
         setContentView(R.layout.activity_reply);
         ctx = this;
         inIntent = getIntent();
-        reusltIntent.putExtra("oid", inIntent.getStringExtra("oid"));
-        reusltIntent.putExtra("type", inIntent.getStringExtra("type"));
-        reusltIntent.putExtra("text", "");
-        setResult(0, reusltIntent);
         sharedPreferences = getSharedPreferences("default", Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
+        setResult(-1, reusltIntent);
 
         if(!sharedPreferences.getBoolean("tail", true))
             findViewById(R.id.rp_tail).setVisibility(View.GONE);

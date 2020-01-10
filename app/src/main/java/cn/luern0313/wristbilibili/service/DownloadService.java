@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.liulishuo.filedownloader.BaseDownloadTask;
 import com.liulishuo.filedownloader.FileDownloadListener;
@@ -77,16 +76,12 @@ public class DownloadService extends Service
             @Override
             protected void pending(BaseDownloadTask task, int soFarBytes, int totalBytes)
             {
-                Log.i("bilibili-pen", task.getPath() + "，pending。");
             }
 
             @Override
             protected void connected(BaseDownloadTask task, String etag, boolean isContinue, int soFarBytes, int totalBytes)
             {
                 super.connected(task, etag, isContinue, soFarBytes, totalBytes);
-                Log.i("bilibili-con", task.getPath() + "，connect。");
-
-
                 int po = DownloadApi.findPositionInList((String) task.getTag(3), downloadingItems);
                 DownloadApi.DownloadItem item = downloadingItems.get(po);
                 item.state = 1;
@@ -115,10 +110,6 @@ public class DownloadService extends Service
             @Override
             protected void progress(BaseDownloadTask task, int soFarBytes, int totalBytes)
             {
-                Log.i("bilibili-pro",
-                      task.getPath() + "，" + soFarBytes + "，" + totalBytes + "，" + task.getSpeed());
-
-
                 int po = DownloadApi.findPositionInList(task.getUrl(), downloadingItems);
                 DownloadApi.DownloadItem item = downloadingItems.get(po);
                 item.nowdl = soFarBytes;
@@ -147,8 +138,6 @@ public class DownloadService extends Service
             @Override
             protected void completed(BaseDownloadTask task)
             {
-                Log.i("bilibili-com", task.getPath() + "，done。");
-
                 int po = DownloadApi.findPositionInList(task.getUrl(), downloadingItems);
                 DownloadApi.DownloadItem item = downloadingItems.get(po);
                 item.mode = 0;
@@ -177,8 +166,6 @@ public class DownloadService extends Service
             @Override
             protected void paused(BaseDownloadTask task, int soFarBytes, int totalBytes)
             {
-                Log.i("bilibili-pau", task.getPath() + "，paused。");
-
                 try
                 {
                     int po = DownloadApi.findPositionInList(task.getUrl(), downloadingItems);
@@ -198,11 +185,6 @@ public class DownloadService extends Service
             @Override
             protected void error(BaseDownloadTask task, Throwable e)
             {
-                //TODO
-                Log.i("bilibili-err", task.getPath() + "，" + e.getMessage());
-                Log.i("bilibili-err", e.getLocalizedMessage());
-
-
                 int po = DownloadApi.findPositionInList(task.getUrl(), downloadingItems);
                 DownloadApi.DownloadItem item = downloadingItems.get(po);
                 item.state = 4;
@@ -220,8 +202,6 @@ public class DownloadService extends Service
             @Override
             protected void warn(BaseDownloadTask task)
             {
-                Log.i("bilibili-warn", task.getPath());
-                //在下载队列中(正在等待/正在下载)已经存在相同下载连接与相同存储路径的任务
             }
         };
     }
@@ -251,7 +231,6 @@ public class DownloadService extends Service
         downloadItem.state = 2;
         downloadItem.speed = 0;
         downloadingItems.set(position, downloadItem);
-        Log.i("bilibili", "ppause");
     }
 
     public void start(int position)
@@ -267,7 +246,6 @@ public class DownloadService extends Service
         FileDownloader.getImpl().start(fileDownloadListener, false);
         downloadItem.state = 0;
         downloadingItems.set(position, downloadItem);
-        Log.i("bilibili", "sstart");
     }
 
     public class MyBinder extends Binder
@@ -281,13 +259,10 @@ public class DownloadService extends Service
         {
             try
             {
-                File downFolder = new File(
-                        getExternalFilesDir(null) + "/download/" + aid + "/" + cid + "/");
+                File downFolder = new File(getExternalFilesDir(null) + "/download/" + aid + "/" + cid + "/");
                 if(downFolder.exists() && downFolder.list().length != 0) return "下载数据已存在";
-                File infoFile = new File(
-                        getExternalFilesDir(null) + "/download/" + aid + "/" + cid + "/info.json");
-                File folInfoFile = new File(
-                        getExternalFilesDir(null) + "/download/" + aid + "/" + cid + "/");
+                File infoFile = new File(getExternalFilesDir(null) + "/download/" + aid + "/" + cid + "/info.json");
+                File folInfoFile = new File(getExternalFilesDir(null) + "/download/" + aid + "/" + cid + "/");
                 if(!folInfoFile.exists()) folInfoFile.mkdirs();
                 if(infoFile.createNewFile())
                 {
@@ -328,8 +303,8 @@ public class DownloadService extends Service
                         FileOutputStream danmakuOut = new FileOutputStream(danmakuFile);
                         danmakuOut.write(NetWorkUtil.uncompress(NetWorkUtil.get(url_danmaku).bytes()));
                         danmakuOut.close();
-                        FileOutputStream coverOut = new FileOutputStream(danmakuFile);
-                        coverOut.write(NetWorkUtil.uncompress(NetWorkUtil.get(cover).bytes()));
+                        FileOutputStream coverOut = new FileOutputStream(coverFile);
+                        coverOut.write(NetWorkUtil.get(cover).bytes());
                         coverOut.close();
                     }
                     catch (IOException | NullPointerException e)

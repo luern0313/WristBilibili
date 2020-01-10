@@ -25,8 +25,8 @@ import java.util.List;
 
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.UserLoginApi;
-import cn.luern0313.wristbilibili.fragment.AniRemind;
-import cn.luern0313.wristbilibili.fragment.Dynamic;
+import cn.luern0313.wristbilibili.fragment.AniRemindFragment;
+import cn.luern0313.wristbilibili.fragment.DynamicFragment;
 import okhttp3.Response;
 
 public class LoginActivity extends Activity
@@ -221,8 +221,8 @@ public class LoginActivity extends Activity
                             editor.commit();
                             stopFlag = true;
 
-                            Dynamic.isLogin = true;
-                            AniRemind.isLogin = true;
+                            DynamicFragment.isLogin = true;
+                            AniRemindFragment.isLogin = true;
 
                             Intent intent1 = new Intent(ctx, FollowmeActivity.class);
                             startActivity(intent1);
