@@ -109,6 +109,35 @@
                 android:text="动态"
                 android:textColor="@color/textColor" />
 
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/menu_rankinglay"
+            android:layout_width="match_parent"
+            android:layout_height="46dp"
+            android:layout_below="@+id/menu_livelay"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:gravity="center_vertical"
+            android:onClick="buttonRanking"
+            android:orientation="horizontal"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp">
+
+            <ImageView
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginRight="6dp"
+                android:background="@drawable/shape_menuiconbg"
+                android:padding="7dp"
+                android:src="@drawable/icon_menu_ranking" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="排行榜"
+                android:textColor="@color/textColor" />
+
 
         </LinearLayout>
 
@@ -116,7 +145,7 @@
             android:id="@+id/menu_remindlay"
             android:layout_width="match_parent"
             android:layout_height="46dp"
-            android:layout_below="@+id/menu_livelay"
+            android:layout_below="@+id/menu_rankinglay"
             android:background="?android:attr/selectableItemBackground"
             android:clickable="true"
             android:gravity="center_vertical"

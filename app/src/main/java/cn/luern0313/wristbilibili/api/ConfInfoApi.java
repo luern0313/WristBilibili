@@ -1,26 +1,25 @@
 package cn.luern0313.wristbilibili.api;
 
+import android.content.SharedPreferences;
+
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
  * 被 luern0313 创建于 2019/8/25.
- * 绝 · 密 · 档 · 案
+ * (人尽皆知的)绝 · 密 · 档 · 案
  */
 
 public class ConfInfoApi
 {
-    private static ArrayList<String> defaultHeaders = new ArrayList<String>(){{
-        add("Referer"); add("https://www.bilibili.com/");
-        add("User-Agent");add("Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
-    }};
+    public final String USER_AGENT_DEF = "Mozilla/5.0 BiliDroid/4.34.0 (bbcallen@gmail.com)";
+    public final String USER_AGENT_OWN = "Wrist Bilibili Client/2.6 (liupeiran0313@163.com; https://luern0313.cn)";
 
     static String getConf(String key)
     {
-        HashMap<String, String> conf =new HashMap<String, String>(){{
+        HashMap<String, String> conf = new HashMap<String, String>(){{
             put("appkey", "1d8b6e7d45233436");
             put("actionKey", "appkey");
             put("build", "520001");
@@ -38,17 +37,9 @@ public class ConfInfoApi
         return md5(str);
     }
 
-    static ArrayList<String> getHeaders(String cookies)
+    public static String getUserAgent(SharedPreferences sharedPreferences)
     {
-        ArrayList<String> arrayList = (ArrayList<String>) defaultHeaders.clone();
-        arrayList.add("Cookie");
-        arrayList.add(cookies);
-        return arrayList;
-    }
-
-    static ArrayList<String> getHeaders()
-    {
-        return defaultHeaders;
+        return "";
     }
 
     private static String md5(String plainText) {

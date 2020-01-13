@@ -1,7 +1,9 @@
 package cn.luern0313.wristbilibili.ui;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -177,6 +179,27 @@ public class FavorvideoActivity extends Activity
                     intent.putExtra("aid", String.valueOf(favorvideoList.get(position).opt("aid")));
                     startActivity(intent);
                 }
+            }
+        });
+
+        favvListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener()
+        {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id)
+            {
+                new AlertDialog.Builder(ctx)
+                        .setMessage("你确定要取消收藏这个视频吗？")
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which)
+                            {
+
+                                //mAdapter.notifyDataSetChanged();
+                            }
+                        })
+                        .setNegativeButton("取消", null).show();
+                return true;
             }
         });
 

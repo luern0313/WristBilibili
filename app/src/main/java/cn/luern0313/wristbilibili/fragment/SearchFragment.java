@@ -246,8 +246,6 @@ public class SearchFragment extends Fragment
             }
         });
 
-
-
         new Thread(new Runnable()
         {
             @Override
@@ -274,7 +272,7 @@ public class SearchFragment extends Fragment
         return rootLayout;
     }
 
-    private class HotWordAdapter<T> extends ArrayAdapter
+    private class HotWordAdapter extends ArrayAdapter
     {
         HotWordAdapter(Context context, int resource, Object[] objects)
         {

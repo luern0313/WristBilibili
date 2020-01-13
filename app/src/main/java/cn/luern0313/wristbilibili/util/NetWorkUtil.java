@@ -3,6 +3,7 @@ package cn.luern0313.wristbilibili.util;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.Inflater;
 
@@ -31,20 +32,29 @@ public class NetWorkUtil
         return null;
     }
 
-    public static Response post(String url, String data) throws IOException
+    public static Response get(String url, ArrayList<String> headers) throws IOException
     {
-        Response response;
-        OkHttpClient client;
-        RequestBody body;
-        Request request;
-        client = new OkHttpClient.Builder().connectTimeout(15, TimeUnit.SECONDS).readTimeout(15, TimeUnit.SECONDS).build();
-        body = RequestBody.create(MediaType.parse("application/x-www-form-urlencoded; charset=utf-8"), data);
-        request = new Request.Builder().url(url).post(body).header("Referer", "https://www.bilibili.com/watchlater/").addHeader("Accept", "*/*").addHeader("User-Agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)").build();
-        response = client.newCall(request).execute();
+        OkHttpClient client = new OkHttpClient.Builder().connectTimeout(15, TimeUnit.SECONDS).readTimeout(15, TimeUnit.SECONDS).build();
+        Request.Builder requestBuilder = new Request.Builder().url(url).get();
+        for(int i = 0; i < headers.size(); i+=2)
+            requestBuilder = requestBuilder.addHeader(headers.get(i), headers.get(i+1));
+        Request request = requestBuilder.build();
+        Response response = client.newCall(request).execute();
         if(response.isSuccessful())
-        {
             return response;
-        }
+        return null;
+    }
+
+    public static Response post(String url, String data, ArrayList<String> headers) throws IOException
+    {
+        OkHttpClient client = new OkHttpClient.Builder().connectTimeout(15, TimeUnit.SECONDS).readTimeout(15, TimeUnit.SECONDS).build();
+        RequestBody body = RequestBody.create(MediaType.parse("application/x-www-form-urlencoded; charset=utf-8"), data);
+        Request.Builder requestBuilder = new Request.Builder().url(url).post(body);
+        for(int i = 0; i < headers.size(); i+=2)
+            requestBuilder = requestBuilder.addHeader(headers.get(i), headers.get(i+1));
+        Request request = requestBuilder.build();
+        Response response = client.newCall(request).execute();
+        if(response.isSuccessful()) return response;
         return null;
     }
 

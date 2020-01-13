@@ -38,10 +38,14 @@ public class UserLoginApi
 {
     private String oauthKey;
     private String sid;
+    private static ArrayList<String> defaultHeaders = new ArrayList<String>();
 
     public UserLoginApi()
     {
         sid = String.valueOf(Math.round(Math.random() * 100000000));
+        defaultHeaders = new ArrayList<String>(){{
+            add("User-Agent"); add("Wrist Bilibili Client/2.6 (liupeiran0313@163.com)");
+        }};
     }
 
     public Bitmap getLoginQR() throws Exception
@@ -53,7 +57,7 @@ public class UserLoginApi
 
     public Response getLoginState() throws IOException
     {
-        return post("https://passport.bilibili.com/qrcode/getLoginInfo", "oauthKey=" + oauthKey + "&gourl=https://www.bilibili.com/", ConfInfoApi.getHeaders());
+        return post("https://passport.bilibili.com/qrcode/getLoginInfo", "oauthKey=" + oauthKey + "&gourl=https://www.bilibili.com/", defaultHeaders);
     }
 
     public String Login(String name, String pw)

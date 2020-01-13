@@ -21,4 +21,18 @@
     <color name="activityBG">#fffafafa</color>
 
     <color name="tipBG">#88000000</color>
+
+    <color name="ranking_rank_1">#F2C056</color>
+    <color name="ranking_rank_1_start">#88F2C056</color>
+    <color name="ranking_rank_1_end">#00F2C056</color>
+
+    <color name="ranking_rank_2">#767668</color>
+    <color name="ranking_rank_2_start">#88767668</color>
+    <color name="ranking_rank_2_end">#00767668</color>
+
+    <color name="ranking_rank_3">#BB7E50</color>
+    <color name="ranking_rank_3_start">#88BB7E50</color>
+    <color name="ranking_rank_3_end">#00BB7E50</color>
+
+    <color name="ranking_rank_other">#BBBBBB</color>
 </resources>
