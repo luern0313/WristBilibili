@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageInfo;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -58,6 +59,7 @@ public class DownloadFragment extends Fragment
     ArrayList<DownloadItem> downloadedItems;
 
     ObjectAnimator tipAnim;
+    String BASE_DOWNLOAD_PATH;
 
     private DownloadService myBinder;
     private ServiceConnection connection = new ServiceConnection()
@@ -130,6 +132,8 @@ public class DownloadFragment extends Fragment
         uiListView.setEmptyView(uiListViewEmpty);
         uiTipBtu = rootLayout.findViewById(R.id.dl_tip_btu);
         uiTip = rootLayout.findViewById(R.id.dl_tip);
+
+        BASE_DOWNLOAD_PATH = ctx.getExternalFilesDir(null) + "/download/";
 
         Intent intent = new Intent(ctx, DownloadService.class);
         getActivity().bindService(intent, connection, Context.BIND_AUTO_CREATE);
@@ -214,7 +218,7 @@ public class DownloadFragment extends Fragment
             }
         });
 
-        uiTip.setText(getString(R.string.dl_tip_1) + ctx.getExternalFilesDir(null) + "/download/" + getString(R.string.dl_tip_2));
+        uiTip.setText(getString(R.string.dl_tip_1) + BASE_DOWNLOAD_PATH + getString(R.string.dl_tip_2));
 
         uiTipBtu.setOnClickListener(new View.OnClickListener()
         {
@@ -499,7 +503,7 @@ public class DownloadFragment extends Fragment
                 }
 
                 viewHolder.img.setTag(downloadItem.cover);
-                BitmapDrawable c = setImageFormWeb(downloadItem.cover);
+                BitmapDrawable c = setImageFormWeb(downloadItem.cover, downloadItem);
                 if(c != null) viewHolder.img.setImageDrawable(c);
             }
             else if(type == 1)
@@ -526,13 +530,24 @@ public class DownloadFragment extends Fragment
             ProgressBar prog;
         }
 
-        BitmapDrawable setImageFormWeb(String url)
+        BitmapDrawable setImageFormWeb(String url, DownloadItem downloadItem)
         {
-            if(mImageCache.get(url) != null) return mImageCache.get(url);
+            if(mImageCache.get(url) != null)
+                return mImageCache.get(url);
             else
             {
-                ImageTask it = new ImageTask();
-                it.execute(url);
+                Bitmap bitmap = BitmapFactory.decodeFile(BASE_DOWNLOAD_PATH + downloadItem.aid + "/" + downloadItem.cid + "/cover.png");
+                if(bitmap != null)
+                {
+                    BitmapDrawable db = new BitmapDrawable(uiListView.getResources(), bitmap);
+                    mImageCache.put(downloadItem.cover, db);
+                    return db;
+                }
+                else
+                {
+                    ImageTask it = new ImageTask();
+                    it.execute(url);
+                }
                 return null;
             }
         }

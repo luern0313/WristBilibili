@@ -79,7 +79,7 @@ public class FavorvideoActivity extends Activity
         editor = sharedPreferences.edit();
         fid = intent.getStringExtra("fid");
 
-        loadingView = inflater.inflate(R.layout.widget_dy_loading, null);
+        loadingView = inflater.inflate(R.layout.widget_loading, null);
         favvListView = findViewById(R.id.favv_listview);
         waveSwipeRefreshLayout = findViewById(R.id.favv_swipe);
         waveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);

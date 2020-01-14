@@ -79,7 +79,7 @@ public class CheckreplyActivity extends Activity
         replyApi = new ReplyApi(sharedPreferences.getString("cookies", ""), sharedPreferences.getString("csrf", ""), intent.getStringExtra("oid"), intent.getStringExtra("type"));
 
         layoutSendReply = inflater.inflate(R.layout.widget_reply_sendreply, null);
-        layoutLoading = inflater.inflate(R.layout.widget_dy_loading, null);
+        layoutLoading = inflater.inflate(R.layout.widget_loading, null);
         uiLoading = findViewById(R.id.cr_loading);
         uiLoadingImg = findViewById(R.id.cr_loading_img);
         uiListview = findViewById(R.id.cr_reply_listview);

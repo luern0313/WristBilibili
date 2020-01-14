@@ -469,9 +469,17 @@ public class UserDynamicApi
             return getTime((int) getInfoFromJson(shareVideoDesc, "timestamp"));
         }
 
-        public String getOriginalVideo()
+        public cardOriginalVideo getOriginalVideo()
         {
-            return (String) getInfoFromJson(shareVideoJson, "origin");
+            try
+            {
+                return new cardOriginalVideo(new JSONObject((String) getInfoFromJson(shareVideoJson, "origin")));
+            }
+            catch (JSONException e)
+            {
+                e.printStackTrace();
+            }
+            return null;
         }
 
         public int getBeLiked()
@@ -544,9 +552,17 @@ public class UserDynamicApi
             return getTime((int) getInfoFromJson(shareTextDesc, "timestamp"));
         }
 
-        public String getOriginalText()
+        public cardOriginalText getOriginalText()
         {
-            return (String) getInfoFromJson(shareTextJson, "origin");
+            try
+            {
+                return new cardOriginalText(new JSONObject((String) getInfoFromJson(shareTextJson, "origin")));
+            }
+            catch (JSONException e)
+            {
+                e.printStackTrace();
+            }
+            return null;
         }
 
         public int getBeLiked()

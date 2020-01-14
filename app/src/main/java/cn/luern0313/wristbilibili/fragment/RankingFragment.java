@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ListView;
 
 import java.io.IOException;
@@ -28,17 +29,21 @@ public class RankingFragment extends Fragment
 {
     Context ctx;
     View rootLayout;
+    RankingAdapter rankingAdapter;
     ListView uiListView;
     WaveSwipeRefreshLayout uiWaveSwipeRefreshLayout;
-    RankingAdapter rankingAdapter;
+    View uiPickUpView;
+    View uiLoadingView;
 
     RankingApi rankingApi;
     ArrayList<RankingApi.RankingVideo> rankingVideoArrayList = new ArrayList<>();
     int pn = 0;
+    boolean isLoading = false;
 
     Handler handler = new Handler();
     Runnable runnableUi;
     Runnable runnableNoWeb;
+
     @Override
     public View onCreateView(final LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState)
     {
@@ -48,7 +53,10 @@ public class RankingFragment extends Fragment
                                     MainActivity.sharedPreferences.getString("cookies", ""),
                                     MainActivity.sharedPreferences.getString("csrf", ""));
 
+        uiPickUpView = inflater.inflate(R.layout.widget_ranking_pickup, null, false);
+        uiPickUpView = inflater.inflate(R.layout.widget_loading, null, false);
         uiListView = rootLayout.findViewById(R.id.rk_listview);
+        uiListView.addHeaderView(uiPickUpView);
         uiWaveSwipeRefreshLayout = rootLayout.findViewById(R.id.rk_swipe);
         uiWaveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
         uiWaveSwipeRefreshLayout.setWaveColor(Color.argb(255, 250, 114, 152));
@@ -79,7 +87,6 @@ public class RankingFragment extends Fragment
             public void run()
             {
                 rootLayout.findViewById(R.id.rk_noweb).setVisibility(View.GONE);
-                rootLayout.findViewById(R.id.rk_nologin).setVisibility(View.GONE);
                 uiListView.setVisibility(View.VISIBLE);
                 uiWaveSwipeRefreshLayout.setRefreshing(false);
                 rankingAdapter.notifyDataSetChanged();
@@ -93,9 +100,26 @@ public class RankingFragment extends Fragment
             {
                 uiWaveSwipeRefreshLayout.setRefreshing(false);
                 rootLayout.findViewById(R.id.rk_noweb).setVisibility(View.VISIBLE);
-                rootLayout.findViewById(R.id.rk_nologin).setVisibility(View.GONE);
             }
         };
+
+        uiListView.setOnScrollListener(new AbsListView.OnScrollListener()
+        {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState)
+            {
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
+            {
+                if(visibleItemCount + firstVisibleItem == totalItemCount && !isLoading)
+                {
+                    isLoading = true;
+                    getRanking();
+                }
+            }
+        });
 
         uiWaveSwipeRefreshLayout.setRefreshing(true);
         getRanking();

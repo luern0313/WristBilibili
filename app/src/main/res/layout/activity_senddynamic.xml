@@ -10,7 +10,6 @@
         android:layout_height="33dp"
         android:background="@color/mainColor"
         android:gravity="center_vertical"
-        android:onClick="loginTitle"
         android:paddingBottom="4dp"
         android:paddingTop="10dp">
 

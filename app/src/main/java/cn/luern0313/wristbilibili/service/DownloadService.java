@@ -91,13 +91,10 @@ public class DownloadService extends Service
 
                 try
                 {
-                    File infoFile = new File(
-                            getExternalFilesDir(null) + "/download/" + task.getTag(1) + "/" + task
-                                    .getTag(2) + "/info.json");
+                    File infoFile = new File(getExternalFilesDir(null) + "/download/" + task.getTag(1) + "/" + task.getTag(2) + "/info.json");
                     JSONObject json = new JSONObject(fileReader(infoFile));
                     FileOutputStream out = new FileOutputStream(infoFile);
-                    out.write(json.put("video_total_size", task.getSmallFileTotalBytes()).put(
-                            "task_id", task.getId()).toString().getBytes("UTF-8"));
+                    out.write(json.put("video_total_size", task.getSmallFileTotalBytes()).put("task_id", task.getId()).toString().getBytes("UTF-8"));
                     out.close();
                 }
                 catch (IOException | JSONException e)
@@ -118,13 +115,10 @@ public class DownloadService extends Service
 
                 try
                 {
-                    File infoFile = new File(
-                            getExternalFilesDir(null) + "/download/" + task.getTag(1) + "/" + task
-                                    .getTag(2) + "/info.json");
+                    File infoFile = new File(getExternalFilesDir(null) + "/download/" + task.getTag(1) + "/" + task.getTag(2) + "/info.json");
                     JSONObject json = new JSONObject(fileReader(infoFile));
                     FileOutputStream out = new FileOutputStream(infoFile);
-                    out.write(json.put("video_downloaded_size", soFarBytes).toString()
-                                      .getBytes("UTF-8"));
+                    out.write(json.put("video_downloaded_size", soFarBytes).toString().getBytes("UTF-8"));
                     out.close();
                 }
                 catch (IOException | JSONException e)

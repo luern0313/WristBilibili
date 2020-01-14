@@ -83,7 +83,7 @@ public class SearchFragment extends Fragment
         seaHotWordText = rootLayout.findViewById(R.id.sea_hotwordtext);
         seaHotWordList = rootLayout.findViewById(R.id.sea_hotword);
         seaListView = rootLayout.findViewById(R.id.sea_listview);
-        loadingView = inflater.inflate(R.layout.widget_dy_loading, null);
+        loadingView = inflater.inflate(R.layout.widget_loading, null);
         seaEdittext = rootLayout.findViewById(R.id.sea_edittext);
         inButton = rootLayout.findViewById(R.id.sea_inbutton);
         seaButton = rootLayout.findViewById(R.id.sea_seabutton);

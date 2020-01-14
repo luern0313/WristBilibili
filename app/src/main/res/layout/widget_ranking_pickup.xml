@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/ranking_rank_1_start"
     android:paddingLeft="19dp"
     android:paddingRight="19dp">
 
@@ -10,24 +11,24 @@
         android:id="@+id/rk_pu_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="bottom"
+        android:gravity="center"
         android:orientation="horizontal">
 
         <TextView
             android:id="@+id/rk_pu_date_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:ellipsize="end"
             android:lines="1"
-            android:text="1月11日"
+            android:text="1月13日"
             android:textStyle="bold" />
 
         <ImageView
             android:layout_width="75dp"
             android:layout_height="16dp"
-            android:layout_alignParentRight="true"
-            app:srcCompat="@drawable/img_ranking_pickup" />
+            android:layout_marginStart="6dp"
+            android:layout_marginTop="1dp"
+            android:src="@drawable/img_ranking_pickup" />
     </LinearLayout>
 
     <LinearLayout
@@ -47,11 +48,12 @@
         <TextView
             android:id="@+id/rk_pu_video_up_name"
             android:layout_width="wrap_content"
-            android:layout_height="24dp"
+            android:layout_height="22dp"
             android:layout_marginLeft="2dp"
             android:layout_weight="1"
             android:gravity="center_vertical"
-            android:textSize="13sp" />
+            android:text="luern0313"
+            android:textSize="12sp" />
     </LinearLayout>
 
     <ImageView
@@ -69,7 +71,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/rk_pu_video_up"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="4dp"
+        android:layout_marginLeft="3dp"
+        android:layout_marginTop="-2dp"
         android:layout_toRightOf="@+id/rk_pu_video_img"
         android:orientation="vertical">
 
@@ -79,6 +82,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="2"
+            android:text="哔哩哔哩2019拜年祭"
             android:textColor="@color/textColor3"
             android:textSize="13sp" />
 
@@ -88,6 +92,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="1"
+            android:text="播放：32.2亿"
             android:textSize="10sp" />
 
         <TextView
@@ -96,7 +101,8 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="1"
-            android:textSize="10sp" />
+            android:text="啊啊啊啊啊啊"
+            android:textSize="9sp" />
 
     </LinearLayout>
 

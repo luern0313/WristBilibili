@@ -1,9 +1,6 @@
 package cn.luern0313.wristbilibili.adapter;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
-import android.os.AsyncTask;
 import android.support.v4.util.LruCache;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -16,36 +13,33 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 
 import cn.carbs.android.expandabletextview.library.ExpandableTextView;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.UserDynamicApi;
+import cn.luern0313.wristbilibili.util.ImageTaskUtil;
 
 /**
  * 被 luern0313 创建于 2019/8/31.
  */
 
-class DynamicAdapter extends BaseAdapter
+public class DynamicAdapter extends BaseAdapter
 {
     private LayoutInflater mInflater;
 
     private LruCache<String, BitmapDrawable> mImageCache;
+    private DynamicAdapterListener dynamicAdapterInterface;
 
     private ArrayList<Object> dyList;
-
     private ListView listView;
 
-    public DynamicAdapter(LayoutInflater inflater, ArrayList<Object> dyList, ListView listView)
+    public DynamicAdapter(LayoutInflater inflater, ArrayList<Object> dyList, ListView listView, DynamicAdapterListener dynamicAdapterListener)
     {
         mInflater = inflater;
         this.dyList = dyList;
+        this.listView = listView;
+        this.dynamicAdapterInterface = dynamicAdapterListener;
 
         int maxCache = (int) Runtime.getRuntime().maxMemory();
         int cacheSize = maxCache / 6;
@@ -105,11 +99,11 @@ class DynamicAdapter extends BaseAdapter
     @Override
     public View getView(int position, View convertView, ViewGroup viewGroup)
     {
-        DynamicAdapter.ViewHolderOriText viewHolderOriText = null;
-        DynamicAdapter.ViewHolderOriVid viewHolderOriVid = null;
-        DynamicAdapter.ViewHolderShaText viewHolderShaText = null;
-        DynamicAdapter.ViewHolderShaVid viewHolderShaVid = null;
-        DynamicAdapter.ViewHolderUnktyp viewHolderUnktyp = null;
+        ViewHolderOriText viewHolderOriText = null;
+        ViewHolderOriVid viewHolderOriVid = null;
+        ViewHolderShaText viewHolderShaText = null;
+        ViewHolderShaVid viewHolderShaVid = null;
+        ViewHolderUnktyp viewHolderUnktyp = null;
         int type = getItemViewType(position);
 
         // 若无可重用的 view 则进行加载
@@ -120,7 +114,7 @@ class DynamicAdapter extends BaseAdapter
                 case 4:
                     //原创视频
                     convertView = mInflater.inflate(R.layout.item_news_original_video, null);
-                    viewHolderOriVid = new DynamicAdapter.ViewHolderOriVid();
+                    viewHolderOriVid = new ViewHolderOriVid();
                     convertView.setTag(viewHolderOriVid);
 
                     viewHolderOriVid.lay = convertView.findViewById(R.id.liov_lay);
@@ -139,13 +133,14 @@ class DynamicAdapter extends BaseAdapter
                 case 3:
                     //原创文字
                     convertView = mInflater.inflate(R.layout.item_news_original_text, null);
-                    viewHolderOriText = new DynamicAdapter.ViewHolderOriText();
+                    viewHolderOriText = new ViewHolderOriText();
                     convertView.setTag(viewHolderOriText);
 
                     viewHolderOriText.head = convertView.findViewById(R.id.liot_head);
                     viewHolderOriText.name = convertView.findViewById(R.id.liot_name);
                     viewHolderOriText.time = convertView.findViewById(R.id.liot_time);
                     viewHolderOriText.text = convertView.findViewById(R.id.liot_text);
+                    viewHolderOriText.sharei = convertView.findViewById(R.id.liot_sharei);
                     viewHolderOriText.textimg = convertView.findViewById(R.id.liot_textimg);
                     viewHolderOriText.replybu = convertView.findViewById(R.id.liot_replybu);
                     viewHolderOriText.reply = convertView.findViewById(R.id.liot_reply);
@@ -157,7 +152,7 @@ class DynamicAdapter extends BaseAdapter
                 case 2:
                     //未知类型
                     convertView = mInflater.inflate(R.layout.item_news_unknowtype, null);
-                    viewHolderUnktyp = new DynamicAdapter.ViewHolderUnktyp();
+                    viewHolderUnktyp = new ViewHolderUnktyp();
                     convertView.setTag(viewHolderUnktyp);
 
                     viewHolderUnktyp.head = convertView.findViewById(R.id.liuk_head);
@@ -168,7 +163,7 @@ class DynamicAdapter extends BaseAdapter
                 case 1:
                     //转发视频
                     convertView = mInflater.inflate(R.layout.item_news_share_video, null);
-                    viewHolderShaVid = new DynamicAdapter.ViewHolderShaVid();
+                    viewHolderShaVid = new ViewHolderShaVid();
                     convertView.setTag(viewHolderShaVid);
 
                     viewHolderShaVid.head = convertView.findViewById(R.id.lisv_head);
@@ -181,6 +176,7 @@ class DynamicAdapter extends BaseAdapter
                     viewHolderShaVid.simg = convertView.findViewById(R.id.lisv_share_img);
                     viewHolderShaVid.simgtext = convertView.findViewById(R.id.lisv_share_imgtext);
                     viewHolderShaVid.stitle = convertView.findViewById(R.id.lisv_share_text);
+                    viewHolderShaVid.sharei = convertView.findViewById(R.id.lisv_sharei);
                     viewHolderShaVid.replybu = convertView.findViewById(R.id.lisv_replybu);
                     viewHolderShaVid.reply = convertView.findViewById(R.id.lisv_reply);
                     viewHolderShaVid.likebu = convertView.findViewById(R.id.lisv_likebu);
@@ -191,7 +187,7 @@ class DynamicAdapter extends BaseAdapter
                 case 0:
                     //转发文字
                     convertView = mInflater.inflate(R.layout.item_news_share_text, null);
-                    viewHolderShaText = new DynamicAdapter.ViewHolderShaText();
+                    viewHolderShaText = new ViewHolderShaText();
                     convertView.setTag(viewHolderShaText);
 
                     viewHolderShaText.head = convertView.findViewById(R.id.list_head);
@@ -202,6 +198,7 @@ class DynamicAdapter extends BaseAdapter
                     viewHolderShaText.sname = convertView.findViewById(R.id.list_share_name);
                     viewHolderShaText.stext = convertView.findViewById(R.id.list_share_text);
                     viewHolderShaText.stextimg = convertView.findViewById(R.id.list_share_textimg);
+                    viewHolderShaText.sharei = convertView.findViewById(R.id.list_sharei);
                     viewHolderShaText.replybu = convertView.findViewById(R.id.list_replybu);
                     viewHolderShaText.reply = convertView.findViewById(R.id.list_reply);
                     viewHolderShaText.likebu = convertView.findViewById(R.id.list_likebu);
@@ -215,26 +212,27 @@ class DynamicAdapter extends BaseAdapter
             switch (type)
             {
                 case 4:
-                    viewHolderOriVid = (DynamicAdapter.ViewHolderOriVid) convertView.getTag();
+                    viewHolderOriVid = (ViewHolderOriVid) convertView.getTag();
                     break;
                 case 3:
-                    viewHolderOriText = (DynamicAdapter.ViewHolderOriText) convertView.getTag();
+                    viewHolderOriText = (ViewHolderOriText) convertView.getTag();
                     break;
                 case 2:
-                    viewHolderUnktyp = (DynamicAdapter.ViewHolderUnktyp) convertView.getTag();
+                    viewHolderUnktyp = (ViewHolderUnktyp) convertView.getTag();
                     break;
                 case 1:
-                    viewHolderShaVid = (DynamicAdapter.ViewHolderShaVid) convertView.getTag();
+                    viewHolderShaVid = (ViewHolderShaVid) convertView.getTag();
                     break;
                 case 0:
-                    viewHolderShaText = (DynamicAdapter.ViewHolderShaText) convertView.getTag();
+                    viewHolderShaText = (ViewHolderShaText) convertView.getTag();
                     break;
             }
         }
 
         if(type == 4) //原创视频
         {
-            final UserDynamicApi.cardOriginalVideo dy = (UserDynamicApi.cardOriginalVideo) dyList.get(position);
+            final UserDynamicApi.cardOriginalVideo dy = (UserDynamicApi.cardOriginalVideo) dyList
+                    .get(position);
             viewHolderOriVid.name.setText(Html.fromHtml("<b>" + dy.getOwnerName() + "</b>投稿了视频"));
             viewHolderOriVid.time.setText(dy.getDynamicTime());
             if(!dy.getDynamic().equals(""))
@@ -243,7 +241,8 @@ class DynamicAdapter extends BaseAdapter
                 viewHolderOriVid.text.setText(dy.getDynamic());
             }
             else viewHolderOriVid.text.setVisibility(View.GONE);
-            viewHolderOriVid.imgtext.setText(dy.getVideoDuration() + "  " + dy.getVideoView() + "观看");
+            viewHolderOriVid.imgtext.setText(
+                    dy.getVideoDuration() + "  " + dy.getVideoView() + "观看");
             viewHolderOriVid.title.setText(dy.getVideoTitle());
             if(dy.isLike) viewHolderOriVid.likei.setImageResource(R.drawable.icon_liked);
             else viewHolderOriVid.likei.setImageResource(R.drawable.icon_like);
@@ -258,55 +257,9 @@ class DynamicAdapter extends BaseAdapter
             if(h != null) viewHolderOriVid.head.setImageDrawable(h);
             if(i != null) viewHolderOriVid.img.setImageDrawable(i);
 
-            /*viewHolderOriVid.lay.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View v)
-                {
-                    Intent intent = new Intent(ctx, VideodetailsActivity.class);
-                    intent.putExtra("aid", dy.getVideoAid());
-                    startActivity(intent);
-                }
-            });
-
-            viewHolderOriVid.head.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View v)
-                {
-                    Intent intent = new Intent(ctx, OtheruserActivity.class);
-                    intent.putExtra("mid", dy.getOwnerUid());
-                    startActivity(intent);
-                }
-            });
-
-            viewHolderOriVid.likebu.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View v)
-                {
-                    new Thread(new Runnable()
-                    {
-                        @Override
-                        public void run()
-                        {
-                            String s = userDynamic.likeDynamic(dy.getDynamicId(), dy.isLike ? "2" : "1");
-                            if(s.equals(""))
-                            {
-                                dy.isLike = !dy.isLike;
-                                dy.likeDynamic(dy.isLike ? 1 : -1);
-                                handler.post(runnableDynamicAddlist);
-                            }
-                            else
-                            {
-                                Looper.prepare();
-                                Toast.makeText(ctx, (dy.isLike ? "取消" : "点赞") + "失败：\n" + s, Toast.LENGTH_SHORT).show();
-                                Looper.loop();
-                            }
-                        }
-                    }).start();
-                }
-            });*/
+            viewHolderOriVid.lay.setOnClickListener(onViewClick(position, 4));
+            viewHolderOriVid.head.setOnClickListener(onViewClick(position, 4));
+            viewHolderOriVid.likebu.setOnClickListener(onViewClick(position, 4));
 
         }
         else if(type == 3)// 原创文字
@@ -331,68 +284,11 @@ class DynamicAdapter extends BaseAdapter
             BitmapDrawable h = setImageFormWeb(dy.getUserHead());
             if(h != null) viewHolderOriText.head.setImageDrawable(h);
 
-            /*viewHolderOriText.textimg.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View v)
-                {
-                    Intent intent = new Intent(ctx, ImgActivity.class);
-                    intent.putExtra("imgUrl", dy.getImgsSrc());
-                    startActivity(intent);
-                }
-            });
-
-            viewHolderOriText.head.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View v)
-                {
-                    Intent intent = new Intent(ctx, OtheruserActivity.class);
-                    intent.putExtra("mid", dy.getUserUid());
-                    startActivity(intent);
-                }
-            });
-
-            viewHolderOriText.replybu.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View v)
-                {
-                    Intent intent = new Intent(ctx, CheckreplyActivity.class);
-                    intent.putExtra("oid", dy.getDynamicId(1));
-                    intent.putExtra("type", dy.getReplyType());
-                    intent.putExtra("root", "");
-                    startActivity(intent);
-                }
-            });
-
-            viewHolderOriText.likebu.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View v)
-                {
-                    new Thread(new Runnable()
-                    {
-                        @Override
-                        public void run()
-                        {
-                            String s = userDynamic.likeDynamic(dy.getDynamicId(2), dy.isLike ? "2" : "1");
-                            if(s.equals(""))
-                            {
-                                dy.isLike = !dy.isLike;
-                                dy.likeDynamic(dy.isLike ? 1 : -1);
-                                handler.post(runnableDynamicAddlist);
-                            }
-                            else
-                            {
-                                Looper.prepare();
-                                Toast.makeText(ctx, (dy.isLike ? "取消" : "点赞") + "失败：\n" + s, Toast.LENGTH_SHORT).show();
-                                Looper.loop();
-                            }
-                        }
-                    }).start();
-                }
-            });*/
+            viewHolderOriText.textimg.setOnClickListener(onViewClick(position, 3));
+            viewHolderOriText.head.setOnClickListener(onViewClick(position, 3));
+            viewHolderOriText.sharei.setOnClickListener(onViewClick(position, 3));
+            viewHolderOriText.replybu.setOnClickListener(onViewClick(position, 3));
+            viewHolderOriText.likebu.setOnClickListener(onViewClick(position, 3));
         }
         else if(type == 2) //未知类型
         {
@@ -408,21 +304,12 @@ class DynamicAdapter extends BaseAdapter
                 if(h != null) viewHolderUnktyp.head.setImageDrawable(h);
             }
 
-            /*viewHolderUnktyp.head.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View v)
-                {
-                    Intent intent = new Intent(ctx, OtheruserActivity.class);
-                    intent.putExtra("mid", dy.getOwnerUid());
-                    startActivity(intent);
-                }
-            });*/
+            viewHolderUnktyp.head.setOnClickListener(onViewClick(position, 2));
         }
         else if(type == 1) //转发视频
         {
             final UserDynamicApi.cardShareVideo dy = (UserDynamicApi.cardShareVideo) dyList.get(position);
-            final UserDynamicApi.cardOriginalVideo sdy = null; //(UserDynamicApi.cardOriginalVideo) userDynamic.getDynamicClass(dy.getOriginalVideo(), 1);
+            final UserDynamicApi.cardOriginalVideo sdy = dy.getOriginalVideo();
             viewHolderShaVid.name.setText(dy.getUserName());
             viewHolderShaVid.time.setText(dy.getDynamicTime());
             viewHolderShaVid.text.setText(dy.getDynamicText());
@@ -447,84 +334,17 @@ class DynamicAdapter extends BaseAdapter
             if(o != null) viewHolderShaVid.shead.setImageDrawable(o);
             if(i != null) viewHolderShaVid.simg.setImageDrawable(i);
 
-            /*viewHolderShaVid.slay.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View v)
-                {
-                    Intent intent = new Intent(ctx, VideodetailsActivity.class);
-                    intent.putExtra("aid", sdy.getVideoAid());
-                    startActivity(intent);
-                }
-            });
-
-            viewHolderShaVid.head.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View v)
-                {
-                    Intent intent = new Intent(ctx, OtheruserActivity.class);
-                    intent.putExtra("mid", dy.getUserUid());
-                    startActivity(intent);
-                }
-            });
-
-            convertView.findViewById(R.id.lisv_share_user).setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View v)
-                {
-                    Intent intent = new Intent(ctx, OtheruserActivity.class);
-                    intent.putExtra("mid", sdy.getOwnerUid());
-                    startActivity(intent);
-                }
-            });
-
-            viewHolderShaVid.replybu.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View v)
-                {
-                    Intent intent = new Intent(ctx, CheckreplyActivity.class);
-                    intent.putExtra("oid", dy.getDynamicId());
-                    intent.putExtra("type", dy.getReplyType());
-                    intent.putExtra("root", "");
-                    startActivity(intent);
-                }
-            });
-
-            viewHolderShaVid.likebu.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View v)
-                {
-                    new Thread(new Runnable()
-                    {
-                        @Override
-                        public void run()
-                        {
-                            String s = userDynamic.likeDynamic(dy.getDynamicId(), dy.isLike ? "2" : "1");
-                            if(s.equals(""))
-                            {
-                                dy.isLike = !dy.isLike;
-                                dy.likeDynamic(dy.isLike ? 1 : -1);
-                                handler.post(runnableDynamicAddlist);
-                            }
-                            else
-                            {
-                                Looper.prepare();
-                                Toast.makeText(ctx, (dy.isLike ? "取消" : "点赞") + "失败：\n" + s, Toast.LENGTH_SHORT).show();
-                                Looper.loop();
-                            }
-                        }
-                    }).start();
-                }
-            });*/
+            viewHolderShaVid.slay.setOnClickListener(onViewClick(position, 1));
+            viewHolderShaVid.head.setOnClickListener(onViewClick(position, 1));
+            convertView.findViewById(R.id.lisv_share_user).setOnClickListener(onViewClick(position, 1));
+            viewHolderShaVid.sharei.setOnClickListener(onViewClick(position, 1));
+            viewHolderShaVid.replybu.setOnClickListener(onViewClick(position, 1));
+            viewHolderShaVid.likebu.setOnClickListener(onViewClick(position, 1));
         }
         else if(type == 0) //转发文字
         {
             final UserDynamicApi.cardShareText dy = (UserDynamicApi.cardShareText) dyList.get(position);
-            final UserDynamicApi.cardOriginalText sdy = null;//(UserDynamicApi.cardOriginalText) userDynamic.getDynamicClass(dy.getOriginalText(), 2);
+            final UserDynamicApi.cardOriginalText sdy = dy.getOriginalText();
             viewHolderShaText.name.setText(dy.getUserName());
             viewHolderShaText.time.setText(dy.getDynamicTime());
             viewHolderShaText.text.setText(dy.getDynamicText());
@@ -550,95 +370,40 @@ class DynamicAdapter extends BaseAdapter
             if(h != null) viewHolderShaText.head.setImageDrawable(h);
             if(o != null) viewHolderShaText.shead.setImageDrawable(o);
 
-            /*viewHolderShaText.stextimg.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View v)
-                {
-                    Intent intent = new Intent(ctx, ImgActivity.class);
-                    intent.putExtra("imgUrl", sdy.getImgsSrc());
-                    startActivity(intent);
-                }
-            });
-
-            viewHolderShaText.head.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View v)
-                {
-                    Intent intent = new Intent(ctx, OtheruserActivity.class);
-                    intent.putExtra("mid", dy.getUserUid());
-                    startActivity(intent);
-                }
-            });
-
-            convertView.findViewById(R.id.list_share_user).setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View v)
-                {
-                    Intent intent = new Intent(ctx, OtheruserActivity.class);
-                    intent.putExtra("mid", sdy.getUserUid());
-                    startActivity(intent);
-                }
-            });
-
-            viewHolderShaText.replybu.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View v)
-                {
-                    Intent intent = new Intent(ctx, CheckreplyActivity.class);
-                    intent.putExtra("oid", dy.getDynamicId());
-                    intent.putExtra("type", dy.getReplyType());
-                    intent.putExtra("root", "");
-                    startActivity(intent);
-                }
-            });
-
-            viewHolderShaText.likebu.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View v)
-                {
-                    new Thread(new Runnable()
-                    {
-                        @Override
-                        public void run()
-                        {
-                            String s = userDynamic.likeDynamic(dy.getDynamicId(), dy.isLike ? "2" : "1");
-                            if(s.equals(""))
-                            {
-                                dy.isLike = !dy.isLike;
-                                dy.likeDynamic(dy.isLike ? 1 : -1);
-                                handler.post(runnableDynamicAddlist);
-                            }
-                            else
-                            {
-                                Looper.prepare();
-                                Toast.makeText(ctx, (dy.isLike ? "取消" : "点赞") + "失败：\n" + s, Toast.LENGTH_SHORT).show();
-                                Looper.loop();
-                            }
-                        }
-                    }).start();
-                }
-            });*/
+            viewHolderShaText.stextimg.setOnClickListener(onViewClick(position, 0));
+            viewHolderShaText.head.setOnClickListener(onViewClick(position, 0));
+            convertView.findViewById(R.id.list_share_user).setOnClickListener(onViewClick(position, 0));
+            viewHolderShaText.sharei.setOnClickListener(onViewClick(position, 0));
+            viewHolderShaText.replybu.setOnClickListener(onViewClick(position, 0));
+            viewHolderShaText.likebu.setOnClickListener(onViewClick(position, 0));
         }
         return convertView;
     }
 
-    BitmapDrawable setImageFormWeb(String url)
+    private BitmapDrawable setImageFormWeb(String url)
     {
-        if(mImageCache.get(url) != null)
+        if(url != null && mImageCache.get(url) != null)
         {
             return mImageCache.get(url);
         }
         else
         {
-            DynamicAdapter.ImageTask it = new DynamicAdapter.ImageTask();
+            ImageTaskUtil it = new ImageTaskUtil(listView, mImageCache);
             it.execute(url);
             return null;
         }
+    }
+
+    View.OnClickListener onViewClick(final int position, final int mode)
+    {
+        return new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                dynamicAdapterInterface.onClick(v.getId(), position, mode);
+            }
+        };
     }
 
     class ViewHolderOriVid
@@ -663,6 +428,7 @@ class DynamicAdapter extends BaseAdapter
         TextView time;
         ExpandableTextView text;
         TextView textimg;
+        ImageView sharei;
         LinearLayout replybu;
         TextView reply;
         LinearLayout likebu;
@@ -689,6 +455,7 @@ class DynamicAdapter extends BaseAdapter
         ImageView simg;
         TextView simgtext;
         TextView stitle;
+        ImageView sharei;
         LinearLayout replybu;
         TextView reply;
         LinearLayout likebu;
@@ -706,6 +473,7 @@ class DynamicAdapter extends BaseAdapter
         TextView sname;
         ExpandableTextView stext;
         TextView stextimg;
+        ImageView sharei;
         LinearLayout replybu;
         TextView reply;
         LinearLayout likebu;
@@ -713,122 +481,8 @@ class DynamicAdapter extends BaseAdapter
         TextView like;
     }
 
-    class ImageTask extends AsyncTask<String, Void, BitmapDrawable>
+    public interface DynamicAdapterListener
     {
-        private String imageUrl;
-
-        @Override
-        protected BitmapDrawable doInBackground(String... params)
-        {
-            try
-            {
-                imageUrl = params[0];
-                Bitmap bitmap = null;
-                bitmap = downloadImage();
-                BitmapDrawable db = new BitmapDrawable(listView.getResources(), bitmap);
-                // 如果本地还没缓存该图片，就缓存
-                if(mImageCache.get(imageUrl) == null && bitmap != null)
-                {
-                    mImageCache.put(imageUrl, db);
-                }
-                return db;
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(BitmapDrawable result)
-        {
-            // 通过Tag找到我们需要的ImageView，如果该ImageView所在的item已被移出页面，就会直接返回null
-            ImageView iv = listView.findViewWithTag(imageUrl);
-            if(iv != null && result != null)
-            {
-                iv.setImageDrawable(result);
-            }
-        }
-
-        /**
-         * 获得需要压缩的比率
-         *
-         * @param options 需要传入已经BitmapFactory.decodeStream(is, null, options);
-         * @return 返回压缩的比率，最小为1
-         */
-        public int getInSampleSize(BitmapFactory.Options options) {
-            int inSampleSize = 1;
-            int realWith = 170;
-            int realHeight = 170;
-
-            int outWidth = options.outWidth;
-            int outHeight = options.outHeight;
-
-            //获取比率最大的那个
-            if (outWidth > realWith || outHeight > realHeight) {
-                int withRadio = Math.round(outWidth / realWith);
-                int heightRadio = Math.round(outHeight / realHeight);
-                inSampleSize = withRadio > heightRadio ? withRadio : heightRadio;
-            }
-            return inSampleSize;
-        }
-
-        /**
-         * 根据输入流返回一个压缩的图片
-         * @param input 图片的输入流
-         * @return 压缩的图片
-         */
-        public Bitmap getCompressBitmap(InputStream input)
-        {
-            //因为InputStream要使用两次，但是使用一次就无效了，所以需要复制两个
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            try
-            {
-                byte[] buffer = new byte[1024];
-                int len;
-                while ((len = input.read(buffer)) > -1)
-                {
-                    baos.write(buffer, 0, len);
-                }
-                baos.flush();
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-
-            //复制新的输入流
-            InputStream is = new ByteArrayInputStream(baos.toByteArray());
-            InputStream is2 = new ByteArrayInputStream(baos.toByteArray());
-
-            //只是获取网络图片的大小，并没有真正获取图片
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            BitmapFactory.decodeStream(is, null, options);
-            //获取图片并进行压缩
-            options.inSampleSize = getInSampleSize(options);
-            options.inJustDecodeBounds = false;
-            return BitmapFactory.decodeStream(is2, null, options);
-        }
-
-        /**
-         * 根据url从网络上下载图片
-         *
-         * @return 图片
-         */
-        private Bitmap downloadImage() throws IOException
-        {
-            HttpURLConnection con = null;
-            Bitmap bitmap = null;
-            URL url = new URL(imageUrl);
-            con = (HttpURLConnection) url.openConnection();
-            if(con != null)
-                con.disconnect();
-            con.setConnectTimeout(5 * 1000);
-            con.setReadTimeout(10 * 1000);
-            bitmap = getCompressBitmap(con.getInputStream());
-            return bitmap;
-        }
+        void onClick(int viewId, int position, int mode);
     }
 }

@@ -143,7 +143,7 @@ public class VideodetailsActivity extends Activity
 
         inflater = getLayoutInflater();
         layoutSendReply = inflater.inflate(R.layout.widget_reply_sendreply, null);
-        layoutLoading = inflater.inflate(R.layout.widget_dy_loading, null);
+        layoutLoading = inflater.inflate(R.layout.widget_loading, null);
         layoutChangeMode = inflater.inflate(R.layout.widget_reply_changemode, null);
 
         titleTextView = findViewById(R.id.vd_title_title);

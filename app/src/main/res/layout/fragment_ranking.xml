@@ -4,30 +4,6 @@
     android:layout_height="match_parent">
 
     <LinearLayout
-        android:id="@+id/rk_nologin"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clickable="true"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:paddingBottom="33dp"
-        android:visibility="gone">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="92dp"
-            android:padding="6dp"
-            android:src="@drawable/img_nologin" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="你好像还没有登录...\n点上面的按钮试试吧"
-            android:textSize="13sp" />
-
-    </LinearLayout>
-
-    <LinearLayout
         android:id="@+id/rk_noweb"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
