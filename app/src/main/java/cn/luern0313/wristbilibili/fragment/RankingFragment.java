@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -44,6 +45,8 @@ public class RankingFragment extends Fragment
     Handler handler = new Handler();
     Runnable runnableUi;
     Runnable runnableNoWeb;
+    Runnable runnableNoMore;
+    Runnable RunnableNoWebH;
 
     @Override
     public View onCreateView(final LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState)
@@ -55,9 +58,10 @@ public class RankingFragment extends Fragment
                                     MainActivity.sharedPreferences.getString("csrf", ""));
 
         uiPickUpView = inflater.inflate(R.layout.widget_ranking_pickup, null, false);
-        uiPickUpView = inflater.inflate(R.layout.widget_loading, null, false);
+        uiLoadingView = inflater.inflate(R.layout.widget_loading, null, false);
         uiListView = rootLayout.findViewById(R.id.rk_listview);
         uiListView.addHeaderView(uiPickUpView);
+        uiListView.addFooterView(uiLoadingView);
         uiWaveSwipeRefreshLayout = rootLayout.findViewById(R.id.rk_swipe);
         uiWaveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
         uiWaveSwipeRefreshLayout.setWaveColor(Color.argb(255, 250, 114, 152));
@@ -90,6 +94,7 @@ public class RankingFragment extends Fragment
                 rootLayout.findViewById(R.id.rk_noweb).setVisibility(View.GONE);
                 uiListView.setVisibility(View.VISIBLE);
                 uiWaveSwipeRefreshLayout.setRefreshing(false);
+                isLoading = false;
                 rankingAdapter.notifyDataSetChanged();
             }
         };
@@ -101,6 +106,26 @@ public class RankingFragment extends Fragment
             {
                 uiWaveSwipeRefreshLayout.setRefreshing(false);
                 rootLayout.findViewById(R.id.rk_noweb).setVisibility(View.VISIBLE);
+                isLoading = false;
+            }
+        };
+
+        RunnableNoWebH = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                ((TextView) uiLoadingView.findViewById(R.id.wid_dy_load_button)).setText("好像没有网络...\n检查下网络？");
+                uiLoadingView.findViewById(R.id.wid_dy_load_button).setVisibility(View.VISIBLE);
+            }
+        };
+
+        runnableNoMore = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                ((TextView) uiLoadingView.findViewById(R.id.wid_dy_load_text)).setText("  没有更多了...");
             }
         };
 
@@ -137,9 +162,17 @@ public class RankingFragment extends Fragment
             {
                 try
                 {
-                    rankingVideoArrayList.addAll(rankingApi.getRankingVideo(pn));
-                    pn++;
-                    handler.post(runnableUi);
+                    ArrayList<RankingModel> rankingModelArrayList = rankingApi.getRankingVideo(pn);
+                    if(rankingModelArrayList != null && rankingModelArrayList.size() != 0)
+                    {
+                        rankingVideoArrayList.addAll(rankingModelArrayList);
+                        pn++;
+                        handler.post(runnableUi);
+                    }
+                    else
+                    {
+                        handler.post(runnableNoMore);
+                    }
                 }
                 catch (IOException e)
                 {
