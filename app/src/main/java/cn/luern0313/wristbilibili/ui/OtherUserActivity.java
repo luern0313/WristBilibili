@@ -44,6 +44,7 @@ import cn.luern0313.wristbilibili.adapter.DynamicAdapter;
 import cn.luern0313.wristbilibili.api.OthersUserApi;
 import cn.luern0313.wristbilibili.api.SendDynamicApi;
 import cn.luern0313.wristbilibili.api.UserDynamicApi;
+import cn.luern0313.wristbilibili.models.OthersUserModel;
 import cn.luern0313.wristbilibili.widget.ImageDownloader;
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.OkHttpClient;
@@ -56,7 +57,7 @@ import okhttp3.Response;
  * 该api去获取去解析的直接在activity文件里完成了
  * 现在要拓展功能才知道当初不该偷懒
  */
-public class OtheruserActivity extends Activity
+public class OtherUserActivity extends Activity
 {
     Context ctx;
     Intent intent;
@@ -111,8 +112,8 @@ public class OtheruserActivity extends Activity
     ListView uiPeopleListView;
 
     ArrayList<Object> dynamicArrayList = new ArrayList<>();
-    ArrayList<OthersUserApi.People> followArrayList = new ArrayList<>();
-    ArrayList<OthersUserApi.People> fansArrayList = new ArrayList<>();
+    ArrayList<OthersUserModel> followArrayList = new ArrayList<>();
+    ArrayList<OthersUserModel> fansArrayList = new ArrayList<>();
     DynamicAdapter dynamicAdapter;
     pAdapter followAdapter;
     pAdapter fansAdapter;
@@ -804,7 +805,7 @@ public class OtheruserActivity extends Activity
             {
                 try
                 {
-                    ArrayList<OthersUserApi.People> followList = othersUserApi.getUserFollow();
+                    ArrayList<OthersUserModel> followList = othersUserApi.getUserFollow();
                     isFollowLoading = false;
                     if(followList != null && followList.size() != 0)
                     {
@@ -838,7 +839,7 @@ public class OtheruserActivity extends Activity
             {
                 try
                 {
-                    ArrayList<OthersUserApi.People> fansList = othersUserApi.getUserFans();
+                    ArrayList<OthersUserModel> fansList = othersUserApi.getUserFans();
                     isFansLoading = false;
                     if(fansList != null && fansList.size() != 0)
                     {
@@ -963,7 +964,7 @@ public class OtheruserActivity extends Activity
             }
             else if(id == R.id.liov_head)
             {
-                Intent intent = new Intent(ctx, OtheruserActivity.class);
+                Intent intent = new Intent(ctx, OtherUserActivity.class);
                 intent.putExtra("mid", dy.getOwnerUid());
                 startActivity(intent);
             }
@@ -1002,7 +1003,7 @@ public class OtheruserActivity extends Activity
             }
             else if(id == R.id.liot_head)
             {
-                Intent intent = new Intent(ctx, OtheruserActivity.class);
+                Intent intent = new Intent(ctx, OtherUserActivity.class);
                 intent.putExtra("mid", dy.getUserUid());
                 startActivity(intent);
             }
@@ -1053,7 +1054,7 @@ public class OtheruserActivity extends Activity
             final UserDynamicApi.cardUnknow dy = (UserDynamicApi.cardUnknow) dynamicArrayList.get(position);
             if(id == R.id.liuk_head)
             {
-                Intent intent = new Intent(ctx, OtheruserActivity.class);
+                Intent intent = new Intent(ctx, OtherUserActivity.class);
                 intent.putExtra("mid", dy.getOwnerUid());
                 startActivity(intent);
             }
@@ -1070,13 +1071,13 @@ public class OtheruserActivity extends Activity
             }
             else if(id == R.id.lisv_head)
             {
-                Intent intent = new Intent(ctx, OtheruserActivity.class);
+                Intent intent = new Intent(ctx, OtherUserActivity.class);
                 intent.putExtra("mid", dy.getUserUid());
                 startActivity(intent);
             }
             else if(id == R.id.lisv_share_user)
             {
-                Intent intent = new Intent(ctx, OtheruserActivity.class);
+                Intent intent = new Intent(ctx, OtherUserActivity.class);
                 intent.putExtra("mid", sdy.getOwnerUid());
                 startActivity(intent);
             }
@@ -1135,13 +1136,13 @@ public class OtheruserActivity extends Activity
             }
             else if(id == R.id.list_head)
             {
-                Intent intent = new Intent(ctx, OtheruserActivity.class);
+                Intent intent = new Intent(ctx, OtherUserActivity.class);
                 intent.putExtra("mid", dy.getUserUid());
                 startActivity(intent);
             }
             else if(id == R.id.list_share_user)
             {
-                Intent intent = new Intent(ctx, OtheruserActivity.class);
+                Intent intent = new Intent(ctx, OtherUserActivity.class);
                 intent.putExtra("mid", sdy.getUserUid());
                 startActivity(intent);
             }
@@ -1196,10 +1197,10 @@ public class OtheruserActivity extends Activity
 
         private LruCache<String, BitmapDrawable> mImageCache;
 
-        private ArrayList<OthersUserApi.People> ppList;
+        private ArrayList<OthersUserModel> ppList;
         private int mode;
 
-        public pAdapter(LayoutInflater inflater, ArrayList<OthersUserApi.People> ppList, int mode)
+        public pAdapter(LayoutInflater inflater, ArrayList<OthersUserModel> ppList, int mode)
         {
             mInflater = inflater;
             this.ppList = ppList;
@@ -1264,7 +1265,7 @@ public class OtheruserActivity extends Activity
                 viewHolder = (ViewHolder) convertView.getTag();
             }
 
-            final OthersUserApi.People pp = ppList.get(position);
+            final OthersUserModel pp = ppList.get(position);
             viewHolder.img.setImageResource(R.drawable.img_default_head);
             viewHolder.name.setText(pp.nmae);
             if(pp.vip == 2)
@@ -1304,7 +1305,7 @@ public class OtheruserActivity extends Activity
                 @Override
                 public void onClick(View v)
                 {
-                    Intent intent = new Intent(ctx, OtheruserActivity.class);
+                    Intent intent = new Intent(ctx, OtherUserActivity.class);
                     intent.putExtra("mid", pp.uid);
                     startActivity(intent);
                 }

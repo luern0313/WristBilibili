@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
+import cn.luern0313.wristbilibili.models.AnimationTimelineModel;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -33,13 +34,13 @@ public class AnimationTimelineApi
         this.cookie = cookie;
     }
 
-    public ArrayList<Anim> getAnimTimelineList() throws IOException
+    public ArrayList<AnimationTimelineModel> getAnimTimelineList() throws IOException
     {
         try
         {
             timelineJson = new JSONObject((String) get(TIMELINEAPI, 1)).getJSONArray("result");
             int nowTime = (int) (System.currentTimeMillis() / 1000);
-            ArrayList<Anim> anims = new ArrayList<>();
+            ArrayList<AnimationTimelineModel> anims = new ArrayList<>();
             for(int i = 6; i >= 0; i--)
             {
                 JSONArray dailyAnims = timelineJson.getJSONObject(i).getJSONArray("seasons");
@@ -49,7 +50,7 @@ public class AnimationTimelineApi
                 {
                     JSONObject anim = dailyAnims.getJSONObject(j);
                     if(anim.getInt("pub_ts") <= nowTime && anim.getInt("is_published") == 1)
-                        anims.add(new Anim(anim.getString("title"), anim.getString("square_cover"), anim.getString("pub_index"), (int) anim.get("follow"), day + anim.getString("pub_time")));
+                        anims.add(new AnimationTimelineModel(anim, day));
                 }
             }
             return anims;
@@ -59,23 +60,6 @@ public class AnimationTimelineApi
             e.printStackTrace();
         }
         return null;
-    }
-
-    public class Anim
-    {
-        public String name;
-        public String coverUrl;
-        public String lastEpisode;
-        public int isfollow;
-        public String time;
-        Anim(String n, String c, String l, int f, String t)
-        {
-            name = n;
-            coverUrl = c;
-            lastEpisode = l;
-            isfollow = f;
-            time = t;
-        }
     }
 
     private Object get(String url, int mode) throws IOException

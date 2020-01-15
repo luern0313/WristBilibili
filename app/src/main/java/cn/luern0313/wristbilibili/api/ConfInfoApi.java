@@ -1,7 +1,5 @@
 package cn.luern0313.wristbilibili.api;
 
-import android.content.SharedPreferences;
-
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -14,8 +12,9 @@ import java.util.HashMap;
 
 public class ConfInfoApi
 {
-    public final String USER_AGENT_DEF = "Mozilla/5.0 BiliDroid/4.34.0 (bbcallen@gmail.com)";
-    public final String USER_AGENT_OWN = "Wrist Bilibili Client/2.6 (liupeiran0313@163.com; https://luern0313.cn)";
+    public static final String USER_AGENT_DEF = "Mozilla/5.0 BiliDroid/4.34.0 (bbcallen@gmail.com)";
+    public static final String USER_AGENT_OWN = "Wrist Bilibili Client/2.6 (liupeiran0313@163.com; https://luern0313.cn)";
+    public static final String USER_AGENT_WEB = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36";
 
     static String getConf(String key)
     {
@@ -35,11 +34,6 @@ public class ConfInfoApi
     {
         str += getConf("app_secret");
         return md5(str);
-    }
-
-    public static String getUserAgent(SharedPreferences sharedPreferences)
-    {
-        return "";
     }
 
     private static String md5(String plainText) {

@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.adapter.AniRemindAdapter;
 import cn.luern0313.wristbilibili.api.AnimationTimelineApi;
-import cn.luern0313.wristbilibili.api.AnimationTimelineApi.Anim;
+import cn.luern0313.wristbilibili.models.AnimationTimelineModel;
 import cn.luern0313.wristbilibili.ui.MainActivity;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
@@ -24,7 +24,7 @@ import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
  * 被 liupe 创建于 2018/11/10.
  */
 
-public class AniRemindFragment extends Fragment
+public class AnimationTimelineFragment extends Fragment
 {
     Context ctx;
     View rootLayout;
@@ -33,7 +33,7 @@ public class AniRemindFragment extends Fragment
 
     public static boolean isLogin;
     AnimationTimelineApi animationTimelineApi;
-    ArrayList<Anim> animationTimelineList;
+    ArrayList<AnimationTimelineModel> animationTimelineList;
 
     Handler handler = new Handler();
     Runnable runnableUi;

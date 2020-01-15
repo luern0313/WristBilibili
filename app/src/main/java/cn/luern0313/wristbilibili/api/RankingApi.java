@@ -7,6 +7,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import cn.luern0313.wristbilibili.models.RankingModel;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
 import okhttp3.Response;
 
@@ -19,7 +20,7 @@ public class RankingApi
     private String cookie;
     private String mid;
     private String csrf;
-    private static ArrayList<String> defaultHeaders = new ArrayList<String>();
+    private ArrayList<String> defaultHeaders = new ArrayList<String>();
 
     public RankingApi(String mid, final String cookie, String csrf)
     {
@@ -28,23 +29,22 @@ public class RankingApi
         this.csrf = csrf;
         defaultHeaders = new ArrayList<String>(){{
             add("Cookie"); add(cookie);
-            add("User-Agent"); add("Wrist Bilibili Client/2.6 (liupeiran0313@163.com)");
+            add("User-Agent"); add(ConfInfoApi.USER_AGENT_OWN);
         }};
     }
 
-    public ArrayList<RankingVideo> getRankingVideo(int pn) throws IOException
+    public ArrayList<RankingModel> getRankingVideo(int pn) throws IOException
     {
-        ArrayList<RankingVideo> rankingVideoArrayList = new ArrayList<>();
+        ArrayList<RankingModel> rankingVideoArrayList = new ArrayList<>();
         try
         {
             String url = "http://app.bilibili.com/x/v2/rank/region";
-            String temp_per = "appkey=" + ConfInfoApi.getConf("appkey") + "&build=" + ConfInfoApi.getConf("build") +
-                    "&mobi_app=android&platform=android&pn=" + pn + "&ps=20&rid=0&ts=" + (int) (System.currentTimeMillis() / 1000);
+            String temp_per = "appkey=" + ConfInfoApi.getConf("appkey") + "&build=" + ConfInfoApi.getConf("build") + "&mobi_app=android&platform=android&pn=" + pn + "&ps=20&rid=0&ts=" + (int) (System.currentTimeMillis() / 1000);
             String sign = ConfInfoApi.calc_sign(temp_per);
             Response response = NetWorkUtil.get(url + "?" + temp_per + "&sign=" + sign, defaultHeaders);
             JSONArray resultJSONArray = new JSONObject(response.body().string()).getJSONArray("data");
             for(int i = 0; i < resultJSONArray.length(); i++)
-                rankingVideoArrayList.add(new RankingVideo(resultJSONArray.getJSONObject(i)));
+                rankingVideoArrayList.add(new RankingModel(resultJSONArray.getJSONObject(i)));
             return rankingVideoArrayList;
         }
         catch (JSONException e)
@@ -54,24 +54,4 @@ public class RankingApi
         return rankingVideoArrayList;
     }
 
-    public class RankingVideo
-    {
-        public String video_title;
-        public String video_pic;
-        public String video_score;
-        public int video_play;
-        public int video_danmaku;
-        public String up_name;
-        public String up_face;
-        RankingVideo(JSONObject jsonObject)
-        {
-            video_title = jsonObject.optString("title");
-            video_pic = jsonObject.optString("cover");
-            video_score = String.valueOf(jsonObject.optInt("pts"));
-            video_play = jsonObject.optInt("play");
-            video_danmaku = jsonObject.optInt("danmaku");
-            up_name = jsonObject.optString("name");
-            up_face = jsonObject.optString("face");
-        }
-    }
 }

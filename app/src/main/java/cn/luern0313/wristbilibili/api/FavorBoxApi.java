@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
+import cn.luern0313.wristbilibili.models.FavorBoxModel;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -34,14 +35,14 @@ public class FavorBoxApi
         this.mid = mid;
     }
 
-    public ArrayList<FavorBox> getFavorbox() throws IOException
+    public ArrayList<FavorBoxModel> getFavorbox() throws IOException
     {
         try
         {
-            ArrayList<FavorBox> favorBoxArrayList = new ArrayList<FavorBox>();
+            ArrayList<FavorBoxModel> favorBoxArrayList = new ArrayList<FavorBoxModel>();
             JSONArray favorboxJSONArray = new JSONObject((String) get("https://api.bilibili.com/medialist/gateway/base/created?pn=1&ps=100&is_space=0&up_mid=" + mid, 1)).getJSONObject("data").getJSONArray("list");
             for(int i = 0; i < favorboxJSONArray.length(); i++)
-                favorBoxArrayList.add(new FavorBox(favorboxJSONArray.getJSONObject(i)));
+                favorBoxArrayList.add(new FavorBoxModel(favorboxJSONArray.getJSONObject(i)));
             return favorBoxArrayList;
         }
         catch (JSONException e)
@@ -49,23 +50,6 @@ public class FavorBoxApi
             e.printStackTrace();
         }
         return new ArrayList<>();
-    }
-
-    public class FavorBox
-    {
-        public String title;
-        public String count;
-        public boolean see;
-        public String fid;
-        public String id;
-        FavorBox(JSONObject box)
-        {
-            title = box.optString("title");
-            count = String.valueOf(box.optInt("media_count"));
-            see = box.optInt("state") % 2 == 0;
-            fid = String.valueOf(box.opt("fid"));
-            id = String.valueOf(box.opt("id"));
-        }
     }
 
     private Object get(String url, int mode) throws IOException

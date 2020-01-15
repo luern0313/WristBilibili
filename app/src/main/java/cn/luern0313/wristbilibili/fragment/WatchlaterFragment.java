@@ -25,6 +25,7 @@ import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.WatchLaterApi;
+import cn.luern0313.wristbilibili.models.WatchLaterModel;
 import cn.luern0313.wristbilibili.ui.MainActivity;
 import cn.luern0313.wristbilibili.ui.VideodetailsActivity;
 import cn.luern0313.wristbilibili.widget.ImageDownloader;
@@ -50,7 +51,7 @@ public class WatchlaterFragment extends Fragment
     Runnable runnableNoWeb;
     Runnable runnableNoData;
 
-    ArrayList<WatchLaterApi.WatchLaterVideo> watchLaterVideoArrayList;
+    ArrayList<WatchLaterModel> watchLaterVideoArrayList;
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -189,9 +190,9 @@ public class WatchlaterFragment extends Fragment
 
         private LruCache<String, BitmapDrawable> mImageCache;
 
-        private ArrayList<WatchLaterApi.WatchLaterVideo> wlList;
+        private ArrayList<WatchLaterModel> wlList;
 
-        public mAdapter(LayoutInflater inflater, ArrayList<WatchLaterApi.WatchLaterVideo> wlList)
+        public mAdapter(LayoutInflater inflater, ArrayList<WatchLaterModel> wlList)
         {
             mInflater = inflater;
             this.wlList = wlList;
@@ -254,7 +255,7 @@ public class WatchlaterFragment extends Fragment
                 viewHolder = (ViewHolder) convertView.getTag();
             }
 
-            WatchLaterApi.WatchLaterVideo video = wlList.get(position);
+            WatchLaterModel video = wlList.get(position);
             viewHolder.title.setText(video.title);
             viewHolder.img.setImageResource(R.drawable.img_default_vid);
             viewHolder.up.setText("UP : " + video.up);

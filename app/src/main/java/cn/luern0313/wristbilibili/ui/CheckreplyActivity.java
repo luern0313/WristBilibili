@@ -35,6 +35,7 @@ import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.ReplyApi;
+import cn.luern0313.wristbilibili.models.ReplyModel;
 
 public class CheckreplyActivity extends Activity
 {
@@ -44,7 +45,7 @@ public class CheckreplyActivity extends Activity
     ReplyApi replyApi;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
-    ArrayList<ReplyApi.reply> replyArrayList;
+    ArrayList<ReplyModel> replyArrayList;
     mAdapter replyAdapter;
 
     AnimationDrawable loadingImgAnim;
@@ -171,15 +172,15 @@ public class CheckreplyActivity extends Activity
                     replyArrayList = new ArrayList<>();
                     if(intent.getStringExtra("root").equals(""))
                     {
-                        replyArrayList.add(replyApi.new reply(1));
+                        replyArrayList.add(new ReplyModel(1));
                         replyArrayList.addAll(replyApi.getReply(1, "2", 5, ""));
-                        replyArrayList.add(replyApi.new reply(2));
+                        replyArrayList.add(new ReplyModel(2));
                         replyArrayList.addAll(replyApi.getReply(1, "0", 0, ""));
                         handler.post(runnableReply);
                     }
                     else
                     {
-                        replyArrayList.add(replyApi.new reply(2));
+                        replyArrayList.add(new ReplyModel(2));
                         replyArrayList.addAll(replyApi.getReply(1, "0", 0, intent.getStringExtra("root")));
                         handler.post(runnableReply);
                     }
@@ -205,7 +206,7 @@ public class CheckreplyActivity extends Activity
             {
                 try
                 {
-                    ArrayList<ReplyApi.reply> r = replyApi.getReply(replyPage, "0", 0, intent.getStringExtra("root"));
+                    ArrayList<ReplyModel> r = replyApi.getReply(replyPage, "0", 0, intent.getStringExtra("root"));
                     if(r != null && r.size() != 0)
                     {
                         replyArrayList.addAll(r);
@@ -269,9 +270,9 @@ public class CheckreplyActivity extends Activity
 
         private LruCache<String, BitmapDrawable> mImageCache;
 
-        private ArrayList<ReplyApi.reply> replyList;
+        private ArrayList<ReplyModel> replyList;
 
-        public mAdapter(LayoutInflater inflater, ArrayList<ReplyApi.reply> replyList)
+        public mAdapter(LayoutInflater inflater, ArrayList<ReplyModel> replyList)
         {
             mInflater = inflater;
             this.replyList = replyList;
@@ -329,7 +330,7 @@ public class CheckreplyActivity extends Activity
         @Override
         public View getView(int position, View convertView, ViewGroup viewGroup)
         {
-            final ReplyApi.reply v = replyList.get(position);
+            final ReplyModel v = replyList.get(position);
             ViewHolder viewHolder = null;
             if(convertView == null)
             {
@@ -401,7 +402,7 @@ public class CheckreplyActivity extends Activity
                     @Override
                     public void onClick(View view)
                     {
-                        Intent intent = new Intent(ctx, OtheruserActivity.class);
+                        Intent intent = new Intent(ctx, OtherUserActivity.class);
                         intent.putExtra("mid", v.getUserMid());
                         startActivity(intent);
                     }

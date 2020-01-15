@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Objects;
 
 import cn.luern0313.wristbilibili.R;
-import cn.luern0313.wristbilibili.api.DownloadApi.DownloadItem;
+import cn.luern0313.wristbilibili.models.DownloadModel;
 import cn.luern0313.wristbilibili.service.DownloadService;
 import cn.luern0313.wristbilibili.util.FileUtil;
 import cn.luern0313.wristbilibili.widget.ImageDownloader;
@@ -55,8 +55,8 @@ public class DownloadFragment extends Fragment
     TextView uiTip;
     mAdapter mAdapter;
 
-    ArrayList<DownloadItem> downloadingItems;
-    ArrayList<DownloadItem> downloadedItems;
+    ArrayList<DownloadModel> downloadingItems;
+    ArrayList<DownloadModel> downloadedItems;
 
     ObjectAnimator tipAnim;
     String BASE_DOWNLOAD_PATH;
@@ -166,7 +166,7 @@ public class DownloadFragment extends Fragment
                     String name = getVideoName();
                     if(!Objects.equals(name, ""))
                     {
-                        DownloadItem downloadItem = downloadedItems.get(position - downloadingItems.size());
+                        DownloadModel downloadItem = downloadedItems.get(position - downloadingItems.size());
                         Intent intent = new Intent();
                         intent.setComponent(new ComponentName(name, name + ".ui.PlayerActivity"));
                         intent.putExtra("mode", 2);
@@ -193,7 +193,7 @@ public class DownloadFragment extends Fragment
                             @Override
                             public void onClick(DialogInterface dialog, int which)
                             {
-                                DownloadItem downloadItem;
+                                DownloadModel downloadItem;
                                 if(position < downloadingItems.size())
                                 {
                                     myBinder.pause(position);
@@ -322,10 +322,10 @@ public class DownloadFragment extends Fragment
 
         private LruCache<String, BitmapDrawable> mImageCache;
 
-        private ArrayList<DownloadItem> downloadingItems = new ArrayList<>();
-        private ArrayList<DownloadItem> downloadedItems = new ArrayList<>();
+        private ArrayList<DownloadModel> downloadingItems = new ArrayList<>();
+        private ArrayList<DownloadModel> downloadedItems = new ArrayList<>();
 
-        public mAdapter(LayoutInflater inflater, ArrayList<DownloadItem> dlingList, ArrayList<DownloadItem> dledList)
+        public mAdapter(LayoutInflater inflater, ArrayList<DownloadModel> dlingList, ArrayList<DownloadModel> dledList)
         {
             mInflater = inflater;
             downloadingItems.clear();
@@ -404,7 +404,7 @@ public class DownloadFragment extends Fragment
         @Override
         public View getView(int position, View convertView, ViewGroup viewGroup)
         {
-            DownloadItem downloadItem;
+            DownloadModel downloadItem;
             if(position < downloadingItems.size()) downloadItem = downloadingItems.get(position);
             else downloadItem = downloadedItems.get(position - downloadingItems.size());
 
@@ -530,7 +530,7 @@ public class DownloadFragment extends Fragment
             ProgressBar prog;
         }
 
-        BitmapDrawable setImageFormWeb(String url, DownloadItem downloadItem)
+        BitmapDrawable setImageFormWeb(String url, DownloadModel downloadItem)
         {
             if(mImageCache.get(url) != null)
                 return mImageCache.get(url);

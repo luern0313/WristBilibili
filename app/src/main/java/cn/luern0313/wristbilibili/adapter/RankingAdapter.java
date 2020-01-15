@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.R;
-import cn.luern0313.wristbilibili.api.RankingApi;
+import cn.luern0313.wristbilibili.models.RankingModel;
 import cn.luern0313.wristbilibili.widget.ImageDownloader;
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -32,10 +32,10 @@ public class RankingAdapter extends BaseAdapter
 
     private LruCache<String, BitmapDrawable> mImageCache;
 
-    private ArrayList<RankingApi.RankingVideo> rkList;
+    private ArrayList<RankingModel> rkList;
     public ListView listView;
 
-    public RankingAdapter(LayoutInflater inflater, ArrayList<RankingApi.RankingVideo> rkList, ListView listView)
+    public RankingAdapter(LayoutInflater inflater, ArrayList<RankingModel> rkList, ListView listView)
     {
         mInflater = inflater;
         this.rkList = rkList;
@@ -82,7 +82,7 @@ public class RankingAdapter extends BaseAdapter
     @Override
     public View getView(int position, View convertView, ViewGroup viewGroup)
     {
-        RankingApi.RankingVideo rankingVideo = rkList.get(position);
+        RankingModel rankingVideo = rkList.get(position);
         ViewHolder viewHolder;
         if(convertView == null)
         {

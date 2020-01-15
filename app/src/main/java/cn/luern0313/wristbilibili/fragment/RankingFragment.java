@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.adapter.RankingAdapter;
 import cn.luern0313.wristbilibili.api.RankingApi;
+import cn.luern0313.wristbilibili.models.RankingModel;
 import cn.luern0313.wristbilibili.ui.MainActivity;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
@@ -36,7 +37,7 @@ public class RankingFragment extends Fragment
     View uiLoadingView;
 
     RankingApi rankingApi;
-    ArrayList<RankingApi.RankingVideo> rankingVideoArrayList = new ArrayList<>();
+    ArrayList<RankingModel> rankingVideoArrayList = new ArrayList<>();
     int pn = 0;
     boolean isLoading = false;
 

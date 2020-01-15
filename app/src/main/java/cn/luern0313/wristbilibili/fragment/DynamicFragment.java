@@ -26,7 +26,7 @@ import cn.luern0313.wristbilibili.api.UserDynamicApi;
 import cn.luern0313.wristbilibili.ui.CheckreplyActivity;
 import cn.luern0313.wristbilibili.ui.ImgActivity;
 import cn.luern0313.wristbilibili.ui.MainActivity;
-import cn.luern0313.wristbilibili.ui.OtheruserActivity;
+import cn.luern0313.wristbilibili.ui.OtherUserActivity;
 import cn.luern0313.wristbilibili.ui.SendDynamicActivity;
 import cn.luern0313.wristbilibili.ui.VideodetailsActivity;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
@@ -355,7 +355,7 @@ public class DynamicFragment extends Fragment
             }
             else if(id == R.id.liov_head)
             {
-                Intent intent = new Intent(ctx, OtheruserActivity.class);
+                Intent intent = new Intent(ctx, OtherUserActivity.class);
                 intent.putExtra("mid", dy.getOwnerUid());
                 startActivity(intent);
             }
@@ -394,7 +394,7 @@ public class DynamicFragment extends Fragment
             }
             else if(id == R.id.liot_head)
             {
-                Intent intent = new Intent(ctx, OtheruserActivity.class);
+                Intent intent = new Intent(ctx, OtherUserActivity.class);
                 intent.putExtra("mid", dy.getUserUid());
                 startActivity(intent);
             }
@@ -445,7 +445,7 @@ public class DynamicFragment extends Fragment
             final UserDynamicApi.cardUnknow dy = (UserDynamicApi.cardUnknow) dynamicList.get(position);
             if(id == R.id.liuk_head)
             {
-                Intent intent = new Intent(ctx, OtheruserActivity.class);
+                Intent intent = new Intent(ctx, OtherUserActivity.class);
                 intent.putExtra("mid", dy.getOwnerUid());
                 startActivity(intent);
             }
@@ -462,13 +462,13 @@ public class DynamicFragment extends Fragment
             }
             else if(id == R.id.lisv_head)
             {
-                Intent intent = new Intent(ctx, OtheruserActivity.class);
+                Intent intent = new Intent(ctx, OtherUserActivity.class);
                 intent.putExtra("mid", dy.getUserUid());
                 startActivity(intent);
             }
             else if(id == R.id.lisv_share_user)
             {
-                Intent intent = new Intent(ctx, OtheruserActivity.class);
+                Intent intent = new Intent(ctx, OtherUserActivity.class);
                 intent.putExtra("mid", sdy.getOwnerUid());
                 startActivity(intent);
             }
@@ -527,13 +527,13 @@ public class DynamicFragment extends Fragment
             }
             else if(id == R.id.list_head)
             {
-                Intent intent = new Intent(ctx, OtheruserActivity.class);
+                Intent intent = new Intent(ctx, OtherUserActivity.class);
                 intent.putExtra("mid", dy.getUserUid());
                 startActivity(intent);
             }
             else if(id == R.id.list_share_user)
             {
-                Intent intent = new Intent(ctx, OtheruserActivity.class);
+                Intent intent = new Intent(ctx, OtherUserActivity.class);
                 intent.putExtra("mid", sdy.getUserUid());
                 startActivity(intent);
             }

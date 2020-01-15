@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
+import cn.luern0313.wristbilibili.models.WatchLaterModel;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -37,23 +38,16 @@ public class WatchLaterApi
         this.mid = mid;
     }
 
-    public ArrayList<WatchLaterVideo> getWatchLater() throws IOException
+    public ArrayList<WatchLaterModel> getWatchLater() throws IOException
     {
         try
         {
-            ArrayList<WatchLaterVideo> videoArrayList = new ArrayList<>();
+            ArrayList<WatchLaterModel> videoArrayList = new ArrayList<>();
             JSONArray wlJsonArray = new JSONObject((String) get("https://api.bilibili.com/x/v2/history/toview/web", 1)).getJSONObject("data").getJSONArray("list");
             for(int i = 0; i < wlJsonArray.length(); i++)
             {
                 JSONObject j = wlJsonArray.optJSONObject(i);
-                videoArrayList.add(new WatchLaterVideo(String.valueOf(j.optInt("aid", 0)),
-                        j.optString("title", ""),
-                        j.optJSONObject("owner").optString("name", ""),
-                        j.optString("pic", ""),
-                        j.optInt("duration", 0),
-                        j.optInt("progress", 0),
-                        getView(j.optJSONObject("stat").optInt("view", 0)),
-                        getView(j.optJSONObject("stat").optInt("danmaku", 0))));
+                videoArrayList.add(new WatchLaterModel(j));
             }
             return videoArrayList;
         }
@@ -62,36 +56,6 @@ public class WatchLaterApi
             e.printStackTrace();
         }
         return new ArrayList<>();
-    }
-
-    public class WatchLaterVideo
-    {
-        public String aid;
-        public String title;
-        public String up;
-        public String cover;
-        public int duration;
-        public int progress;
-        public String play;
-        public String danmaku;
-
-        WatchLaterVideo(String a, String t, String u, String c, int d, int p, String play, String dan)
-        {
-            this.aid = a;
-            this.title = t;
-            this.up = u;
-            this.cover = c;
-            this.duration = d;
-            this.progress = p;
-            this.play = play;
-            this.danmaku = dan;
-        }
-    }
-
-    private String getView(int view)
-    {
-        if(view > 10000) return view / 1000 / 10.0 + "万";
-        else return String.valueOf(view);
     }
 
     private Object get(String url, int mode) throws IOException

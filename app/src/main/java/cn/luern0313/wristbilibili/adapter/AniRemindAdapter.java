@@ -13,7 +13,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.R;
-import cn.luern0313.wristbilibili.api.AnimationTimelineApi;
+import cn.luern0313.wristbilibili.models.AnimationTimelineModel;
 import cn.luern0313.wristbilibili.util.ImageTaskUtil;
 
 /**
@@ -26,10 +26,10 @@ public class AniRemindAdapter extends BaseAdapter
 
     private LruCache<String, BitmapDrawable> mImageCache;
 
-    private ArrayList<AnimationTimelineApi.Anim> arList;
+    private ArrayList<AnimationTimelineModel> arList;
     private ListView listView;
 
-    public AniRemindAdapter(LayoutInflater inflater, ArrayList<AnimationTimelineApi.Anim> arList, ListView listView)
+    public AniRemindAdapter(LayoutInflater inflater, ArrayList<AnimationTimelineModel> arList, ListView listView)
     {
         mInflater = inflater;
         this.arList = arList;
@@ -76,7 +76,7 @@ public class AniRemindAdapter extends BaseAdapter
     @Override
     public View getView(int position, View convertView, ViewGroup viewGroup)
     {
-        AnimationTimelineApi.Anim anim = arList.get(position);
+        AnimationTimelineModel anim = arList.get(position);
         ViewHolder viewHolder;
         if(convertView == null)
         {

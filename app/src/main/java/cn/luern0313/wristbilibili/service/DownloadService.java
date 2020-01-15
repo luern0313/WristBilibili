@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.api.DownloadApi;
+import cn.luern0313.wristbilibili.models.DownloadModel;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
 
 import static cn.luern0313.wristbilibili.util.FileUtil.fileReader;
@@ -43,8 +44,8 @@ public class DownloadService extends Service
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     DownloadApi downloadApi;
-    public ArrayList<DownloadApi.DownloadItem> downloadingItems;
-    public ArrayList<DownloadApi.DownloadItem> downloadedItems;
+    public ArrayList<DownloadModel> downloadingItems;
+    public ArrayList<DownloadModel> downloadedItems;
     FileDownloadListener fileDownloadListener;
 
     MyBinder myBinder = new MyBinder();
@@ -83,7 +84,7 @@ public class DownloadService extends Service
             {
                 super.connected(task, etag, isContinue, soFarBytes, totalBytes);
                 int po = DownloadApi.findPositionInList((String) task.getTag(3), downloadingItems);
-                DownloadApi.DownloadItem item = downloadingItems.get(po);
+                DownloadModel item = downloadingItems.get(po);
                 item.state = 1;
                 item.id = task.getId();
                 item.size = task.getSmallFileTotalBytes();
@@ -108,7 +109,7 @@ public class DownloadService extends Service
             protected void progress(BaseDownloadTask task, int soFarBytes, int totalBytes)
             {
                 int po = DownloadApi.findPositionInList(task.getUrl(), downloadingItems);
-                DownloadApi.DownloadItem item = downloadingItems.get(po);
+                DownloadModel item = downloadingItems.get(po);
                 item.nowdl = soFarBytes;
                 item.speed = task.getSpeed() * 1024;
                 downloadingItems.set(po, item);
@@ -133,7 +134,7 @@ public class DownloadService extends Service
             protected void completed(BaseDownloadTask task)
             {
                 int po = DownloadApi.findPositionInList(task.getUrl(), downloadingItems);
-                DownloadApi.DownloadItem item = downloadingItems.get(po);
+                DownloadModel item = downloadingItems.get(po);
                 item.mode = 0;
                 item.state = 5;
                 item.nowdl = task.getSmallFileSoFarBytes();
@@ -163,7 +164,7 @@ public class DownloadService extends Service
                 try
                 {
                     int po = DownloadApi.findPositionInList(task.getUrl(), downloadingItems);
-                    DownloadApi.DownloadItem item = downloadingItems.get(po);
+                    DownloadModel item = downloadingItems.get(po);
                     item.state = 3;
                     item.nowdl = task.getSmallFileSoFarBytes();
                     item.speed = task.getSpeed() * 1024;
@@ -180,7 +181,7 @@ public class DownloadService extends Service
             protected void error(BaseDownloadTask task, Throwable e)
             {
                 int po = DownloadApi.findPositionInList(task.getUrl(), downloadingItems);
-                DownloadApi.DownloadItem item = downloadingItems.get(po);
+                DownloadModel item = downloadingItems.get(po);
                 item.state = 4;
                 if(e instanceof FileDownloadHttpException) item.tip = "错误的下载链接";
                 else if(e instanceof FileDownloadGiveUpRetryException) item.tip = "无法获取文件信息";
@@ -221,7 +222,7 @@ public class DownloadService extends Service
     public void pause(int position)
     {
         FileDownloader.getImpl().pause(downloadingItems.get(position).id);
-        DownloadApi.DownloadItem downloadItem = downloadingItems.get(position);
+        DownloadModel downloadItem = downloadingItems.get(position);
         downloadItem.state = 2;
         downloadItem.speed = 0;
         downloadingItems.set(position, downloadItem);
@@ -229,7 +230,7 @@ public class DownloadService extends Service
 
     public void start(int position)
     {
-        DownloadApi.DownloadItem downloadItem = downloadingItems.get(position);
+        DownloadModel downloadItem = downloadingItems.get(position);
         FileDownloader.getImpl().create(downloadItem.url_video).setPath(getExternalFilesDir(
                 null) + "/download/" + downloadItem.aid + "/" + downloadItem.cid + "/video.mp4")
                 .addHeader("User-Agent",
@@ -316,7 +317,7 @@ public class DownloadService extends Service
                     .setTag(3, url_video).setListener(fileDownloadListener).asInQueueTask()
                     .enqueue();
             FileDownloader.getImpl().start(fileDownloadListener, false);
-            downloadingItems.add(1, new DownloadApi.DownloadItem(url_video, url_danmaku, 1, title, cover, aid, cid, 0));
+            downloadingItems.add(1, new DownloadModel(url_video, url_danmaku, 1, title, cover, aid, cid, 0));
             return "";
         }
     }

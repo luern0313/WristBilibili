@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import cn.luern0313.wristbilibili.models.ListofVideoModel;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -232,14 +233,14 @@ public class VideoDetailsApi
         return isFaved;
     }
 
-    public ArrayList<ListofVideoApi> getRecommendVideos() throws IOException
+    public ArrayList<ListofVideoModel> getRecommendVideos() throws IOException
     {
         try
         {
-            ArrayList<ListofVideoApi> videoArrayList = new ArrayList<>();
+            ArrayList<ListofVideoModel> videoArrayList = new ArrayList<>();
             JSONArray videoJson = new JSONObject((String) get("https://comment.bilibili.com/recommendnew," +  aid, 1)).getJSONArray("data");
             for(int i = 0; i < videoJson.length(); i++)
-                videoArrayList.add(new ListofVideoApi(videoJson.getJSONObject(i)));
+                videoArrayList.add(new ListofVideoModel(videoJson.getJSONObject(i)));
             return videoArrayList;
         }
         catch (JSONException e)

@@ -1,7 +1,6 @@
 package cn.luern0313.wristbilibili.api;
 
 import android.graphics.BitmapFactory;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -10,11 +9,10 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import cn.luern0313.wristbilibili.models.ReplyModel;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -43,15 +41,15 @@ public class ReplyApi
         this.type = type;
     }
 
-    public ArrayList<reply> getReply(int page, String sort, int limit, String root) throws IOException
+    public ArrayList<ReplyModel> getReply(int page, String sort, int limit, String root) throws IOException
     {
         try
         {
             replyJson = new JSONObject((String) get("https://api.bilibili.com/x/v2" + (root.equals("") ? "" : "/reply") + "/reply?pn=" + page + "&type=" + type + "&oid=" + oid + "&sort=" + sort + (root.equals("") ? "" : ("&root=" + root)), 1)).getJSONObject("data");
             JSONArray replyJsonArray = replyJson.getJSONArray("replies");
-            ArrayList<reply> replyArrayList = new ArrayList<>();
+            ArrayList<ReplyModel> replyArrayList = new ArrayList<>();
             for (int i = 0; i < (limit != 0 ? Math.min(limit, replyJsonArray.length()) : replyJsonArray.length()); i++)
-                replyArrayList.add(new reply(replyJsonArray.getJSONObject(i)));
+                replyArrayList.add(new ReplyModel(cookie, csrf, replyJsonArray.getJSONObject(i), oid));
             return replyArrayList;
         }
         catch (JSONException e)
@@ -86,174 +84,6 @@ public class ReplyApi
     public boolean isShowFloor()
     {
         return replyJson.optJSONObject("config").optInt("showfloor") == 1;
-    }
-
-    public class reply
-    {
-        private JSONObject replyJson;
-        private JSONObject replyUserJson;
-
-        private boolean isLike;
-        private boolean isHate;
-        private int likeCount;
-        private int replyCount;
-
-        private int mode;
-
-        reply(JSONObject replyJson)
-        {
-            this.replyJson = replyJson;
-            this.replyUserJson = replyJson.optJSONObject("member");
-            this.isLike = replyJson.optInt("action") == 1;
-            this.isHate = replyJson.optInt("action") == 2;
-            this.likeCount = replyJson.optInt("like", 0);
-            this.replyCount = replyJson.optInt("rcount", 0);
-            this.mode = 0;
-        }
-
-        public reply(int mode)
-        {
-            this.mode = mode;
-        }
-
-        public int getMode()
-        {
-            return mode;
-        }
-
-        public String getReplyId()
-        {
-            return replyJson.optString("rpid_str");
-        }
-
-        public String getUserMid()
-        {
-            return replyUserJson.optString("mid");
-        }
-
-        public String getUserHead()
-        {
-            return replyUserJson.optString("avatar");
-        }
-
-        public String getUserName()
-        {
-            return replyUserJson.optString("uname");
-        }
-
-        public int getUserVip()
-        {
-            return replyUserJson.optJSONObject("vip").optInt("vipType");
-        }
-
-        public String getReplyTime()
-        {
-            try
-            {
-                Date date = new Date(replyJson.optInt("ctime") * 1000L);
-                SimpleDateFormat format = new SimpleDateFormat("MM-dd HH:mm");
-                return format.format(date);
-            }
-            catch (NullPointerException e)
-            {
-                e.printStackTrace();
-                return "";
-            }
-        }
-
-        public int getUserLv()
-        {
-            return replyUserJson.optJSONObject("level_info").optInt("current_level");
-        }
-
-        public String getReplyText()
-        {
-            return replyJson.optJSONObject("content").optString("message", "");
-        }
-
-        public String getReplyFloor(boolean showfloor)
-        {
-            return replyJson.has("floor") && showfloor ? ("#" + String.valueOf(replyJson.optInt("floor"))) : "";
-        }
-
-        public String getReplyBeLiked()
-        {
-            if(likeCount > 10000) return likeCount / 1000 / 10.0 + "万";
-            else return String.valueOf(likeCount);
-        }
-
-        public String getReplyBeReply()
-        {
-            if(replyCount > 10000) return replyCount / 1000 / 10.0 + "万";
-            else return String.valueOf(replyCount);
-        }
-
-        public boolean isReplyLike()
-        {
-            return isLike;
-        }
-
-        public boolean isReplyDislike()
-        {
-            return isHate;
-        }
-
-        public String likeReply(String rpid, int action, String type)
-        {
-            try
-            {
-                JSONObject j = new JSONObject(post("https://api.bilibili.com/x/v2/reply/action", "oid=" + oid + "&type=" + type + "&rpid=" + rpid + "&action=" + action + "&jsonp=jsonp&csrf=" + csrf).body().string());
-                if(j.getInt("code") == 0)
-                {
-                    isLike = action == 1;
-                    likeCount += action * 2 - 1;
-                    isHate = false;
-                    return "";
-                }
-                else
-                    return j.getString("message");
-            }
-            catch (JSONException e)
-            {
-                e.printStackTrace();
-                return "未知问题，请重试？";
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-                return "网络错误！";
-            }
-        }
-
-        public String hateReply(String rpid, int action, String type)
-        {
-            try
-            {
-                JSONObject j = new JSONObject(post("https://api.bilibili.com/x/v2/reply/hate", "oid=" + oid + "&type=" + type + "&rpid=" + rpid + "&action=" + action + "&jsonp=jsonp&csrf=" + csrf).body().string());
-                if(j.getInt("code") == 0)
-                {
-                    if(isLike)
-                    {
-                        likeCount--;
-                        isLike = false;
-                    }
-                    isHate = action == 1;
-                    return "";
-                }
-                else
-                    return j.getString("message");
-            }
-            catch (JSONException e)
-            {
-                e.printStackTrace();
-                return "未知问题，请重试？";
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-                return "网络错误！";
-            }
-        }
     }
 
     private Object get(String url, int mode) throws IOException

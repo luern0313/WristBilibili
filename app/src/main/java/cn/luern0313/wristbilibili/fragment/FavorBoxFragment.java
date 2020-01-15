@@ -30,6 +30,7 @@ import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.FavorBoxApi;
+import cn.luern0313.wristbilibili.models.FavorBoxModel;
 import cn.luern0313.wristbilibili.ui.FavorvideoActivity;
 import cn.luern0313.wristbilibili.ui.MainActivity;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
@@ -44,7 +45,7 @@ public class FavorBoxFragment extends Fragment
 {
     Context ctx;
     FavorBoxApi favorBoxApi;
-    ArrayList<FavorBoxApi.FavorBox> favourboxArrayList;
+    ArrayList<FavorBoxModel> favourboxArrayList;
 
     View rootLayout;
     ListView favListView;
@@ -193,9 +194,9 @@ public class FavorBoxFragment extends Fragment
 
         private LruCache<String, BitmapDrawable> mImageCache;
 
-        private ArrayList<FavorBoxApi.FavorBox> favList;
+        private ArrayList<FavorBoxModel> favList;
 
-        public mAdapter(LayoutInflater inflater, ArrayList<FavorBoxApi.FavorBox> favList)
+        public mAdapter(LayoutInflater inflater, ArrayList<FavorBoxModel> favList)
         {
             mInflater = inflater;
             this.favList = favList;
@@ -241,7 +242,7 @@ public class FavorBoxFragment extends Fragment
         @Override
         public View getView(int position, View convertView, ViewGroup viewGroup)
         {
-            FavorBoxApi.FavorBox box = favList.get(position);
+            FavorBoxModel box = favList.get(position);
             ViewHolder viewHolder;
             if(convertView == null)
             {

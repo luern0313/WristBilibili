@@ -173,7 +173,7 @@ public class MenuActivity extends Activity
         }
         else
         {
-            Intent intent = new Intent(ctx, OtheruserActivity.class);
+            Intent intent = new Intent(ctx, OtherUserActivity.class);
             intent.putExtra("mid", sharedPreferences.getString("mid", ""));
             startActivity(intent);
         }

@@ -21,7 +21,7 @@ import java.io.IOException;
 
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.StatisticsApi;
-import cn.luern0313.wristbilibili.fragment.AniRemindFragment;
+import cn.luern0313.wristbilibili.fragment.AnimationTimelineFragment;
 import cn.luern0313.wristbilibili.fragment.DownloadFragment;
 import cn.luern0313.wristbilibili.fragment.DynamicFragment;
 import cn.luern0313.wristbilibili.fragment.FavorBoxFragment;
@@ -136,7 +136,7 @@ public class MainActivity extends Activity
                     titleText.setTextSize(14);
                     break;
                 case 3:
-                    transaction.replace(R.id.main_frame, new AniRemindFragment());
+                    transaction.replace(R.id.main_frame, new AnimationTimelineFragment());
                     titleText.setText("追番提醒");
                     titleText.setTextSize(13);
                     break;

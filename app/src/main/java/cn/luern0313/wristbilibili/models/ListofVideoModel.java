@@ -1,4 +1,4 @@
-package cn.luern0313.wristbilibili.api;
+package cn.luern0313.wristbilibili.models;
 
 import org.json.JSONObject;
 
@@ -7,13 +7,13 @@ import org.json.JSONObject;
  * 针对返回一个列表的视频的单个视频信息解析的api
  */
 
-public class ListofVideoApi
+public class ListofVideoModel
 {
     private JSONObject videoJson;
     private JSONObject videoUserJson;
     private JSONObject videoStatJson;
 
-    public ListofVideoApi(JSONObject json)
+    public ListofVideoModel(JSONObject json)
     {
         this.videoJson = json;
         this.videoUserJson = json.optJSONObject("owner");

@@ -45,10 +45,12 @@ import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.FavorBoxApi;
-import cn.luern0313.wristbilibili.api.ListofVideoApi;
+import cn.luern0313.wristbilibili.models.FavorBoxModel;
+import cn.luern0313.wristbilibili.models.ListofVideoModel;
 import cn.luern0313.wristbilibili.api.OnlineVideoApi;
 import cn.luern0313.wristbilibili.api.ReplyApi;
 import cn.luern0313.wristbilibili.api.VideoDetailsApi;
+import cn.luern0313.wristbilibili.models.ReplyModel;
 import cn.luern0313.wristbilibili.service.DownloadService;
 
 public class VideodetailsActivity extends Activity
@@ -62,8 +64,8 @@ public class VideodetailsActivity extends Activity
     OnlineVideoApi onlineVideoApi;
     ReplyApi replyApi;
     ArrayList<VideoDetailsApi.VideoPart> videoPartArrayList;
-    ArrayList<ReplyApi.reply> replyArrayList;
-    ArrayList<ListofVideoApi> recommendList;
+    ArrayList<ReplyModel> replyArrayList;
+    ArrayList<ListofVideoModel> recommendList;
 
     View layoutSendReply;
     View layoutChangeMode;
@@ -458,7 +460,7 @@ public class VideodetailsActivity extends Activity
                         @Override
                         public void onClick(View v)
                         {
-                            Intent intent = new Intent(ctx, OtheruserActivity.class);
+                            Intent intent = new Intent(ctx, OtherUserActivity.class);
                             intent.putExtra("mid", videoDetail.getVideoUpAid());
                             startActivity(intent);
                         }
@@ -527,9 +529,9 @@ public class VideodetailsActivity extends Activity
                             try
                             {
                                 replyArrayList = new ArrayList<>();
-                                replyArrayList.add(replyApi.new reply(1));
+                                replyArrayList.add(new ReplyModel(1));
                                 replyArrayList.addAll(replyApi.getReply(1, "2", 5, ""));
-                                replyArrayList.add(replyApi.new reply(2));
+                                replyArrayList.add(new ReplyModel(2));
                                 replyArrayList.addAll(replyApi.getReply(1, "0", 0, ""));
                                 handler.post(runnableReply);
                             }
@@ -652,7 +654,7 @@ public class VideodetailsActivity extends Activity
             {
                 try
                 {
-                    ArrayList<ReplyApi.reply> r = replyApi.getReply(replyPage, "0", 0, "");
+                    ArrayList<ReplyModel> r = replyApi.getReply(replyPage, "0", 0, "");
                     if(r != null && r.size() != 0)
                     {
                         replyArrayList.addAll(r);
@@ -719,9 +721,9 @@ public class VideodetailsActivity extends Activity
 
         private LruCache<String, BitmapDrawable> mImageCache;
 
-        private ArrayList<ReplyApi.reply> replyList;
+        private ArrayList<ReplyModel> replyList;
 
-        public mAdapter(LayoutInflater inflater, ArrayList<ReplyApi.reply> replyList)
+        public mAdapter(LayoutInflater inflater, ArrayList<ReplyModel> replyList)
         {
             mInflater = inflater;
             this.replyList = replyList;
@@ -779,7 +781,7 @@ public class VideodetailsActivity extends Activity
         @Override
         public View getView(int position, View convertView, ViewGroup viewGroup)
         {
-            final ReplyApi.reply v = replyList.get(position);
+            final ReplyModel v = replyList.get(position);
             ViewHolder viewHolder = null;
             if(convertView == null)
             {
@@ -845,7 +847,7 @@ public class VideodetailsActivity extends Activity
                     @Override
                     public void onClick(View view)
                     {
-                        Intent intent = new Intent(ctx, OtheruserActivity.class);
+                        Intent intent = new Intent(ctx, OtherUserActivity.class);
                         intent.putExtra("mid", v.getUserMid());
                         startActivity(intent);
                     }
@@ -1074,9 +1076,9 @@ public class VideodetailsActivity extends Activity
 
         private LruCache<String, BitmapDrawable> mImageCache;
 
-        private ArrayList<ListofVideoApi> recommendList;
+        private ArrayList<ListofVideoModel> recommendList;
 
-        public rAdapter(LayoutInflater inflater, ArrayList<ListofVideoApi> recommendList)
+        public rAdapter(LayoutInflater inflater, ArrayList<ListofVideoModel> recommendList)
         {
             mInflater = inflater;
             this.recommendList = recommendList;
@@ -1122,7 +1124,7 @@ public class VideodetailsActivity extends Activity
         @Override
         public View getView(int position, View convertView, ViewGroup viewGroup)
         {
-            final ListofVideoApi v = recommendList.get(position);
+            final ListofVideoModel v = recommendList.get(position);
             ViewHolder viewHolder;
             if(convertView == null)
             {
@@ -1562,7 +1564,7 @@ public class VideodetailsActivity extends Activity
                     FavorBoxApi favorBoxApi = new FavorBoxApi(
                             sharedPreferences.getString("cookies", ""),
                             sharedPreferences.getString("mid", ""));
-                    ArrayList<FavorBoxApi.FavorBox> favorBoxArrayList = favorBoxApi.getFavorbox();
+                    ArrayList<FavorBoxModel> favorBoxArrayList = favorBoxApi.getFavorbox();
                     String[] favorBoxNames = new String[favorBoxArrayList.size()];
                     for (int i = 0; i < favorBoxArrayList.size(); i++)
                         favorBoxNames[i] = favorBoxArrayList.get(i).title;
