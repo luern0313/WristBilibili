@@ -114,8 +114,8 @@ public class DynamicFragment extends Fragment
             @Override
             public void run()
             {
-                ((TextView) loadingView.findViewById(R.id.wid_dy_load_button)).setText("好像没有网络...\n检查下网络？");
-                loadingView.findViewById(R.id.wid_dy_load_button).setVisibility(View.VISIBLE);
+                ((TextView) loadingView.findViewById(R.id.wid_load_button)).setText("好像没有网络...\n检查下网络？");
+                loadingView.findViewById(R.id.wid_load_button).setVisibility(View.VISIBLE);
                 isLoading = false;
             }
         };
@@ -166,13 +166,13 @@ public class DynamicFragment extends Fragment
             }
         });
 
-        loadingView.findViewById(R.id.wid_dy_load_button).setOnClickListener(new View.OnClickListener()
+        loadingView.findViewById(R.id.wid_load_button).setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                ((TextView) loadingView.findViewById(R.id.wid_dy_load_button)).setText(" 加载中. . .");
-                loadingView.findViewById(R.id.wid_dy_load_button).setVisibility(View.GONE);
+                ((TextView) loadingView.findViewById(R.id.wid_load_button)).setText(" 加载中. . .");
+                loadingView.findViewById(R.id.wid_load_button).setVisibility(View.GONE);
                 getMoreDynamic();
             }
         });

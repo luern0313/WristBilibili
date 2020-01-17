@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:text="用户"
-            android:textColor="@color/textColor" />
+            android:textColor="@color/white" />
 
         <ImageView
             android:id="@+id/ou_title_extraicon"
@@ -49,7 +49,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/ou_title_layout"
-        android:background="@color/textColor"
+        android:background="@color/white"
         android:clickable="true"
         android:gravity="center"
         android:orientation="vertical"
@@ -73,7 +73,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/ou_title_layout"
-        android:background="@color/textColor"
+        android:background="@color/white"
         android:clickable="true"
         android:gravity="center"
         android:orientation="vertical"

@@ -18,7 +18,7 @@
         android:id="@+id/dl_nothing"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/textColor"
+        android:background="@color/white"
         android:gravity="center"
         android:orientation="vertical"
         android:paddingBottom="33dp"
@@ -57,7 +57,7 @@
         android:paddingLeft="28dp"
         android:paddingRight="28dp"
         android:paddingTop="10dp"
-        android:textColor="@color/textColor"
+        android:textColor="@color/white"
         android:textSize="12sp"
         android:visibility="gone" />
 

@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -215,6 +216,7 @@ public class LoginActivity extends Activity
                                 cookies += cookiesList.get(i).split("; ")[0] + "; ";
                             cookies = cookies.substring(0, cookies.length() - 2);
 
+                            editor.putString("access_key", userLoginApi.getAccessKey(cookies));
                             editor.putString("cookies", cookies);
                             editor.putString("mid", getInfoFromCookie("DedeUserID", cookies));
                             editor.putString("csrf", getInfoFromCookie("bili_jct", cookies));

@@ -76,7 +76,7 @@
             android:layout_margin="4dp"
             android:background="@drawable/shape_dynamic_videotext"
             android:padding="2dp"
-            android:textColor="@color/textColor"
+            android:textColor="@color/white"
             android:textSize="11sp" />
 
         <TextView

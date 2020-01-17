@@ -1,4 +1,4 @@
-package cn.luern0313.wristbilibili.widget;
+package cn.luern0313.wristbilibili.util;
 
 /**
  * Created by liupe on 2018/11/20.

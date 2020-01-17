@@ -5,17 +5,16 @@
     <color name="colorAccent">#FF4081</color>
     <color name="mainColor">#fa7298</color>
 
-    <color name="textColor">#ffffff</color>
-    <color name="textColor2">#fdd4e0</color>
-    <color name="textColor3">#444444</color>
-    <color name="textColor4">#000000</color>
-
+    <color name="white">#ffffff</color>
+    <color name="gray_da">#DADADA</color>
+    <color name="gray_bb">#BBBBBB</color>
+    <color name="gray_44">#444444</color>
     <color name="black">#000000</color>
     <color name="alpha">#00000000</color>
     <color name="alpha_activity">#00fafafa</color>
 
-    <color name="shareBG">#DADADA</color>
-    <color name="shareBGs">#BBB</color>
+    <color name="pink_light">#fdd4e0</color>
+    <color name="orange">#FB9E60</color>
     <color name="shareText">#126845</color>
 
     <color name="activityBG">#fffafafa</color>

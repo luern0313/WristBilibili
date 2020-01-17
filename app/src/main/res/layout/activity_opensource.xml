@@ -25,7 +25,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:text="关于开源"
-                android:textColor="@color/textColor"
+                android:textColor="@color/white"
                 android:textSize="13sp" />
 
             <ImageView

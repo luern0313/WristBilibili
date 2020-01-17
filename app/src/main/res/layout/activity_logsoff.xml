@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:text="注销"
-            android:textColor="@color/textColor" />
+            android:textColor="@color/white" />
 
         <ImageView
             android:id="@+id/logs_title_extraicon"
@@ -60,7 +60,7 @@
                 android:layout_marginTop="4dp"
                 android:onClick="clickLogsoff"
                 android:text="注销并重启应用"
-                android:textColor="@color/textColor" />
+                android:textColor="@color/white" />
 
         </LinearLayout>
     </ScrollView>

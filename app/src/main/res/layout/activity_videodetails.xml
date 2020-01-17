@@ -20,7 +20,7 @@
             android:layout_centerHorizontal="true"
             android:gravity="center_vertical"
             android:text="视频详情"
-            android:textColor="@color/textColor"
+            android:textColor="@color/white"
             android:textSize="13sp" />
 
         <ImageView
@@ -51,7 +51,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/vd_title_layout"
-        android:background="@color/textColor"
+        android:background="@color/white"
         android:clickable="true"
         android:gravity="center"
         android:orientation="vertical"
@@ -76,7 +76,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/vd_title_layout"
-        android:background="@color/textColor"
+        android:background="@color/white"
         android:clickable="true"
         android:gravity="center"
         android:orientation="vertical"
@@ -101,7 +101,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/vd_title_layout"
-        android:background="@color/textColor"
+        android:background="@color/white"
         android:clickable="true"
         android:gravity="center"
         android:orientation="vertical"
@@ -151,7 +151,7 @@
             android:gravity="center"
             android:paddingTop="14dp"
             android:text="当标题栏出现左右两个箭头时，代表这个页面是可以左右滑动的！"
-            android:textColor="@color/textColor"
+            android:textColor="@color/white"
             android:textStyle="bold" />
 
         <TextView
@@ -161,7 +161,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="18dp"
             android:text="轻触不再显示"
-            android:textColor="@color/textColor"
+            android:textColor="@color/white"
             android:textSize="12sp" />
     </RelativeLayout>
 </RelativeLayout>

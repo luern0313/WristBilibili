@@ -26,6 +26,7 @@ import cn.luern0313.wristbilibili.fragment.DownloadFragment;
 import cn.luern0313.wristbilibili.fragment.DynamicFragment;
 import cn.luern0313.wristbilibili.fragment.FavorBoxFragment;
 import cn.luern0313.wristbilibili.fragment.RankingFragment;
+import cn.luern0313.wristbilibili.fragment.RecommendFragment;
 import cn.luern0313.wristbilibili.fragment.SearchFragment;
 import cn.luern0313.wristbilibili.fragment.SettingFragment;
 import cn.luern0313.wristbilibili.fragment.WatchlaterFragment;
@@ -131,36 +132,41 @@ public class MainActivity extends Activity
                     titleText.setTextSize(14);
                     break;
                 case 2:
+                    transaction.replace(R.id.main_frame, new RecommendFragment());
+                    titleText.setText("推荐");
+                    titleText.setTextSize(14);
+                    break;
+                case 3:
                     transaction.replace(R.id.main_frame, new RankingFragment());
                     titleText.setText("排行榜");
                     titleText.setTextSize(14);
                     break;
-                case 3:
+                case 4:
                     transaction.replace(R.id.main_frame, new AnimationTimelineFragment());
                     titleText.setText("追番提醒");
                     titleText.setTextSize(13);
                     break;
-                case 4:
+                case 5:
                     transaction.replace(R.id.main_frame, new DownloadFragment());
                     titleText.setText("离线缓存");
                     titleText.setTextSize(13);
                     break;
-                case 5:
+                case 6:
                     transaction.replace(R.id.main_frame, new SearchFragment());
                     titleText.setText("搜索");
                     titleText.setTextSize(14);
                     break;
-                case 6:
+                case 7:
                     transaction.replace(R.id.main_frame, new FavorBoxFragment());
                     titleText.setText("收藏");
                     titleText.setTextSize(14);
                     break;
-                case 7:
+                case 8:
                     transaction.replace(R.id.main_frame, new WatchlaterFragment());
                     titleText.setText("稍后再看");
                     titleText.setTextSize(13);
                     break;
-                case 8:
+                case 9:
                     transaction.replace(R.id.main_frame, new SettingFragment());
                     titleText.setText("设置");
                     titleText.setTextSize(14);

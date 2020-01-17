@@ -83,7 +83,7 @@
             android:ellipsize="end"
             android:maxLines="2"
             android:text="哔哩哔哩2019拜年祭"
-            android:textColor="@color/textColor3"
+            android:textColor="@color/gray_44"
             android:textSize="13sp" />
 
         <TextView

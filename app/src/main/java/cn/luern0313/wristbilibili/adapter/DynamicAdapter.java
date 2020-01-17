@@ -29,7 +29,7 @@ public class DynamicAdapter extends BaseAdapter
     private LayoutInflater mInflater;
 
     private LruCache<String, BitmapDrawable> mImageCache;
-    private DynamicAdapterListener dynamicAdapterInterface;
+    private DynamicAdapterListener dynamicAdapterListener;
 
     private ArrayList<Object> dyList;
     private ListView listView;
@@ -39,7 +39,7 @@ public class DynamicAdapter extends BaseAdapter
         mInflater = inflater;
         this.dyList = dyList;
         this.listView = listView;
-        this.dynamicAdapterInterface = dynamicAdapterListener;
+        this.dynamicAdapterListener = dynamicAdapterListener;
 
         int maxCache = (int) Runtime.getRuntime().maxMemory();
         int cacheSize = maxCache / 6;
@@ -394,14 +394,14 @@ public class DynamicAdapter extends BaseAdapter
         }
     }
 
-    View.OnClickListener onViewClick(final int position, final int mode)
+    private View.OnClickListener onViewClick(final int position, final int mode)
     {
         return new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                dynamicAdapterInterface.onClick(v.getId(), position, mode);
+                dynamicAdapterListener.onClick(v.getId(), position, mode);
             }
         };
     }

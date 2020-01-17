@@ -52,6 +52,7 @@ import cn.luern0313.wristbilibili.api.ReplyApi;
 import cn.luern0313.wristbilibili.api.VideoDetailsApi;
 import cn.luern0313.wristbilibili.models.ReplyModel;
 import cn.luern0313.wristbilibili.service.DownloadService;
+import cn.luern0313.wristbilibili.widget.ImageDownloader;
 
 public class VideodetailsActivity extends Activity
 {
@@ -367,8 +368,7 @@ public class VideodetailsActivity extends Activity
             @Override
             public void run()
             {
-                ((TextView) layoutLoading.findViewById(R.id.wid_dy_load_text)).setText(
-                        "  没有更多了...");
+                ((TextView) layoutLoading.findViewById(R.id.wid_load_text)).setText("  没有更多了...");
             }
         };
 
@@ -377,9 +377,8 @@ public class VideodetailsActivity extends Activity
             @Override
             public void run()
             {
-                ((TextView) layoutLoading.findViewById(R.id.wid_dy_load_text)).setText(
-                        "好像没有网络...\n检查下网络？");
-                layoutLoading.findViewById(R.id.wid_dy_load_button).setVisibility(View.VISIBLE);
+                ((TextView) layoutLoading.findViewById(R.id.wid_load_text)).setText("好像没有网络...\n检查下网络？");
+                layoutLoading.findViewById(R.id.wid_load_button).setVisibility(View.VISIBLE);
                 isReplyLoading = false;
             }
         };
@@ -400,16 +399,14 @@ public class VideodetailsActivity extends Activity
             }
         };
 
-        layoutLoading.findViewById(R.id.wid_dy_load_button).setOnClickListener(
+        layoutLoading.findViewById(R.id.wid_load_button).setOnClickListener(
                 new View.OnClickListener()
                 {
                     @Override
                     public void onClick(View v)
                     {
-                        ((TextView) layoutLoading.findViewById(R.id.wid_dy_load_text)).setText(
-                                " 加载中. . .");
-                        layoutLoading.findViewById(R.id.wid_dy_load_button).setVisibility(
-                                View.GONE);
+                        ((TextView) layoutLoading.findViewById(R.id.wid_load_text)).setText(" 加载中. . .");
+                        layoutLoading.findViewById(R.id.wid_load_button).setVisibility(View.GONE);
                         getMoreReply();
                     }
                 });
@@ -836,7 +833,7 @@ public class VideodetailsActivity extends Activity
                 else viewHolder.dislikei.setImageResource(R.drawable.icon_dislike);
                 if(v.getUserVip() == 2) viewHolder.name.setTextColor(
                         getResources().getColor(R.color.mainColor));
-                else viewHolder.name.setTextColor(getResources().getColor(R.color.textColor4));
+                else viewHolder.name.setTextColor(getResources().getColor(R.color.black));
 
                 viewHolder.img.setTag(v.getUserHead());
                 BitmapDrawable h = setImageFormWeb(v.getUserHead());
@@ -955,7 +952,7 @@ public class VideodetailsActivity extends Activity
                 {
                     imageUrl = params[0];
                     Bitmap bitmap = null;
-                    bitmap = downloadImage();
+                    bitmap = ImageDownloader.downloadImage(imageUrl);
                     BitmapDrawable db = new BitmapDrawable(getResources(), bitmap);
                     // 如果本地还没缓存该图片，就缓存
                     if(mImageCache.get(imageUrl) == null && bitmap != null)
@@ -980,91 +977,6 @@ public class VideodetailsActivity extends Activity
                 {
                     iv.setImageDrawable(result);
                 }
-            }
-
-            /**
-             * 获得需要压缩的比率
-             *
-             * @param options 需要传入已经BitmapFactory.decodeStream(is, null, options);
-             * @return 返回压缩的比率，最小为1
-             */
-            public int getInSampleSize(BitmapFactory.Options options)
-            {
-                int inSampleSize = 1;
-                int realWith = 136;
-                int realHeight = 136;
-
-                int outWidth = options.outWidth;
-                int outHeight = options.outHeight;
-
-                //获取比率最大的那个
-                if(outWidth > realWith || outHeight > realHeight)
-                {
-                    int withRadio = Math.round(outWidth / realWith);
-                    int heightRadio = Math.round(outHeight / realHeight);
-                    inSampleSize = withRadio > heightRadio ? withRadio : heightRadio;
-                }
-                return inSampleSize;
-            }
-
-            /**
-             * 根据输入流返回一个压缩的图片
-             *
-             * @param input 图片的输入流
-             * @return 压缩的图片
-             */
-            public Bitmap getCompressBitmap(InputStream input)
-            {
-                //因为InputStream要使用两次，但是使用一次就无效了，所以需要复制两个
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                try
-                {
-                    byte[] buffer = new byte[1024];
-                    int len;
-                    while ((len = input.read(buffer)) > -1)
-                    {
-                        baos.write(buffer, 0, len);
-                    }
-                    baos.flush();
-                }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
-                }
-
-                //复制新的输入流
-                InputStream is = new ByteArrayInputStream(baos.toByteArray());
-                InputStream is2 = new ByteArrayInputStream(baos.toByteArray());
-
-                //只是获取网络图片的大小，并没有真正获取图片
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inJustDecodeBounds = true;
-                BitmapFactory.decodeStream(is, null, options);
-                //获取图片并进行压缩
-                options.inSampleSize = getInSampleSize(options);
-                options.inJustDecodeBounds = false;
-                return BitmapFactory.decodeStream(is2, null, options);
-            }
-
-            /**
-             * 根据url从网络上下载图片
-             *
-             * @return 图片
-             */
-            private Bitmap downloadImage() throws IOException
-            {
-                HttpURLConnection con = null;
-                Bitmap bitmap = null;
-                URL url = new URL(imageUrl);
-                con = (HttpURLConnection) url.openConnection();
-                con.setConnectTimeout(5 * 1000);
-                con.setReadTimeout(10 * 1000);
-                bitmap = getCompressBitmap(con.getInputStream());
-                if(con != null)
-                {
-                    con.disconnect();
-                }
-                return bitmap;
             }
         }
 

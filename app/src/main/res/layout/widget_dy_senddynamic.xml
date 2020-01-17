@@ -10,6 +10,6 @@
         android:layout_height="36dp"
         android:layout_centerHorizontal="true"
         android:text="发动态"
-        android:textColor="@color/textColor"
+        android:textColor="@color/white"
         android:textSize="13sp" />
 </RelativeLayout>

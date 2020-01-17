@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:text="请选择"
-            android:textColor="@color/textColor" />
+            android:textColor="@color/white" />
 
         <ImageView
             android:id="@+id/sp_title_extraicon"

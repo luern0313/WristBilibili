@@ -18,32 +18,29 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.R;
-import cn.luern0313.wristbilibili.adapter.RankingAdapter;
-import cn.luern0313.wristbilibili.api.RankingApi;
-import cn.luern0313.wristbilibili.models.RankingModel;
+import cn.luern0313.wristbilibili.adapter.RecommendAdapter;
+import cn.luern0313.wristbilibili.api.RecommendApi;
+import cn.luern0313.wristbilibili.models.RecommendModel;
 import cn.luern0313.wristbilibili.ui.MainActivity;
-import cn.luern0313.wristbilibili.ui.OtherUserActivity;
 import cn.luern0313.wristbilibili.ui.VideodetailsActivity;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
 /**
- * 被 luern0313 创建于 2020/1/11.
+ * 被 luern0313 创建于 2020/1/15.
  */
 
-public class RankingFragment extends Fragment
+public class RecommendFragment extends Fragment
 {
     Context ctx;
     View rootLayout;
-    RankingAdapter rankingAdapter;
-    RankingAdapter.RankingAdapterListener adapterListener;
+    RecommendAdapter recommendAdapter;
+    RecommendAdapter.RecommendAdapterListener adapterListener;
     ListView uiListView;
     WaveSwipeRefreshLayout uiWaveSwipeRefreshLayout;
-    View uiPickUpView;
     View uiLoadingView;
 
-    RankingApi rankingApi;
-    ArrayList<RankingModel> rankingVideoArrayList = new ArrayList<>();
-    int pn = 0;
+    RecommendApi recommendApi;
+    ArrayList<RecommendModel> recommendVideoArrayList = new ArrayList<>();
     boolean isLoading = false;
 
     Handler handler = new Handler();
@@ -56,17 +53,16 @@ public class RankingFragment extends Fragment
     public View onCreateView(final LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState)
     {
         ctx = getActivity();
-        rootLayout = inflater.inflate(R.layout.fragment_ranking, container, false);
-        rankingApi = new RankingApi(MainActivity.sharedPreferences.getString("mid", ""),
-                                    MainActivity.sharedPreferences.getString("cookies", ""),
-                                    MainActivity.sharedPreferences.getString("csrf", ""));
+        rootLayout = inflater.inflate(R.layout.fragment_recommend, container, false);
+        recommendApi = new RecommendApi(MainActivity.sharedPreferences.getString("mid", ""),
+                                        MainActivity.sharedPreferences.getString("cookies", ""),
+                                        MainActivity.sharedPreferences.getString("csrf", ""),
+                                        MainActivity.sharedPreferences.getString("access_key", ""));
 
-        uiPickUpView = inflater.inflate(R.layout.widget_ranking_pickup, null, false);
         uiLoadingView = inflater.inflate(R.layout.widget_loading, null, false);
-        uiListView = rootLayout.findViewById(R.id.rk_listview);
-        uiListView.addHeaderView(uiPickUpView);
+        uiListView = rootLayout.findViewById(R.id.rc_listview);
         uiListView.addFooterView(uiLoadingView);
-        uiWaveSwipeRefreshLayout = rootLayout.findViewById(R.id.rk_swipe);
+        uiWaveSwipeRefreshLayout = rootLayout.findViewById(R.id.rc_swipe);
         uiWaveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
         uiWaveSwipeRefreshLayout.setWaveColor(Color.argb(255, 250, 114, 152));
         uiWaveSwipeRefreshLayout.setOnRefreshListener(new WaveSwipeRefreshLayout.OnRefreshListener()
@@ -80,16 +76,15 @@ public class RankingFragment extends Fragment
                     public void run()
                     {
                         isLoading = true;
-                        rankingVideoArrayList.clear();
-                        pn = 0;
+                        recommendVideoArrayList.clear();
                         uiListView.setVisibility(View.GONE);
-                        getRanking();
+                        getRecommend();
                     }
                 });
             }
         });
 
-        adapterListener = new RankingAdapter.RankingAdapterListener()
+        adapterListener = new RecommendAdapter.RecommendAdapterListener()
         {
             @Override
             public void onClick(int viewId, int position)
@@ -98,19 +93,19 @@ public class RankingFragment extends Fragment
             }
         };
 
-        rankingAdapter = new RankingAdapter(inflater, rankingVideoArrayList, uiListView, adapterListener);
-        uiListView.setAdapter(rankingAdapter);
+        recommendAdapter = new RecommendAdapter(inflater, recommendVideoArrayList, uiListView, adapterListener);
+        uiListView.setAdapter(recommendAdapter);
 
         runnableUi = new Runnable()
         {
             @Override
             public void run()
             {
-                rootLayout.findViewById(R.id.rk_noweb).setVisibility(View.GONE);
+                rootLayout.findViewById(R.id.rc_noweb).setVisibility(View.GONE);
                 uiListView.setVisibility(View.VISIBLE);
                 uiWaveSwipeRefreshLayout.setRefreshing(false);
                 isLoading = false;
-                rankingAdapter.notifyDataSetChanged();
+                recommendAdapter.notifyDataSetChanged();
             }
         };
 
@@ -120,7 +115,7 @@ public class RankingFragment extends Fragment
             public void run()
             {
                 uiWaveSwipeRefreshLayout.setRefreshing(false);
-                rootLayout.findViewById(R.id.rk_noweb).setVisibility(View.VISIBLE);
+                rootLayout.findViewById(R.id.rc_noweb).setVisibility(View.VISIBLE);
                 isLoading = false;
             }
         };
@@ -157,18 +152,18 @@ public class RankingFragment extends Fragment
                 if(visibleItemCount + firstVisibleItem == totalItemCount && !isLoading)
                 {
                     isLoading = true;
-                    getRanking();
+                    getRecommend();
                 }
             }
         });
 
         uiWaveSwipeRefreshLayout.setRefreshing(true);
-        getRanking();
+        getRecommend();
 
         return rootLayout;
     }
 
-    void getRanking()
+    void getRecommend()
     {
         new Thread(new Runnable()
         {
@@ -177,11 +172,10 @@ public class RankingFragment extends Fragment
             {
                 try
                 {
-                    ArrayList<RankingModel> rankingModelArrayList = rankingApi.getRankingVideo(pn);
+                    ArrayList<RecommendModel> rankingModelArrayList = recommendApi.getRecommendVideo();
                     if(rankingModelArrayList != null && rankingModelArrayList.size() != 0)
                     {
-                        rankingVideoArrayList.addAll(rankingModelArrayList);
-                        pn++;
+                        recommendVideoArrayList.addAll(rankingModelArrayList);
                         handler.post(runnableUi);
                     }
                     else
@@ -200,20 +194,14 @@ public class RankingFragment extends Fragment
 
     void onViewClick(int viewId, int position)
     {
-        if(viewId == R.id.rk_video_lay)
+        if(viewId == R.id.rc_video)
         {
-            if(!rankingVideoArrayList.get(position).video_aid.equals(""))
+            if(!recommendVideoArrayList.get(position).video_aid.equals(""))
             {
                 Intent intent = new Intent(ctx, VideodetailsActivity.class);
-                intent.putExtra("aid", rankingVideoArrayList.get(position).video_aid);
+                intent.putExtra("aid", recommendVideoArrayList.get(position).video_aid);
                 startActivity(intent);
             }
-        }
-        else if(viewId == R.id.rk_video_video_up)
-        {
-            Intent intent = new Intent(ctx, OtherUserActivity.class);
-            intent.putExtra("mid", rankingVideoArrayList.get(position).up_mid);
-            startActivity(intent);
         }
     }
 }

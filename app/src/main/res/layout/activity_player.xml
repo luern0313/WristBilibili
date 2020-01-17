@@ -10,14 +10,14 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:text="同步观看进度中...请稍后\n\n（你也可以右滑来返回）"
-        android:textColor="@color/textColor"
+        android:textColor="@color/white"
         android:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/player_loading"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/textColor"
+        android:background="@color/white"
         android:gravity="center"
         android:orientation="vertical">
 

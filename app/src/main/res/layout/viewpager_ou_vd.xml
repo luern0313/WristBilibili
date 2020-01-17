@@ -23,7 +23,7 @@
                 android:layout_marginLeft="21dp"
                 android:layout_marginRight="21dp"
                 android:layout_marginTop="7dp"
-                android:textColor="@color/textColor3" />
+                android:textColor="@color/gray_44" />
 
             <TextView
                 android:id="@+id/vd_video_play"
@@ -349,7 +349,7 @@
                         android:layout_toRightOf="@+id/vd_card_head"
                         android:ellipsize="end"
                         android:maxLines="1"
-                        android:textColor="@color/textColor3"
+                        android:textColor="@color/gray_44"
                         android:textSize="13sp"
                         android:textStyle="bold" />
 
@@ -363,7 +363,7 @@
                         android:layout_toRightOf="@+id/vd_card_head"
                         android:ellipsize="end"
                         android:maxLines="1"
-                        android:textColor="@color/textColor3"
+                        android:textColor="@color/gray_44"
                         android:textSize="10sp" />
                 </RelativeLayout>
             </android.support.v7.widget.CardView>

@@ -39,7 +39,7 @@ public class MenuActivity extends Activity
     Runnable runnableUi;
 
     Bitmap head;
-    private Intent intent;
+    private Intent resultIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -69,8 +69,8 @@ public class MenuActivity extends Activity
             e.printStackTrace();
         }
 
-        intent = new Intent();
-        setResult(-1, intent);
+        resultIntent = new Intent();
+        setResult(-1, resultIntent);
 
         setUserInfo();
 
@@ -181,64 +181,72 @@ public class MenuActivity extends Activity
 
     public void buttonDynamic(View view)
     {
-        intent.putExtra("activity", 1);
-        setResult(0, intent);
+        resultIntent.putExtra("activity", 1);
+        setResult(0, resultIntent);
+        finish();
+        overridePendingTransition(0, R.anim.anim_activity_out_up);
+    }
+
+    public void buttonRecommend(View view)
+    {
+        resultIntent.putExtra("activity", 2);
+        setResult(0, resultIntent);
         finish();
         overridePendingTransition(0, R.anim.anim_activity_out_up);
     }
 
     public void buttonRanking(View view)
     {
-        intent.putExtra("activity", 2);
-        setResult(0, intent);
+        resultIntent.putExtra("activity", 3);
+        setResult(0, resultIntent);
         finish();
         overridePendingTransition(0, R.anim.anim_activity_out_up);
     }
 
     public void buttonRemind(View view)
     {
-        intent.putExtra("activity", 3);
-        setResult(0, intent);
+        resultIntent.putExtra("activity", 4);
+        setResult(0, resultIntent);
         finish();
         overridePendingTransition(0, R.anim.anim_activity_out_up);
     }
 
     public void buttonDL(View view)
     {
-        intent.putExtra("activity", 4);
-        setResult(0, intent);
+        resultIntent.putExtra("activity", 5);
+        setResult(0, resultIntent);
         finish();
         overridePendingTransition(0, R.anim.anim_activity_out_up);
     }
 
     public void buttonSearch(View view)
     {
-        intent.putExtra("activity", 5);
-        setResult(0, intent);
+        resultIntent.putExtra("activity", 6);
+        setResult(0, resultIntent);
         finish();
         overridePendingTransition(0, R.anim.anim_activity_out_up);
     }
 
     public void buttonCollect(View view)
     {
-        intent.putExtra("activity", 6);
-        setResult(0, intent);
+        resultIntent.putExtra("activity", 7);
+        setResult(0, resultIntent);
         finish();
         overridePendingTransition(0, R.anim.anim_activity_out_up);
     }
 
     public void buttonWatchlater(View view)
     {
-        intent.putExtra("activity", 7);
-        setResult(0, intent);
+        resultIntent.putExtra("activity", 8);
+        setResult(0, resultIntent);
         finish();
         overridePendingTransition(0, R.anim.anim_activity_out_up);
     }
 
     public void buttonSetting(View view)
     {
-        intent.putExtra("activity", 8);
-        setResult(0, intent);
+        resultIntent.putExtra("activity", 9);
+        setResult(0, resultIntent);
         finish();
         overridePendingTransition(0, R.anim.anim_activity_out_up);
     }

@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:text="查看评论"
-            android:textColor="@color/textColor" />
+            android:textColor="@color/white" />
 
         <ImageView
             android:id="@+id/cr_title_extraicon"
@@ -43,7 +43,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/cr_title_layout"
-        android:background="@color/textColor"
+        android:background="@color/white"
         android:gravity="center"
         android:orientation="vertical"
         android:paddingBottom="33dp"
@@ -68,7 +68,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/cr_title_layout"
-        android:background="@color/textColor"
+        android:background="@color/white"
         android:clickable="true"
         android:gravity="center"
         android:orientation="vertical"

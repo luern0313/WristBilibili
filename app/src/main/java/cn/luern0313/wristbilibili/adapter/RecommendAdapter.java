@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -19,30 +18,29 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.R;
-import cn.luern0313.wristbilibili.models.RankingModel;
+import cn.luern0313.wristbilibili.models.RecommendModel;
 import cn.luern0313.wristbilibili.widget.ImageDownloader;
-import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
- * 被 luern0313 创建于 2020/1/9.
+ * 被 luern0313 创建于 2020/1/15.
  */
 
-public class RankingAdapter extends BaseAdapter
+public class RecommendAdapter extends BaseAdapter
 {
     private LayoutInflater mInflater;
 
     private LruCache<String, BitmapDrawable> mImageCache;
-    private RankingAdapterListener rankingAdapterListener;
+    private RecommendAdapterListener recommendAdapterListener;
 
-    private ArrayList<RankingModel> rkList;
+    private ArrayList<RecommendModel> rcList;
     public ListView listView;
 
-    public RankingAdapter(LayoutInflater inflater, ArrayList<RankingModel> rkList, ListView listView, RankingAdapterListener rankingAdapterListener)
+    public RecommendAdapter(LayoutInflater inflater, ArrayList<RecommendModel> rcList, ListView listView, RecommendAdapterListener recommendAdapterListener)
     {
         mInflater = inflater;
-        this.rkList = rkList;
+        this.rcList = rcList;
         this.listView = listView;
-        this.rankingAdapterListener = rankingAdapterListener;
+        this.recommendAdapterListener = recommendAdapterListener;
 
         int maxCache = (int) Runtime.getRuntime().maxMemory();
         int cacheSize = maxCache / 8;
@@ -67,7 +65,7 @@ public class RankingAdapter extends BaseAdapter
     @Override
     public int getCount()
     {
-        return rkList.size();
+        return rcList.size();
     }
 
     @Override
@@ -85,27 +83,43 @@ public class RankingAdapter extends BaseAdapter
     @Override
     public View getView(int position, View convertView, ViewGroup viewGroup)
     {
-        RankingModel rankingVideo = rkList.get(position);
+        RecommendModel recommendVideo = rcList.get(position);
         ViewHolder viewHolder;
         if(convertView == null)
         {
-            convertView = mInflater.inflate(R.layout.item_ranking_video, null);
+            convertView = mInflater.inflate(R.layout.item_recommend, null);
             viewHolder = new ViewHolder();
+            viewHolder.layout = convertView.findViewById(R.id.rc_video);
+            viewHolder.video_img = convertView.findViewById(R.id.rc_video_img);
+            viewHolder.video_time = convertView.findViewById(R.id.rc_video_time);
+            viewHolder.video_title = convertView.findViewById(R.id.rc_video_video_title);
+            viewHolder.video_play = convertView.findViewById(R.id.rc_video_video_play);
+            viewHolder.video_danmaku = convertView.findViewById(R.id.rc_video_video_danmaku);
+            viewHolder.video_reason = convertView.findViewById(R.id.rc_video_video_reason);
+            viewHolder.video_lable = convertView.findViewById(R.id.rc_video_video_label);
             convertView.setTag(viewHolder);
-            viewHolder.layout = convertView.findViewById(R.id.rk_video_lay);
-            viewHolder.up_layout = convertView.findViewById(R.id.rk_video_video_up);
-            viewHolder.up_head = convertView.findViewById(R.id.rk_video_video_up_head);
-            viewHolder.up_name = convertView.findViewById(R.id.rk_video_video_up_name);
-            viewHolder.video_rank = convertView.findViewById(R.id.rk_video_rank);
-            viewHolder.video_img = convertView.findViewById(R.id.rk_video_video_img);
-            viewHolder.video_title = convertView.findViewById(R.id.rk_video_video_title);
-            viewHolder.video_play = convertView.findViewById(R.id.rk_video_video_play);
-            viewHolder.video_danmaku = convertView.findViewById(R.id.rk_video_video_danmaku);
-            viewHolder.video_score = convertView.findViewById(R.id.rk_video_video_score);
         }
         else
         {
             viewHolder = (ViewHolder) convertView.getTag();
+        }
+
+        viewHolder.video_img.setImageResource(R.drawable.img_default_vid);
+        viewHolder.video_time.setText(recommendVideo.video_time);
+        viewHolder.video_title.setText(recommendVideo.video_title);
+        viewHolder.video_play.setText(recommendVideo.video_data_1_text);
+        viewHolder.video_danmaku.setText(recommendVideo.video_data_2_text);
+        viewHolder.video_lable.setText(recommendVideo.video_lable);
+        if(!recommendVideo.video_recommend_reason.equals(""))
+        {
+            viewHolder.video_reason.setVisibility(View.VISIBLE);
+            viewHolder.video_lable.setVisibility(View.GONE);
+            viewHolder.video_reason.setText(recommendVideo.video_recommend_reason);
+        }
+        else
+        {
+            viewHolder.video_reason.setVisibility(View.GONE);
+            viewHolder.video_lable.setVisibility(View.VISIBLE);
         }
 
         Drawable playNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_play_num);
@@ -115,44 +129,10 @@ public class RankingAdapter extends BaseAdapter
         viewHolder.video_play.setCompoundDrawables(playNumDrawable,null, null,null);
         viewHolder.video_danmaku.setCompoundDrawables(danmakuNumDrawable,null, null,null);
 
-        viewHolder.up_name.setText(rankingVideo.up_name);
-        viewHolder.video_rank.setText(String.valueOf(position + 1));
-        viewHolder.video_title.setText(rankingVideo.video_title);
-        viewHolder.video_play.setText(getView(rankingVideo.video_play));
-        viewHolder.video_danmaku.setText(getView(rankingVideo.video_danmaku));
-        viewHolder.video_score.setText("综合得分：" + rankingVideo.video_score);
-        viewHolder.up_head.setImageResource(R.drawable.img_default_head);
-        viewHolder.video_img.setImageResource(R.drawable.img_default_vid);
-
         viewHolder.layout.setOnClickListener(onViewClick(position));
-        viewHolder.up_layout.setOnClickListener(onViewClick(position));
 
-        switch(position + 1)
-        {
-            case 1:
-                viewHolder.layout.setBackgroundResource(R.drawable.shape_bg_ranking_rank_1);
-                viewHolder.video_rank.setTextColor(convertView.getResources().getColor(R.color.ranking_rank_1));
-                break;
-            case 2:
-                viewHolder.layout.setBackgroundResource(R.drawable.shape_bg_ranking_rank_2);
-                viewHolder.video_rank.setTextColor(convertView.getResources().getColor(R.color.ranking_rank_2));
-                break;
-            case 3:
-                viewHolder.layout.setBackgroundResource(R.drawable.shape_bg_ranking_rank_3);
-                viewHolder.video_rank.setTextColor(convertView.getResources().getColor(R.color.ranking_rank_3));
-                break;
-            default:
-                viewHolder.layout.setBackgroundResource(0);
-                viewHolder.video_rank.setTextColor(convertView.getResources().getColor(R.color.ranking_rank_other));
-                break;
-        }
-
-        viewHolder.up_head.setTag(rankingVideo.up_face);
-        BitmapDrawable c = setImageFormWeb(rankingVideo.up_face);
-        if(c != null) viewHolder.up_head.setImageDrawable(c);
-
-        viewHolder.video_img.setTag(rankingVideo.video_pic);
-        BitmapDrawable i = setImageFormWeb(rankingVideo.video_pic);
+        viewHolder.video_img.setTag(recommendVideo.video_img);
+        BitmapDrawable i = setImageFormWeb(recommendVideo.video_img);
         if(i != null) viewHolder.video_img.setImageDrawable(i);
         return convertView;
     }
@@ -164,7 +144,7 @@ public class RankingAdapter extends BaseAdapter
             @Override
             public void onClick(View v)
             {
-                rankingAdapterListener.onClick(v.getId(), position);
+                recommendAdapterListener.onClick(v.getId(), position);
             }
         };
     }
@@ -172,15 +152,13 @@ public class RankingAdapter extends BaseAdapter
     class ViewHolder
     {
         RelativeLayout layout;
-        LinearLayout up_layout;
-        CircleImageView up_head;
-        TextView up_name;
-        TextView video_rank;
         ImageView video_img;
+        TextView video_time;
         TextView video_title;
         TextView video_play;
         TextView video_danmaku;
-        TextView video_score;
+        TextView video_reason;
+        TextView video_lable;
     }
 
     private String getView(int view)
@@ -249,7 +227,7 @@ public class RankingAdapter extends BaseAdapter
         }
     }
 
-    public interface RankingAdapterListener
+    public interface RecommendAdapterListener
     {
         void onClick(int viewId, int position);
     }

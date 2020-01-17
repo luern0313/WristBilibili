@@ -160,7 +160,7 @@ public class OtherUserActivity extends Activity
                     findViewById(R.id.ou_noweb).setVisibility(View.GONE);
 
                     if(otherUserCardJson.optJSONObject("vip").optInt("vipStatus") == 0)
-                        uiName.setTextColor(getResources().getColor(R.color.textColor3));
+                        uiName.setTextColor(getResources().getColor(R.color.gray_44));
                     uiName.setText(otherUserCardJson.optString("name"));
                     uiLv.setText("LV" + otherUserCardJson.optJSONObject("level_info").optInt("current_level"));
                     if(otherUserJson.optBoolean("following"))
@@ -361,7 +361,7 @@ public class OtherUserActivity extends Activity
                 try
                 {
                     Log.i("bilibili", "123");
-                    ((TextView) dynamicLayoutLoading.findViewById(R.id.wid_dy_load_text)).setText("  没有更多了...");
+                    ((TextView) dynamicLayoutLoading.findViewById(R.id.wid_load_text)).setText("  没有更多了...");
                 }
                 catch(Exception e)
                 {
@@ -377,7 +377,7 @@ public class OtherUserActivity extends Activity
             {
                 try
                 {
-                    ((TextView) followLayoutLoading.findViewById(R.id.wid_dy_load_text)).setText("无法查看更多了");
+                    ((TextView) followLayoutLoading.findViewById(R.id.wid_load_text)).setText("无法查看更多了");
                     isFollowLoading = true;
                 }
                 catch(Exception e)
@@ -394,7 +394,7 @@ public class OtherUserActivity extends Activity
             {
                 try
                 {
-                    ((TextView) fansLayoutLoading.findViewById(R.id.wid_dy_load_text)).setText("无法查看更多了");
+                    ((TextView) fansLayoutLoading.findViewById(R.id.wid_load_text)).setText("无法查看更多了");
                     isFansLoading = true;
                 }
                 catch(Exception e)
@@ -411,8 +411,8 @@ public class OtherUserActivity extends Activity
             {
                 try
                 {
-                    ((TextView) dynamicLayoutLoading.findViewById(R.id.wid_dy_load_button)).setText("好像没有网络...\n检查下网络？");
-                    dynamicLayoutLoading.findViewById(R.id.wid_dy_load_button).setVisibility(View.VISIBLE);
+                    ((TextView) dynamicLayoutLoading.findViewById(R.id.wid_load_button)).setText("好像没有网络...\n检查下网络？");
+                    dynamicLayoutLoading.findViewById(R.id.wid_load_button).setVisibility(View.VISIBLE);
                     isDynamicLoading = false;
                 }
                 catch(Exception e)
@@ -429,8 +429,8 @@ public class OtherUserActivity extends Activity
             {
                 try
                 {
-                    ((TextView) followLayoutLoading.findViewById(R.id.wid_dy_load_button)).setText("好像没有网络...\n检查下网络？");
-                    followLayoutLoading.findViewById(R.id.wid_dy_load_button).setVisibility(View.VISIBLE);
+                    ((TextView) followLayoutLoading.findViewById(R.id.wid_load_button)).setText("好像没有网络...\n检查下网络？");
+                    followLayoutLoading.findViewById(R.id.wid_load_button).setVisibility(View.VISIBLE);
                     isFollowLoading = false;
                 }
                 catch(Exception e)
@@ -447,8 +447,8 @@ public class OtherUserActivity extends Activity
             {
                 try
                 {
-                    ((TextView) fansLayoutLoading.findViewById(R.id.wid_dy_load_button)).setText("好像没有网络...\n检查下网络？");
-                    fansLayoutLoading.findViewById(R.id.wid_dy_load_button).setVisibility(View.VISIBLE);
+                    ((TextView) fansLayoutLoading.findViewById(R.id.wid_load_button)).setText("好像没有网络...\n检查下网络？");
+                    fansLayoutLoading.findViewById(R.id.wid_load_button).setVisibility(View.VISIBLE);
                     isFansLoading = false;
                 }
                 catch(Exception e)
@@ -1269,7 +1269,7 @@ public class OtherUserActivity extends Activity
             viewHolder.img.setImageResource(R.drawable.img_default_head);
             viewHolder.name.setText(pp.nmae);
             if(pp.vip == 2)
-                viewHolder.name.setTextColor(getResources().getColor(R.color.textColor3));
+                viewHolder.name.setTextColor(getResources().getColor(R.color.gray_44));
             else
                 viewHolder.name.setTextColor(getResources().getColor(R.color.colorAccent));
             String s = pp.verifyName.equals("") ? pp.sign : pp.verifyName;

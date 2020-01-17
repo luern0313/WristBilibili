@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/mainColor"
@@ -48,23 +49,23 @@
                 android:layout_marginTop="4dp"
                 android:layout_toRightOf="@+id/menu_useric"
                 android:text="你还没登录呢~"
-                android:textColor="@color/textColor" />
+                android:textColor="@color/white" />
 
             <TextView
                 android:id="@+id/menu_userlv"
                 android:layout_width="wrap_content"
                 android:layout_height="13dp"
                 android:layout_below="@+id/menu_username"
-                android:layout_marginLeft="2dp"
+                android:layout_marginStart="2dp"
                 android:layout_marginTop="10dp"
-                android:layout_toRightOf="@+id/menu_useric"
+                android:layout_toEndOf="@+id/menu_useric"
                 android:background="@drawable/shape_lvbg_menu"
                 android:paddingBottom="1dp"
                 android:paddingLeft="4dp"
                 android:paddingRight="4dp"
                 android:paddingTop="1dp"
                 android:text="LV0"
-                android:textColor="@color/textColor2"
+                android:textColor="@color/pink_light"
                 android:textSize="8sp"
                 android:textStyle="bold" />
 
@@ -73,11 +74,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="13dp"
                 android:layout_below="@+id/menu_username"
-                android:layout_marginLeft="4dp"
+                android:layout_marginStart="4dp"
                 android:layout_marginTop="9dp"
-                android:layout_toRightOf="@+id/menu_userlv"
+                android:layout_toEndOf="@+id/menu_userlv"
                 android:text="硬币 : 0"
-                android:textColor="@color/textColor2"
+                android:textColor="@color/pink_light"
                 android:textSize="10sp" />
 
         </RelativeLayout>
@@ -98,7 +99,7 @@
             <ImageView
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:layout_marginRight="6dp"
+                android:layout_marginEnd="6dp"
                 android:background="@drawable/shape_menuiconbg"
                 android:padding="7dp"
                 android:src="@drawable/icon_menu_live" />
@@ -107,19 +108,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="动态"
-                android:textColor="@color/textColor" />
+                android:textColor="@color/white" />
 
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/menu_rankinglay"
+            android:id="@+id/menu_recommendlay"
             android:layout_width="match_parent"
             android:layout_height="46dp"
             android:layout_below="@+id/menu_livelay"
             android:background="?android:attr/selectableItemBackground"
             android:clickable="true"
             android:gravity="center_vertical"
-            android:onClick="buttonRanking"
+            android:onClick="buttonRecommend"
             android:orientation="horizontal"
             android:paddingLeft="30dp"
             android:paddingRight="30dp">
@@ -127,7 +128,36 @@
             <ImageView
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:layout_marginRight="6dp"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/shape_menuiconbg"
+                android:padding="7dp"
+                android:src="@drawable/icon_menu_watchlater" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="推荐"
+                android:textColor="@color/white" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/menu_rankinglay"
+            android:layout_width="match_parent"
+            android:layout_height="46dp"
+            android:layout_below="@+id/menu_recommendlay"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:gravity="center_vertical"
+            android:onClick="buttonRecommend"
+            android:orientation="horizontal"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp">
+
+            <ImageView
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginEnd="6dp"
                 android:background="@drawable/shape_menuiconbg"
                 android:padding="7dp"
                 android:src="@drawable/icon_menu_ranking" />
@@ -136,8 +166,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="排行榜"
-                android:textColor="@color/textColor" />
-
+                android:textColor="@color/white" />
 
         </LinearLayout>
 
@@ -157,7 +186,7 @@
             <ImageView
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:layout_marginRight="6dp"
+                android:layout_marginEnd="6dp"
                 android:background="@drawable/shape_menuiconbg"
                 android:padding="7dp"
                 android:src="@drawable/icon_menu_remind" />
@@ -166,7 +195,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="追番提醒"
-                android:textColor="@color/textColor" />
+                android:textColor="@color/white" />
         </LinearLayout>
 
         <LinearLayout
@@ -185,7 +214,7 @@
             <ImageView
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:layout_marginRight="6dp"
+                android:layout_marginEnd="6dp"
                 android:background="@drawable/shape_menuiconbg"
                 android:padding="7dp"
                 android:src="@drawable/icon_menu_download" />
@@ -194,7 +223,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="离线缓存"
-                android:textColor="@color/textColor" />
+                android:textColor="@color/white" />
         </LinearLayout>
 
         <LinearLayout
@@ -213,7 +242,7 @@
             <ImageView
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:layout_marginRight="6dp"
+                android:layout_marginEnd="6dp"
                 android:background="@drawable/shape_menuiconbg"
                 android:padding="7dp"
                 android:src="@drawable/icon_menu_search" />
@@ -222,7 +251,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="搜索"
-                android:textColor="@color/textColor" />
+                android:textColor="@color/white" />
         </LinearLayout>
 
         <LinearLayout
@@ -241,7 +270,7 @@
             <ImageView
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:layout_marginRight="6dp"
+                android:layout_marginEnd="6dp"
                 android:background="@drawable/shape_menuiconbg"
                 android:padding="7dp"
                 android:src="@drawable/icon_menu_collect" />
@@ -250,7 +279,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="收藏"
-                android:textColor="@color/textColor" />
+                android:textColor="@color/white" />
         </LinearLayout>
 
         <LinearLayout
@@ -269,7 +298,7 @@
             <ImageView
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:layout_marginRight="6dp"
+                android:layout_marginEnd="6dp"
                 android:background="@drawable/shape_menuiconbg"
                 android:padding="7dp"
                 android:paddingLeft="2dp"
@@ -280,7 +309,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="稍后再看"
-                android:textColor="@color/textColor" />
+                android:textColor="@color/white" />
         </LinearLayout>
 
         <LinearLayout
@@ -299,7 +328,7 @@
             <ImageView
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:layout_marginRight="6dp"
+                android:layout_marginEnd="6dp"
                 android:background="@drawable/shape_menuiconbg"
                 android:padding="7dp"
                 android:src="@drawable/icon_menu_setting" />
@@ -308,7 +337,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="设置"
-                android:textColor="@color/textColor" />
+                android:textColor="@color/white" />
         </LinearLayout>
 
     </RelativeLayout>

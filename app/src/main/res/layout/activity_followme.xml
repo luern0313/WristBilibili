@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:text="关注我"
-            android:textColor="@color/textColor" />
+            android:textColor="@color/white" />
 
         <ImageView
             android:id="@+id/fme_title_extraicon"
@@ -98,7 +98,7 @@
                         android:paddingRight="4dp"
                         android:paddingTop="1dp"
                         android:text="LV6"
-                        android:textColor="@color/textColor3"
+                        android:textColor="@color/gray_44"
                         android:textSize="8sp" />
 
                     <TextView
@@ -110,7 +110,7 @@
                         android:layout_marginTop="-1dp"
                         android:layout_toRightOf="@+id/fme_card_lv"
                         android:text=""
-                        android:textColor="@color/textColor3"
+                        android:textColor="@color/gray_44"
                         android:textSize="10sp" />
 
                     <TextView
@@ -126,7 +126,7 @@
                         android:paddingRight="6dp"
                         android:paddingTop="4dp"
                         android:text="+关注"
-                        android:textColor="@color/textColor"
+                        android:textColor="@color/white"
                         android:textSize="13sp" />
                 </RelativeLayout>
 
@@ -192,7 +192,7 @@
                     android:clickable="false"
                     android:gravity="center_horizontal"
                     android:text="这个视频参加了“互动游戏开发大赛”，点击按钮为这个作品投一票~\n（之后一定要去亲自玩玩看！）"
-                    android:textColor="@color/textColor"
+                    android:textColor="@color/white"
                     android:textSize="10dp" />
 
                 <TextView
@@ -208,7 +208,7 @@
                     android:paddingRight="8dp"
                     android:paddingTop="5dp"
                     android:text="+1 票"
-                    android:textColor="@color/textColor"
+                    android:textColor="@color/white"
                     android:textSize="12sp" />
 
 

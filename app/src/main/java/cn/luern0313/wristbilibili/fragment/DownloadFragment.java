@@ -455,7 +455,7 @@ public class DownloadFragment extends Fragment
                     viewHolder.progress.setVisibility(View.VISIBLE);
                     viewHolder.time.setVisibility(View.VISIBLE);
                     viewHolder.prog.setVisibility(View.VISIBLE);
-                    viewHolder.time.setTextColor(getResources().getColor(R.color.textColor3));
+                    viewHolder.time.setTextColor(getResources().getColor(R.color.gray_44));
                     if(downloadItem.state == 0) //初始化
                     {
                         viewHolder.size.setText(downloadItem.size == 0 ? "未知" : getSize(downloadItem.size));

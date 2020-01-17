@@ -6,7 +6,7 @@
     android:paddingBottom="12dp">
 
     <TextView
-        android:id="@+id/wid_dy_load_text"
+        android:id="@+id/wid_load_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -15,13 +15,13 @@
         android:textSize="13sp" />
 
     <Button
-        android:id="@+id/wid_dy_load_button"
+        android:id="@+id/wid_load_button"
         style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_marginLeft="60dp"
         android:layout_marginRight="60dp"
         android:text="重新加载"
-        android:textColor="@color/textColor"
+        android:textColor="@color/white"
         android:visibility="gone" />
 </LinearLayout>

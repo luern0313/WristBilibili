@@ -36,7 +36,7 @@ public class ConfInfoApi
         return md5(str);
     }
 
-    private static String md5(String plainText) {
+    public static String md5(String plainText) {
         byte[] secretBytes = null;
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");

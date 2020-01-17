@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:text="发动态"
-            android:textColor="@color/textColor" />
+            android:textColor="@color/white" />
 
         <ImageView
             android:id="@+id/senddy_title_extraicon"
@@ -57,7 +57,7 @@
                 android:id="@+id/senddy_share"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/shareBG"
+                android:background="@color/gray_da"
                 android:paddingBottom="6dp"
                 android:paddingLeft="24dp"
                 android:paddingRight="24dp"

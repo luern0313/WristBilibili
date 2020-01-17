@@ -6,7 +6,7 @@
         android:radius="2dp" />
 
     <stroke
-        android:color="@color/shareBGs"
+        android:color="@color/gray_bb"
         android:width="1dp"/>
 
 </shape>

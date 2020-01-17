@@ -133,8 +133,8 @@ public class FavorvideoActivity extends Activity
             @Override
             public void run()
             {
-                ((TextView) loadingView.findViewById(R.id.wid_dy_load_text)).setText("好像没有网络...\n检查下网络？");
-                loadingView.findViewById(R.id.wid_dy_load_button).setVisibility(View.VISIBLE);
+                ((TextView) loadingView.findViewById(R.id.wid_load_text)).setText("好像没有网络...\n检查下网络？");
+                loadingView.findViewById(R.id.wid_load_button).setVisibility(View.VISIBLE);
             }
         };
 
@@ -143,7 +143,7 @@ public class FavorvideoActivity extends Activity
             @Override
             public void run()
             {
-                ((TextView) loadingView.findViewById(R.id.wid_dy_load_text)).setText("  没有更多了...");
+                ((TextView) loadingView.findViewById(R.id.wid_load_text)).setText("  没有更多了...");
             }
         };
 
@@ -157,13 +157,13 @@ public class FavorvideoActivity extends Activity
             }
         };
 
-        loadingView.findViewById(R.id.wid_dy_load_button).setOnClickListener(new View.OnClickListener()
+        loadingView.findViewById(R.id.wid_load_button).setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                ((TextView) loadingView.findViewById(R.id.wid_dy_load_text)).setText(" 加载中. . .");
-                loadingView.findViewById(R.id.wid_dy_load_button).setVisibility(View.GONE);
+                ((TextView) loadingView.findViewById(R.id.wid_load_text)).setText(" 加载中. . .");
+                loadingView.findViewById(R.id.wid_load_button).setVisibility(View.GONE);
                 getMoreFavorVideo();
             }
         });

@@ -126,7 +126,7 @@ public class CheckreplyActivity extends Activity
             @Override
             public void run()
             {
-                ((TextView) layoutLoading.findViewById(R.id.wid_dy_load_text)).setText("  没有更多了...");
+                ((TextView) layoutLoading.findViewById(R.id.wid_load_text)).setText("  没有更多了...");
             }
         };
 
@@ -135,8 +135,8 @@ public class CheckreplyActivity extends Activity
             @Override
             public void run()
             {
-                ((TextView) layoutLoading.findViewById(R.id.wid_dy_load_text)).setText("好像没有网络...\n检查下网络？");
-                layoutLoading.findViewById(R.id.wid_dy_load_button).setVisibility(View.VISIBLE);
+                ((TextView) layoutLoading.findViewById(R.id.wid_load_text)).setText("好像没有网络...\n检查下网络？");
+                layoutLoading.findViewById(R.id.wid_load_button).setVisibility(View.VISIBLE);
                 isReplyLoading = false;
             }
         };
@@ -391,7 +391,7 @@ public class CheckreplyActivity extends Activity
                 else viewHolder.dislikei.setImageResource(R.drawable.icon_dislike);
                 if(v.getUserVip() == 2)
                     viewHolder.name.setTextColor(getResources().getColor(R.color.mainColor));
-                else viewHolder.name.setTextColor(getResources().getColor(R.color.textColor4));
+                else viewHolder.name.setTextColor(getResources().getColor(R.color.black));
 
                 viewHolder.img.setTag(v.getUserHead());
                 BitmapDrawable h = setImageFormWeb(v.getUserHead());

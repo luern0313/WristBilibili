@@ -1,18 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/rk_video_lay"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:descendantFocusability="blocksDescendants"
+    android:background="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
     android:paddingLeft="19dp"
     android:paddingRight="19dp">
 
+    <TextView
+        android:id="@+id/rk_video_rank"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:textSize="18sp"
+        android:textStyle="bold|italic" />
+
     <LinearLayout
         android:id="@+id/rk_video_video_up"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_toStartOf="@id/rk_video_rank"
+        android:layout_alignParentStart="true">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/rk_video_video_up_head"
@@ -24,18 +37,9 @@
             android:id="@+id/rk_video_video_up_name"
             android:layout_width="wrap_content"
             android:layout_height="22dp"
-            android:layout_marginLeft="3dp"
-            android:layout_weight="1"
+            android:layout_marginStart="3dp"
             android:gravity="center_vertical"
             android:textSize="12sp" />
-
-        <TextView
-            android:id="@+id/rk_video_rank"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:textSize="18sp"
-            android:textStyle="bold|italic" />
 
     </LinearLayout>
 
@@ -65,7 +69,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:lines="2"
-            android:textColor="@color/textColor3"
+            android:textColor="@color/gray_44"
             android:textSize="12sp" />
 
         <LinearLayout

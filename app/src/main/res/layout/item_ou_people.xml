@@ -44,7 +44,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="4dp"
         android:layout_toRightOf="@+id/oupp_face"
-        android:textColor="@color/textColor3"
+        android:textColor="@color/gray_44"
         android:textStyle="bold" />
 
     <TextView
@@ -56,7 +56,7 @@
         android:layout_toRightOf="@+id/oupp_face"
         android:ellipsize="end"
         android:singleLine="true"
-        android:textColor="@color/textColor3"
+        android:textColor="@color/gray_44"
         android:textSize="11sp" />
 
     <TextView

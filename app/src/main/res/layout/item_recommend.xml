@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rc_video"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:descendantFocusability="blocksDescendants"
+    android:paddingBottom="1dp"
+    android:paddingLeft="19dp"
+    android:paddingRight="19dp"
+    android:paddingTop="1dp">
+
+    <ImageView
+        android:id="@+id/rc_video_img"
+        android:layout_width="68dp"
+        android:layout_height="44dp"
+        android:layout_marginTop="2dp"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/img_default_vid" />
+
+    <TextView
+        android:id="@+id/rc_video_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/rc_video_img"
+        android:layout_alignEnd="@+id/rc_video_img"
+        android:layout_alignParentBottom="false"
+        android:background="@drawable/shape_bg_recommend_video_time"
+        android:gravity="end"
+        android:paddingRight="2dp"
+        android:text="01:32"
+        android:textColor="@color/white"
+        android:textSize="10sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="3dp"
+        android:layout_toEndOf="@+id/rc_video_img"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/rc_video_video_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:lines="2"
+            android:textColor="@color/gray_44"
+            android:textSize="12sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/rc_video_video_play"
+                android:layout_width="wrap_content"
+                android:layout_height="14dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textSize="10sp" />
+
+            <TextView
+                android:id="@+id/rc_video_video_danmaku"
+                android:layout_width="wrap_content"
+                android:layout_height="14dp"
+                android:layout_marginLeft="6dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textSize="10sp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/rc_video_video_reason"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="3dp"
+            android:layout_marginStart="1dp"
+            android:layout_marginTop="1dp"
+            android:background="@drawable/shape_bg_rc_reason"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingBottom="2dp"
+            android:paddingEnd="3dp"
+            android:paddingStart="3dp"
+            android:paddingTop="2dp"
+            android:text="点赞飙升"
+            android:textColor="@color/white"
+            android:textSize="10sp" />
+
+        <TextView
+            android:id="@+id/rc_video_video_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:text="动画 · 手书"
+            android:textSize="10sp"
+            android:visibility="visible" />
+
+    </LinearLayout>
+
+</RelativeLayout>
