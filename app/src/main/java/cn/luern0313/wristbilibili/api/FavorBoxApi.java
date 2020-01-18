@@ -40,7 +40,7 @@ public class FavorBoxApi
         try
         {
             ArrayList<FavorBoxModel> favorBoxArrayList = new ArrayList<FavorBoxModel>();
-            JSONArray favorboxJSONArray = new JSONObject((String) get("https://api.bilibili.com/medialist/gateway/base/created?pn=1&ps=100&is_space=0&up_mid=" + mid, 1)).getJSONObject("data").getJSONArray("list");
+            JSONArray favorboxJSONArray = new JSONObject((String) get("http://space.bilibili.com/ajax/fav/getBoxList?mid=" + mid, 1)).getJSONObject("data").getJSONArray("list");
             for(int i = 0; i < favorboxJSONArray.length(); i++)
                 favorBoxArrayList.add(new FavorBoxModel(favorboxJSONArray.getJSONObject(i)));
             return favorBoxArrayList;

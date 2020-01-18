@@ -13,12 +13,14 @@ public class FavorBoxModel
     public boolean see;
     public String fid;
     public String id;
+    public String img;
     public FavorBoxModel(JSONObject box)
     {
-        title = box.optString("title");
-        count = String.valueOf(box.optInt("media_count"));
+        title = box.optString("name");
+        count = String.valueOf(box.optInt("count"));
         see = box.optInt("state") % 2 == 0;
-        fid = String.valueOf(box.opt("fid"));
-        id = String.valueOf(box.opt("id"));
+        fid = String.valueOf(box.opt("fav_box"));
+        id = String.valueOf(box.opt("fav_box")) + "31";
+        img = box.optJSONArray("videos").optJSONObject(0).optString("pic");
     }
 }
