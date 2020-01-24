@@ -209,13 +209,9 @@ public class DownloadService extends Service
     public interface downloadListener
     {
         void onConnected();
-
         void onProgress();
-
         void onCompleted();
-
         void onPaused();
-
         void onError();
     }
 
@@ -296,10 +292,10 @@ public class DownloadService extends Service
                         danmakuFile.createNewFile();
                         coverFile.createNewFile();
                         FileOutputStream danmakuOut = new FileOutputStream(danmakuFile);
-                        danmakuOut.write(NetWorkUtil.uncompress(NetWorkUtil.get(url_danmaku).bytes()));
+                        danmakuOut.write(NetWorkUtil.uncompress(NetWorkUtil.get(url_danmaku).body().bytes()));
                         danmakuOut.close();
                         FileOutputStream coverOut = new FileOutputStream(coverFile);
-                        coverOut.write(NetWorkUtil.get(cover).bytes());
+                        coverOut.write(NetWorkUtil.get(cover).body().bytes());
                         coverOut.close();
                     }
                     catch (IOException | NullPointerException e)

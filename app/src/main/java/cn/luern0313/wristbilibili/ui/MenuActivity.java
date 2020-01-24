@@ -107,7 +107,7 @@ public class MenuActivity extends Activity
                     try
                     {
                         int stat = userInfoApi.getUserInfo();
-                        //0正常，-1网络问题，-2登录过期
+                        //0正常，-1其他问题，-2登录过期
                         if(stat == 0)
                         {
                             head = userInfoApi.getUserHead();

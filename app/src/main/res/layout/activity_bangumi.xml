@@ -4,7 +4,7 @@
     android:layout_height="match_parent">
 
     <RelativeLayout
-        android:id="@+id/vd_title_layout"
+        android:id="@+id/bgm_title_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/mainColor"
@@ -13,43 +13,43 @@
         android:paddingTop="10dp">
 
         <TextView
-            android:id="@+id/vd_title_title"
+            android:id="@+id/bgm_title_title"
             android:layout_width="wrap_content"
             android:layout_height="19dp"
             android:layout_centerHorizontal="true"
             android:gravity="center_vertical"
-            android:text="视频详情"
+            android:text="番剧详情"
             android:textColor="@color/white"
             android:textSize="13sp" />
 
         <ImageView
-            android:id="@+id/vd_title_extraicon"
+            android:id="@+id/bgm_title_extraicon"
             android:layout_width="12dp"
             android:layout_height="19dp"
-            android:layout_toLeftOf="@+id/vd_title_title"
+            android:layout_toLeftOf="@+id/bgm_title_title"
             android:rotation="90"
             android:src="@drawable/icon_extra" />
 
         <ImageView
-            android:id="@+id/vd_title_extraicon2"
+            android:id="@+id/bgm_title_extraicon2"
             android:layout_width="12dp"
             android:layout_height="19dp"
-            android:layout_toRightOf="@+id/vd_title_title"
+            android:layout_toRightOf="@+id/bgm_title_title"
             android:rotation="270"
             android:src="@drawable/icon_extra" />
     </RelativeLayout>
 
     <android.support.v4.view.ViewPager
-        android:id="@+id/vd_viewpager"
+        android:id="@+id/bgm_viewpager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/vd_title_layout" />
+        android:layout_below="@+id/bgm_title_layout" />
 
     <LinearLayout
-        android:id="@+id/vd_loading"
+        android:id="@+id/bgm_loading"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/vd_title_layout"
+        android:layout_below="@+id/bgm_title_layout"
         android:background="@color/white"
         android:clickable="true"
         android:gravity="center"
@@ -58,7 +58,7 @@
         android:visibility="gone">
 
         <ImageView
-            android:id="@+id/vd_loading_img"
+            android:id="@+id/bgm_loading_img"
             android:layout_width="wrap_content"
             android:layout_height="92dp"
             android:padding="6dp" />
@@ -71,10 +71,10 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/vd_noweb"
+        android:id="@+id/bgm_noweb"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/vd_title_layout"
+        android:layout_below="@+id/bgm_title_layout"
         android:background="@color/white"
         android:clickable="true"
         android:gravity="center"
@@ -96,10 +96,10 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/vd_novideo"
+        android:id="@+id/bgm_novideo"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/vd_title_layout"
+        android:layout_below="@+id/bgm_title_layout"
         android:background="@color/white"
         android:clickable="true"
         android:gravity="center"
@@ -116,51 +116,9 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="视频不见了. . .\n可能是没有登录？"
+            android:text="内容不见了. . .\n可能是没有登录？"
             android:textSize="13sp" />
 
     </LinearLayout>
 
-    <RelativeLayout
-        android:id="@+id/vd_tip"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/vd_title_layout"
-        android:background="@color/tipBG"
-        android:clickable="true"
-        android:onClick="clickVdTip"
-        android:visibility="gone">
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="24dp"
-            android:layout_marginRight="24dp"
-            android:layout_marginTop="-2dp"
-            android:scaleType="fitStart"
-            android:src="@drawable/img_vd_tip" />
-
-        <TextView
-            android:id="@+id/vd_tip_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_marginLeft="28dp"
-            android:layout_marginRight="28dp"
-            android:gravity="center"
-            android:paddingTop="14dp"
-            android:text="当标题栏出现左右两个箭头时，代表这个页面是可以左右滑动的！"
-            android:textColor="@color/white"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/vd_tip_text"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="18dp"
-            android:text="轻触不再显示"
-            android:textColor="@color/white"
-            android:textSize="12sp" />
-    </RelativeLayout>
 </RelativeLayout>

@@ -12,7 +12,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import okhttp3.ResponseBody;
 
 /**
  * 被 luern0313 创建于 2019/10/13.
@@ -20,7 +19,7 @@ import okhttp3.ResponseBody;
 
 public class NetWorkUtil
 {
-    public static ResponseBody get(String url) throws IOException
+    public static Response get(String url) throws IOException
     {
         OkHttpClient client = new OkHttpClient.Builder().connectTimeout(15, TimeUnit.SECONDS).readTimeout(15, TimeUnit.SECONDS).build();
         Request.Builder requestb = new Request.Builder().url(url).header("Referer", "https://www.bilibili.com/").addHeader("Accept", "*/*").addHeader("User-Agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
@@ -28,7 +27,7 @@ public class NetWorkUtil
         Response response = client.newCall(request).execute();
 
         if(response.isSuccessful())
-            return response.body();
+            return response;
         return null;
     }
 

@@ -181,7 +181,7 @@ public class RecommendAdapter extends BaseAdapter
         }
     }
 
-    class ImageTask extends AsyncTask<String, Void, BitmapDrawable>
+    private class ImageTask extends AsyncTask<String, Void, BitmapDrawable>
     {
         private String imageUrl;
         private ListView listView;

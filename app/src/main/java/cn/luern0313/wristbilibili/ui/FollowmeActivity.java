@@ -154,7 +154,7 @@ public class FollowmeActivity extends Activity
                         showVoteAid = StatisticsApi.isShowVideoVote();
                         handler.post(runnVideo);
 
-                        byte[] picByte = NetWorkUtil.readStream(NetWorkUtil.get("http:" + videoJson.optString("pic", "")).byteStream());
+                        byte[] picByte = NetWorkUtil.readStream(NetWorkUtil.get("http:" + videoJson.optString("pic", "")).body().byteStream());
                         videoCover = BitmapFactory.decodeByteArray(picByte, 0, picByte.length);
                         handler.post(runnImg);
                     }

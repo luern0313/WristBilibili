@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="18dp">
+
+
+            <TextView
+                android:id="@+id/bgm_detail_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="22dp"
+                android:layout_marginRight="22dp"
+                android:layout_marginTop="8dp"
+                android:text="我的青春恋爱物语果然有问题。"
+                android:textColor="@color/gray_44" />
+
+            <cn.luern0313.wristbilibili.widget.AutoLineUtil
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="21dp"
+                android:layout_marginRight="21dp"
+                android:orientation="horizontal"
+                android:paddingBottom="4dp"
+                android:paddingTop="4dp">
+
+                <TextView
+                    android:id="@+id/bgm_detail_score"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="6dp"
+                    android:text="9.7分"
+                    android:textColor="@color/orange"
+                    android:textSize="11sp" />
+
+                <TextView
+                    android:id="@+id/bgm_detail_play"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="6dp"
+                    android:text="3157.5万"
+                    android:textSize="11sp" />
+
+                <TextView
+                    android:id="@+id/bgm_detail_like"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="6dp"
+                    android:text="282.4万"
+                    android:textSize="11sp" />
+
+                <TextView
+                    android:id="@+id/bgm_detail_series"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="6dp"
+                    android:text="已完结，共13话"
+                    android:textSize="11sp" />
+
+                <TextView
+                    android:id="@+id/bgm_detail_needvip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="6dp"
+                    android:text="会员抢先"
+                    android:textSize="11sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="查看详情 >"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="11sp" />
+            </cn.luern0313.wristbilibili.widget.AutoLineUtil>
+
+            <LinearLayout
+                android:id="@+id/bgm_detail_video_part_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="21dp"
+                    android:paddingRight="16dp">
+
+                    <TextView
+                        android:id="@+id/bgm_detail_video_part_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="全13话"
+                        android:textColor="@color/gray_44"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/bgm_detail_video_part_more"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="clickMorePart"
+                        android:text="查看全部>"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipToPadding="false"
+                    android:paddingLeft="21dp"
+                    android:paddingRight="21dp"
+                    android:scrollbars="none">
+
+                    <LinearLayout
+                        android:id="@+id/bgm_detail_video_part"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:divider="@color/alpha"
+                        android:dividerPadding="4dp"
+                        android:orientation="horizontal" />
+                </HorizontalScrollView>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/vd_vd_loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/tipBG"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ProgressBar
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="4dp"
+            android:text="  加载中..."
+            android:textColor="@color/white" />
+    </LinearLayout>
+</RelativeLayout>

@@ -1,7 +1,6 @@
 package cn.luern0313.wristbilibili.api;
 
 import android.graphics.BitmapFactory;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -50,8 +49,7 @@ public class OnlineVideoApi
     {
         try
         {
-            playUrlJson = new JSONObject((String) get(
-                    "https://api.bilibili.com/x/player/playurl?avid=" + aid + "&cid=" + cid + "&qn=16&type=mp4", 1));
+            playUrlJson = new JSONObject((String) get("https://api.bilibili.com/x/player/playurl?avid=" + aid + "&cid=" + cid + "&qn=16&type=mp4", 1));
         }
         catch (JSONException e)
         {
@@ -63,7 +61,6 @@ public class OnlineVideoApi
     {
         try
         {
-            Log.i("bilibili", playUrlJson.toString());
             playUrl = playUrlJson.getJSONObject("data").getJSONArray("durl").getJSONObject(0).getString("url");
             return playUrl;
         }
@@ -78,7 +75,6 @@ public class OnlineVideoApi
     {
         try
         {
-            Log.i("bilibili", playUrlJson.toString());
             JSONArray backUpUrl = playUrlJson.getJSONObject("data").getJSONArray("durl").getJSONObject(0).getJSONArray("backup_url");
             ArrayList<String> backUpUrlList = new ArrayList<>();
             for(int i = 0; i < backUpUrl.length(); i++)

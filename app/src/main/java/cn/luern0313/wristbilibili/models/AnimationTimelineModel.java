@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 public class AnimationTimelineModel
 {
+    public String season_id;
     public String name;
     public String coverUrl;
     public String lastEpisode;
@@ -15,6 +16,7 @@ public class AnimationTimelineModel
     public String time;
     public AnimationTimelineModel(JSONObject anim, String day)
     {
+        season_id = String.valueOf(anim.optInt("season_id"));
         name = anim.optString("title");
         coverUrl = anim.optString("square_cover");
         lastEpisode = anim.optString("pub_index");

@@ -170,17 +170,23 @@ public class VideodetailsActivity extends Activity
         loadingImgAnim.start();
         uiLoading.setVisibility(View.VISIBLE);
 
-        if(sharedPreferences.getBoolean("tip_vd", true)) findViewById(R.id.vd_tip).setVisibility(
-                View.VISIBLE);
+        if(sharedPreferences.getBoolean("tip_vd", true)) findViewById(R.id.vd_tip).setVisibility(View.VISIBLE);
 
         runnableNoWeb = new Runnable()
         {
             @Override
             public void run()
             {
-                uiLoading.setVisibility(View.GONE);
-                uiNoWeb.setVisibility(View.VISIBLE);
-                isReplyLoading = false;
+                try
+                {
+                    uiLoading.setVisibility(View.GONE);
+                    uiNoWeb.setVisibility(View.VISIBLE);
+                    isReplyLoading = false;
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
             }
         };
 
@@ -210,7 +216,7 @@ public class VideodetailsActivity extends Activity
                         findViewById(R.id.vd_video_part_layout).setVisibility(View.VISIBLE);
                         findViewById(R.id.vd_bt_play).setVisibility(View.GONE);
                         ((TextView) findViewById(R.id.vd_video_part_text)).setText("共" + String.valueOf(videoDetail.getVideoPartSize()) + "P");
-                        for (int i = 0; i < videoPartArrayList.size(); i++)
+                        for(int i = 0; i < videoPartArrayList.size(); i++)
                         {
                             if(i < 30)
                                 uiVideoPartLayout.addView(getVideoPartButton(videoPartArrayList.get(i)));

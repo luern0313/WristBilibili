@@ -2,6 +2,7 @@ package cn.luern0313.wristbilibili.fragment;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,9 +15,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.R;
-import cn.luern0313.wristbilibili.adapter.AniRemindAdapter;
+import cn.luern0313.wristbilibili.adapter.AnimationTimelineAdapter;
 import cn.luern0313.wristbilibili.api.AnimationTimelineApi;
 import cn.luern0313.wristbilibili.models.AnimationTimelineModel;
+import cn.luern0313.wristbilibili.ui.BangumiActivity;
 import cn.luern0313.wristbilibili.ui.MainActivity;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
@@ -34,6 +36,8 @@ public class AnimationTimelineFragment extends Fragment
     public static boolean isLogin;
     AnimationTimelineApi animationTimelineApi;
     ArrayList<AnimationTimelineModel> animationTimelineList;
+    AnimationTimelineAdapter adapter;
+    AnimationTimelineAdapter.AnimationTimelineListener adapterListener;
 
     Handler handler = new Handler();
     Runnable runnableUi;
@@ -69,6 +73,15 @@ public class AnimationTimelineFragment extends Fragment
             }
         });
 
+        adapterListener = new AnimationTimelineAdapter.AnimationTimelineListener()
+        {
+            @Override
+            public void onClick(int viewId, int position)
+            {
+                onViewClick(viewId, position);
+            }
+        };
+
         runnableUi = new Runnable()
         {
             @Override
@@ -76,7 +89,8 @@ public class AnimationTimelineFragment extends Fragment
             {
                 rootLayout.findViewById(R.id.ar_nologin).setVisibility(View.GONE);
                 rootLayout.findViewById(R.id.ar_noweb).setVisibility(View.GONE);
-                arListView.setAdapter(new AniRemindAdapter(inflater, animationTimelineList, arListView));
+                adapter = new AnimationTimelineAdapter(inflater, animationTimelineList, arListView, adapterListener);
+                arListView.setAdapter(adapter);
                 arListView.setVisibility(View.VISIBLE);
                 waveSwipeRefreshLayout.setRefreshing(false);
             }
@@ -128,5 +142,12 @@ public class AnimationTimelineFragment extends Fragment
                 }
             }
         }).start();
+    }
+
+    void onViewClick(int id, int position)
+    {
+        Intent intent = new Intent(ctx, BangumiActivity.class);
+        intent.putExtra("season_id", animationTimelineList.get(position).season_id);
+        startActivity(intent);
     }
 }
