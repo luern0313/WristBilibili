@@ -17,7 +17,12 @@ public class BangumiModel
     public String bangumi_like;
     public String bangumi_series;
     public String bangumi_needvip;
+    public String bangumi_cover;
+    public String bangumi_cover_small;
+    public boolean bangumi_is_follow;
     public ArrayList<BangumiEpisodeModel> bangumi_episodes = new ArrayList<>();
+    public StringBuilder bangumi_section_name = new StringBuilder();
+    public ArrayList<BangumiEpisodeModel> bangumi_sections = new ArrayList<>();
     public ArrayList<BangumiSeasonModel> bangumi_seasons = new ArrayList<>();
     public BangumiModel(JSONObject bangumi)
     {
@@ -27,14 +32,25 @@ public class BangumiModel
         bangumi_like = getView(bangumi.optJSONObject("stat").optInt("favorites"));
         bangumi_series = bangumi.optJSONObject("publish").optString("time_length_show");
         bangumi_needvip = bangumi.optString("badge");
+        bangumi_cover = bangumi.optString("cover");
+        bangumi_cover_small = bangumi.optString("square_cover");
 
         JSONArray episodes = bangumi.optJSONArray("episodes");
         for(int i = 0; i < episodes.length(); i++)
             bangumi_episodes.add(new BangumiEpisodeModel(episodes.optJSONObject(i), i));
 
+        JSONArray sections = bangumi.optJSONArray("section");
+        for(int i = 0; i < sections.length(); i++)
+        {
+            bangumi_section_name.append(i == 0 ? sections.optJSONObject(i).optString("title") : ("&" + sections.optJSONObject(i).optString("title")));
+            JSONArray sections_episodes = sections.optJSONObject(i).optJSONArray("episodes");
+            for (int j = 0; j < sections_episodes.length(); j++)
+                bangumi_sections.add(new BangumiEpisodeModel(sections_episodes.optJSONObject(j), bangumi_sections.size()));
+        }
+
         JSONArray seasons = bangumi.optJSONArray("seasons");
         for(int i = 0; i < seasons.length(); i++)
-            bangumi_seasons.add(new BangumiSeasonModel(episodes.optJSONObject(i)));
+            bangumi_seasons.add(new BangumiSeasonModel(seasons.optJSONObject(i)));
     }
 
     public class BangumiEpisodeModel

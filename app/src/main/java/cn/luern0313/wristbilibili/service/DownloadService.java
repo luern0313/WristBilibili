@@ -305,10 +305,8 @@ public class DownloadService extends Service
                 }
             }).start();
 
-            FileDownloader.getImpl().create(url_video).setPath(
-                    getExternalFilesDir(null) + "/download/" + aid + "/" + cid + "/video.mp4")
-                    .addHeader("User-Agent",
-                               "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36")
+            FileDownloader.getImpl().create(url_video).setPath(getExternalFilesDir(null) + "/download/" + aid + "/" + cid + "/video.mp4")
+                    .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36")
                     .addHeader("Referer", "https://www.bilibili.com/").setTag(1, aid).setTag(2, cid)
                     .setTag(3, url_video).setListener(fileDownloadListener).asInQueueTask()
                     .enqueue();

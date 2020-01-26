@@ -149,7 +149,7 @@
             android:background="?android:attr/selectableItemBackground"
             android:clickable="true"
             android:gravity="center_vertical"
-            android:onClick="buttonRecommend"
+            android:onClick="buttonRanking"
             android:orientation="horizontal"
             android:paddingLeft="30dp"
             android:paddingRight="30dp">
