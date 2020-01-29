@@ -208,6 +208,9 @@ public class FavorvideoActivity extends Activity
                                             {
                                                 favorvideoList.remove(position);
                                                 handler.post(runnableAddlist);
+                                                Looper.prepare();
+                                                Toast.makeText(ctx, "取消收藏成功！", Toast.LENGTH_SHORT).show();
+                                                Looper.loop();
                                             }
                                             else
                                             {
@@ -222,7 +225,6 @@ public class FavorvideoActivity extends Activity
                                         }
                                     }
                                 }).start();
-                                //mAdapter.notifyDataSetChanged();
                             }
                         })
                         .setNegativeButton("取消", null).show();

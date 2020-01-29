@@ -35,7 +35,7 @@ public class RecommendApi
         }};
     }
 
-    public ArrayList<RecommendModel> getRecommendVideo() throws IOException
+    public ArrayList<RecommendModel> getRecommendVideo(boolean isPull) throws IOException
     {
         ArrayList<RecommendModel> recommendModelArrayList = new ArrayList<>();
         try
@@ -43,7 +43,7 @@ public class RecommendApi
             String url = "http://app.bilibili.com/x/v2/feed/index";
             String temp_per = "access_key=" + access_key + "&appkey=" + ConfInfoApi.getConf("appkey") +
                     "&build=" + ConfInfoApi.getConf("build") + "&flush=0&idx=" + (int) (System.currentTimeMillis() / 1000) +
-                    "&login_event=2&mobi_app=android&network=wifi&open_event=&platform=android&pull=false&qn=32&style=1&ts=" +
+                    "&login_event=2&mobi_app=android&network=wifi&open_event=&platform=android&pull=" + (isPull ? "true" : "false") + "&qn=32&style=1&ts=" +
                     (int) (System.currentTimeMillis() / 1000);
             String sign = ConfInfoApi.calc_sign(temp_per);
             Response response = NetWorkUtil.get(url + "?" + temp_per + "&sign=" + sign, defaultHeaders);

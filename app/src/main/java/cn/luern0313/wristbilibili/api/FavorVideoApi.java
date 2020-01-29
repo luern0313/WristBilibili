@@ -58,7 +58,7 @@ public class FavorVideoApi
         try
         {
             String url = "https://api.bilibili.com/medialist/gateway/coll/resource/batch/del";
-            String per = "resources=" + aid + "%3A2&media_id=" + fid + "&csrf=" + csrf;
+            String per = "resources=" + aid + ":2&media_id=" + fid + "31&csrf=" + csrf;
             JSONObject result = new JSONObject(NetWorkUtil.post(url, per, webHeaders).body().string());
             if(result.optInt("code") == 0)
                 return "";

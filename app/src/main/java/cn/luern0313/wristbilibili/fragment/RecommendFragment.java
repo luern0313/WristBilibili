@@ -76,7 +76,6 @@ public class RecommendFragment extends Fragment
                     public void run()
                     {
                         isLoading = true;
-                        recommendVideoArrayList.add(0, new RecommendModel(1));
                         getRecommend(1);
                     }
                 });
@@ -171,11 +170,14 @@ public class RecommendFragment extends Fragment
             {
                 try
                 {
-                    ArrayList<RecommendModel> rankingModelArrayList = recommendApi.getRecommendVideo();
+                    ArrayList<RecommendModel> rankingModelArrayList = recommendApi.getRecommendVideo(mode == 1);
                     if(rankingModelArrayList != null && rankingModelArrayList.size() != 0)
                     {
                         if(mode == 1)
+                        {
+                            recommendVideoArrayList.add(0, new RecommendModel(1));
                             recommendVideoArrayList.addAll(0, rankingModelArrayList);
+                        }
                         else
                             recommendVideoArrayList.addAll(rankingModelArrayList);
                         handler.post(runnableUi);
@@ -207,8 +209,11 @@ public class RecommendFragment extends Fragment
         }
         else if(viewId == R.id.widget_recommend_update_lay)
         {
-            uiListView.smoothScrollByOffset(0);
+            uiListView.smoothScrollToPositionFromTop(0, 0);
             uiWaveSwipeRefreshLayout.setRefreshing(true);
+            isLoading = true;
+            recommendVideoArrayList.remove(position);
+            getRecommend(1);
         }
     }
 }
