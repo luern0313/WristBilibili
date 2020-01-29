@@ -54,7 +54,7 @@
         <activity android:name=".ui.PlayerActivity" />
         <activity android:name=".ui.SendDynamicActivity" />
         <activity android:name=".ui.SelectPartActivity" />
-        <activity android:name=".ui.BangumiActivity"></activity>
+        <activity android:name=".ui.BangumiActivity"/>
     </application>
 
 </manifest>

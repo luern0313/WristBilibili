@@ -28,11 +28,15 @@
             <cn.luern0313.wristbilibili.widget.AutoLineUtil
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="21dp"
-                android:layout_marginRight="21dp"
+                android:paddingLeft="21dp"
+                android:paddingRight="21dp"
+                android:clickable="true"
+                android:focusable="true"
                 android:orientation="horizontal"
                 android:paddingBottom="4dp"
-                android:paddingTop="4dp">
+                android:paddingTop="4dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:onClick="clickBangumiDetail">
 
                 <TextView
                     android:id="@+id/bgm_detail_score"
@@ -107,11 +111,13 @@
                         android:padding="3dp">
 
                         <ImageView
+                            android:id="@+id/bgm_detail_bt_follow"
                             android:layout_width="38dp"
                             android:layout_height="38dp"
                             android:src="@drawable/icon_vdd_do_follow_no" />
 
                         <TextView
+                            android:id="@+id/bgm_detail_bt_follow_text"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
@@ -147,7 +153,7 @@
                     </LinearLayout>
 
                     <LinearLayout
-                        android:id="@+id/vd_bt_play"
+                        android:id="@+id/bgm_detail_bt_play"
                         android:layout_width="55dp"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="2dp"
@@ -155,7 +161,7 @@
                         android:clickable="true"
                         android:descendantFocusability="blocksDescendants"
                         android:gravity="center_horizontal"
-                        android:onClick="clickPlay"
+                        android:onClick="clickBangumiCoin"
                         android:orientation="vertical"
                         android:padding="3dp">
 
@@ -181,7 +187,7 @@
                         android:clickable="true"
                         android:descendantFocusability="blocksDescendants"
                         android:gravity="center_horizontal"
-                        android:onClick="clickDownload"
+                        android:onClick="clickBangumiDownload"
                         android:orientation="vertical"
                         android:padding="3dp">
 
@@ -207,7 +213,7 @@
                         android:clickable="true"
                         android:descendantFocusability="blocksDescendants"
                         android:gravity="center_horizontal"
-                        android:onClick="clickShare"
+                        android:onClick="clickBangumiShare"
                         android:orientation="vertical"
                         android:padding="3dp">
 
@@ -308,7 +314,7 @@
                         android:id="@+id/bgm_detail_video_other_more"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:onClick="clickMorePart"
+                        android:onClick="clickBangumiMoreOther"
                         android:text="查看全部>"
                         android:textColor="@color/colorPrimary"
                         android:textSize="12sp" />
@@ -358,7 +364,7 @@
     </ScrollView>
 
     <LinearLayout
-        android:id="@+id/vd_vd_loading"
+        android:id="@+id/bgm_detail_loading"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/tipBG"

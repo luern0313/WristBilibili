@@ -29,19 +29,17 @@ public class OnlineVideoApi
     private String csrf;
     private String mid;
     private String aid;
-    private String part;
     private String cid;
 
     private JSONObject playUrlJson;
     private String playUrl;
 
-    public OnlineVideoApi(String cookie, String csrf, String mid, String aid, String part, String cid)
+    public OnlineVideoApi(String cookie, String csrf, String mid, String aid, String cid)
     {
         this.cookie = cookie;
         this.csrf = csrf;
         this.mid = mid;
         this.aid = aid;
-        this.part = part;
         this.cid = cid;
     }
 

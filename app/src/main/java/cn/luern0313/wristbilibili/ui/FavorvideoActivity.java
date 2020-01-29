@@ -13,6 +13,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +24,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -185,7 +187,7 @@ public class FavorvideoActivity extends Activity
         favvListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener()
         {
             @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id)
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id)
             {
                 new AlertDialog.Builder(ctx)
                         .setMessage("你确定要取消收藏这个视频吗？")
@@ -194,7 +196,32 @@ public class FavorvideoActivity extends Activity
                             @Override
                             public void onClick(DialogInterface dialog, int which)
                             {
-
+                                new Thread(new Runnable()
+                                {
+                                    @Override
+                                    public void run()
+                                    {
+                                        try
+                                        {
+                                            String result = favorVideoApi.cancelFavVideo(String.valueOf(favorvideoList.get(position).opt("aid")));
+                                            if(result.equals(""))
+                                            {
+                                                favorvideoList.remove(position);
+                                                handler.post(runnableAddlist);
+                                            }
+                                            else
+                                            {
+                                                Looper.prepare();
+                                                Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
+                                                Looper.loop();
+                                            }
+                                        }
+                                        catch(IOException e)
+                                        {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                }).start();
                                 //mAdapter.notifyDataSetChanged();
                             }
                         })
@@ -228,7 +255,9 @@ public class FavorvideoActivity extends Activity
     void getFavorVideo()
     {
         isLoading = true;
-        favorVideoApi = new FavorVideoApi(sharedPreferences.getString("cookies", ""), sharedPreferences.getString("mid", ""), fid);
+        favorVideoApi = new FavorVideoApi(sharedPreferences.getString("cookies", ""),
+                                          sharedPreferences.getString("mid", ""),
+                                          sharedPreferences.getString("csrf", ""), fid);
         page = 1;
         new Thread(new Runnable()
         {

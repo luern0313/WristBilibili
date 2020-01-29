@@ -93,6 +93,7 @@ public class RankingAdapter extends BaseAdapter
             viewHolder = new ViewHolder();
             convertView.setTag(viewHolder);
             viewHolder.layout = convertView.findViewById(R.id.rk_video_lay);
+            viewHolder.relativeLayout = convertView.findViewById(R.id.rk_video_lay_lay);
             viewHolder.up_layout = convertView.findViewById(R.id.rk_video_video_up);
             viewHolder.up_head = convertView.findViewById(R.id.rk_video_video_up_head);
             viewHolder.up_name = convertView.findViewById(R.id.rk_video_video_up_name);
@@ -130,19 +131,19 @@ public class RankingAdapter extends BaseAdapter
         switch(position + 1)
         {
             case 1:
-                viewHolder.layout.setBackgroundResource(R.drawable.shape_bg_ranking_rank_1);
+                viewHolder.relativeLayout.setBackgroundResource(R.drawable.shape_bg_ranking_rank_1);
                 viewHolder.video_rank.setTextColor(convertView.getResources().getColor(R.color.ranking_rank_1));
                 break;
             case 2:
-                viewHolder.layout.setBackgroundResource(R.drawable.shape_bg_ranking_rank_2);
+                viewHolder.relativeLayout.setBackgroundResource(R.drawable.shape_bg_ranking_rank_2);
                 viewHolder.video_rank.setTextColor(convertView.getResources().getColor(R.color.ranking_rank_2));
                 break;
             case 3:
-                viewHolder.layout.setBackgroundResource(R.drawable.shape_bg_ranking_rank_3);
+                viewHolder.relativeLayout.setBackgroundResource(R.drawable.shape_bg_ranking_rank_3);
                 viewHolder.video_rank.setTextColor(convertView.getResources().getColor(R.color.ranking_rank_3));
                 break;
             default:
-                viewHolder.layout.setBackgroundResource(0);
+                viewHolder.relativeLayout.setBackgroundResource(0);
                 viewHolder.video_rank.setTextColor(convertView.getResources().getColor(R.color.ranking_rank_other));
                 break;
         }
@@ -171,7 +172,8 @@ public class RankingAdapter extends BaseAdapter
 
     class ViewHolder
     {
-        RelativeLayout layout;
+        LinearLayout layout;
+        RelativeLayout relativeLayout;
         LinearLayout up_layout;
         CircleImageView up_head;
         TextView up_name;

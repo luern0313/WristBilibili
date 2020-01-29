@@ -76,9 +76,8 @@ public class RecommendFragment extends Fragment
                     public void run()
                     {
                         isLoading = true;
-                        recommendVideoArrayList.clear();
-                        uiListView.setVisibility(View.GONE);
-                        getRecommend();
+                        recommendVideoArrayList.add(0, new RecommendModel(1));
+                        getRecommend(1);
                     }
                 });
             }
@@ -152,18 +151,18 @@ public class RecommendFragment extends Fragment
                 if(visibleItemCount + firstVisibleItem == totalItemCount && !isLoading)
                 {
                     isLoading = true;
-                    getRecommend();
+                    getRecommend(2);
                 }
             }
         });
 
         uiWaveSwipeRefreshLayout.setRefreshing(true);
-        getRecommend();
+        getRecommend(2);
 
         return rootLayout;
     }
 
-    void getRecommend()
+    void getRecommend(final int mode) //1上 2下
     {
         new Thread(new Runnable()
         {
@@ -175,7 +174,10 @@ public class RecommendFragment extends Fragment
                     ArrayList<RecommendModel> rankingModelArrayList = recommendApi.getRecommendVideo();
                     if(rankingModelArrayList != null && rankingModelArrayList.size() != 0)
                     {
-                        recommendVideoArrayList.addAll(rankingModelArrayList);
+                        if(mode == 1)
+                            recommendVideoArrayList.addAll(0, rankingModelArrayList);
+                        else
+                            recommendVideoArrayList.addAll(rankingModelArrayList);
                         handler.post(runnableUi);
                     }
                     else
@@ -202,6 +204,11 @@ public class RecommendFragment extends Fragment
                 intent.putExtra("aid", recommendVideoArrayList.get(position).video_aid);
                 startActivity(intent);
             }
+        }
+        else if(viewId == R.id.widget_recommend_update_lay)
+        {
+            uiListView.smoothScrollByOffset(0);
+            uiWaveSwipeRefreshLayout.setRefreshing(true);
         }
     }
 }

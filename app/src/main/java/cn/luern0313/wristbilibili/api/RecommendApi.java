@@ -1,7 +1,5 @@
 package cn.luern0313.wristbilibili.api;
 
-import android.util.Log;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -53,7 +51,6 @@ public class RecommendApi
             for(int i = 0; i < resultJSONArray.length(); i++)
             {
                 JSONObject recommend = resultJSONArray.getJSONObject(i);
-                Log.i("bilibili", recommend.toString());
                 if(recommend.optString("card_type").contains("small_cover") && recommend.optString("card_goto").equals("av"))
                     recommendModelArrayList.add(new RecommendModel(recommend));
             }

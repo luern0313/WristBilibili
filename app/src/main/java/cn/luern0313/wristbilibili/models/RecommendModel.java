@@ -8,6 +8,8 @@ import org.json.JSONObject;
 
 public class RecommendModel
 {
+    public int mode;
+
     public String video_aid;
     public String video_title;
     public String video_img;
@@ -30,5 +32,10 @@ public class RecommendModel
         video_data_2_text = video.optString("cover_left_text_2");
         video_recommend_reason = video.optString("rcmd_reason");
         video_lable = video.has("desc_button") ? video.optJSONObject("desc_button").optString("text") : "";
+    }
+
+    public RecommendModel(int mode)
+    {
+        this.mode = mode;
     }
 }

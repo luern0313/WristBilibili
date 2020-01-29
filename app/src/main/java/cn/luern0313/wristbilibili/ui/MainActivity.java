@@ -14,6 +14,7 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.liulishuo.filedownloader.FileDownloader;
 
@@ -80,6 +81,12 @@ public class MainActivity extends Activity
             {
                 editor.putInt("ver", pi.versionCode);
                 editor.apply();
+                if(sharedPreferences.getInt("ver", 0) < 12)
+                {
+                    Toast.makeText(ctx, "抱歉，因为登录功能更新，您需要重新登录，否则某些功能将不可用。", Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(ctx, LogsoffActivity.class);
+                    startActivity(intent);
+                }
                 if(sharedPreferences.contains("cookies"))
                     startActivity(new Intent(ctx, FollowmeActivity.class));
                 Intent intent = new Intent(ctx, TextActivity.class);

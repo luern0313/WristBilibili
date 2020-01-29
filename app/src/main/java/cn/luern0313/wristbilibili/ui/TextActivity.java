@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Html;
 import android.widget.TextView;
 
 import cn.luern0313.wristbilibili.R;
@@ -26,6 +27,6 @@ public class TextActivity extends Activity
         uiTitle = findViewById(R.id.text_title_title);
         uiText = findViewById(R.id.text_textview);
         uiTitle.setText(intent.getStringExtra("title"));
-        uiText.setText(intent.getStringExtra("text"));
+        uiText.setText(Html.fromHtml(intent.getStringExtra("text")));
     }
 }

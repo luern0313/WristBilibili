@@ -33,7 +33,7 @@ public class RecommendAdapter extends BaseAdapter
     private RecommendAdapterListener recommendAdapterListener;
 
     private ArrayList<RecommendModel> rcList;
-    public ListView listView;
+    private ListView listView;
 
     public RecommendAdapter(LayoutInflater inflater, ArrayList<RecommendModel> rcList, ListView listView, RecommendAdapterListener recommendAdapterListener)
     {
@@ -81,59 +81,88 @@ public class RecommendAdapter extends BaseAdapter
     }
 
     @Override
+    public int getViewTypeCount()
+    {
+        return 2;
+    };
+
+    @Override
+    public int getItemViewType(int position)
+    {
+        return rcList.get(position).mode;
+    }
+
+    @Override
     public View getView(int position, View convertView, ViewGroup viewGroup)
     {
         RecommendModel recommendVideo = rcList.get(position);
-        ViewHolder viewHolder;
+        int type = getItemViewType(position);
+
+        ViewHolder viewHolder = null;
         if(convertView == null)
         {
-            convertView = mInflater.inflate(R.layout.item_recommend, null);
-            viewHolder = new ViewHolder();
-            viewHolder.layout = convertView.findViewById(R.id.rc_video);
-            viewHolder.video_img = convertView.findViewById(R.id.rc_video_img);
-            viewHolder.video_time = convertView.findViewById(R.id.rc_video_time);
-            viewHolder.video_title = convertView.findViewById(R.id.rc_video_video_title);
-            viewHolder.video_play = convertView.findViewById(R.id.rc_video_video_play);
-            viewHolder.video_danmaku = convertView.findViewById(R.id.rc_video_video_danmaku);
-            viewHolder.video_reason = convertView.findViewById(R.id.rc_video_video_reason);
-            viewHolder.video_lable = convertView.findViewById(R.id.rc_video_video_label);
-            convertView.setTag(viewHolder);
+            if(type == 0)
+            {
+                convertView = mInflater.inflate(R.layout.item_recommend, null);
+                viewHolder = new ViewHolder();
+                viewHolder.layout = convertView.findViewById(R.id.rc_video);
+                viewHolder.video_img = convertView.findViewById(R.id.rc_video_img);
+                viewHolder.video_time = convertView.findViewById(R.id.rc_video_time);
+                viewHolder.video_title = convertView.findViewById(R.id.rc_video_video_title);
+                viewHolder.video_play = convertView.findViewById(R.id.rc_video_video_play);
+                viewHolder.video_danmaku = convertView.findViewById(R.id.rc_video_video_danmaku);
+                viewHolder.video_reason = convertView.findViewById(R.id.rc_video_video_reason);
+                viewHolder.video_lable = convertView.findViewById(R.id.rc_video_video_label);
+                convertView.setTag(viewHolder);
+            }
+            else
+            {
+                convertView = mInflater.inflate(R.layout.widget_recommend_update, null);
+            }
         }
         else
         {
-            viewHolder = (ViewHolder) convertView.getTag();
+            if(type == 0)
+                viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        viewHolder.video_img.setImageResource(R.drawable.img_default_vid);
-        viewHolder.video_time.setText(recommendVideo.video_time);
-        viewHolder.video_title.setText(recommendVideo.video_title);
-        viewHolder.video_play.setText(recommendVideo.video_data_1_text);
-        viewHolder.video_danmaku.setText(recommendVideo.video_data_2_text);
-        viewHolder.video_lable.setText(recommendVideo.video_lable);
-        if(!recommendVideo.video_recommend_reason.equals(""))
+        if(type == 0)
         {
-            viewHolder.video_reason.setVisibility(View.VISIBLE);
-            viewHolder.video_lable.setVisibility(View.GONE);
-            viewHolder.video_reason.setText(recommendVideo.video_recommend_reason);
+            viewHolder.video_img.setImageResource(R.drawable.img_default_vid);
+            viewHolder.video_time.setText(recommendVideo.video_time);
+            viewHolder.video_title.setText(recommendVideo.video_title);
+            viewHolder.video_play.setText(recommendVideo.video_data_1_text);
+            viewHolder.video_danmaku.setText(recommendVideo.video_data_2_text);
+            viewHolder.video_lable.setText(recommendVideo.video_lable);
+            if(!recommendVideo.video_recommend_reason.equals(""))
+            {
+                viewHolder.video_reason.setVisibility(View.VISIBLE);
+                viewHolder.video_lable.setVisibility(View.GONE);
+                viewHolder.video_reason.setText(recommendVideo.video_recommend_reason);
+            }
+            else
+            {
+                viewHolder.video_reason.setVisibility(View.GONE);
+                viewHolder.video_lable.setVisibility(View.VISIBLE);
+            }
+
+            Drawable playNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_play_num);
+            Drawable danmakuNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_danmu_num);
+            playNumDrawable.setBounds(0, 0, 24, 24);
+            danmakuNumDrawable.setBounds(0, 0, 24, 24);
+            viewHolder.video_play.setCompoundDrawables(playNumDrawable, null, null, null);
+            viewHolder.video_danmaku.setCompoundDrawables(danmakuNumDrawable, null, null, null);
+
+            viewHolder.layout.setOnClickListener(onViewClick(position));
+
+            viewHolder.video_img.setTag(recommendVideo.video_img);
+            BitmapDrawable i = setImageFormWeb(recommendVideo.video_img);
+            if(i != null) viewHolder.video_img.setImageDrawable(i);
         }
         else
         {
-            viewHolder.video_reason.setVisibility(View.GONE);
-            viewHolder.video_lable.setVisibility(View.VISIBLE);
+            (convertView.findViewById(R.id.widget_recommend_update_lay)).setOnClickListener(onViewClick(position));
         }
-
-        Drawable playNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_play_num);
-        Drawable danmakuNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_danmu_num);
-        playNumDrawable.setBounds(0,0,24,24);
-        danmakuNumDrawable.setBounds(0,0,24,24);
-        viewHolder.video_play.setCompoundDrawables(playNumDrawable,null, null,null);
-        viewHolder.video_danmaku.setCompoundDrawables(danmakuNumDrawable,null, null,null);
-
-        viewHolder.layout.setOnClickListener(onViewClick(position));
-
-        viewHolder.video_img.setTag(recommendVideo.video_img);
-        BitmapDrawable i = setImageFormWeb(recommendVideo.video_img);
-        if(i != null) viewHolder.video_img.setImageDrawable(i);
         return convertView;
     }
 

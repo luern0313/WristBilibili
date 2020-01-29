@@ -56,7 +56,7 @@ public class PlayerActivity extends Activity
         aid = intent.getStringExtra("aid");
         part = intent.getStringExtra("part");
         cid = intent.getStringExtra("cid");
-        onlineVideoApi = new OnlineVideoApi(sharedPreferences.getString("cookies", ""), sharedPreferences.getString("csrf", ""), sharedPreferences.getString("mid", ""), aid, part, cid);
+        onlineVideoApi = new OnlineVideoApi(sharedPreferences.getString("cookies", ""), sharedPreferences.getString("csrf", ""), sharedPreferences.getString("mid", ""), aid, cid);
 
         uiLoadingimg = findViewById(R.id.player_loadingimg);
         uiLoadingtip = findViewById(R.id.player_loadingtip);
@@ -71,7 +71,6 @@ public class PlayerActivity extends Activity
             public void run()
             {
                 findViewById(R.id.player_loading).setVisibility(View.GONE);
-
                 try
                 {
                     Intent intent = new Intent();
@@ -168,6 +167,5 @@ public class PlayerActivity extends Activity
                 }
             }).start();
         }
-        super.onActivityResult(requestCode, resultCode, data);
     }
 }
