@@ -600,22 +600,21 @@ public class BangumiActivity extends Activity
     String getBangumiInfo()
     {
         ArrayList<String> detail_info = new ArrayList<>();
-        detail_info.add("<font size=\"5\" color=\"#000000\">" + bangumiModel.bangumi_title + "</font>");
+        detail_info.add("<h2><font color=\"#000000\">" + bangumiModel.bangumi_title + "</font></h2>");
         detail_info.add("");
-        detail_info.add(bangumiModel.bangumi_detail_typename + "|" + bangumiModel.bangumi_detail_areas.toString());
+        detail_info.add(bangumiModel.bangumi_detail_typename + " | " + bangumiModel.bangumi_detail_areas.toString());
         detail_info.add(bangumiModel.bangumi_detail_publish_date);
         detail_info.add(bangumiModel.bangumi_detail_publish_ep);
         detail_info.add("风格：" + bangumiModel.bangumi_detail_styles.toString());
         detail_info.add("");
-        detail_info.add("<font size=\"4\" color=\"#000000\">简介</font>");
+        detail_info.add("<h4><font color=\"#000000\">简介</font></h4>");
         detail_info.add(bangumiModel.bangumi_detail_evaluate);
         detail_info.add("");
-        detail_info.add("<font size=\"4\" color=\"#000000\">" + bangumiModel.bangumi_detail_actor_title + "</font>");
-        detail_info.add(bangumiModel.bangumi_detail_actor_info);
+        detail_info.add("<h4><font color=\"#000000\">" + bangumiModel.bangumi_detail_actor_title + "</font></h4>");
+        detail_info.add(bangumiModel.bangumi_detail_actor_info.replaceAll("\n", "<br/>"));
         detail_info.add("");
-        detail_info.add("<font size=\"4\" color=\"#000000\">" + bangumiModel.bangumi_detail_staff_title + "</font>");
-        detail_info.add(bangumiModel.bangumi_detail_staff_info);
-        detail_info.add("别名：" + bangumiModel.bangumi_detail_name_alias);
+        detail_info.add("<h4><font color=\"#000000\">" + bangumiModel.bangumi_detail_staff_title + "</font></h4>");
+        detail_info.add(bangumiModel.bangumi_detail_staff_info.replaceAll("\n", "<br/>"));
         return join(detail_info, "<br/>");
     }
 

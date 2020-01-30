@@ -38,7 +38,6 @@ public class BangumiModel
     public String bangumi_detail_publish_ep;
     public StringBuilder bangumi_detail_styles = new StringBuilder(); //风格
     public String bangumi_detail_evaluate; //简介
-    public String bangumi_detail_name_alias; //别名
     public String bangumi_detail_actor_title; //声优栏标题
     public String bangumi_detail_actor_info;//声优栏信息
     public String bangumi_detail_staff_title; //staff栏标题
@@ -97,7 +96,7 @@ public class BangumiModel
         bangumi_detail_typename = bangumi.optString("type_name");
         JSONArray bangumi_detail_areas_jsonarray = bangumi.optJSONArray("areas");
         for(int i = 0; i < bangumi_detail_areas_jsonarray.length(); i++)
-            bangumi_detail_areas.append(bangumi_detail_areas_jsonarray.optJSONObject(i).optString("name")).append(i == 0 ? "" : " ");
+            bangumi_detail_areas.append(i == 0 ? "" : " ").append(bangumi_detail_areas_jsonarray.optJSONObject(i).optString("name"));
 
         JSONObject bangumi_detail_public = bangumi.has("publish") ? bangumi.optJSONObject("publish") : new JSONObject();
         bangumi_detail_publish_date = bangumi_detail_public.optString("release_date_show");
@@ -105,10 +104,9 @@ public class BangumiModel
 
         JSONArray bangumi_detail_styles_jsonarray = bangumi.optJSONArray("styles");
         for(int i = 0; i < bangumi_detail_styles_jsonarray.length(); i++)
-            bangumi_detail_styles.append(bangumi_detail_styles_jsonarray.optJSONObject(i).optString("name")).append(i == 0 ? "" : " ");
+            bangumi_detail_styles.append(i == 0 ? "" : " ").append(bangumi_detail_styles_jsonarray.optJSONObject(i).optString("name"));
 
         bangumi_detail_evaluate = bangumi.optString("evaluate");
-        bangumi_detail_name_alias = bangumi.optString("alias");
 
         JSONObject bangumi_detail_actor_jsonobject = bangumi.has("actor") ? bangumi.optJSONObject("actor") : new JSONObject();
         bangumi_detail_actor_title = bangumi_detail_actor_jsonobject.optString("title");
