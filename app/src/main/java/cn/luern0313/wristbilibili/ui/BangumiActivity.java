@@ -96,7 +96,7 @@ public class BangumiActivity extends Activity
 
         uiTitle = findViewById(R.id.bgm_title_title);
         uiViewPager = findViewById(R.id.bgm_viewpager);
-        uiViewPager.setOffscreenPageLimit(2);
+        uiViewPager.setOffscreenPageLimit(3);
         uiLoadingImg = findViewById(R.id.bgm_loading_img);
         uiLoading = findViewById(R.id.bgm_loading);
         uiNoWeb = findViewById(R.id.bgm_noweb);
@@ -271,7 +271,7 @@ public class BangumiActivity extends Activity
             @Override
             public int getCount()
             {
-                return 3;
+                return 4;
             }
 
             @Override
@@ -343,9 +343,10 @@ public class BangumiActivity extends Activity
             @Override
             public void onPageSelected(int position)
             {
-                if(position == 0) titleAnim("视频详情");
-                else if(position == 1) titleAnim("视频评论");
-                else if(position == 2) titleAnim("相关推荐");
+                if(position == 0) titleAnim("番剧详情");
+                else if(position == 1) titleAnim("番剧评论");
+                else if(position == 2) titleAnim("番剧评分");
+                else if(position == 3) titleAnim("相关推荐");
             }
         });
 
@@ -555,35 +556,6 @@ public class BangumiActivity extends Activity
         intent.putExtra("options_name", videoPartNames);
         intent.putExtra("options_id", videoPartCids);
         startActivityForResult(intent, RESULT_DETAIL_OTHER);
-    }
-
-    TextView getVideoPartButton(final BangumiModel.BangumiEpisodeModel part, int mode)
-    {
-        TextView textView = new TextView(ctx);
-        textView.setWidth(170);
-        textView.setBackgroundResource(R.drawable.selector_bg_vd_videopart);
-        textView.setPadding(12, 6, 12, 6);
-        textView.setText(mode == 1 ? part.bangumi_episode_title + "：" + part.bangumi_episode_title_long : (part.bangumi_episode_title_long.equals("") ? part.bangumi_episode_title : part.bangumi_episode_title_long));
-        textView.setLines(2);
-        textView.setEllipsize(TextUtils.TruncateAt.END);
-        textView.setTextSize(13);
-        textView.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                Intent intent = new Intent(ctx, PlayerActivity.class);
-                intent.putExtra("title", "第" + part.bangumi_episode_title + "话 " + part.bangumi_episode_title_long);
-                intent.putExtra("aid", part.bangumi_episode_aid);
-                intent.putExtra("part", String.valueOf(part.position));
-                intent.putExtra("cid", String.valueOf(part.bangumi_episode_cid));
-                startActivity(intent);
-            }
-        });
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        lp.setMargins(0, 0, 4, 0);
-        textView.setLayoutParams(lp);
-        return textView;
     }
 
     TextView getVideoSeasonButton(final BangumiModel.BangumiSeasonModel season)

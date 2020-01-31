@@ -35,7 +35,7 @@ public class RankingAdapter extends BaseAdapter
     private RankingAdapterListener rankingAdapterListener;
 
     private ArrayList<RankingModel> rkList;
-    public ListView listView;
+    private ListView listView;
 
     public RankingAdapter(LayoutInflater inflater, ArrayList<RankingModel> rkList, ListView listView, RankingAdapterListener rankingAdapterListener)
     {
