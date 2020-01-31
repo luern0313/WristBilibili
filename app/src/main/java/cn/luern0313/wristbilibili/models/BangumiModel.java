@@ -28,6 +28,7 @@ public class BangumiModel
     public String bangumi_user_progress_epid;
     public int bangumi_user_progress_mode; //1ep 2se
     public int bangumi_user_progress_position;
+    public String bangumi_user_progress_aid;
     public int bangumi_user_score;
 
     public String bangumi_detail_typename; //类型
@@ -68,6 +69,7 @@ public class BangumiModel
             {
                 bangumi_user_progress_mode = 1;
                 bangumi_user_progress_position = i;
+                bangumi_user_progress_aid = bangumiEpisodeModel.bangumi_episode_aid;
             }
             bangumi_episodes.add(bangumiEpisodeModel);
         }
@@ -84,6 +86,7 @@ public class BangumiModel
                 {
                     bangumi_user_progress_mode = 2;
                     bangumi_user_progress_position = bangumi_sections.size();
+                    bangumi_user_progress_aid = bangumiEpisodeModel.bangumi_episode_aid;
                 }
                 bangumi_sections.add(bangumiEpisodeModel);
             }

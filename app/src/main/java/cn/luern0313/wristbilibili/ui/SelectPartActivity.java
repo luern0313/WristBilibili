@@ -111,7 +111,8 @@ public class SelectPartActivity extends Activity
                 @Override
                 public void onClick(View v)
                 {
-                    reusltIntent.putExtra("option_id", optionsId[position]);
+                    if(optionsId.length != 0)
+                        reusltIntent.putExtra("option_id", optionsId[position]);
                     reusltIntent.putExtra("option_position", position);
                     reusltIntent.putExtra("option_name", options[position]);
                     setResult(0, reusltIntent);

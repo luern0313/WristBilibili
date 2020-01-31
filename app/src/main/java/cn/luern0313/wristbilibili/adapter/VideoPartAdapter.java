@@ -20,15 +20,13 @@ public class VideoPartAdapter extends RecyclerView.Adapter<VideoPartAdapter.View
 {
     private OnItemClickListener itemClickLitener;
     private ArrayList<BangumiModel.BangumiEpisodeModel> bangumiEpisodeModelArrayList;
-    private int userProgressMode;
-    private int userProgressPosition;
+    private BangumiModel bangumiModel;
     private int mode;
 
-    public VideoPartAdapter(ArrayList<BangumiModel.BangumiEpisodeModel> bangumiEpisodeModelArrayList, int userProgressMode, int userProgressPosition, int mode)
+    public VideoPartAdapter(ArrayList<BangumiModel.BangumiEpisodeModel> bangumiEpisodeModelArrayList, BangumiModel bangumiModel, int mode)
     {
         this.bangumiEpisodeModelArrayList = bangumiEpisodeModelArrayList;
-        this.userProgressMode = userProgressMode;
-        this.userProgressPosition = userProgressPosition;
+        this.bangumiModel = bangumiModel;
         this.mode = mode;
     }
 
@@ -47,24 +45,20 @@ public class VideoPartAdapter extends RecyclerView.Adapter<VideoPartAdapter.View
                 bangumiEpisodeModel.bangumi_episode_title_long : (bangumiEpisodeModel.bangumi_episode_title_long.equals("") ?
                 bangumiEpisodeModel.bangumi_episode_title : bangumiEpisodeModel.bangumi_episode_title_long));
         holder.vip.setVisibility(bangumiEpisodeModel.bangumi_episode_vip.equals("") ? View.GONE : View.VISIBLE);
-
-        if(userProgressMode == mode && userProgressPosition == position)
+        holder.lay.setOnClickListener(new View.OnClickListener()
         {
-            holder.lay.setBackgroundResource(R.drawable.selector_bg_bangumi_episode_now);
-            holder.lay.setOnClickListener(new View.OnClickListener()
+            @Override
+            public void onClick(View v)
             {
-                @Override
-                public void onClick(View v)
-                {
-                    itemClickLitener.onItemClick(v, position);
-                }
-            });
-        }
+                itemClickLitener.onItemClick(v, position);
+            }
+        });
+
+        if(bangumiModel.bangumi_user_progress_mode == mode && bangumiModel.bangumi_user_progress_position == position)
+            holder.lay.setBackgroundResource(R.drawable.selector_bg_bangumi_episode_now);
+
         else
-        {
             holder.lay.setBackgroundResource(R.drawable.selector_bg_bangumi_episode);
-            holder.lay.setOnClickListener(null);
-        }
     }
 
     @Override

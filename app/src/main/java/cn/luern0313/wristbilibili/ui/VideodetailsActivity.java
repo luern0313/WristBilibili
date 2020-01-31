@@ -77,10 +77,9 @@ public class VideodetailsActivity extends Activity
     Runnable runnableVideoLoadingFin;
 
     Runnable runnableReply;
-    Runnable runnableReplyAddlist;
     Runnable runnableRecommend;
-    Runnable runnableMoreNomore;
-    Runnable runnableMoreErr;
+    Runnable runnableReplyMoreNomore;
+    Runnable runnableReplyMoreErr;
     Runnable runnableReplyUpdate;
 
     AnimationDrawable loadingImgAnim;
@@ -105,7 +104,7 @@ public class VideodetailsActivity extends Activity
     LinearLayout uiDislikeLay;
 
     LinearLayout uiVideoPartLayout;
-    ListView uiRelpyListView;
+    ListView uiReplyListView;
     ListView uiRecommendListView;
     ReplyAdapter replyAdapter;
     ReplyAdapter.ReplyAdapterListener replyAdapterListener;
@@ -338,22 +337,13 @@ public class VideodetailsActivity extends Activity
             {
                 try
                 {
-                    replyAdapter = new ReplyAdapter(inflater, uiRelpyListView, replyArrayList, replyApi.isShowFloor(), replyAdapterListener);
-                    uiRelpyListView.setAdapter(replyAdapter);
+                    replyAdapter = new ReplyAdapter(inflater, uiReplyListView, replyArrayList, replyApi.isShowFloor(), replyAdapterListener);
+                    uiReplyListView.setAdapter(replyAdapter);
                 }
                 catch (Exception e)
                 {
                     e.printStackTrace();
                 }
-            }
-        };
-
-        runnableReplyAddlist = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                replyAdapter.notifyDataSetChanged();
             }
         };
 
@@ -367,14 +357,14 @@ public class VideodetailsActivity extends Activity
                     rAdapter recommendAdapter = new rAdapter(inflater, recommendList);
                     uiRecommendListView.setAdapter(recommendAdapter);
                 }
-                catch (Exception e)
+                catch(Exception e)
                 {
                     e.printStackTrace();
                 }
             }
         };
 
-        runnableMoreNomore = new Runnable()
+        runnableReplyMoreNomore = new Runnable()
         {
             @Override
             public void run()
@@ -383,7 +373,7 @@ public class VideodetailsActivity extends Activity
             }
         };
 
-        runnableMoreErr = new Runnable()
+        runnableReplyMoreErr = new Runnable()
         {
             @Override
             public void run()
@@ -507,12 +497,12 @@ public class VideodetailsActivity extends Activity
                     View v = inflater.inflate(R.layout.viewpager_vd_reply, null);
                     v.setTag(1);
 
-                    uiRelpyListView = v.findViewById(R.id.vd_reply_listview);
-                    uiRelpyListView.setEmptyView(v.findViewById(R.id.vd_reply_nothing));
-                    uiRelpyListView.addHeaderView(layoutSendReply, null, true);
-                    uiRelpyListView.addFooterView(layoutLoading, null, true);
-                    uiRelpyListView.setHeaderDividersEnabled(false);
-                    uiRelpyListView.setOnScrollListener(new AbsListView.OnScrollListener()
+                    uiReplyListView = v.findViewById(R.id.vd_reply_listview);
+                    uiReplyListView.setEmptyView(v.findViewById(R.id.vd_reply_nothing));
+                    uiReplyListView.addHeaderView(layoutSendReply, null, true);
+                    uiReplyListView.addFooterView(layoutLoading, null, true);
+                    uiReplyListView.setHeaderDividersEnabled(false);
+                    uiReplyListView.setOnScrollListener(new AbsListView.OnScrollListener()
                     {
                         @Override
                         public void onScrollStateChanged(AbsListView view, int scrollState)
@@ -722,16 +712,16 @@ public class VideodetailsActivity extends Activity
                     {
                         replyArrayList.addAll(r);
                         isReplyLoading = false;
-                        handler.post(runnableReplyAddlist);
+                        handler.post(runnableReplyUpdate);
                     }
                     else
                     {
-                        handler.post(runnableMoreNomore);
+                        handler.post(runnableReplyMoreNomore);
                     }
                 }
                 catch (IOException e)
                 {
-                    handler.post(runnableMoreErr);
+                    handler.post(runnableReplyMoreErr);
                     e.printStackTrace();
                 }
             }
