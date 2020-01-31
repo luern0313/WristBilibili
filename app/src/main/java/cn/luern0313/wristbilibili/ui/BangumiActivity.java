@@ -17,6 +17,8 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +32,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.R;
+import cn.luern0313.wristbilibili.adapter.VideoPartAdapter;
 import cn.luern0313.wristbilibili.api.BangumiApi;
 import cn.luern0313.wristbilibili.api.OnlineVideoApi;
 import cn.luern0313.wristbilibili.models.BangumiModel;
@@ -52,6 +55,11 @@ public class BangumiActivity extends Activity
     ImageView uiLoadingImg;
     LinearLayout uiLoading;
     LinearLayout uiNoWeb;
+
+    RecyclerView uiDetailEpisodesRecyclerView;
+    RecyclerView uiDetailSectionsRecyclerView;
+    VideoPartAdapter episodesRecyclerViewAdapter;
+    VideoPartAdapter sectionsRecyclerViewAdapter;
 
     boolean isLogin = false;
 
@@ -95,8 +103,8 @@ public class BangumiActivity extends Activity
 
         isLogin = !sharedPreferences.getString("cookies", "").equals("");
         bangumiApi = new BangumiApi(sharedPreferences.getString("cookies", ""),
-                                    sharedPreferences.getString("csrf", ""),
                                     sharedPreferences.getString("mid", ""),
+                                    sharedPreferences.getString("csrf", ""),
                                     sharedPreferences.getString("access_key", ""),
                                     seasonId);
 
@@ -135,26 +143,62 @@ public class BangumiActivity extends Activity
                 if(bangumiModel.bangumi_episodes.size() != 0)
                 {
                     findViewById(R.id.bgm_detail_video_part_layout).setVisibility(View.VISIBLE);
-                    LinearLayout episodesLinearLayout = findViewById(R.id.bgm_detail_video_part);
                     ((TextView) findViewById(R.id.bgm_detail_video_part_text)).setText("正片-共" + String.valueOf(bangumiModel.bangumi_episodes.size()) + "话");
-                    for (int i = 0; i < bangumiModel.bangumi_episodes.size(); i++)
-                        episodesLinearLayout.addView(getVideoPartButton(bangumiModel.bangumi_episodes.get(i), 1));
+                    LinearLayoutManager layoutManager = new LinearLayoutManager(BangumiActivity.super.getParent());
+                    layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+                    uiDetailEpisodesRecyclerView.setLayoutManager(layoutManager);
+                    episodesRecyclerViewAdapter = new VideoPartAdapter(bangumiModel.bangumi_episodes,
+                                                                       bangumiModel.bangumi_user_progress_mode,
+                                                                       bangumiModel.bangumi_user_progress_position,1);
+                    episodesRecyclerViewAdapter.setOnItemClickListener(new VideoPartAdapter.OnItemClickListener()
+                    {
+                        @Override
+                        public void onItemClick(View view, int position)
+                        {
+                            BangumiModel.BangumiEpisodeModel part = bangumiModel.bangumi_episodes.get(position);
+                            Intent intent = new Intent(ctx, PlayerActivity.class);
+                            intent.putExtra("title", "第" + part.bangumi_episode_title + "话 " + part.bangumi_episode_title_long);
+                            intent.putExtra("aid", part.bangumi_episode_aid);
+                            intent.putExtra("part", String.valueOf(part.position));
+                            intent.putExtra("cid", String.valueOf(part.bangumi_episode_cid));
+                            startActivity(intent);
+                        }
+                    });
+                    uiDetailEpisodesRecyclerView.setAdapter(episodesRecyclerViewAdapter);
                 }
 
                 if(bangumiModel.bangumi_sections.size() != 0)
                 {
                     findViewById(R.id.bgm_detail_video_other_layout).setVisibility(View.VISIBLE);
-                    LinearLayout episodesLinearLayout = findViewById(R.id.bgm_detail_video_other);
                     ((TextView) findViewById(R.id.bgm_detail_video_other_text)).setText(bangumiModel.bangumi_section_name);
-                    for (int i = 0; i < bangumiModel.bangumi_sections.size(); i++)
-                        episodesLinearLayout.addView(getVideoPartButton(bangumiModel.bangumi_sections.get(i), 2));
+                    LinearLayoutManager layoutManager = new LinearLayoutManager(BangumiActivity.super.getParent());
+                    layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+                    uiDetailSectionsRecyclerView.setLayoutManager(layoutManager);
+                    sectionsRecyclerViewAdapter = new VideoPartAdapter(bangumiModel.bangumi_sections,
+                                                                       bangumiModel.bangumi_user_progress_mode,
+                                                                       bangumiModel.bangumi_user_progress_position, 2);
+                    sectionsRecyclerViewAdapter.setOnItemClickListener(new VideoPartAdapter.OnItemClickListener()
+                    {
+                        @Override
+                        public void onItemClick(View view, int position)
+                        {
+                            BangumiModel.BangumiEpisodeModel part = bangumiModel.bangumi_sections.get(position);
+                            Intent intent = new Intent(ctx, PlayerActivity.class);
+                            intent.putExtra("title",  part.bangumi_episode_title_long.equals("") ? part.bangumi_episode_title : part.bangumi_episode_title_long);
+                            intent.putExtra("aid", part.bangumi_episode_aid);
+                            intent.putExtra("part", String.valueOf(part.position));
+                            intent.putExtra("cid", String.valueOf(part.bangumi_episode_cid));
+                            startActivity(intent);
+                        }
+                    });
+                    uiDetailSectionsRecyclerView.setAdapter(sectionsRecyclerViewAdapter);
                 }
 
                 if(bangumiModel.bangumi_seasons.size() > 1)
                 {
                     findViewById(R.id.bgm_detail_video_season_layout).setVisibility(View.VISIBLE);
                     LinearLayout episodesLinearLayout = findViewById(R.id.bgm_detail_video_season);
-                    for (int i = 0; i < bangumiModel.bangumi_seasons.size(); i++)
+                    for(int i = 0; i < bangumiModel.bangumi_seasons.size(); i++)
                         episodesLinearLayout.addView(getVideoSeasonButton(bangumiModel.bangumi_seasons.get(i)));
                 }
 
@@ -250,6 +294,9 @@ public class BangumiActivity extends Activity
                     View v = inflater.inflate(R.layout.viewpager_bangumi_detail, null);
                     v.setTag(0);
 
+                    uiDetailEpisodesRecyclerView = v.findViewById(R.id.bgm_detail_video_part);
+                    uiDetailSectionsRecyclerView = v.findViewById(R.id.bgm_detail_video_other);
+
                     new Thread(new Runnable()
                     {
                         @Override
@@ -335,7 +382,7 @@ public class BangumiActivity extends Activity
         }
         else if(requestCode == RESULT_DETAIL_OTHER)
         {
-            BangumiModel.BangumiEpisodeModel se = bangumiModel.bangumi_sections.get(data.getIntExtra("option_position", 0));
+            BangumiModel.BangumiEpisodeModel ss = bangumiModel.bangumi_sections.get(data.getIntExtra("option_position", 0));
             Intent intent = new Intent(ctx, PlayerActivity.class);
             intent.putExtra("title", data.getStringExtra("option_name"));
             intent.putExtra("aid", data.getStringExtra("option_id").split("，")[0]);
@@ -427,7 +474,9 @@ public class BangumiActivity extends Activity
             {
                 try
                 {
-                    String result = bangumiApi.followBangumi(bangumiModel.bangumi_user_is_follow);
+                    String result = bangumiApi.followBangumi(!bangumiModel.bangumi_user_is_follow);
+                    handler.post(runnableDetailLoadingFin);
+                    handler.post(runnableDetailSetIcon);
                     if(!"".equals(result))
                     {
                         Looper.prepare();
@@ -448,39 +497,6 @@ public class BangumiActivity extends Activity
         Intent intent = new Intent(ctx, ImgActivity.class);
         intent.putExtra("imgUrl", new String[]{bangumiModel.bangumi_cover});
         startActivity(intent);
-    }
-
-    public void clickBangumiCoin(View view)
-    {
-        findViewById(R.id.bgm_detail_loading).setVisibility(View.VISIBLE);
-        new Thread(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                try
-                {
-                    String aid = bangumiModel.bangumi_user_progress_mode == 1 ?
-                            bangumiModel.bangumi_episodes.get(bangumiModel.bangumi_user_progress_position).bangumi_episode_aid :
-                            bangumiModel.bangumi_sections.get(bangumiModel.bangumi_user_progress_position).bangumi_episode_aid;
-                    String result = bangumiApi.coinBangumi(aid);
-                    if(result.equals(""))
-                    {
-
-                    }
-                    else
-                    {
-                        Looper.prepare();
-                        Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
-                        Looper.loop();
-                    }
-                }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
     }
 
     public void clickBangumiDownload(View view)
@@ -574,7 +590,7 @@ public class BangumiActivity extends Activity
     {
         TextView textView = new TextView(ctx);
         textView.setWidth(120);
-        textView.setBackgroundResource(seasonId.equals(season.bangumi_season_id) ? R.drawable.selector_bg_bangumi_season_now : R.drawable.selector_bg_bangumi_episode);
+        textView.setBackgroundResource(seasonId.equals(season.bangumi_season_id) ? R.drawable.selector_bg_bangumi_episode_now : R.drawable.selector_bg_bangumi_episode);
         textView.setPadding(12, 6, 12, 6);
         textView.setText(season.bangumi_season_title);
         textView.setLines(1);
@@ -600,20 +616,20 @@ public class BangumiActivity extends Activity
     String getBangumiInfo()
     {
         ArrayList<String> detail_info = new ArrayList<>();
-        detail_info.add("<h2><font color=\"#000000\">" + bangumiModel.bangumi_title + "</font></h2>");
+        detail_info.add("<b><big><font color=\"#000000\">" + bangumiModel.bangumi_title + "</font></big></b>");
         detail_info.add("");
         detail_info.add(bangumiModel.bangumi_detail_typename + " | " + bangumiModel.bangumi_detail_areas.toString());
         detail_info.add(bangumiModel.bangumi_detail_publish_date);
         detail_info.add(bangumiModel.bangumi_detail_publish_ep);
         detail_info.add("风格：" + bangumiModel.bangumi_detail_styles.toString());
         detail_info.add("");
-        detail_info.add("<h4><font color=\"#000000\">简介</font></h4>");
+        detail_info.add("<big><font color=\"#000000\">简介</font></big>");
         detail_info.add(bangumiModel.bangumi_detail_evaluate);
         detail_info.add("");
-        detail_info.add("<h4><font color=\"#000000\">" + bangumiModel.bangumi_detail_actor_title + "</font></h4>");
+        detail_info.add("<big><font color=\"#000000\">" + bangumiModel.bangumi_detail_actor_title + "</font></big>");
         detail_info.add(bangumiModel.bangumi_detail_actor_info.replaceAll("\n", "<br/>"));
         detail_info.add("");
-        detail_info.add("<h4><font color=\"#000000\">" + bangumiModel.bangumi_detail_staff_title + "</font></h4>");
+        detail_info.add("<big><font color=\"#000000\">" + bangumiModel.bangumi_detail_staff_title + "</font></big>");
         detail_info.add(bangumiModel.bangumi_detail_staff_info.replaceAll("\n", "<br/>"));
         return join(detail_info, "<br/>");
     }

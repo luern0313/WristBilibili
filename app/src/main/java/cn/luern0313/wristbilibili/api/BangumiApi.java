@@ -1,7 +1,5 @@
 package cn.luern0313.wristbilibili.api;
 
-import android.util.Log;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -27,8 +25,9 @@ public class BangumiApi
     private ArrayList<String> webHeaders = new ArrayList<String>();
 
     private String season_id;
+    private BangumiModel bangumiModel;
 
-    public BangumiApi(String mid, String cookies, String csrf, String access_key, String season_id)
+    public BangumiApi(String cookies, String mid, String csrf, String access_key, String season_id)
     {
         this.mid = mid;
         this.cookie = cookies;
@@ -57,14 +56,11 @@ public class BangumiApi
             String sign = ConfInfoApi.calc_sign(temp_per);
             Response response = NetWorkUtil.get("https://api.bilibili.com/pgc/view/app/season?" + temp_per + "&sign=" + sign, phoneHeaders);
             JSONObject result = new JSONObject(response.body().string());
-            String a = result.toString();
-            for(int i=0; i < a.length(); i += 3000)
-            {
-                if(i + 3000 < a.length()) Log.i("bilibili" + i, a.substring(i, i + 3000));
-                else Log.i("bilibili" + i, a.substring(i, a.length()));
-            }
             if(result.optInt("code") == 0)
-                return new BangumiModel(result.getJSONObject("result"));
+            {
+                bangumiModel = new BangumiModel(result.getJSONObject("result"));
+                return bangumiModel;
+            }
             else
                 return null;
         }
@@ -83,13 +79,16 @@ public class BangumiApi
             String per = "season_id=" + season_id + "&csrf=" + csrf;
             JSONObject result = new JSONObject(NetWorkUtil.post(url, per, webHeaders).body().string());
             if(result.getInt("code") == 0)
+            {
+                bangumiModel.bangumi_user_is_follow = isFollow;
                 return result.getJSONObject("result").getString("toast");
+            }
         }
         catch(JSONException | NullPointerException e)
         {
             e.printStackTrace();
         }
-        return isFollow ? "" : "取消" + "追番错误";
+        return (isFollow ? "" : "取消") + "追番错误";
     }
 
     public String shareBangumi(String text) throws IOException
@@ -108,22 +107,5 @@ public class BangumiApi
             e.printStackTrace();
         }
         return "未知错误";
-    }
-
-    public String coinBangumi(String aid) throws IOException
-    {
-        try
-        {
-            String url = "https://api.bilibili.com/x/web-interface/coin/add";
-            String per = "aid=" + aid + "&multiply=1&csrf=" + csrf;
-            JSONObject result = new JSONObject(NetWorkUtil.post(url, per, webHeaders).body().string());
-            if(result.getInt("code") == 0)
-                return "";
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
-        return "投币失败，未知错误";
     }
 }

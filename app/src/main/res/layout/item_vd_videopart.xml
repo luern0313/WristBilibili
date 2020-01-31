@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/item_video_part"
+    android:layout_width="112dp"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="3dp"
+    android:background="@drawable/selector_bg_bangumi_episode"
+    android:clickable="true"
+    android:focusable="true"
+    android:descendantFocusability="blocksDescendants">
+
+    <TextView
+        android:id="@+id/item_video_part_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:ellipsize="end"
+        android:lines="2"
+        android:paddingBottom="4dp"
+        android:paddingEnd="8dp"
+        android:paddingStart="8dp"
+        android:paddingTop="4dp"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/item_video_part_vip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/shape_bg_vd_videopart_vip"
+        android:clickable="false"
+        android:focusable="false"
+        android:paddingBottom="1dp"
+        android:paddingEnd="2dp"
+        android:paddingStart="2dp"
+        android:paddingTop="1dp"
+        android:text="会员"
+        android:textColor="@color/white"
+        android:textSize="10sp" />
+</RelativeLayout>

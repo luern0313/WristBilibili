@@ -35,9 +35,10 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    implementation 'com.android.support:recyclerview-v7:26.1.0'
 
     implementation 'com.squareup.okhttp3:okhttp:3.11.0'//okhttp
-    implementation 'com.google.zxing:core:3.3.0'//二维码
+    implementation 'com.google.zxing:core:3.4.0'//二维码
     implementation 'de.hdodenhof:circleimageview:2.2.0'//圆形imageview
     implementation 'cn.carbs.android:ExpandableTextView:1.0.3'//折叠textview
     implementation 'com.github.recruit-lifestyle:WaveSwipeRefreshLayout:1.6'//水滴状下拉刷新

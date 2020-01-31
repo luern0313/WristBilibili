@@ -29,8 +29,6 @@ public class BangumiModel
     public int bangumi_user_progress_mode; //1ep 2se
     public int bangumi_user_progress_position;
     public int bangumi_user_score;
-    public ArrayList<Boolean> bangumi_user_coin_episode;
-    public ArrayList<Boolean> bangumi_user_coin_sections;
 
     public String bangumi_detail_typename; //类型
     public StringBuilder bangumi_detail_areas = new StringBuilder(); //地区
@@ -64,6 +62,8 @@ public class BangumiModel
         for(int i = 0; i < episodes.length(); i++)
         {
             BangumiEpisodeModel bangumiEpisodeModel = new BangumiEpisodeModel(episodes.optJSONObject(i), i);
+            if(i == 0 && bangumi_user_progress_epid.equals("0"))
+                bangumi_user_progress_epid = bangumiEpisodeModel.bangumi_episode_id;
             if(bangumi_user_progress_epid.equals(bangumiEpisodeModel.bangumi_episode_id))
             {
                 bangumi_user_progress_mode = 1;
@@ -124,6 +124,7 @@ public class BangumiModel
         public String bangumi_episode_id;
         public String bangumi_episode_aid;
         public String bangumi_episode_cid;
+        public String bangumi_episode_vip;
         public int position;
         BangumiEpisodeModel(JSONObject episode, int position)
         {
@@ -132,6 +133,7 @@ public class BangumiModel
             bangumi_episode_id = String.valueOf(episode.optInt("id"));
             bangumi_episode_aid = String.valueOf(episode.optInt("aid"));
             bangumi_episode_cid = String.valueOf(episode.optInt("cid"));
+            bangumi_episode_vip = episode.optString("badge");
             this.position = position;
         }
     }

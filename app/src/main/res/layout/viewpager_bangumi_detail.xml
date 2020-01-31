@@ -19,10 +19,9 @@
                 android:id="@+id/bgm_detail_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="22dp"
-                android:layout_marginRight="22dp"
+                android:layout_marginLeft="23dp"
+                android:layout_marginRight="23dp"
                 android:layout_marginTop="8dp"
-                android:text="我的青春恋爱物语果然有问题。"
                 android:textColor="@color/gray_44" />
 
             <cn.luern0313.wristbilibili.widget.AutoLineUtil
@@ -43,7 +42,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingRight="6dp"
-                    android:text="9.7分"
                     android:textColor="@color/orange"
                     android:textSize="12sp" />
 
@@ -52,7 +50,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingRight="6dp"
-                    android:text="3157.5万"
                     android:textSize="12sp" />
 
                 <TextView
@@ -60,7 +57,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingRight="6dp"
-                    android:text="282.4万"
                     android:textSize="12sp" />
 
                 <TextView
@@ -68,7 +64,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingRight="6dp"
-                    android:text="已完结，共13话"
                     android:textSize="12sp" />
 
                 <TextView
@@ -76,7 +71,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingRight="6dp"
-                    android:text="会员抢先"
                     android:textSize="12sp" />
 
                 <TextView
@@ -100,7 +94,7 @@
                     <LinearLayout
                         android:layout_width="55dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="22dp"
+                        android:layout_marginLeft="20dp"
                         android:layout_marginRight="2dp"
                         android:background="?android:attr/selectableItemBackground"
                         android:clickable="true"
@@ -153,33 +147,6 @@
                     </LinearLayout>
 
                     <LinearLayout
-                        android:id="@+id/bgm_detail_bt_play"
-                        android:layout_width="55dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="2dp"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:clickable="true"
-                        android:descendantFocusability="blocksDescendants"
-                        android:gravity="center_horizontal"
-                        android:onClick="clickBangumiCoin"
-                        android:orientation="vertical"
-                        android:padding="3dp">
-
-                        <ImageView
-                            android:layout_width="38dp"
-                            android:layout_height="38dp"
-                            android:src="@drawable/icon_vdd_do_coin_no" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="6dp"
-                            android:text="投币"
-                            android:textSize="12sp" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
                         android:layout_width="55dp"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="2dp"
@@ -208,7 +175,7 @@
                     <LinearLayout
                         android:layout_width="55dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginRight="22dp"
+                        android:layout_marginRight="20dp"
                         android:background="?android:attr/selectableItemBackground"
                         android:clickable="true"
                         android:descendantFocusability="blocksDescendants"
@@ -238,6 +205,7 @@
                 android:id="@+id/bgm_detail_video_part_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
                 android:gravity="center_vertical"
                 android:orientation="vertical"
                 android:visibility="gone">
@@ -267,22 +235,16 @@
                         android:textSize="12sp" />
                 </LinearLayout>
 
-                <HorizontalScrollView
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/bgm_detail_video_part"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:clipToPadding="false"
                     android:paddingLeft="21dp"
                     android:paddingRight="21dp"
-                    android:scrollbars="none">
-
-                    <LinearLayout
-                        android:id="@+id/bgm_detail_video_part"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:divider="@color/alpha"
-                        android:dividerPadding="4dp"
-                        android:orientation="horizontal" />
-                </HorizontalScrollView>
+                    android:scrollbars="none"
+                    android:divider="@color/alpha"
+                    android:dividerPadding="4dp" />
 
             </LinearLayout>
 
@@ -320,22 +282,16 @@
                         android:textSize="12sp" />
                 </LinearLayout>
 
-                <HorizontalScrollView
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/bgm_detail_video_other"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:clipToPadding="false"
                     android:paddingLeft="21dp"
                     android:paddingRight="21dp"
-                    android:scrollbars="none">
-
-                    <LinearLayout
-                        android:id="@+id/bgm_detail_video_other"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:divider="@color/alpha"
-                        android:dividerPadding="4dp"
-                        android:orientation="horizontal" />
-                </HorizontalScrollView>
+                    android:scrollbars="none"
+                    android:divider="@color/alpha"
+                    android:dividerPadding="4dp" />
 
             </LinearLayout>
 
