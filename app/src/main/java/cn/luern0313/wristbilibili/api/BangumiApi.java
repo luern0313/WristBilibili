@@ -1,5 +1,7 @@
 package cn.luern0313.wristbilibili.api;
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -117,8 +119,9 @@ public class BangumiApi
         try
         {
             String url = "https://api.vc.bilibili.com/dynamic_repost/v1/dynamic_repost/share";
-            String per = "csrf_token=" + csrf + "&platform=pc&uid="  + "&type=8&share_uid=" + mid + "&content=" + URLEncoder.encode(text, "UTF-8") + "&repost_code=20000&rid=";
+            String per = "csrf_token=" + csrf + "&platform=pc&type=8&uid=&share_uid=" + mid + "&content=" + URLEncoder.encode(text, "UTF-8") + "&repost_code=20000&rid=" + bangumiModel.bangumi_user_progress_aid;
             JSONObject result = new JSONObject(NetWorkUtil.post(url, per, webHeaders).body().string());
+            Log.i("bilibili", result.toString());
             if(result.getInt("code") == 0)
                 return "";
         }
@@ -127,5 +130,22 @@ public class BangumiApi
             e.printStackTrace();
         }
         return "未知错误";
+    }
+
+    public String sendReply(String text) throws IOException
+    {
+        try
+        {
+            String url = "https://api.bilibili.com/x/v2/reply/add";
+            String per = "oid=" + bangumiModel.bangumi_user_progress_aid + "&type=1&message=" + text + "&plat=1&jsonp=jsonp&csrf=" + csrf;
+            JSONObject result = new JSONObject(NetWorkUtil.post(url, per, webHeaders).body().string());
+            if(result.optInt("code") == 0)
+                return "";
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+        return "发送评论失败";
     }
 }

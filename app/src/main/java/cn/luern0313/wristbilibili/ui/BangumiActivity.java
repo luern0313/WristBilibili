@@ -116,6 +116,9 @@ public class BangumiActivity extends Activity
         editor = sharedPreferences.edit();
         seasonId = intent.getStringExtra("season_id");
 
+        Intent serviceIntent = new Intent(ctx, DownloadService.class);
+        bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE);
+
         inflater = getLayoutInflater();
         layoutReplyLoading = inflater.inflate(R.layout.widget_loading, null);
 
@@ -686,7 +689,7 @@ public class BangumiActivity extends Activity
         }
         else if(requestCode == RESULT_DETAIL_DOWNLOAD)
         {
-            findViewById(R.id.vd_vd_loading).setVisibility(View.VISIBLE);
+            findViewById(R.id.bgm_detail_loading).setVisibility(View.VISIBLE);
             new Thread(new Runnable()
             {
                 @Override
@@ -694,16 +697,19 @@ public class BangumiActivity extends Activity
                 {
                     try
                     {
+                        int position = data.getIntExtra("option_position", 0);
+                        String aid = String.valueOf(position < bangumiModel.bangumi_episodes.size() ?
+                                                            bangumiModel.bangumi_episodes.get(position).bangumi_episode_aid :
+                                                            bangumiModel.bangumi_sections.get(position - bangumiModel.bangumi_episodes.size()).bangumi_episode_aid);
+                        String cid = String.valueOf(position < bangumiModel.bangumi_episodes.size() ?
+                                                            bangumiModel.bangumi_episodes.get(position).bangumi_episode_cid :
+                                                            bangumiModel.bangumi_sections.get(position - bangumiModel.bangumi_episodes.size()).bangumi_episode_cid);
                         onlineVideoApi = new OnlineVideoApi(sharedPreferences.getString("cookies", ""),
                                                             sharedPreferences.getString("csrf", ""),
-                                                            sharedPreferences.getString("mid", ""),
-                                                            data.getStringExtra("option_id").split("，")[0],
-                                                            data.getStringExtra("option_id").split("，")[1]);
+                                                            sharedPreferences.getString("mid", ""), aid, cid);
                         onlineVideoApi.connectionVideoUrl();
                         handler.post(runnableDetailLoadingFin);
-                        connection.downloadVideo(data.getStringExtra("option_name") + " - " + bangumiModel.bangumi_title,
-                                                 data.getStringExtra("option_id").split("，")[0],
-                                                 data.getStringExtra("option_id").split("，")[1]);
+                        connection.downloadVideo(data.getStringExtra("option_name") + " - " + bangumiModel.bangumi_title, aid, cid);
                     }
                     catch (IOException e)
                     {
@@ -717,7 +723,6 @@ public class BangumiActivity extends Activity
         }
         else if(requestCode == RESULT_DETAIL_SHARE)
         {
-            //TODO type待确定
             new Thread(new Runnable()
             {
                 @Override
@@ -735,7 +740,7 @@ public class BangumiActivity extends Activity
                         else
                         {
                             Looper.prepare();
-                            Toast.makeText(ctx, "发送失败，可能是短时间发送过多？", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
                             Looper.loop();
                         }
                     }
@@ -749,6 +754,47 @@ public class BangumiActivity extends Activity
                 }
             }).start();
         }
+        else if(requestCode == RESULT_REPLY_SEND)
+        {
+            new Thread(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    try
+                    {
+                        String result = bangumiApi.sendReply(data.getStringExtra("text"));
+                        if(result.equals(""))
+                        {
+                            Looper.prepare();
+                            Toast.makeText(ctx, "发送成功！", Toast.LENGTH_SHORT).show();
+                            Looper.loop();
+                        }
+                        else
+                        {
+                            Looper.prepare();
+                            Toast.makeText(ctx, "发送失败，可能是短时间发送过多？", Toast.LENGTH_SHORT).show();
+                            Looper.loop();
+                        }
+                    }
+                    catch (IOException e)
+                    {
+                        e.printStackTrace();
+                        Looper.prepare();
+                        Toast.makeText(ctx, "评论发送失败。。请检查网络？", Toast.LENGTH_SHORT).show();
+                        Looper.loop();
+                    }
+                }
+            }).start();
+        }
+    }
+
+    public void clickSendReply(View view)
+    {
+        Intent replyIntent = new Intent(ctx, ReplyActivity.class);
+        replyIntent.putExtra("oid", bangumiModel.bangumi_user_progress_aid);
+        replyIntent.putExtra("type", "1");
+        startActivityForResult(replyIntent, RESULT_REPLY_SEND);
     }
 
     public void clickBangumiDetail(View view)
@@ -797,20 +843,16 @@ public class BangumiActivity extends Activity
     public void clickBangumiDownload(View view)
     {
         String[] videoPartNames = new String[bangumiModel.bangumi_episodes.size() + bangumiModel.bangumi_sections.size()];
-        String[] videoPartCids = new String[bangumiModel.bangumi_episodes.size() + bangumiModel.bangumi_sections.size()];
         for(int i = 0; i < bangumiModel.bangumi_episodes.size(); i++)
-            videoPartNames[i] = bangumiModel.bangumi_episodes.get(i).position + "：" + bangumiModel.bangumi_episodes.get(i).bangumi_episode_title_long;
+            videoPartNames[i] = "第" + bangumiModel.bangumi_episodes.get(i).bangumi_episode_title + "话 " + bangumiModel.bangumi_episodes.get(i).bangumi_episode_title_long;
         for(int i = bangumiModel.bangumi_episodes.size(); i < videoPartNames.length; i++)
-            videoPartNames[i] = bangumiModel.bangumi_sections.get(i).bangumi_episode_title_long.equals("") ? bangumiModel.bangumi_sections.get(i).bangumi_episode_title : bangumiModel.bangumi_sections.get(i).bangumi_episode_title_long;
-        for(int i = 0; i < bangumiModel.bangumi_episodes.size(); i++)
-            videoPartCids[i] = bangumiModel.bangumi_episodes.get(i).bangumi_episode_aid + "，" + bangumiModel.bangumi_episodes.get(i).bangumi_episode_cid;
-        for(int i = bangumiModel.bangumi_episodes.size(); i < videoPartNames.length; i++)
-            videoPartCids[i] = bangumiModel.bangumi_sections.get(i).bangumi_episode_aid + "，" + bangumiModel.bangumi_sections.get(i).bangumi_episode_cid;
+            videoPartNames[i] = bangumiModel.bangumi_sections.get(i - bangumiModel.bangumi_episodes.size()).bangumi_episode_title_long.equals("") ?
+                    bangumiModel.bangumi_sections.get(i - bangumiModel.bangumi_episodes.size()).bangumi_episode_title :
+                    bangumiModel.bangumi_sections.get(i - bangumiModel.bangumi_episodes.size()).bangumi_episode_title_long;
         Intent intent = new Intent(ctx, SelectPartActivity.class);
         intent.putExtra("title", "分集下载");
         intent.putExtra("tip", "选择要下载的分集");
         intent.putExtra("options_name", videoPartNames);
-        intent.putExtra("options_id", videoPartCids);
         startActivityForResult(intent, RESULT_DETAIL_DOWNLOAD);
     }
 
