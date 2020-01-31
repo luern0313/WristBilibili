@@ -1,5 +1,6 @@
 package cn.luern0313.wristbilibili.api;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -8,6 +9,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.models.BangumiModel;
+import cn.luern0313.wristbilibili.models.BangumiRecommendModel;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
 import okhttp3.Response;
 
@@ -69,6 +71,24 @@ public class BangumiApi
             e.printStackTrace();
         }
         return null;
+    }
+
+    public ArrayList<BangumiRecommendModel> getBangumiRecommend() throws IOException
+    {
+        try
+        {
+            String url = "https://api.bilibili.com/pgc/web/recommend/related/recommend?season_id=" + season_id;
+            JSONArray result = new JSONObject(NetWorkUtil.get(url, webHeaders).body().string()).getJSONObject("result").getJSONArray("season");
+            ArrayList<BangumiRecommendModel> bangumiRecommendModelArrayList = new ArrayList<>();
+            for(int i = 0; i< result.length(); i++)
+                bangumiRecommendModelArrayList.add(new BangumiRecommendModel(result.optJSONObject(i)));
+            return bangumiRecommendModelArrayList;
+        }
+        catch (JSONException | NullPointerException e)
+        {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
     }
 
     public String followBangumi(boolean isFollow) throws IOException

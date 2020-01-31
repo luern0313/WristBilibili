@@ -89,7 +89,6 @@
             android:paddingEnd="3dp"
             android:paddingStart="3dp"
             android:paddingTop="2dp"
-            android:text="点赞飙升"
             android:textColor="@color/white"
             android:textSize="10sp" />
 
@@ -101,7 +100,6 @@
             android:ellipsize="end"
             android:gravity="center_vertical"
             android:maxLines="1"
-            android:text="动画 · 手书"
             android:textSize="10sp"
             android:visibility="visible" />
 

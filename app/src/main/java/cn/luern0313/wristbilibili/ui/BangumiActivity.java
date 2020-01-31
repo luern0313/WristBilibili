@@ -24,6 +24,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -34,12 +35,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.R;
+import cn.luern0313.wristbilibili.adapter.BangumiRecommendAdapter;
 import cn.luern0313.wristbilibili.adapter.ReplyAdapter;
 import cn.luern0313.wristbilibili.adapter.VideoPartAdapter;
 import cn.luern0313.wristbilibili.api.BangumiApi;
 import cn.luern0313.wristbilibili.api.OnlineVideoApi;
 import cn.luern0313.wristbilibili.api.ReplyApi;
 import cn.luern0313.wristbilibili.models.BangumiModel;
+import cn.luern0313.wristbilibili.models.BangumiRecommendModel;
 import cn.luern0313.wristbilibili.models.ReplyModel;
 import cn.luern0313.wristbilibili.service.DownloadService;
 
@@ -54,6 +57,7 @@ public class BangumiActivity extends Activity
     BangumiModel bangumiModel;
     ReplyApi replyApi;
     ArrayList<ReplyModel> replyArrayList;
+    ArrayList<BangumiRecommendModel> bangumiRecommendModelArrayList;
     OnlineVideoApi onlineVideoApi;
     String seasonId;
 
@@ -71,6 +75,8 @@ public class BangumiActivity extends Activity
     ListView uiReplyListView;
     ReplyAdapter replyAdapter;
     ReplyAdapter.ReplyAdapterListener replyAdapterListener;
+    ListView uiRecommendListView;
+    BangumiRecommendAdapter bangumiRecommendAdapter;
 
     boolean isLogin = false;
     boolean isReplyLoading = true;
@@ -88,6 +94,7 @@ public class BangumiActivity extends Activity
     Runnable runnableReplyUpdate;
     Runnable runnableReplyMoreNomore;
     Runnable runnableReplyMoreErr;
+    Runnable runnableRecommendUi;
 
     final private int RESULT_DETAIL_EPISODE = 101;
     final private int RESULT_DETAIL_OTHER = 102;
@@ -114,7 +121,7 @@ public class BangumiActivity extends Activity
 
         uiTitle = findViewById(R.id.bgm_title_title);
         uiViewPager = findViewById(R.id.bgm_viewpager);
-        uiViewPager.setOffscreenPageLimit(3);
+        uiViewPager.setOffscreenPageLimit(2);
         uiLoadingImg = findViewById(R.id.bgm_loading_img);
         uiLoading = findViewById(R.id.bgm_loading);
         uiNoWeb = findViewById(R.id.bgm_noweb);
@@ -145,26 +152,24 @@ public class BangumiActivity extends Activity
             @Override
             public void run()
             {
-                getReply();
                 ((TextView) findViewById(R.id.bgm_detail_title)).setText(bangumiModel.bangumi_title);
-                if(bangumiModel.bangumi_score.equals(""))
-                    findViewById(R.id.bgm_detail_score).setVisibility(View.GONE);
-                else
-                    ((TextView) findViewById(R.id.bgm_detail_score)).setText(bangumiModel.bangumi_score);
+                if(bangumiModel.bangumi_score.equals("")) findViewById(R.id.bgm_detail_score).setVisibility(View.GONE);
+                else ((TextView) findViewById(R.id.bgm_detail_score)).setText(bangumiModel.bangumi_score);
                 ((TextView) findViewById(R.id.bgm_detail_play)).setText(bangumiModel.bangumi_play);
                 ((TextView) findViewById(R.id.bgm_detail_like)).setText(bangumiModel.bangumi_like);
                 ((TextView) findViewById(R.id.bgm_detail_series)).setText(bangumiModel.bangumi_series);
-                if(bangumiModel.bangumi_needvip.equals(""))
-                    findViewById(R.id.bgm_detail_needvip).setVisibility(View.GONE);
-                else
-                    ((TextView) findViewById(R.id.bgm_detail_needvip)).setText(bangumiModel.bangumi_needvip);
+                if(bangumiModel.bangumi_needvip.equals("")) findViewById(R.id.bgm_detail_needvip).setVisibility(View.GONE);
+                else ((TextView) findViewById(R.id.bgm_detail_needvip)).setText(bangumiModel.bangumi_needvip);
 
                 Drawable playNumDrawable = getResources().getDrawable(R.drawable.icon_video_play_num);
                 Drawable danmakuNumDrawable = getResources().getDrawable(R.drawable.icon_video_like_num);
-                playNumDrawable.setBounds(0,0,24,24);
-                danmakuNumDrawable.setBounds(0,0,24,24);
-                ((TextView) findViewById(R.id.bgm_detail_play)).setCompoundDrawables(playNumDrawable,null, null,null);
-                ((TextView) findViewById(R.id.bgm_detail_like)).setCompoundDrawables(danmakuNumDrawable,null, null,null);
+                playNumDrawable.setBounds(0, 0, 24, 24);
+                danmakuNumDrawable.setBounds(0, 0, 24, 24);
+                ((TextView) findViewById(R.id.bgm_detail_play)).setCompoundDrawables(playNumDrawable,
+                                                                                     null, null,
+                                                                                     null);
+                ((TextView) findViewById(R.id.bgm_detail_like)).setCompoundDrawables(
+                        danmakuNumDrawable, null, null, null);
 
                 setBangumiIcon();
 
@@ -175,7 +180,8 @@ public class BangumiActivity extends Activity
                     LinearLayoutManager layoutManager = new LinearLayoutManager(BangumiActivity.super.getParent());
                     layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
                     uiDetailEpisodesRecyclerView.setLayoutManager(layoutManager);
-                    episodesRecyclerViewAdapter = new VideoPartAdapter(bangumiModel.bangumi_episodes, bangumiModel,1);
+                    episodesRecyclerViewAdapter = new VideoPartAdapter(bangumiModel.bangumi_episodes, bangumiModel,
+                                                                       1);
                     episodesRecyclerViewAdapter.setOnItemClickListener(new VideoPartAdapter.OnItemClickListener()
                     {
                         @Override
@@ -186,8 +192,9 @@ public class BangumiActivity extends Activity
                     });
                     uiDetailEpisodesRecyclerView.setAdapter(episodesRecyclerViewAdapter);
                     if(bangumiModel.bangumi_user_progress_mode == 1)
-                        ((LinearLayoutManager)uiDetailEpisodesRecyclerView.getLayoutManager()).
-                                scrollToPositionWithOffset(bangumiModel.bangumi_user_progress_position,0);
+                        ((LinearLayoutManager) uiDetailEpisodesRecyclerView.getLayoutManager()).
+                                scrollToPositionWithOffset(bangumiModel.bangumi_user_progress_position,
+                                                           0);
                 }
 
                 if(bangumiModel.bangumi_sections.size() != 0)
@@ -208,20 +215,24 @@ public class BangumiActivity extends Activity
                     });
                     uiDetailSectionsRecyclerView.setAdapter(sectionsRecyclerViewAdapter);
                     if(bangumiModel.bangumi_user_progress_mode == 2)
-                        ((LinearLayoutManager)uiDetailSectionsRecyclerView.getLayoutManager()).
-                                scrollToPositionWithOffset(bangumiModel.bangumi_user_progress_position,0);
+                        ((LinearLayoutManager) uiDetailSectionsRecyclerView.getLayoutManager()).
+                                scrollToPositionWithOffset(bangumiModel.bangumi_user_progress_position,
+                                                           0);
                 }
 
                 if(bangumiModel.bangumi_seasons.size() > 1)
                 {
                     findViewById(R.id.bgm_detail_video_season_layout).setVisibility(View.VISIBLE);
                     LinearLayout episodesLinearLayout = findViewById(R.id.bgm_detail_video_season);
-                    for(int i = 0; i < bangumiModel.bangumi_seasons.size(); i++)
+                    for (int i = 0; i < bangumiModel.bangumi_seasons.size(); i++)
                         episodesLinearLayout.addView(getVideoSeasonButton(bangumiModel.bangumi_seasons.get(i)));
                 }
 
                 uiLoading.setVisibility(View.GONE);
                 uiNoWeb.setVisibility(View.GONE);
+
+                getReply();
+                getRecommend();
             }
         };
 
@@ -326,12 +337,22 @@ public class BangumiActivity extends Activity
             }
         };
 
+        runnableRecommendUi = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                bangumiRecommendAdapter = new BangumiRecommendAdapter(inflater, uiRecommendListView, bangumiRecommendModelArrayList);
+                uiRecommendListView.setAdapter(bangumiRecommendAdapter);
+            }
+        };
+
         final PagerAdapter pagerAdapter = new PagerAdapter()
         {
             @Override
             public int getCount()
             {
-                return 4;
+                return 3;
             }
 
             @Override
@@ -414,7 +435,27 @@ public class BangumiActivity extends Activity
                     container.addView(v);
                     return 1;
                 }
-                return 0;
+                else
+                {
+                    View v = inflater.inflate(R.layout.viewpager_bangumi_recommend, null);
+                    v.setTag(2);
+
+                    uiRecommendListView = v.findViewById(R.id.bgm_recommend_listview);
+                    uiRecommendListView.setEmptyView(v.findViewById(R.id.bgm_recommend_nothing));
+                    uiRecommendListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+                    {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+                        {
+                            Intent intent = new Intent(ctx, BangumiActivity.class);
+                            intent.putExtra("season_id", bangumiRecommendModelArrayList.get(position).bangumi_season_id);
+                            startActivity(intent);
+                        }
+                    });
+
+                    container.addView(v);
+                    return 2;
+                }
             }
         };
 
@@ -435,8 +476,7 @@ public class BangumiActivity extends Activity
             {
                 if(position == 0) titleAnim("番剧详情");
                 else if(position == 1) titleAnim("番剧评论");
-                else if(position == 2) titleAnim("番剧评分");
-                else if(position == 3) titleAnim("相关推荐");
+                else if(position == 2) titleAnim("相关推荐");
             }
         });
 
@@ -571,6 +611,27 @@ public class BangumiActivity extends Activity
                 catch (IOException e)
                 {
                     handler.post(runnableReplyMoreErr);
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+
+    public void getRecommend()
+    {
+        new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    bangumiRecommendModelArrayList = bangumiApi.getBangumiRecommend();
+                    handler.post(runnableRecommendUi);
+                }
+                catch (IOException e)
+                {
                     e.printStackTrace();
                 }
             }

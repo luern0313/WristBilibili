@@ -89,6 +89,6 @@ public class ReplyApi
 
     public boolean isShowFloor()
     {
-        return replyJson.optJSONObject("config").optInt("showfloor") == 1;
+        return !replyJson.has("config") || replyJson.optJSONObject("config").optInt("showfloor") == 1;
     }
 }

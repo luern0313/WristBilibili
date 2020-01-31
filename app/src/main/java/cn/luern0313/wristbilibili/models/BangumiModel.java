@@ -29,7 +29,6 @@ public class BangumiModel
     public int bangumi_user_progress_mode; //1ep 2se
     public int bangumi_user_progress_position;
     public String bangumi_user_progress_aid;
-    public int bangumi_user_score;
 
     public String bangumi_detail_typename; //类型
     public StringBuilder bangumi_detail_areas = new StringBuilder(); //地区
@@ -56,8 +55,6 @@ public class BangumiModel
         bangumi_user_is_follow = bangumi_user_jsonobject.optInt("follow") == 1;
         bangumi_user_progress_epid = bangumi_user_jsonobject.has("progress") ?
                 String.valueOf(bangumi_user_jsonobject.optJSONObject("progress").optInt("last_ep_id")) : "0";
-        bangumi_user_score = bangumi_user_jsonobject.has("review") ?
-                bangumi_user_jsonobject.optJSONObject("review").optInt("score") : 0;
 
         JSONArray episodes = bangumi.optJSONArray("episodes");
         for(int i = 0; i < episodes.length(); i++)
