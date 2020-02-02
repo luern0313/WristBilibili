@@ -7,6 +7,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import cn.luern0313.wristbilibili.models.FavorVideoModel;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
 
 /**
@@ -35,22 +36,22 @@ public class FavorVideoApi
         }};
     }
 
-    public ArrayList<JSONObject> getFavorvideo(int page) throws IOException
+    public ArrayList<FavorVideoModel> getFavorvideo(int page) throws IOException
     {
         try
         {
             String url = "http://api.bilibili.com/x/space/fav/arc?vmid=" + mid + "&ps=30&fid=" + fid + "&tid=0&keyword=&pn=" + page + "&order=fav_time";
             JSONArray jsonArray = new JSONObject(NetWorkUtil.get(url, webHeaders).body().string()).getJSONObject("data").getJSONArray("archives");
-            ArrayList<JSONObject> arrayList = new ArrayList<JSONObject>();
+            ArrayList<FavorVideoModel> arrayList = new ArrayList<>();
             for(int i = 0; i < jsonArray.length(); i++)
-                arrayList.add(jsonArray.getJSONObject(i));
+                arrayList.add(new FavorVideoModel(jsonArray.getJSONObject(i)));
             return arrayList;
         }
         catch (JSONException e)
         {
             e.printStackTrace();
         }
-        return null;
+        return new ArrayList<>();
     }
 
     public String cancelFavVideo(String aid) throws IOException

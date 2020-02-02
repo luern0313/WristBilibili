@@ -21,7 +21,7 @@ public class RecommendApi
     private String mid;
     private String csrf;
     private String access_key;
-    private ArrayList<String> defaultHeaders = new ArrayList<String>();
+    private ArrayList<String> appHeaders = new ArrayList<String>();
 
     public RecommendApi(String mid, String cookies, String csrf, String access_key)
     {
@@ -29,7 +29,7 @@ public class RecommendApi
         this.cookie = cookies;
         this.csrf = csrf;
         this.access_key = access_key;
-        defaultHeaders = new ArrayList<String>(){{
+        appHeaders = new ArrayList<String>(){{
             add("Cookie"); add(cookie);
             add("User-Agent"); add(ConfInfoApi.USER_AGENT_OWN);
         }};
@@ -43,10 +43,11 @@ public class RecommendApi
             String url = "http://app.bilibili.com/x/v2/feed/index";
             String temp_per = "access_key=" + access_key + "&appkey=" + ConfInfoApi.getConf("appkey") +
                     "&build=" + ConfInfoApi.getConf("build") + "&flush=0&idx=" + (int) (System.currentTimeMillis() / 1000) +
-                    "&login_event=2&mobi_app=android&network=wifi&open_event=&platform=android&pull=" + (isPull ? "true" : "false") + "&qn=32&style=1&ts=" +
+                    "&login_event=2&mobi_app=" + ConfInfoApi.getConf("mobi_app") + "&network=wifi&open_event=&platform=" +
+                    ConfInfoApi.getConf("platform") + "&pull=" + (isPull ? "true" : "false") + "&qn=32&style=1&ts=" +
                     (int) (System.currentTimeMillis() / 1000);
             String sign = ConfInfoApi.calc_sign(temp_per);
-            Response response = NetWorkUtil.get(url + "?" + temp_per + "&sign=" + sign, defaultHeaders);
+            Response response = NetWorkUtil.get(url + "?" + temp_per + "&sign=" + sign, appHeaders);
             JSONArray resultJSONArray = new JSONObject(response.body().string()).getJSONObject("data").getJSONArray("items");
             for(int i = 0; i < resultJSONArray.length(); i++)
             {

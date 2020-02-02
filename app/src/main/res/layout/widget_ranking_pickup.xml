@@ -5,7 +5,8 @@
     android:layout_height="wrap_content"
     android:background="@color/ranking_rank_1_start"
     android:paddingLeft="19dp"
-    android:paddingRight="19dp">
+    android:paddingRight="19dp"
+    android:paddingTop="4dp">
 
     <LinearLayout
         android:id="@+id/rk_pu_date"

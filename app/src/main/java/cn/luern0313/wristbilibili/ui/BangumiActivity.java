@@ -183,8 +183,7 @@ public class BangumiActivity extends Activity
                     LinearLayoutManager layoutManager = new LinearLayoutManager(BangumiActivity.super.getParent());
                     layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
                     uiDetailEpisodesRecyclerView.setLayoutManager(layoutManager);
-                    episodesRecyclerViewAdapter = new VideoPartAdapter(bangumiModel.bangumi_episodes, bangumiModel,
-                                                                       1);
+                    episodesRecyclerViewAdapter = new VideoPartAdapter(bangumiModel.bangumi_episodes, bangumiModel, 1);
                     episodesRecyclerViewAdapter.setOnItemClickListener(new VideoPartAdapter.OnItemClickListener()
                     {
                         @Override

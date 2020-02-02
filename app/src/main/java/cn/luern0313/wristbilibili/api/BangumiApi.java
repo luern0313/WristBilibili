@@ -25,7 +25,7 @@ public class BangumiApi
     private String mid;
     private String csrf;
     private String access_key;
-    private ArrayList<String> phoneHeaders = new ArrayList<String>();
+    private ArrayList<String> appHeaders = new ArrayList<String>();
     private ArrayList<String> webHeaders = new ArrayList<String>();
 
     private String season_id;
@@ -39,7 +39,7 @@ public class BangumiApi
         this.access_key = access_key;
 
         this.season_id = season_id;
-        phoneHeaders = new ArrayList<String>(){{
+        appHeaders = new ArrayList<String>(){{
             add("Cookie"); add(cookie);
             add("User-Agent"); add(ConfInfoApi.USER_AGENT_OWN);
         }};
@@ -58,7 +58,7 @@ public class BangumiApi
                 "&build=" + ConfInfoApi.getConf("build") + "&platform=android&season_id=" + season_id +
                 "&ts=" + (int) (System.currentTimeMillis() / 1000);
             String sign = ConfInfoApi.calc_sign(temp_per);
-            Response response = NetWorkUtil.get("https://api.bilibili.com/pgc/view/app/season?" + temp_per + "&sign=" + sign, phoneHeaders);
+            Response response = NetWorkUtil.get("https://api.bilibili.com/pgc/view/app/season?" + temp_per + "&sign=" + sign, appHeaders);
             JSONObject result = new JSONObject(response.body().string());
             if(result.optInt("code") == 0)
             {
@@ -115,7 +115,6 @@ public class BangumiApi
 
     public String shareBangumi(String text) throws IOException
     {
-        //TODO 123
         try
         {
             String url = "https://api.vc.bilibili.com/dynamic_repost/v1/dynamic_repost/share";

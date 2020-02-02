@@ -20,14 +20,14 @@ public class RankingApi
     private String cookie;
     private String mid;
     private String csrf;
-    private ArrayList<String> defaultHeaders = new ArrayList<String>();
+    private ArrayList<String> appHeaders = new ArrayList<String>();
 
     public RankingApi(String mid, final String cookie, String csrf)
     {
         this.mid = mid;
         this.cookie = cookie;
         this.csrf = csrf;
-        defaultHeaders = new ArrayList<String>(){{
+        appHeaders = new ArrayList<String>(){{
             add("Cookie"); add(cookie);
             add("User-Agent"); add(ConfInfoApi.USER_AGENT_OWN);
         }};
@@ -41,7 +41,7 @@ public class RankingApi
             String url = "http://app.bilibili.com/x/v2/rank/region";
             String temp_per = "appkey=" + ConfInfoApi.getConf("appkey") + "&build=" + ConfInfoApi.getConf("build") + "&mobi_app=android&platform=android&pn=" + pn + "&ps=20&rid=0&ts=" + (int) (System.currentTimeMillis() / 1000);
             String sign = ConfInfoApi.calc_sign(temp_per);
-            Response response = NetWorkUtil.get(url + "?" + temp_per + "&sign=" + sign, defaultHeaders);
+            Response response = NetWorkUtil.get(url + "?" + temp_per + "&sign=" + sign, appHeaders);
             JSONArray resultJSONArray = new JSONObject(response.body().string()).getJSONArray("data");
             for(int i = 0; i < resultJSONArray.length(); i++)
                 rankingVideoArrayList.add(new RankingModel(resultJSONArray.getJSONObject(i)));

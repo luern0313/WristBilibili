@@ -11,13 +11,10 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.AnimationDrawable;
-import android.graphics.drawable.BitmapDrawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
-import android.support.v4.util.LruCache;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
@@ -27,7 +24,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -39,13 +35,14 @@ import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.adapter.ReplyAdapter;
+import cn.luern0313.wristbilibili.adapter.VideoRecommendAdapter;
 import cn.luern0313.wristbilibili.api.FavorBoxApi;
 import cn.luern0313.wristbilibili.api.OnlineVideoApi;
 import cn.luern0313.wristbilibili.api.ReplyApi;
 import cn.luern0313.wristbilibili.api.VideoDetailsApi;
 import cn.luern0313.wristbilibili.models.FavorBoxModel;
-import cn.luern0313.wristbilibili.models.ListofVideoModel;
 import cn.luern0313.wristbilibili.models.ReplyModel;
+import cn.luern0313.wristbilibili.models.VideoModel;
 import cn.luern0313.wristbilibili.service.DownloadService;
 import cn.luern0313.wristbilibili.widget.ImageDownloader;
 
@@ -57,11 +54,11 @@ public class VideodetailsActivity extends Activity
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     VideoDetailsApi videoDetail;
+    VideoModel videoModel;
     OnlineVideoApi onlineVideoApi;
     ReplyApi replyApi;
-    ArrayList<VideoDetailsApi.VideoPart> videoPartArrayList;
     ArrayList<ReplyModel> replyArrayList;
-    ArrayList<ListofVideoModel> recommendList;
+    ArrayList<VideoModel.VideoRecommendModel> recommendList;
 
     View layoutSendReply;
     View layoutChangeMode;
@@ -91,17 +88,6 @@ public class VideodetailsActivity extends Activity
     ImageView uiLoadingImg;
     LinearLayout uiLoading;
     LinearLayout uiNoWeb;
-    TextView uiLikeText;
-    TextView uiCoinText;
-    TextView uiFavText;
-    ImageView uiLikeImg;
-    ImageView uiCoinImg;
-    ImageView uiFavImg;
-    ImageView uiDislikeImg;
-    LinearLayout uiLikeLay;
-    LinearLayout uiCoinLay;
-    LinearLayout uiFavLay;
-    LinearLayout uiDislikeLay;
 
     LinearLayout uiVideoPartLayout;
     ListView uiReplyListView;
@@ -110,9 +96,6 @@ public class VideodetailsActivity extends Activity
     ReplyAdapter.ReplyAdapterListener replyAdapterListener;
 
     boolean isLogin = false;
-    int isLiked = 0; //012
-    int isCoined = 0;
-    boolean isFaved = false;
     int replyPage = 1;
     boolean isReplyLoading = true;
 
@@ -155,6 +138,7 @@ public class VideodetailsActivity extends Activity
         videoDetail = new VideoDetailsApi(sharedPreferences.getString("cookies", ""),
                                           sharedPreferences.getString("csrf", ""),
                                           sharedPreferences.getString("mid", ""),
+                                          sharedPreferences.getString("access_key", ""),
                                           intent.getStringExtra("aid"));
         replyApi = new ReplyApi(sharedPreferences.getString("cookies", ""),
                                 sharedPreferences.getString("csrf", ""),
@@ -201,29 +185,22 @@ public class VideodetailsActivity extends Activity
             {
                 try
                 {
-                    ((TextView) findViewById(R.id.vd_video_title)).setText(videoDetail.getVideoTitle());
-                    ((TextView) findViewById(R.id.vd_video_play)).setText("播放:" + videoDetail.getVideoPlay() + "  弹幕:" + videoDetail.getVideoDanmaku());
-                    ((TextView) findViewById(R.id.vd_video_time)).setText(videoDetail.getVideoupTime() + "  AV" + videoDetail.getVideoAid());
-                    ((TextView) findViewById(R.id.vd_video_details)).setText(videoDetail.getVideoDetail());
-                    ((TextView) findViewById(R.id.vd_card_name)).setText(videoDetail.getVideoUpName());
-                    ((TextView) findViewById(R.id.vd_card_sen)).setText(videoDetail.getVideoUpSign());
-                    uiLikeText.setText(videoDetail.getVideoLike());
-                    uiCoinText.setText(videoDetail.getVideoCoin());
-                    uiFavText.setText(videoDetail.getVideoFav());
-                    isLiked = videoDetail.getSelfLiked();
-                    isCoined = videoDetail.getSelfCoined();
-                    isFaved = videoDetail.getSelfFaved();
-                    videoPartArrayList = videoDetail.getVideoPartList();
+                    ((TextView) findViewById(R.id.vd_video_title)).setText(videoModel.video_title);
+                    ((TextView) findViewById(R.id.vd_video_play)).setText("播放:" + videoModel.video_play + "  弹幕:" + videoModel.video_danmaku);
+                    ((TextView) findViewById(R.id.vd_video_time)).setText(videoModel.video_time + "  AV" + videoModel.video_aid);
+                    ((TextView) findViewById(R.id.vd_video_details)).setText(videoModel.video_desc);
+                    ((TextView) findViewById(R.id.vd_card_name)).setText(videoModel.video_up_name);
+                    ((TextView) findViewById(R.id.vd_card_sen)).setText(videoModel.video_up_official);
 
-                    if(videoDetail.getVideoPartSize() > 1)
+                    if(videoModel.video_part_array_list.size() > 1)
                     {
                         findViewById(R.id.vd_video_part_layout).setVisibility(View.VISIBLE);
                         findViewById(R.id.vd_bt_play).setVisibility(View.GONE);
-                        ((TextView) findViewById(R.id.vd_video_part_text)).setText("共" + String.valueOf(videoDetail.getVideoPartSize()) + "P");
-                        for(int i = 0; i < videoPartArrayList.size(); i++)
+                        ((TextView) findViewById(R.id.vd_video_part_text)).setText("共" + String.valueOf(videoModel.video_part_array_list.size()) + "P");
+                        for(int i = 0; i < videoModel.video_part_array_list.size(); i++)
                         {
                             if(i < 30)
-                                uiVideoPartLayout.addView(getVideoPartButton(videoPartArrayList.get(i)));
+                                uiVideoPartLayout.addView(getVideoPartButton(videoModel.video_part_array_list.get(i)));
                             else
                             {
                                 TextView textView = new TextView(ctx);
@@ -354,7 +331,7 @@ public class VideodetailsActivity extends Activity
             {
                 try
                 {
-                    rAdapter recommendAdapter = new rAdapter(inflater, recommendList);
+                    VideoRecommendAdapter recommendAdapter = new VideoRecommendAdapter(inflater, recommendList, uiRecommendListView);
                     uiRecommendListView.setAdapter(recommendAdapter);
                 }
                 catch(Exception e)
@@ -440,17 +417,6 @@ public class VideodetailsActivity extends Activity
                     View v = inflater.inflate(R.layout.viewpager_vd_vd, null);
                     v.setTag(0);
 
-                    uiLikeText = v.findViewById(R.id.vd_like_text);
-                    uiCoinText = v.findViewById(R.id.vd_coin_text);
-                    uiFavText = v.findViewById(R.id.vd_fav_text);
-                    uiLikeImg = v.findViewById(R.id.vd_like_img);
-                    uiCoinImg = v.findViewById(R.id.vd_coin_img);
-                    uiFavImg = v.findViewById(R.id.vd_fav_img);
-                    uiDislikeImg = v.findViewById(R.id.vd_dislike_img);
-                    uiLikeLay = v.findViewById(R.id.vd_like);
-                    uiCoinLay = v.findViewById(R.id.vd_coin);
-                    uiFavLay = v.findViewById(R.id.vd_fav);
-                    uiDislikeLay = v.findViewById(R.id.vd_dislike);
                     uiVideoPartLayout = v.findViewById(R.id.vd_video_part);
 
                     v.findViewById(R.id.vd_card).setOnClickListener(new View.OnClickListener()
@@ -459,7 +425,7 @@ public class VideodetailsActivity extends Activity
                         public void onClick(View v)
                         {
                             Intent intent = new Intent(ctx, OtherUserActivity.class);
-                            intent.putExtra("mid", videoDetail.getVideoUpAid());
+                            intent.putExtra("mid", videoModel.video_up_mid);
                             startActivity(intent);
                         }
                     });
@@ -471,11 +437,14 @@ public class VideodetailsActivity extends Activity
                         {
                             try
                             {
-                                if(videoDetail.getVideoDetails())
+                                videoModel = videoDetail.getVideoDetails();
+                                if(videoModel != null)
                                 {
                                     handler.post(runnableUi);
-                                    videoUpFace = videoDetail.getVideoUpFace();
+                                    videoUpFace = ImageDownloader.downloadImage(videoModel.video_up_face);
                                     handler.post(runnableSetface);
+                                    recommendList = videoModel.video_recommend_array_list;
+                                    handler.post(runnableRecommend);
                                 }
                                 else
                                 {
@@ -557,30 +526,11 @@ public class VideodetailsActivity extends Activity
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id)
                         {
                             Intent intent = new Intent(ctx, VideodetailsActivity.class);
-                            intent.putExtra("aid", String.valueOf(
-                                    recommendList.get(position).getVideoAid()));
+                            intent.putExtra("aid", String.valueOf(recommendList.get(position).video_recommend_video_aid));
                             startActivity(intent);
                         }
                     });
 
-                    new Thread(new Runnable()
-                    {
-                        @Override
-                        public void run()
-                        {
-                            try
-                            {
-                                recommendList = videoDetail.getRecommendVideos();
-                                handler.post(runnableRecommend);
-                            }
-                            catch (IOException e)
-                            {
-                                e.printStackTrace();
-                                recommendList = new ArrayList<>();
-                                handler.post(runnableRecommend);
-                            }
-                        }
-                    }).start();
                     container.addView(v);
                     return 2;
                 }
@@ -666,13 +616,13 @@ public class VideodetailsActivity extends Activity
         }
     }
 
-    TextView getVideoPartButton(final VideoDetailsApi.VideoPart part)
+    TextView getVideoPartButton(final VideoModel.VideoPartModel part)
     {
         TextView textView = new TextView(ctx);
         textView.setWidth(170);
         textView.setBackgroundResource(R.drawable.selector_bg_vd_videopart);
         textView.setPadding(12, 6, 12, 6);
-        textView.setText(part.getPartName());
+        textView.setText(part.video_part_name);
         textView.setLines(2);
         textView.setEllipsize(TextUtils.TruncateAt.END);
         textView.setOnClickListener(new View.OnClickListener()
@@ -681,10 +631,10 @@ public class VideodetailsActivity extends Activity
             public void onClick(View v)
             {
                 Intent intent = new Intent(ctx, PlayerActivity.class);
-                intent.putExtra("title", part.getPartName() + " - " + videoDetail.getVideoTitle());
-                intent.putExtra("aid", videoDetail.getVideoAid());
-                intent.putExtra("part", String.valueOf(part.getPartNum()));
-                intent.putExtra("cid", String.valueOf(part.getPartCid()));
+                intent.putExtra("title", part.video_part_num + " - " + videoModel.video_title);
+                intent.putExtra("aid", videoModel.video_aid);
+                intent.putExtra("part", String.valueOf(part.video_part_num));
+                intent.putExtra("cid", String.valueOf(part.video_part_cid));
                 startActivity(intent);
             }
         });
@@ -768,193 +718,46 @@ public class VideodetailsActivity extends Activity
         editor.commit();
     }
 
-
-
-    class rAdapter extends BaseAdapter
-    {
-        private LayoutInflater mInflater;
-
-        private LruCache<String, BitmapDrawable> mImageCache;
-
-        private ArrayList<ListofVideoModel> recommendList;
-
-        public rAdapter(LayoutInflater inflater, ArrayList<ListofVideoModel> recommendList)
-        {
-            mInflater = inflater;
-            this.recommendList = recommendList;
-
-            int maxCache = (int) Runtime.getRuntime().maxMemory();
-            int cacheSize = maxCache / 8;
-            mImageCache = new LruCache<String, BitmapDrawable>(cacheSize)
-            {
-                @Override
-                protected int sizeOf(String key, BitmapDrawable value)
-                {
-                    try
-                    {
-                        return value.getBitmap().getByteCount();
-                    }
-                    catch (Exception e)
-                    {
-                        e.printStackTrace();
-                    }
-                    return 0;
-                }
-            };
-        }
-
-        @Override
-        public int getCount()
-        {
-            return recommendList.size();
-        }
-
-        @Override
-        public Object getItem(int position)
-        {
-            return position;
-        }
-
-        @Override
-        public long getItemId(int position)
-        {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup viewGroup)
-        {
-            final ListofVideoModel v = recommendList.get(position);
-            ViewHolder viewHolder;
-            if(convertView == null)
-            {
-                convertView = mInflater.inflate(R.layout.item_favor_video, null);
-                viewHolder = new ViewHolder();
-                convertView.setTag(viewHolder);
-                viewHolder.img = convertView.findViewById(R.id.vid_img);
-                viewHolder.title = convertView.findViewById(R.id.vid_title);
-                viewHolder.up = convertView.findViewById(R.id.vid_up);
-                viewHolder.play = convertView.findViewById(R.id.vid_play);
-            }
-            else
-            {
-                viewHolder = (ViewHolder) convertView.getTag();
-            }
-
-            viewHolder.img.setImageResource(R.drawable.img_default_vid);
-            viewHolder.title.setText(v.getVideoTitle());
-            viewHolder.up.setText("UP : " + v.getOwnerName());
-            viewHolder.play.setText("播放 : " + v.getVideoPlay() + "  弹幕 : " + v.getVideoDanmaku());
-
-            viewHolder.img.setTag(v.getVideoImg());
-            BitmapDrawable h = setImageFormWeb(v.getVideoImg());
-            if(h != null) viewHolder.img.setImageDrawable(h);
-
-            return convertView;
-        }
-
-        class ViewHolder
-        {
-            ImageView img;
-            TextView title;
-            TextView up;
-            TextView play;
-        }
-
-        BitmapDrawable setImageFormWeb(String url)
-        {
-            if(mImageCache.get(url) != null)
-            {
-                return mImageCache.get(url);
-            }
-            else
-            {
-                ImageTask it = new ImageTask();
-                it.execute(url);
-                return null;
-            }
-        }
-
-        class ImageTask extends AsyncTask<String, Void, BitmapDrawable>
-        {
-            private String imageUrl;
-
-            @Override
-            protected BitmapDrawable doInBackground(String... params)
-            {
-                try
-                {
-                    imageUrl = params[0];
-                    Bitmap bitmap = null;
-                    bitmap = ImageDownloader.downloadImage(imageUrl);
-                    BitmapDrawable db = new BitmapDrawable(getResources(), bitmap);
-                    // 如果本地还没缓存该图片，就缓存
-                    if(mImageCache.get(imageUrl) == null && bitmap != null)
-                    {
-                        mImageCache.put(imageUrl, db);
-                    }
-                    return db;
-                }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(BitmapDrawable result)
-            {
-                // 通过Tag找到我们需要的ImageView，如果该ImageView所在的item已被移出页面，就会直接返回null
-                ImageView iv = uiRecommendListView.findViewWithTag(imageUrl);
-                if(iv != null && result != null)
-                {
-                    iv.setImageDrawable(result);
-                }
-            }
-        }
-
-    }
-
     void setIcon()
     {
-        uiLikeText.setText(videoDetail.getVideoLike());
-        uiCoinText.setText(videoDetail.getVideoCoin());
-        uiFavText.setText(videoDetail.getVideoFav());
-        uiLikeImg.setImageResource(R.drawable.icon_vdd_do_like_no);
-        uiCoinImg.setImageResource(R.drawable.icon_vdd_do_coin_no);
-        uiFavImg.setImageResource(R.drawable.icon_vdd_do_fav_no);
-        uiDislikeImg.setImageResource(R.drawable.icon_vdd_do_dislike_no);
-        if(isLiked == 1)//赞
+        ((TextView) findViewById(R.id.vd_like_text)).setText(videoModel.video_detail_like == 0 ? "点赞" : String.valueOf(videoModel.video_detail_like));
+        ((TextView) findViewById(R.id.vd_coin_text)).setText(videoModel.video_detail_coin == 0 ? "投币" : String.valueOf(videoModel.video_detail_coin));
+        ((TextView) findViewById(R.id.vd_fav_text)).setText(videoModel.video_detail_fav == 0 ? "收藏" : String.valueOf(videoModel.video_detail_fav));
+
+        if(videoModel.video_user_like)
         {
-            uiLikeImg.setImageResource(R.drawable.icon_vdd_do_like_yes);
-            uiDislikeImg.setImageResource(R.drawable.icon_vdd_do_dislike_no);
+            ((ImageView) findViewById(R.id.vd_like_img)).setImageResource(R.drawable.icon_vdd_do_like_yes);
+            ((ImageView) findViewById(R.id.vd_dislike_img)).setImageResource(R.drawable.icon_vdd_do_dislike_no);
         }
-        else if(isLiked == 2)
+        else if(videoModel.video_user_dislike)
         {
-            uiLikeImg.setImageResource(R.drawable.icon_vdd_do_like_no);
-            uiDislikeImg.setImageResource(R.drawable.icon_vdd_do_dislike_yes);
+            ((ImageView) findViewById(R.id.vd_like_img)).setImageResource(R.drawable.icon_vdd_do_like_no);
+            ((ImageView) findViewById(R.id.vd_dislike_img)).setImageResource(R.drawable.icon_vdd_do_dislike_yes);
         }
         else
         {
-            uiLikeImg.setImageResource(R.drawable.icon_vdd_do_like_no);
-            uiDislikeImg.setImageResource(R.drawable.icon_vdd_do_dislike_no);
+            ((ImageView) findViewById(R.id.vd_like_img)).setImageResource(R.drawable.icon_vdd_do_like_no);
+            ((ImageView) findViewById(R.id.vd_dislike_img)).setImageResource(R.drawable.icon_vdd_do_dislike_no);
         }
-        if(isCoined > 0) uiCoinImg.setImageResource(R.drawable.icon_vdd_do_coin_yes);
-        else uiCoinImg.setImageResource(R.drawable.icon_vdd_do_coin_no);
-        if(isFaved) uiFavImg.setImageResource(R.drawable.icon_vdd_do_fav_yes);
-        else uiFavImg.setImageResource(R.drawable.icon_vdd_do_fav_no);
+        if(videoModel.video_user_coin > 0)
+            ((ImageView) findViewById(R.id.vd_coin_img)).setImageResource(R.drawable.icon_vdd_do_coin_yes);
+        else
+            ((ImageView) findViewById(R.id.vd_coin_img)).setImageResource(R.drawable.icon_vdd_do_coin_no);
+        if(videoModel.video_user_fav)
+            ((ImageView) findViewById(R.id.vd_fav_img)).setImageResource(R.drawable.icon_vdd_do_fav_yes);
+        else
+            ((ImageView) findViewById(R.id.vd_fav_img)).setImageResource(R.drawable.icon_vdd_do_fav_no);
     }
 
 
     public void clickMorePart(View view)
     {
-        String[] videoPartNames = new String[videoPartArrayList.size()];
-        String[] videoPartCids = new String[videoPartArrayList.size()];
-        for(int i = 0; i < videoPartArrayList.size(); i++)
-            videoPartNames[i] = videoPartArrayList.get(i).getPartName();
-        for(int i = 0; i < videoPartArrayList.size(); i++)
-            videoPartCids[i] = String.valueOf(videoPartArrayList.get(i).getPartCid());
+        String[] videoPartNames = new String[videoModel.video_part_array_list.size()];
+        String[] videoPartCids = new String[videoModel.video_part_array_list.size()];
+        for(int i = 0; i < videoModel.video_part_array_list.size(); i++)
+            videoPartNames[i] = videoModel.video_part_array_list.get(i).video_part_name;
+        for(int i = 0; i < videoModel.video_part_array_list.size(); i++)
+            videoPartCids[i] = String.valueOf(videoModel.video_part_array_list.get(i).video_part_cid);
         Intent intent = new Intent(ctx, SelectPartActivity.class);
         intent.putExtra("title", "分P");
         intent.putExtra("options_name", videoPartNames);
@@ -965,28 +768,27 @@ public class VideodetailsActivity extends Activity
     public void clickCover(View view)
     {
         Intent intent = new Intent(ctx, ImgActivity.class);
-        intent.putExtra("imgUrl", new String[]{videoDetail.getVideoFace()});
+        intent.putExtra("imgUrl", new String[]{videoModel.video_cover});
         startActivity(intent);
     }
 
     public void clickPlay(View view)
     {
         Intent intent = new Intent(ctx, PlayerActivity.class);
-        intent.putExtra("title", videoDetail.getVideoTitle());
-        intent.putExtra("aid", videoDetail.getVideoAid());
-        intent.putExtra("part", "1");
-        intent.putExtra("cid", videoDetail.getVideoCid());
+        intent.putExtra("title", videoModel.video_title);
+        intent.putExtra("aid", videoModel.video_aid);
+        intent.putExtra("cid", videoModel.video_cid);
         startActivity(intent);
     }
 
     public void clickDownload(View view)
     {
-        String[] videoPartNames = new String[videoPartArrayList.size()];
-        String[] videoPartCids = new String[videoPartArrayList.size()];
-        for(int i = 0; i < videoPartArrayList.size(); i++)
-            videoPartNames[i] = videoPartArrayList.get(i).getPartName();
-        for(int i = 0; i < videoPartArrayList.size(); i++)
-            videoPartCids[i] = String.valueOf(videoPartArrayList.get(i).getPartCid());
+        String[] videoPartNames = new String[videoModel.video_part_array_list.size()];
+        String[] videoPartCids = new String[videoModel.video_part_array_list.size()];
+        for(int i = 0; i < videoModel.video_part_array_list.size(); i++)
+            videoPartNames[i] = videoModel.video_part_array_list.get(i).video_part_name;
+        for(int i = 0; i < videoModel.video_part_array_list.size(); i++)
+            videoPartCids[i] = String.valueOf(videoModel.video_part_array_list.get(i).video_part_cid);
         Intent intent = new Intent(ctx, SelectPartActivity.class);
         intent.putExtra("title", "分P下载");
         intent.putExtra("tip", "选择要下载的分P");
@@ -1004,7 +806,8 @@ public class VideodetailsActivity extends Activity
             {
                 try
                 {
-                    if(videoDetail.playLater())
+                    String result = videoDetail.playLater();
+                    if(result.equals(""))
                     {
                         Looper.prepare();
                         Toast.makeText(ctx, "已添加至稍后再看", Toast.LENGTH_SHORT).show();
@@ -1013,7 +816,7 @@ public class VideodetailsActivity extends Activity
                     else
                     {
                         Looper.prepare();
-                        Toast.makeText(ctx, "未成功添加至稍后观看！请检查网络再试", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
                         Looper.loop();
                     }
                 }
@@ -1037,7 +840,8 @@ public class VideodetailsActivity extends Activity
             {
                 try
                 {
-                    if(videoDetail.playHistory())
+                    String result = videoDetail.playHistory();
+                    if(result.equals(""))
                     {
                         Looper.prepare();
                         Toast.makeText(ctx, "已添加至历史记录！你可以在历史记录找到", Toast.LENGTH_SHORT).show();
@@ -1046,7 +850,7 @@ public class VideodetailsActivity extends Activity
                     else
                     {
                         Looper.prepare();
-                        Toast.makeText(ctx, "未成功添加至历史记录！请检查网络再试", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
                         Looper.loop();
                     }
                 }
@@ -1065,10 +869,10 @@ public class VideodetailsActivity extends Activity
     {
         Intent intent = new Intent(ctx, SendDynamicActivity.class);
         intent.putExtra("is_share", true);
-        intent.putExtra("share_dyid", videoDetail.getVideoAid());
-        intent.putExtra("share_up", videoDetail.getVideoUpName());
-        intent.putExtra("share_img", videoDetail.getVideoFace());
-        intent.putExtra("share_title", videoDetail.getVideoTitle());
+        intent.putExtra("share_dyid", videoModel.video_aid);
+        intent.putExtra("share_up", videoModel.video_up_name);
+        intent.putExtra("share_img", videoModel.video_cover);
+        intent.putExtra("share_title", videoModel.video_title);
         startActivityForResult(intent, RESULT_VD_SHARE);
     }
 
@@ -1081,21 +885,38 @@ public class VideodetailsActivity extends Activity
             {
                 try
                 {
-                    if(isLiked == 1)
+                    if(videoModel.video_user_like)
                     {
-                        videoDetail.likeVideo(2);
-                        isLiked = 0;
-                        videoDetail.setSelfLiked(-1);
-                        Looper.prepare();
-                        Toast.makeText(ctx, "已取消喜欢...", Toast.LENGTH_SHORT).show();
+                        String result = videoDetail.likeVideo(2);
+                        if(result.equals(""))
+                        {
+                            videoModel.video_detail_like--;
+                            videoModel.video_user_like = false;
+                            Looper.prepare();
+                            Toast.makeText(ctx, "已取消喜欢...", Toast.LENGTH_SHORT).show();
+                        }
+                        else
+                        {
+                            Looper.prepare();
+                            Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
+                        }
                     }
                     else
                     {
-                        videoDetail.likeVideo(1);
-                        isLiked = 1;
-                        videoDetail.setSelfLiked(1);
-                        Looper.prepare();
-                        Toast.makeText(ctx, "已喜欢！这个视频会被更多人看到！", Toast.LENGTH_SHORT).show();
+                        String result = videoDetail.likeVideo(1);
+                        if(result.equals(""))
+                        {
+                            videoModel.video_detail_like++;
+                            videoModel.video_user_like = true;
+                            videoModel.video_user_dislike = false;
+                            Looper.prepare();
+                            Toast.makeText(ctx, "已喜欢！这个视频会被更多人看到！", Toast.LENGTH_SHORT).show();
+                        }
+                        else
+                        {
+                            Looper.prepare();
+                            Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
+                        }
                     }
                     handler.post(runnableImg);
                     Looper.loop();
@@ -1120,15 +941,23 @@ public class VideodetailsActivity extends Activity
             {
                 try
                 {
-                    if(videoDetail.getVideoCopyright() == 1)  //1原创
+                    if(videoModel.video_detail_copyright == 1)  //1原创
                     {
-                        if(isCoined < 2)
+                        if(videoModel.video_user_coin < 2)
                         {
-                            isCoined++;
-                            videoDetail.coinVideo(1);
-                            videoDetail.setSelfCoined(1);
-                            Looper.prepare();
-                            Toast.makeText(ctx, "你投了一个硬币！再次点击可以再次投币！", Toast.LENGTH_SHORT).show();
+                            String result = videoDetail.coinVideo(1);
+                            if(result.equals(""))
+                            {
+                                videoModel.video_detail_coin++;
+                                videoModel.video_user_coin++;
+                                Looper.prepare();
+                                Toast.makeText(ctx, "你投了一个硬币！再次点击可以再次投币！", Toast.LENGTH_SHORT).show();
+                            }
+                            else
+                            {
+                                Looper.prepare();
+                                Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
+                            }
                         }
                         else
                         {
@@ -1138,13 +967,21 @@ public class VideodetailsActivity extends Activity
                     }
                     else  //2转载
                     {
-                        if(isCoined < 1)
+                        if(videoModel.video_user_coin < 1)
                         {
-                            isCoined++;
-                            videoDetail.coinVideo(1);
-                            videoDetail.setSelfCoined(1);
-                            Looper.prepare();
-                            Toast.makeText(ctx, "你投了一个硬币！本稿件最多投一个硬币", Toast.LENGTH_SHORT).show();
+                            String result = videoDetail.coinVideo(1);
+                            if(result.equals(""))
+                            {
+                                videoModel.video_detail_coin++;
+                                videoModel.video_user_coin++;
+                                Looper.prepare();
+                                Toast.makeText(ctx, "你投了一个硬币！本稿件最多投一个硬币", Toast.LENGTH_SHORT).show();
+                            }
+                            else
+                            {
+                                Looper.prepare();
+                                Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
+                            }
                         }
                         else
                         {
@@ -1217,17 +1054,19 @@ public class VideodetailsActivity extends Activity
             {
                 try
                 {
-                    if(isLiked == 2)
+                    if(videoModel.video_user_dislike)
                     {
                         videoDetail.likeVideo(4);
-                        isLiked = 0;
+                        videoModel.video_user_dislike = false;
                         Looper.prepare();
                         Toast.makeText(ctx, "取消点踩成功！", Toast.LENGTH_SHORT).show();
                     }
                     else
                     {
                         videoDetail.likeVideo(3);
-                        isLiked = 2;
+                        videoModel.video_detail_like -= videoModel.video_user_like ? 1 : 0;
+                        videoModel.video_user_dislike = true;
+                        videoModel.video_user_like = false;
                         Looper.prepare();
                         Toast.makeText(ctx, "点踩成功！", Toast.LENGTH_SHORT).show();
                     }
@@ -1254,7 +1093,7 @@ public class VideodetailsActivity extends Activity
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, final Intent data)
+    public void onActivityResult(final int requestCode, int resultCode, final Intent data)
     {
         if(resultCode != 0) return;
         switch (requestCode)
@@ -1268,15 +1107,19 @@ public class VideodetailsActivity extends Activity
                         try
                         {
                             String result = videoDetail.favVideo(data.getStringExtra("option_id"));
-                            Looper.prepare();
-                            if("success".equals(result))
+                            if(result.equals(""))
                             {
-                                isFaved = true;
-                                videoDetail.setSelfFaved(1);
+                                videoModel.video_detail_fav += videoModel.video_user_fav ? 0 :1;
+                                videoModel.video_user_fav = true;
+                                Looper.prepare();
                                 Toast.makeText(ctx, "已收藏至 " + data.getStringExtra("option_name") + " 收藏夹！", Toast.LENGTH_SHORT).show();
                                 handler.post(runnableImg);
                             }
-                            else Toast.makeText(ctx, "错误：" + result, Toast.LENGTH_SHORT).show();
+                            else
+                            {
+                                Looper.prepare();
+                                Toast.makeText(ctx, "错误：" + result, Toast.LENGTH_SHORT).show();
+                            }
                             Looper.loop();
                         }
                         catch (IOException e)
@@ -1299,11 +1142,10 @@ public class VideodetailsActivity extends Activity
                             onlineVideoApi = new OnlineVideoApi(sharedPreferences.getString("cookies", ""),
                                                                 sharedPreferences.getString("csrf", ""),
                                                                 sharedPreferences.getString("mid", ""),
-                                                                videoDetail.getVideoAid(),
-                                                                data.getStringExtra("option_id"));
+                                                                videoModel.video_aid, data.getStringExtra("option_id"));
                             onlineVideoApi.connectionVideoUrl();
                             handler.post(runnableVideoLoadingFin);
-                            connection.setVideoPartData(data.getStringExtra("option_name") + " - " + videoDetail.getVideoTitle(), data.getStringExtra("option_id"));
+                            connection.setVideoPartData(data.getStringExtra("option_name") + " - " + videoModel.video_title, data.getStringExtra("option_id"));
                             connection.downloadVideo();
                         }
                         catch (IOException e)
@@ -1319,9 +1161,8 @@ public class VideodetailsActivity extends Activity
 
             case RESULT_VD_PART:
                 Intent intent = new Intent(ctx, PlayerActivity.class);
-                intent.putExtra("title", data.getStringExtra("option_name") + " - " + videoDetail.getVideoTitle());
-                intent.putExtra("aid", videoDetail.getVideoAid());
-                intent.putExtra("part", String.valueOf(data.getIntExtra("option_position", 1)));
+                intent.putExtra("title", data.getStringExtra("option_name") + " - " + videoModel.video_title);
+                intent.putExtra("aid", videoModel.video_aid);
                 intent.putExtra("cid", data.getStringExtra("option_id"));
                 startActivity(intent);
                 break;
@@ -1334,7 +1175,8 @@ public class VideodetailsActivity extends Activity
                     {
                         try
                         {
-                            if(videoDetail.shareVideo(data.getStringExtra("text")))
+                            String result = videoDetail.shareVideo(data.getStringExtra("text"));
+                            if(result.equals(""))
                             {
                                 Looper.prepare();
                                 Toast.makeText(ctx, "发送成功！", Toast.LENGTH_SHORT).show();
@@ -1343,7 +1185,7 @@ public class VideodetailsActivity extends Activity
                             else
                             {
                                 Looper.prepare();
-                                Toast.makeText(ctx, "发送失败，可能是短时间发送过多？", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
                                 Looper.loop();
                             }
                         }
@@ -1366,7 +1208,8 @@ public class VideodetailsActivity extends Activity
                     {
                         try
                         {
-                            if(videoDetail.sendReply(data.getStringExtra("text")))
+                            String result = videoDetail.sendReply(data.getStringExtra("text"));
+                            if(result.equals(""))
                             {
                                 Looper.prepare();
                                 Toast.makeText(ctx, "发送成功！", Toast.LENGTH_SHORT).show();
@@ -1375,7 +1218,7 @@ public class VideodetailsActivity extends Activity
                             else
                             {
                                 Looper.prepare();
-                                Toast.makeText(ctx, "发送失败，可能是短时间发送过多？", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
                                 Looper.loop();
                             }
                         }
@@ -1416,9 +1259,8 @@ public class VideodetailsActivity extends Activity
 
         void downloadVideo()
         {
-            String result = myBinder.startDownload(videoDetail.getVideoAid(), cid, title,
-                                                   videoDetail.getVideoFace(),
-                                                   onlineVideoApi.getVideoUrl(),
+            String result = myBinder.startDownload(videoModel.video_aid, cid, title,
+                                                   videoModel.video_cover, onlineVideoApi.getVideoUrl(),
                                                    onlineVideoApi.getDanmakuUrl());
             Looper.prepare();
             if(result.equals("")) Toast.makeText(ctx, "已添加至下载列表", Toast.LENGTH_SHORT).show();

@@ -43,6 +43,7 @@ public class FollowmeActivity extends Activity
     String cookies;
     String csrf;
     String mid;
+    String access_key;
 
     Handler handler = new Handler();
     Runnable runnVideo;
@@ -82,6 +83,8 @@ public class FollowmeActivity extends Activity
         cookies = sharedPreferences.getString("cookies", "");
         csrf = sharedPreferences.getString("csrf", "");
         mid = sharedPreferences.getString("mid", "");
+        access_key = sharedPreferences.getString("access_key", "");
+
         othersUserApi = new OthersUserApi(cookies, csrf, "8014831");
 
         cardView = findViewById(R.id.fme_card);
@@ -150,7 +153,7 @@ public class FollowmeActivity extends Activity
                     {
                         JSONArray jsonArray = new JSONObject(othersUserApi.getOtheruserVideo()).getJSONObject("data").getJSONArray("vlist");
                         videoJson = jsonArray.getJSONObject(0);
-                        videoDetail = new VideoDetailsApi(cookies, csrf, mid, String.valueOf(videoJson.getInt("aid")));
+                        videoDetail = new VideoDetailsApi(cookies, csrf, mid, access_key, String.valueOf(videoJson.getInt("aid")));
                         showVoteAid = StatisticsApi.isShowVideoVote();
                         handler.post(runnVideo);
 
@@ -202,7 +205,7 @@ public class FollowmeActivity extends Activity
                 if(videoDetail != null)
                 {
                     Intent intent = new Intent(ctx, VideodetailsActivity.class);
-                    intent.putExtra("aid", videoDetail.getVideoAid());
+                    intent.putExtra("aid", videoDetail.aid);
                     startActivity(intent);
                 }
             }

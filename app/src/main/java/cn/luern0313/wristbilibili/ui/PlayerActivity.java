@@ -28,7 +28,6 @@ public class PlayerActivity extends Activity
 
     String title;
     String aid;
-    String part;
     String cid;
     String url;
     String[] url_backup;
@@ -54,7 +53,6 @@ public class PlayerActivity extends Activity
 
         title = intent.getStringExtra("title");
         aid = intent.getStringExtra("aid");
-        part = intent.getStringExtra("part");
         cid = intent.getStringExtra("cid");
         onlineVideoApi = new OnlineVideoApi(sharedPreferences.getString("cookies", ""), sharedPreferences.getString("csrf", ""), sharedPreferences.getString("mid", ""), aid, cid);
 
