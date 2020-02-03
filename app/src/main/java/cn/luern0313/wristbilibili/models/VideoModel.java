@@ -6,6 +6,7 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * 被 luern0313 创建于 2020/2/2.
@@ -46,7 +47,7 @@ public class VideoModel
         video_title = video.optString("title");
         video_cover = video.optString("pic");
         video_desc = video.optString("desc");
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", new Locale("cn"));
         video_time = format.format(new Date(video.optInt("pubdate") * 1000L));
 
         JSONObject video_stat = video.has("stat") ? video.optJSONObject("stat") : new JSONObject();
@@ -90,7 +91,7 @@ public class VideoModel
         public String video_part_cid;
         public int video_part_num;
         public String video_part_name;
-        public VideoPartModel(JSONObject video_part)
+        VideoPartModel(JSONObject video_part)
         {
             video_part_cid = String.valueOf(video_part.optInt("cid", 0));
             video_part_num = video_part.optInt("page", 0);
@@ -107,7 +108,7 @@ public class VideoModel
         public String video_recommend_video_danmaku;
         public String video_recommend_video_owner_name;
 
-        public VideoRecommendModel(JSONObject video_recommend_video)
+        VideoRecommendModel(JSONObject video_recommend_video)
         {
             video_recommend_video_aid = String.valueOf(video_recommend_video.optInt("aid"));
             video_recommend_video_title = video_recommend_video.optString("title");

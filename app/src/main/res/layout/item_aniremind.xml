@@ -5,7 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingLeft="20dp"
-    android:paddingRight="20dp">
+    android:paddingRight="20dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:descendantFocusability="blocksDescendants"
+    android:background="?android:attr/selectableItemBackground">
 
     <android.support.v7.widget.CardView
         android:id="@+id/anre_imgc"
@@ -13,7 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
         android:layout_marginRight="4dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="2dp"
         app:cardCornerRadius="8dp"
         app:cardElevation="0dp">
 
@@ -28,7 +32,7 @@
         android:id="@+id/anre_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="2dp"
         android:layout_toRightOf="@+id/anre_imgc" />
 
     <TextView
@@ -39,7 +43,10 @@
         android:layout_marginTop="2dp"
         android:layout_toRightOf="@+id/anre_imgc"
         android:background="@drawable/shape_anre_followbg"
-        android:padding="2dp"
+        android:paddingBottom="1dp"
+        android:paddingEnd="3dp"
+        android:paddingStart="3dp"
+        android:paddingTop="1dp"
         android:text="已追番"
         android:textColor="@color/white"
         android:textSize="10sp" />
