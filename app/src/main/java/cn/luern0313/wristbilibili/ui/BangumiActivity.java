@@ -647,8 +647,10 @@ public class BangumiActivity extends Activity
         bangumiModel.bangumi_user_progress_mode = 1;
         bangumiModel.bangumi_user_progress_position = position;
         bangumiModel.bangumi_user_progress_aid = ep.bangumi_episode_aid;
-        episodesRecyclerViewAdapter.notifyDataSetChanged();
-        sectionsRecyclerViewAdapter.notifyDataSetChanged();
+        if(episodesRecyclerViewAdapter != null)
+            episodesRecyclerViewAdapter.notifyDataSetChanged();
+        if(sectionsRecyclerViewAdapter != null)
+            sectionsRecyclerViewAdapter.notifyDataSetChanged();
         getReply();
         Intent intent = new Intent(ctx, PlayerActivity.class);
         intent.putExtra("title", "第" + ep.bangumi_episode_title + "话 " + ep.bangumi_episode_title_long);
@@ -664,8 +666,10 @@ public class BangumiActivity extends Activity
         bangumiModel.bangumi_user_progress_mode = 2;
         bangumiModel.bangumi_user_progress_position = position;
         bangumiModel.bangumi_user_progress_aid = ss.bangumi_episode_aid;
-        episodesRecyclerViewAdapter.notifyDataSetChanged();
-        sectionsRecyclerViewAdapter.notifyDataSetChanged();
+        if(episodesRecyclerViewAdapter != null)
+            episodesRecyclerViewAdapter.notifyDataSetChanged();
+        if(sectionsRecyclerViewAdapter != null)
+            sectionsRecyclerViewAdapter.notifyDataSetChanged();
         getReply();
         Intent intent = new Intent(ctx, PlayerActivity.class);
         intent.putExtra("title", ss.bangumi_episode_title_long.equals("") ? ss.bangumi_episode_title : ss.bangumi_episode_title_long);

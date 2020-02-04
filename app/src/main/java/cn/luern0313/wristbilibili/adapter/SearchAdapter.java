@@ -6,12 +6,14 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.support.v4.util.LruCache;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.io.IOException;
@@ -19,6 +21,7 @@ import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.models.SearchModel;
+import cn.luern0313.wristbilibili.util.HtmlTagHandlerUtil;
 import cn.luern0313.wristbilibili.util.ImageDownloaderUtil;
 
 /**
@@ -32,15 +35,17 @@ public class SearchAdapter extends BaseAdapter
     private LruCache<String, BitmapDrawable> mImageCache;
     private ListView listView;
     private SearchAdapterListener searchAdapterListener;
+    private HtmlTagHandlerUtil htmlTagHandlerUtil;
 
     private ArrayList<SearchModel> searchArrayList;
 
-    public SearchAdapter(LayoutInflater inflater, ArrayList<SearchModel> searchArrayList, ListView listView, SearchAdapterListener searchAdapterListener)
+    public SearchAdapter(LayoutInflater inflater, ArrayList<SearchModel> searchArrayList, ListView listView, SearchAdapterListener searchAdapterListener, HtmlTagHandlerUtil htmlTagHandlerUtil)
     {
         mInflater = inflater;
         this.searchArrayList = searchArrayList;
         this.listView = listView;
         this.searchAdapterListener = searchAdapterListener;
+        this.htmlTagHandlerUtil = htmlTagHandlerUtil;
 
         int maxCache = (int) Runtime.getRuntime().maxMemory();
         int cacheSize = maxCache / 8;
@@ -108,6 +113,7 @@ public class SearchAdapter extends BaseAdapter
                 bangumiViewHolder = new BangumiViewHolder();
                 convertView.setTag(bangumiViewHolder);
 
+                bangumiViewHolder.bangumi_lay = convertView.findViewById(R.id.item_search_bangumi_lay);
                 bangumiViewHolder.bangumi_img = convertView.findViewById(R.id.item_search_bangumi_img);
                 bangumiViewHolder.bangumi_title = convertView.findViewById(R.id.item_search_bangumi_title);
                 bangumiViewHolder.bangumi_score = convertView.findViewById(R.id.item_search_bangumi_score);
@@ -120,6 +126,7 @@ public class SearchAdapter extends BaseAdapter
                 userViewHolder = new UserViewHolder();
                 convertView.setTag(userViewHolder);
 
+                userViewHolder.user_lay = convertView.findViewById(R.id.item_search_user_lay);
                 userViewHolder.user_name = convertView.findViewById(R.id.item_search_user_name);
                 userViewHolder.user_face = convertView.findViewById(R.id.item_search_user_face);
                 userViewHolder.user_off_1 = convertView.findViewById(R.id.item_search_user_ver_1);
@@ -132,6 +139,8 @@ public class SearchAdapter extends BaseAdapter
                 convertView = mInflater.inflate(R.layout.item_search_video, null);
                 videoViewHolder = new VideoViewHolder();
                 convertView.setTag(videoViewHolder);
+
+                videoViewHolder.video_lay = convertView.findViewById(R.id.item_search_video_lay);
                 videoViewHolder.video_img = convertView.findViewById(R.id.item_search_video_img);
                 videoViewHolder.video_time = convertView.findViewById(R.id.item_search_video_time);
                 videoViewHolder.video_title = convertView.findViewById(R.id.item_search_video_title);
@@ -150,11 +159,14 @@ public class SearchAdapter extends BaseAdapter
         if(type == 0)
         {
             SearchModel.SearchBangumiModel searchBangumiModel = (SearchModel.SearchBangumiModel) searchArrayList.get(position);
-            bangumiViewHolder.bangumi_title.setText(Html.fromHtml(searchBangumiModel.search_bangumi_title));
+            bangumiViewHolder.bangumi_title.setText(Html.fromHtml(searchBangumiModel.search_bangumi_title, null, htmlTagHandlerUtil));
+            Log.i("bilibili", searchBangumiModel.search_bangumi_title);
             bangumiViewHolder.bangumi_img.setImageResource(R.drawable.img_default_animation);
             bangumiViewHolder.bangumi_score.setText(searchBangumiModel.search_bangumi_score);
             bangumiViewHolder.bangumi_play.setText(searchBangumiModel.search_bangumi_time + " | " + searchBangumiModel.search_bangumi_area);
             bangumiViewHolder.bangumi_ep.setText(searchBangumiModel.search_bangumi_episode_count + "话");
+
+            bangumiViewHolder.bangumi_lay.setOnClickListener(onViewClick(position));
 
             bangumiViewHolder.bangumi_img.setTag(searchBangumiModel.search_bangumi_cover);
             BitmapDrawable c = setImageFormWeb(searchBangumiModel.search_bangumi_cover);
@@ -190,6 +202,8 @@ public class SearchAdapter extends BaseAdapter
                     break;
             }
 
+            userViewHolder.user_lay.setOnClickListener(onViewClick(position));
+
             userViewHolder.user_face.setTag(searchUserModel.search_user_face);
             BitmapDrawable c = setImageFormWeb(searchUserModel.search_user_face);
             if(c != null) userViewHolder.user_face.setImageDrawable(c);
@@ -208,12 +222,14 @@ public class SearchAdapter extends BaseAdapter
             videoViewHolder.video_play.setCompoundDrawables(playNumDrawable,null, null,null);
             videoViewHolder.video_danmaku.setCompoundDrawables(danmakuNumDrawable,null, null,null);
 
-            videoViewHolder.video_title.setText(Html.fromHtml(searchVideoModel.search_video_title));
+            videoViewHolder.video_title.setText(Html.fromHtml(searchVideoModel.search_video_title, null, htmlTagHandlerUtil));
             videoViewHolder.video_img.setImageResource(R.drawable.img_default_vid);
             videoViewHolder.video_time.setText(searchVideoModel.search_video_duration);
             videoViewHolder.video_up.setText(searchVideoModel.search_video_up_name);
             videoViewHolder.video_play.setText(searchVideoModel.search_video_play);
             videoViewHolder.video_danmaku.setText(searchVideoModel.search_video_danmaku);
+
+            videoViewHolder.video_lay.setOnClickListener(onViewClick(position));
 
             videoViewHolder.video_img.setTag(searchVideoModel.search_video_cover);
             BitmapDrawable c = setImageFormWeb(searchVideoModel.search_video_cover);
@@ -224,6 +240,7 @@ public class SearchAdapter extends BaseAdapter
 
     class BangumiViewHolder
     {
+        RelativeLayout bangumi_lay;
         ImageView bangumi_img;
         TextView bangumi_title;
         TextView bangumi_score;
@@ -233,6 +250,7 @@ public class SearchAdapter extends BaseAdapter
 
     class UserViewHolder
     {
+        RelativeLayout user_lay;
         TextView user_name;
         ImageView user_face;
         ImageView user_off_1;
@@ -243,6 +261,7 @@ public class SearchAdapter extends BaseAdapter
 
     class VideoViewHolder
     {
+        RelativeLayout video_lay;
         ImageView video_img;
         TextView video_time;
         TextView video_title;

@@ -240,8 +240,7 @@ public class DynamicAdapter extends BaseAdapter
                 viewHolderOriVid.text.setText(dy.getDynamic());
             }
             else viewHolderOriVid.text.setVisibility(View.GONE);
-            viewHolderOriVid.imgtext.setText(
-                    dy.getVideoDuration() + "  " + dy.getVideoView() + "观看");
+            viewHolderOriVid.imgtext.setText(dy.getVideoDuration() + "  " + dy.getVideoView() + "观看");
             viewHolderOriVid.title.setText(dy.getVideoTitle());
             if(dy.isLike) viewHolderOriVid.likei.setImageResource(R.drawable.icon_liked);
             else viewHolderOriVid.likei.setImageResource(R.drawable.icon_like);

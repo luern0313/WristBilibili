@@ -29,13 +29,14 @@ public class SearchModel
         public SearchBangumiModel(JSONObject bangumi)
         {
             search_mode = 0;
-            search_bangumi_title = bangumi.optString("title");
+            search_bangumi_title = bangumi.optString("title").replaceAll("<em class=\"keyword\">", "<keyword>");
+            search_bangumi_title = search_bangumi_title.replaceAll("</em>", "</keyword>");
             search_bangumi_cover = "http:" + bangumi.optString("cover");
             search_bangumi_season_id = String.valueOf(bangumi.optInt("season_id"));
             search_bangumi_episode_count = bangumi.optInt("ep_size");
 
-            JSONObject bangumi_score = bangumi.has("media_score") ? bangumi.optJSONObject("media_score") : new JSONObject();
-            search_bangumi_score = String.valueOf(bangumi_score.optDouble("score"));
+            JSONObject bangumi_score = bangumi.optJSONObject("media_score") != null ? bangumi.optJSONObject("media_score") : new JSONObject();
+            search_bangumi_score = bangumi_score.has("score") ? String.valueOf(bangumi_score.optDouble("score", -1)) : "";
 
             SimpleDateFormat format = new SimpleDateFormat("yyyy", Locale.getDefault());
             search_bangumi_time = format.format(new Date(bangumi.optInt("pubtime") * 1000L));
@@ -85,7 +86,8 @@ public class SearchModel
         public SearchVideoModel(JSONObject video)
         {
             search_mode = 2;
-            search_video_title = video.optString("title");
+            search_video_title = video.optString("title").replaceAll("<em class=\"keyword\">", "<keyword>");
+            search_video_title = search_video_title.replaceAll("</em>", "</keyword>");
             search_video_aid = String.valueOf(video.optInt("aid"));
             search_video_cover = "http:" + video.optString("pic");
             search_video_play = DataProcessUtil.getView(video.optInt("play"));

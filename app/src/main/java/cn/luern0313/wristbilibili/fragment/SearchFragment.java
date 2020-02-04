@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
@@ -28,7 +27,11 @@ import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.adapter.SearchAdapter;
 import cn.luern0313.wristbilibili.api.SearchApi;
 import cn.luern0313.wristbilibili.models.SearchModel;
+import cn.luern0313.wristbilibili.ui.BangumiActivity;
 import cn.luern0313.wristbilibili.ui.MainActivity;
+import cn.luern0313.wristbilibili.ui.OtherUserActivity;
+import cn.luern0313.wristbilibili.ui.VideodetailsActivity;
+import cn.luern0313.wristbilibili.util.HtmlTagHandlerUtil;
 
 /**
  * Created by liupe on 2018/11/16.
@@ -41,6 +44,7 @@ public class SearchFragment extends Fragment
     SearchApi searchApi;
     SearchAdapter searchAdapter;
     SearchAdapter.SearchAdapterListener searchAdapterListener;
+    HtmlTagHandlerUtil htmlTagHandlerUtil;
 
     View rootLayout;
     TextView seaHotWordText;
@@ -74,6 +78,7 @@ public class SearchFragment extends Fragment
         ctx = getActivity();
         rootLayout = inflater.inflate(R.layout.fragment_search, container, false);
         searchApi = new SearchApi(MainActivity.sharedPreferences.getString("cookies", ""));
+        htmlTagHandlerUtil = new HtmlTagHandlerUtil(ctx);
         searchAdapterListener = new SearchAdapter.SearchAdapterListener()
         {
             @Override
@@ -139,7 +144,7 @@ public class SearchFragment extends Fragment
             @Override
             public void run()
             {
-                searchAdapter = new SearchAdapter(inflater, searchResult, seaListView, searchAdapterListener);
+                searchAdapter = new SearchAdapter(inflater, searchResult, seaListView, searchAdapterListener, htmlTagHandlerUtil);
                 seaListView.setAdapter(searchAdapter);
                 rootLayout.findViewById(R.id.sea_noweb).setVisibility(View.GONE);
                 rootLayout.findViewById(R.id.sea_searching).setVisibility(View.GONE);
@@ -213,14 +218,6 @@ public class SearchFragment extends Fragment
             public void onClick(View v)
             {
                 getSearch();
-            }
-        });
-
-        seaListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
-        {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-            {
             }
         });
 
@@ -375,6 +372,25 @@ public class SearchFragment extends Fragment
 
     void onViewClick(int id, int position)
     {
+        SearchModel searchModel = searchResult.get(position);
+        if(searchModel.search_mode == 0)
+        {
+            Intent intent = new Intent(ctx, BangumiActivity.class);
+            intent.putExtra("season_id", ((SearchModel.SearchBangumiModel) searchModel).search_bangumi_season_id);
+            startActivity(intent);
+        }
+        else if(searchModel.search_mode == 1)
+        {
+            Intent intent = new Intent(ctx, OtherUserActivity.class);
+            intent.putExtra("mid", ((SearchModel.SearchUserModel) searchModel).search_user_mid);
+            startActivity(intent);
+        }
+        else if(searchModel.search_mode == 2)
+        {
+            Intent intent = new Intent(ctx, VideodetailsActivity.class);
+            intent.putExtra("aid", ((SearchModel.SearchVideoModel) searchModel).search_video_aid);
+            startActivity(intent);
+        }
     }
 
     @Override

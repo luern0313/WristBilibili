@@ -80,10 +80,10 @@ public class SearchApi
             {
                 JSONObject all_search = resultArray.optJSONObject(i);
                 JSONArray search = all_search.optJSONArray("data");
-                if(all_search.optString("result_type").equals("media_bangumi"))
+                if((all_search.optString("result_type").equals("media_bangumi") || all_search.optString("result_type").equals("media_ft")) && page == 1)
                     for(int j = 0; j < search.length(); j++)
                         searchResult.add(searchModel.new SearchBangumiModel(search.optJSONObject(j)));
-                else if(all_search.optString("result_type").equals("bili_user"))
+                else if(all_search.optString("result_type").equals("bili_user") && page == 1)
                     for(int j = 0; j < search.length(); j++)
                         searchResult.add(searchModel.new SearchUserModel(search.optJSONObject(j)));
                 else if(all_search.optString("result_type").equals("video"))
