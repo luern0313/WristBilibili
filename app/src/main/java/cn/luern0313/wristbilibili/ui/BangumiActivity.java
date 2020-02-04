@@ -533,7 +533,7 @@ public class BangumiActivity extends Activity
         else if(viewId == R.id.item_reply_reply)
         {
             Intent rintent = new Intent(ctx, CheckreplyActivity.class);
-            rintent.putExtra("oid", intent.getStringExtra("aid"));
+            rintent.putExtra("oid", bangumiModel.bangumi_user_progress_aid);
             rintent.putExtra("type", "1");
             rintent.putExtra("root", replyModel.getReplyId());
             startActivity(rintent);
