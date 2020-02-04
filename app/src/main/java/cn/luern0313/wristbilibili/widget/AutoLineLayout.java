@@ -9,17 +9,17 @@ import android.view.ViewGroup;
  * 被 luern0313 创建于 2020/1/16.
  */
 
-public class AutoLineUtil extends ViewGroup{
+public class AutoLineLayout extends ViewGroup{
 
-    public AutoLineUtil(Context context, AttributeSet attrs, int defStyle) {
+    public AutoLineLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 
-    public AutoLineUtil(Context context, AttributeSet attrs) {
+    public AutoLineLayout(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public AutoLineUtil(Context context) {
+    public AutoLineLayout(Context context) {
         this(context, null);
     }
 

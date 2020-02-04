@@ -19,7 +19,7 @@ import android.widget.Toast;
 import java.io.IOException;
 
 import cn.luern0313.wristbilibili.R;
-import cn.luern0313.wristbilibili.widget.ImageDownloader;
+import cn.luern0313.wristbilibili.util.ImageDownloaderUtil;
 
 public class SendDynamicActivity extends Activity
 {
@@ -83,7 +83,7 @@ public class SendDynamicActivity extends Activity
                     {
                         try
                         {
-                            image = ImageDownloader.downloadImage(img);
+                            image = ImageDownloaderUtil.downloadImage(img);
                             handler.post(runnableUi);
                         }
                         catch (IOException e)

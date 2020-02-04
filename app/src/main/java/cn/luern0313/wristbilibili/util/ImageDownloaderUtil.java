@@ -1,4 +1,4 @@
-package cn.luern0313.wristbilibili.widget;
+package cn.luern0313.wristbilibili.util;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,7 +14,7 @@ import java.net.URL;
  * 被 luern0313 创建于 2019/8/31.
  */
 
-public class ImageDownloader
+public class ImageDownloaderUtil
 {
     /**
      * 根据url从网络上下载图片

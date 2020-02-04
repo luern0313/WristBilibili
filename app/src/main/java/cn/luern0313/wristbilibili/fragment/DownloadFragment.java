@@ -41,7 +41,7 @@ import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.models.DownloadModel;
 import cn.luern0313.wristbilibili.service.DownloadService;
 import cn.luern0313.wristbilibili.util.FileUtil;
-import cn.luern0313.wristbilibili.widget.ImageDownloader;
+import cn.luern0313.wristbilibili.util.ImageDownloaderUtil;
 
 public class DownloadFragment extends Fragment
 {
@@ -563,7 +563,7 @@ public class DownloadFragment extends Fragment
                 {
                     imageUrl = params[0];
                     Bitmap bitmap = null;
-                    bitmap = ImageDownloader.downloadImage(imageUrl);
+                    bitmap = ImageDownloaderUtil.downloadImage(imageUrl);
                     BitmapDrawable db = new BitmapDrawable(uiListView.getResources(), bitmap);
                     if(mImageCache.get(imageUrl) == null && bitmap != null)
                     {

@@ -5,6 +5,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import cn.luern0313.wristbilibili.util.DataProcessUtil;
+
 /**
  * 被 luern0313 创建于 2020/1/21.
  */
@@ -44,8 +46,8 @@ public class BangumiModel
     {
         bangumi_title = bangumi.optString("season_title");
         bangumi_score = bangumi.has("rating") ? String.valueOf(bangumi.optJSONObject("rating").optDouble("score")) + "分" : "";
-        bangumi_play = getView(bangumi.optJSONObject("stat").optInt("views"));
-        bangumi_like = getView(bangumi.optJSONObject("stat").optInt("favorites"));
+        bangumi_play = DataProcessUtil.getView(bangumi.optJSONObject("stat").optInt("views"));
+        bangumi_like = DataProcessUtil.getView(bangumi.optJSONObject("stat").optInt("favorites"));
         bangumi_series = bangumi.optJSONObject("publish").optString("time_length_show");
         bangumi_needvip = bangumi.optString("badge");
         bangumi_cover = bangumi.optString("cover");
@@ -147,11 +149,5 @@ public class BangumiModel
             bangumi_season_id = String.valueOf(season.optInt("season_id"));
             bangumi_season_title = season.optString("season_title");
         }
-    }
-
-    private static String getView(int view)
-    {
-        if(view > 10000) return view / 1000 / 10.0 + "万";
-        else return String.valueOf(view);
     }
 }

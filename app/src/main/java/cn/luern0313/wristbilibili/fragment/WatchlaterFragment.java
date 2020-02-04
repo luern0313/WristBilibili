@@ -28,7 +28,7 @@ import cn.luern0313.wristbilibili.api.WatchLaterApi;
 import cn.luern0313.wristbilibili.models.WatchLaterModel;
 import cn.luern0313.wristbilibili.ui.MainActivity;
 import cn.luern0313.wristbilibili.ui.VideodetailsActivity;
-import cn.luern0313.wristbilibili.widget.ImageDownloader;
+import cn.luern0313.wristbilibili.util.ImageDownloaderUtil;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
 /**
@@ -303,7 +303,7 @@ public class WatchlaterFragment extends Fragment
                 {
                     imageUrl = params[0];
                     Bitmap bitmap = null;
-                    bitmap = ImageDownloader.downloadImage(imageUrl);
+                    bitmap = ImageDownloaderUtil.downloadImage(imageUrl);
                     BitmapDrawable db = new BitmapDrawable(wlListView.getResources(), bitmap);
                     // 如果本地还没缓存该图片，就缓存
                     if(mImageCache.get(imageUrl) == null && bitmap != null)

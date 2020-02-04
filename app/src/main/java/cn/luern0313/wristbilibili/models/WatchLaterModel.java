@@ -2,6 +2,8 @@ package cn.luern0313.wristbilibili.models;
 
 import org.json.JSONObject;
 
+import cn.luern0313.wristbilibili.util.DataProcessUtil;
+
 /**
  * 被 luern0313 创建于 2020/1/15.
  */
@@ -25,13 +27,7 @@ public class WatchLaterModel
         this.cover = warchlater.optString("pic", "");
         this.duration = warchlater.optInt("duration", 0);
         this.progress = warchlater.optInt("progress", 0);
-        this.play = getView(warchlater.optJSONObject("stat").optInt("view", 0));
-        this.danmaku = getView(warchlater.optJSONObject("stat").optInt("danmaku", 0));
-    }
-
-    private String getView(int view)
-    {
-        if(view > 10000) return view / 1000 / 10.0 + "万";
-        else return String.valueOf(view);
+        this.play = DataProcessUtil.getView(warchlater.optJSONObject("stat").optInt("view", 0));
+        this.danmaku = DataProcessUtil.getView(warchlater.optJSONObject("stat").optInt("danmaku", 0));
     }
 }

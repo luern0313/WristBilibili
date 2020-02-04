@@ -231,8 +231,7 @@ public class DynamicAdapter extends BaseAdapter
 
         if(type == 4) //原创视频
         {
-            final UserDynamicApi.cardOriginalVideo dy = (UserDynamicApi.cardOriginalVideo) dyList
-                    .get(position);
+            final UserDynamicApi.cardOriginalVideo dy = (UserDynamicApi.cardOriginalVideo) dyList.get(position);
             viewHolderOriVid.name.setText(Html.fromHtml("<b>" + dy.getOwnerName() + "</b>投稿了视频"));
             viewHolderOriVid.time.setText(dy.getDynamicTime());
             if(!dy.getDynamic().equals(""))

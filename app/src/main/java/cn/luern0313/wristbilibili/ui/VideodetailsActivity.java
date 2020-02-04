@@ -44,7 +44,7 @@ import cn.luern0313.wristbilibili.models.FavorBoxModel;
 import cn.luern0313.wristbilibili.models.ReplyModel;
 import cn.luern0313.wristbilibili.models.VideoModel;
 import cn.luern0313.wristbilibili.service.DownloadService;
-import cn.luern0313.wristbilibili.widget.ImageDownloader;
+import cn.luern0313.wristbilibili.util.ImageDownloaderUtil;
 
 public class VideodetailsActivity extends Activity
 {
@@ -441,7 +441,7 @@ public class VideodetailsActivity extends Activity
                                 if(videoModel != null)
                                 {
                                     handler.post(runnableUi);
-                                    videoUpFace = ImageDownloader.downloadImage(videoModel.video_up_face);
+                                    videoUpFace = ImageDownloaderUtil.downloadImage(videoModel.video_up_face);
                                     handler.post(runnableSetface);
                                     recommendList = videoModel.video_recommend_array_list;
                                     handler.post(runnableRecommend);

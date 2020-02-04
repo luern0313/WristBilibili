@@ -24,7 +24,7 @@
                 android:layout_marginTop="8dp"
                 android:textColor="@color/gray_44" />
 
-            <cn.luern0313.wristbilibili.widget.AutoLineUtil
+            <cn.luern0313.wristbilibili.widget.AutoLineLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingLeft="21dp"
@@ -79,7 +79,7 @@
                     android:text="查看详情 >"
                     android:textColor="@color/colorPrimary"
                     android:textSize="12sp" />
-            </cn.luern0313.wristbilibili.widget.AutoLineUtil>
+            </cn.luern0313.wristbilibili.widget.AutoLineLayout>
 
             <HorizontalScrollView
                 android:layout_width="match_parent"

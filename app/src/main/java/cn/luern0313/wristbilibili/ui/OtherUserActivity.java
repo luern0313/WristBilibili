@@ -45,7 +45,7 @@ import cn.luern0313.wristbilibili.api.OthersUserApi;
 import cn.luern0313.wristbilibili.api.SendDynamicApi;
 import cn.luern0313.wristbilibili.api.UserDynamicApi;
 import cn.luern0313.wristbilibili.models.OthersUserModel;
-import cn.luern0313.wristbilibili.widget.ImageDownloader;
+import cn.luern0313.wristbilibili.util.ImageDownloaderUtil;
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -1348,7 +1348,7 @@ public class OtherUserActivity extends Activity
                 {
                     imageUrl = params[0];
                     Bitmap bitmap = null;
-                    bitmap = ImageDownloader.downloadImage(imageUrl);
+                    bitmap = ImageDownloaderUtil.downloadImage(imageUrl);
                     BitmapDrawable db = new BitmapDrawable(uiViewpager.findViewWithTag(mode).findViewById(R.id.ou_pp_listview).getResources(), bitmap);
                     if(mImageCache.get(imageUrl) == null && bitmap != null)
                     {

@@ -4,13 +4,9 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.drawable.AnimationDrawable;
-import android.graphics.drawable.BitmapDrawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +14,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -26,17 +21,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.R;
+import cn.luern0313.wristbilibili.adapter.SearchAdapter;
 import cn.luern0313.wristbilibili.api.SearchApi;
+import cn.luern0313.wristbilibili.models.SearchModel;
 import cn.luern0313.wristbilibili.ui.MainActivity;
-import cn.luern0313.wristbilibili.ui.VideodetailsActivity;
-import cn.luern0313.wristbilibili.widget.ImageDownloader;
 
 /**
  * Created by liupe on 2018/11/16.
@@ -47,6 +39,8 @@ public class SearchFragment extends Fragment
 {
     Context ctx;
     SearchApi searchApi;
+    SearchAdapter searchAdapter;
+    SearchAdapter.SearchAdapterListener searchAdapterListener;
 
     View rootLayout;
     TextView seaHotWordText;
@@ -69,9 +63,8 @@ public class SearchFragment extends Fragment
     Runnable runnableNomore;
 
     String[] hotWordArray;
-    ArrayList<JSONObject> searchResult;
+    ArrayList<SearchModel> searchResult;
     HotWordAdapter hotwordAdapter;
-    mAdapter mAdapter;
 
     boolean isLoading = true;
 
@@ -80,6 +73,16 @@ public class SearchFragment extends Fragment
     {
         ctx = getActivity();
         rootLayout = inflater.inflate(R.layout.fragment_search, container, false);
+        searchApi = new SearchApi(MainActivity.sharedPreferences.getString("cookies", ""));
+        searchAdapterListener = new SearchAdapter.SearchAdapterListener()
+        {
+            @Override
+            public void onClick(int viewId, int position)
+            {
+                onViewClick(viewId, position);
+            }
+        };
+
         seaHotWordText = rootLayout.findViewById(R.id.sea_hotwordtext);
         seaHotWordList = rootLayout.findViewById(R.id.sea_hotword);
         seaListView = rootLayout.findViewById(R.id.sea_listview);
@@ -136,8 +139,8 @@ public class SearchFragment extends Fragment
             @Override
             public void run()
             {
-                mAdapter = new mAdapter(inflater, searchResult);
-                seaListView.setAdapter(mAdapter);
+                searchAdapter = new SearchAdapter(inflater, searchResult, seaListView, searchAdapterListener);
+                seaListView.setAdapter(searchAdapter);
                 rootLayout.findViewById(R.id.sea_noweb).setVisibility(View.GONE);
                 rootLayout.findViewById(R.id.sea_searching).setVisibility(View.GONE);
                 rootLayout.findViewById(R.id.sea_nonthing).setVisibility(View.GONE);
@@ -171,7 +174,7 @@ public class SearchFragment extends Fragment
             @Override
             public void run()
             {
-                mAdapter.notifyDataSetChanged();
+                searchAdapter.notifyDataSetChanged();
             }
         };
 
@@ -191,10 +194,10 @@ public class SearchFragment extends Fragment
             @Override
             public void onClick(View v)
             {
-                Intent voiceInputIntent = new Intent("com.mobvoi.ticwear.action.SPEECH");
-                voiceInputIntent.putExtra("start_mode", "start_mode_with_voice_input");
                 try
                 {
+                    Intent voiceInputIntent = new Intent("com.mobvoi.ticwear.action.SPEECH");
+                    voiceInputIntent.putExtra("start_mode", "start_mode_with_voice_input");
                     startActivityForResult(voiceInputIntent, 0);
                 }
                 catch (Exception e)
@@ -218,12 +221,6 @@ public class SearchFragment extends Fragment
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id)
             {
-                if(position < searchResult.size())
-                {
-                    Intent intent = new Intent(ctx, VideodetailsActivity.class);
-                    intent.putExtra("aid", String.valueOf(searchResult.get(position).optInt("aid")));
-                    startActivity(intent);
-                }
             }
         });
 
@@ -254,7 +251,7 @@ public class SearchFragment extends Fragment
                 try
                 {
                     //获取搜索关键词
-                    hotWordArray = SearchApi.getHotWord();
+                    hotWordArray = searchApi.getHotWord();
                     if(hotWordArray != null && hotWordArray.length != 0)
                         handler.post(runnableHotWord);
                     else handler.post(runnableHotWordErr);
@@ -314,7 +311,7 @@ public class SearchFragment extends Fragment
         inputMethodManager.hideSoftInputFromWindow(seaEdittext.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
         isLoading = true;
-        searchApi = new SearchApi(MainActivity.sharedPreferences.getString("cookies", ""), seaEdittext.getText().toString());
+        searchApi.setSearchWord(seaEdittext.getText().toString());
 
         seaLoadImg.setImageResource(R.drawable.anim_searching);
         AnimationDrawable loadingImgAnim = (AnimationDrawable) seaLoadImg.getDrawable();
@@ -332,7 +329,8 @@ public class SearchFragment extends Fragment
                 try
                 {
                     searchResult = searchApi.getSearchResult();
-                    if(searchResult != null && searchResult.size() != 0) handler.post(runnableUi);
+                    if(searchResult != null && searchResult.size() != 0)
+                        handler.post(runnableUi);
                     else handler.post(runnableNoresult);
                     isLoading = false;
                 }
@@ -354,7 +352,7 @@ public class SearchFragment extends Fragment
             {
                 try
                 {
-                    ArrayList<JSONObject> arrayList = searchApi.getSearchResult();
+                    ArrayList<SearchModel> arrayList = searchApi.getSearchResult();
                     if(arrayList.size() != 0)
                     {
                         searchResult.addAll(arrayList);
@@ -375,6 +373,10 @@ public class SearchFragment extends Fragment
         }).start();
     }
 
+    void onViewClick(int id, int position)
+    {
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data)
     {
@@ -391,168 +393,6 @@ public class SearchFragment extends Fragment
             else
             {
                 Toast.makeText(ctx, "识别失败，请重试", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    class mAdapter extends BaseAdapter
-    {
-        private LayoutInflater mInflater;
-
-        private LruCache<String, BitmapDrawable> mImageCache;
-
-        private ArrayList<JSONObject> seaList;
-
-        public mAdapter(LayoutInflater inflater, ArrayList<JSONObject> seaList)
-        {
-            mInflater = inflater;
-            this.seaList = seaList;
-
-            int maxCache = (int) Runtime.getRuntime().maxMemory();
-            int cacheSize = maxCache / 8;
-            mImageCache = new LruCache<String, BitmapDrawable>(cacheSize)
-            {
-                @Override
-                protected int sizeOf(String key, BitmapDrawable value)
-                {
-                    try
-                    {
-                        return value.getBitmap().getByteCount();
-                    }
-                    catch (Exception e)
-                    {
-                        e.printStackTrace();
-                    }
-                    return 0;
-                }
-            };
-        }
-
-        @Override
-        public int getCount()
-        {
-            return seaList.size();
-        }
-
-        @Override
-        public Object getItem(int position)
-        {
-            return position;
-        }
-
-        @Override
-        public long getItemId(int position)
-        {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup viewGroup)
-        {
-            JSONObject v = seaList.get(position);
-            ViewHolder viewHolder;
-            if(convertView == null)
-            {
-                convertView = mInflater.inflate(R.layout.item_favor_video, null);
-                viewHolder = new ViewHolder();
-                convertView.setTag(viewHolder);
-                viewHolder.img = convertView.findViewById(R.id.vid_img);
-                viewHolder.title = convertView.findViewById(R.id.vid_title);
-                viewHolder.up = convertView.findViewById(R.id.vid_up);
-                viewHolder.play = convertView.findViewById(R.id.vid_play);
-            }
-            else
-            {
-                viewHolder = (ViewHolder) convertView.getTag();
-            }
-            viewHolder.img.setImageResource(R.drawable.img_default_vid);
-            viewHolder.title.setText((String) getInfoFromJson(v, "title"));
-            viewHolder.up.setText("UP : " + getInfoFromJson(v, "author"));
-            viewHolder.play.setText("播放 : " + getView((int) getInfoFromJson(v, "play")) + "  弹幕 : " + getInfoFromJson(v, "video_review"));
-
-            viewHolder.img.setTag("https:" + getInfoFromJson(v, "pic"));
-            BitmapDrawable c = setImageFormWeb("https:" + getInfoFromJson(v, "pic"));
-            if(c != null) viewHolder.img.setImageDrawable(c);
-            return convertView;
-        }
-
-        class ViewHolder
-        {
-            ImageView img;
-            TextView title;
-            TextView up;
-            TextView play;
-        }
-
-        BitmapDrawable setImageFormWeb(String url)
-        {
-            if(mImageCache.get(url) != null)
-            {
-                return mImageCache.get(url);
-            }
-            else
-            {
-                ImageTask it = new ImageTask();
-                it.execute(url);
-                return null;
-            }
-        }
-
-        private String getView(int view)
-        {
-            if(view > 10000) return view / 1000 / 10.0 + "万";
-            else return String.valueOf(view);
-        }
-
-        private Object getInfoFromJson(JSONObject json, String get)
-        {
-            try
-            {
-                return json.get(get);
-            }
-            catch (JSONException e)
-            {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        class ImageTask extends AsyncTask<String, Void, BitmapDrawable>
-        {
-            private String imageUrl;
-
-            @Override
-            protected BitmapDrawable doInBackground(String... params)
-            {
-                try
-                {
-                    imageUrl = params[0];
-                    Bitmap bitmap = null;
-                    bitmap = ImageDownloader.downloadImage(imageUrl);
-                    BitmapDrawable db = new BitmapDrawable(seaListView.getResources(), bitmap);
-                    // 如果本地还没缓存该图片，就缓存
-                    if(mImageCache.get(imageUrl) == null && bitmap != null)
-                    {
-                        mImageCache.put(imageUrl, db);
-                    }
-                    return db;
-                }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(BitmapDrawable result)
-            {
-                // 通过Tag找到我们需要的ImageView，如果该ImageView所在的item已被移出页面，就会直接返回null
-                ImageView iv = seaListView.findViewWithTag(imageUrl);
-                if(iv != null && result != null)
-                {
-                    iv.setImageDrawable(result);
-                }
             }
         }
     }

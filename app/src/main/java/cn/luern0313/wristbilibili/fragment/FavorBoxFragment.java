@@ -27,7 +27,7 @@ import cn.luern0313.wristbilibili.api.FavorBoxApi;
 import cn.luern0313.wristbilibili.models.FavorBoxModel;
 import cn.luern0313.wristbilibili.ui.FavorvideoActivity;
 import cn.luern0313.wristbilibili.ui.MainActivity;
-import cn.luern0313.wristbilibili.widget.ImageDownloader;
+import cn.luern0313.wristbilibili.util.ImageDownloaderUtil;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
 /**
@@ -307,7 +307,7 @@ public class FavorBoxFragment extends Fragment
                 {
                     imageUrl = params[0];
                     Bitmap bitmap = null;
-                    bitmap = ImageDownloader.downloadImage(imageUrl);
+                    bitmap = ImageDownloaderUtil.downloadImage(imageUrl);
                     BitmapDrawable db = new BitmapDrawable(favListView.getResources(), bitmap);
                     // 如果本地还没缓存该图片，就缓存
                     if(mImageCache.get(imageUrl) == null && bitmap != null)

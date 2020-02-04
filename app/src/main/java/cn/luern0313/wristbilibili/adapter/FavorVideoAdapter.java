@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.models.FavorVideoModel;
-import cn.luern0313.wristbilibili.widget.ImageDownloader;
+import cn.luern0313.wristbilibili.util.ImageDownloaderUtil;
 
 /**
  * 被 luern0313 创建于 2020/2/2.
@@ -165,7 +165,7 @@ public class FavorVideoAdapter extends BaseAdapter
             {
                 imageUrl = params[0];
                 Bitmap bitmap = null;
-                bitmap = ImageDownloader.downloadImage(imageUrl);
+                bitmap = ImageDownloaderUtil.downloadImage(imageUrl);
                 BitmapDrawable db = new BitmapDrawable(listView.getResources(), bitmap);
                 // 如果本地还没缓存该图片，就缓存
                 if(mImageCache.get(imageUrl) == null && bitmap != null)

@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
+import cn.luern0313.wristbilibili.util.DataProcessUtil;
+
 /**
  * 被 luern0313 创建于 2020/2/2.
  */
@@ -51,8 +53,8 @@ public class VideoModel
         video_time = format.format(new Date(video.optInt("pubdate") * 1000L));
 
         JSONObject video_stat = video.has("stat") ? video.optJSONObject("stat") : new JSONObject();
-        video_play = getView(video_stat.optInt("view"));
-        video_danmaku = getView(video_stat.optInt("danmaku"));
+        video_play = DataProcessUtil.getView(video_stat.optInt("view"));
+        video_danmaku = DataProcessUtil.getView(video_stat.optInt("danmaku"));
 
         JSONArray video_parts = video.has("pages") ? video.optJSONArray("pages") : new JSONArray();
         for(int i = 0; i < video_parts.length(); i++)
@@ -115,17 +117,11 @@ public class VideoModel
             video_recommend_video_cover = video_recommend_video.optString("pic");
 
             JSONObject video_recommend_video_stat = video_recommend_video.has("stat") ? video_recommend_video.optJSONObject("stat") : new JSONObject();
-            video_recommend_video_play = getView(video_recommend_video_stat.optInt("view"));
-            video_recommend_video_danmaku = getView(video_recommend_video_stat.optInt("danmaku"));
+            video_recommend_video_play = DataProcessUtil.getView(video_recommend_video_stat.optInt("view"));
+            video_recommend_video_danmaku = DataProcessUtil.getView(video_recommend_video_stat.optInt("danmaku"));
 
             JSONObject video_recommend_video_owner = video_recommend_video.has("owner") ? video_recommend_video.optJSONObject("owner") : new JSONObject();
             video_recommend_video_owner_name = video_recommend_video_owner.optString("name");
         }
-    }
-
-    private static String getView(int view)
-    {
-        if(view > 10000) return view / 1000 / 10.0 + "万";
-        else return String.valueOf(view);
     }
 }
