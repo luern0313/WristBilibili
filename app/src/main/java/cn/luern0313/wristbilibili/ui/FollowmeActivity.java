@@ -25,7 +25,6 @@ import java.io.IOException;
 
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.OthersUserApi;
-import cn.luern0313.wristbilibili.api.StatisticsApi;
 import cn.luern0313.wristbilibili.api.VideoDetailsApi;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
 
@@ -69,7 +68,6 @@ public class FollowmeActivity extends Activity
     VideoDetailsApi videoDetail;
     JSONObject videoJson = null;
     Bitmap videoCover;
-    String showVoteAid = "";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState)
@@ -113,8 +111,6 @@ public class FollowmeActivity extends Activity
                     uiVideoTitle.setText(videoJson.optString("title", ""));
                     if(videoJson.optString("title").startsWith("【互动"))
                         uiVideoStarLin.setVisibility(View.VISIBLE);
-                    if(showVoteAid.equals("1"))
-                        uiVoteLin.setVisibility(View.VISIBLE);
                     uiVideoLC.setVisibility(View.VISIBLE);
                 }
                 catch (Exception e)
@@ -154,7 +150,6 @@ public class FollowmeActivity extends Activity
                         JSONArray jsonArray = new JSONObject(othersUserApi.getOtheruserVideo()).getJSONObject("data").getJSONArray("vlist");
                         videoJson = jsonArray.getJSONObject(0);
                         videoDetail = new VideoDetailsApi(cookies, csrf, mid, access_key, String.valueOf(videoJson.getInt("aid")));
-                        showVoteAid = StatisticsApi.isShowVideoVote();
                         handler.post(runnVideo);
 
                         byte[] picByte = NetWorkUtil.readStream(NetWorkUtil.get("http:" + videoJson.optString("pic", "")).body().byteStream());
@@ -226,7 +221,6 @@ public class FollowmeActivity extends Activity
                         try
                         {
                             videoDetail.scoreVideo(5);
-                            StatisticsApi.voteHudongGameVideo(csrf, cookies);
                         }
                         catch (IOException e)
                         {

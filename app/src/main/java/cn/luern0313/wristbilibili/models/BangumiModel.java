@@ -42,6 +42,10 @@ public class BangumiModel
     public String bangumi_detail_actor_info;//声优栏信息
     public String bangumi_detail_staff_title; //staff栏标题
     public String bangumi_detail_staff_info;//staff栏信息
+
+    public String bangumi_type_name;
+    public String bangumi_type_follow;
+    public String bangumi_type_ep;
     public BangumiModel(JSONObject bangumi)
     {
         bangumi_title = bangumi.optString("season_title");
@@ -91,7 +95,7 @@ public class BangumiModel
             }
         }
 
-        JSONArray seasons = bangumi.optJSONArray("seasons");
+        JSONArray seasons = bangumi.has("season") ? bangumi.optJSONArray("seasons") : new JSONArray();
         for(int i = 0; i < seasons.length(); i++)
             bangumi_seasons.add(new BangumiSeasonModel(seasons.optJSONObject(i)));
 
@@ -117,6 +121,10 @@ public class BangumiModel
         JSONObject bangumi_detail_staff_jsonobject = bangumi.has("staff") ? bangumi.optJSONObject("staff") : new JSONObject();
         bangumi_detail_staff_title = bangumi_detail_staff_jsonobject.optString("title");
         bangumi_detail_staff_info = bangumi_detail_staff_jsonobject.optString("info");
+
+        bangumi_type_name = (bangumi_detail_typename.equals("番剧") || bangumi_detail_typename.equals("国创")) ? "番剧" : "影视";
+        bangumi_type_follow = bangumi_type_name.equals("番剧") ? "追番" : "追剧";
+        bangumi_type_ep = bangumi_type_name.equals("番剧") ? "话" : "集";
     }
 
     public class BangumiEpisodeModel

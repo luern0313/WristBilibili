@@ -41,7 +41,7 @@ public class VideoPartAdapter extends RecyclerView.Adapter<VideoPartAdapter.View
     public void onBindViewHolder(ViewHolder holder, final int position)
     {
         BangumiModel.BangumiEpisodeModel bangumiEpisodeModel = bangumiEpisodeModelArrayList.get(position);
-        holder.text.setText(mode == 1 ? "第" + bangumiEpisodeModel.bangumi_episode_title + "话\n" +
+        holder.text.setText(mode == 1 ? "第" + (bangumiEpisodeModel.position + 1) + bangumiModel.bangumi_type_ep + "\n" +
                 bangumiEpisodeModel.bangumi_episode_title_long : (bangumiEpisodeModel.bangumi_episode_title_long.equals("") ?
                 bangumiEpisodeModel.bangumi_episode_title : bangumiEpisodeModel.bangumi_episode_title_long));
         holder.vip.setVisibility(bangumiEpisodeModel.bangumi_episode_vip.equals("") ? View.GONE : View.VISIBLE);

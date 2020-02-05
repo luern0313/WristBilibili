@@ -38,6 +38,7 @@ public class RankingApi
         ArrayList<RankingModel> rankingVideoArrayList = new ArrayList<>();
         try
         {
+
             String url = "http://app.bilibili.com/x/v2/rank/region";
             String temp_per = "appkey=" + ConfInfoApi.getConf("appkey") + "&build=" + ConfInfoApi.getConf("build") + "&mobi_app=android&platform=android&pn=" + pn + "&ps=20&rid=0&ts=" + (int) (System.currentTimeMillis() / 1000);
             String sign = ConfInfoApi.calc_sign(temp_per);
@@ -52,6 +53,31 @@ public class RankingApi
             e.printStackTrace();
         }
         return rankingVideoArrayList;
+    }
+
+    public ArrayList<ArrayList<String>> getPickUpVideo() throws IOException
+    {
+        try
+        {
+            ArrayList<ArrayList<String>> pickUpArrayList = new ArrayList<>();
+            String url = "http://luern0313.cn:8080/bp/getHistoryPickUpVideo";
+            JSONObject result = new JSONObject(NetWorkUtil.get(url).body().string());
+            JSONArray jsonArray = result.optJSONArray("Data");
+            for(int i = 0; i < jsonArray.length(); i++)
+            {
+                final JSONObject jsonObject = jsonArray.optJSONObject(i);
+                pickUpArrayList.add(new ArrayList<String>(){{
+                    add(jsonObject.optString("Date"));
+                    add(jsonObject.optString("Aid"));
+                }});
+            }
+            return pickUpArrayList;
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

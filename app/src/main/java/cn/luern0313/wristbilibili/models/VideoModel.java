@@ -49,7 +49,7 @@ public class VideoModel
         video_title = video.optString("title");
         video_cover = video.optString("pic");
         video_desc = video.optString("desc");
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", new Locale("cn"));
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
         video_time = format.format(new Date(video.optInt("pubdate") * 1000L));
 
         JSONObject video_stat = video.has("stat") ? video.optJSONObject("stat") : new JSONObject();

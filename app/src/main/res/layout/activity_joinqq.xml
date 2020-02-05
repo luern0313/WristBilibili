@@ -51,7 +51,7 @@
         <ImageView
             android:layout_width="128dp"
             android:layout_height="128dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="4dp"
             android:src="@drawable/img_qq" />
 
         <TextView
@@ -61,13 +61,29 @@
             android:layout_marginRight="22dp"
             android:layout_marginTop="6dp"
             android:gravity="center_horizontal"
-            android:text="二群群号：302277714"
+            android:text="二群群号：302277714（群满）"
+            android:textSize="12sp" />
+
+        <ImageView
+            android:layout_width="128dp"
+            android:layout_height="128dp"
+            android:layout_marginBottom="4dp"
+            android:src="@drawable/img_qq2" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="22dp"
+            android:layout_marginRight="22dp"
+            android:layout_marginTop="6dp"
+            android:gravity="center_horizontal"
+            android:text="三群群号：1026083781"
             android:textSize="12sp" />
 
         <ImageView
             android:layout_width="128dp"
             android:layout_height="128dp"
             android:layout_marginBottom="16dp"
-            android:src="@drawable/img_qq2" />
+            android:src="@drawable/img_qq3" />
     </LinearLayout>
 </ScrollView>

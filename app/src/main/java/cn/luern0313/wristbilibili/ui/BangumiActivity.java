@@ -155,6 +155,7 @@ public class BangumiActivity extends Activity
             @Override
             public void run()
             {
+                uiTitle.setText(bangumiModel.bangumi_type_name + "详情");
                 ((TextView) findViewById(R.id.bgm_detail_title)).setText(bangumiModel.bangumi_title);
                 if(bangumiModel.bangumi_score.equals("")) findViewById(R.id.bgm_detail_score).setVisibility(View.GONE);
                 else ((TextView) findViewById(R.id.bgm_detail_score)).setText(bangumiModel.bangumi_score);
@@ -168,18 +169,15 @@ public class BangumiActivity extends Activity
                 Drawable danmakuNumDrawable = getResources().getDrawable(R.drawable.icon_video_like_num);
                 playNumDrawable.setBounds(0, 0, 24, 24);
                 danmakuNumDrawable.setBounds(0, 0, 24, 24);
-                ((TextView) findViewById(R.id.bgm_detail_play)).setCompoundDrawables(playNumDrawable,
-                                                                                     null, null,
-                                                                                     null);
-                ((TextView) findViewById(R.id.bgm_detail_like)).setCompoundDrawables(
-                        danmakuNumDrawable, null, null, null);
+                ((TextView) findViewById(R.id.bgm_detail_play)).setCompoundDrawables(playNumDrawable, null, null, null);
+                ((TextView) findViewById(R.id.bgm_detail_like)).setCompoundDrawables(danmakuNumDrawable, null, null, null);
 
                 setBangumiIcon();
 
                 if(bangumiModel.bangumi_episodes.size() != 0)
                 {
                     findViewById(R.id.bgm_detail_video_part_layout).setVisibility(View.VISIBLE);
-                    ((TextView) findViewById(R.id.bgm_detail_video_part_text)).setText("正片-共" + String.valueOf(bangumiModel.bangumi_episodes.size()) + "话");
+                    ((TextView) findViewById(R.id.bgm_detail_video_part_text)).setText("正片-共" + String.valueOf(bangumiModel.bangumi_episodes.size()) + bangumiModel.bangumi_type_ep);
                     LinearLayoutManager layoutManager = new LinearLayoutManager(BangumiActivity.super.getParent());
                     layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
                     uiDetailEpisodesRecyclerView.setLayoutManager(layoutManager);
@@ -476,8 +474,8 @@ public class BangumiActivity extends Activity
             @Override
             public void onPageSelected(int position)
             {
-                if(position == 0) titleAnim("番剧详情");
-                else if(position == 1) titleAnim("番剧评论");
+                if(position == 0) titleAnim(bangumiModel.bangumi_type_name + "详情");
+                else if(position == 1) titleAnim("单" + bangumiModel.bangumi_type_ep + "评论");
                 else if(position == 2) titleAnim("相关推荐");
             }
         });
@@ -546,12 +544,12 @@ public class BangumiActivity extends Activity
         if(bangumiModel.bangumi_user_is_follow)
         {
             ((ImageView) findViewById(R.id.bgm_detail_bt_follow)).setImageResource(R.drawable.icon_vdd_do_follow_yes);
-            ((TextView) findViewById(R.id.bgm_detail_bt_follow_text)).setText("已追番");
+            ((TextView) findViewById(R.id.bgm_detail_bt_follow_text)).setText("已" + bangumiModel.bangumi_type_follow);
         }
         else
         {
             ((ImageView) findViewById(R.id.bgm_detail_bt_follow)).setImageResource(R.drawable.icon_vdd_do_follow_no);
-            ((TextView) findViewById(R.id.bgm_detail_bt_follow_text)).setText("追番");
+            ((TextView) findViewById(R.id.bgm_detail_bt_follow_text)).setText(bangumiModel.bangumi_type_follow);
         }
     }
 
@@ -653,7 +651,7 @@ public class BangumiActivity extends Activity
             sectionsRecyclerViewAdapter.notifyDataSetChanged();
         getReply();
         Intent intent = new Intent(ctx, PlayerActivity.class);
-        intent.putExtra("title", "第" + ep.bangumi_episode_title + "话 " + ep.bangumi_episode_title_long);
+        intent.putExtra("title", "第" + (ep.position + 1) +  bangumiModel.bangumi_type_ep + " " + ep.bangumi_episode_title_long);
         intent.putExtra("aid", ep.bangumi_episode_aid);
         intent.putExtra("cid", ep.bangumi_episode_cid);
         startActivity(intent);
@@ -803,7 +801,7 @@ public class BangumiActivity extends Activity
     public void clickBangumiDetail(View view)
     {
         Intent intent = new Intent(ctx, TextActivity.class);
-        intent.putExtra("title", "番剧信息");
+        intent.putExtra("title", bangumiModel.bangumi_type_name + "信息");
         intent.putExtra("text", getBangumiInfo());
         startActivity(intent);
     }
@@ -847,7 +845,7 @@ public class BangumiActivity extends Activity
     {
         String[] videoPartNames = new String[bangumiModel.bangumi_episodes.size() + bangumiModel.bangumi_sections.size()];
         for(int i = 0; i < bangumiModel.bangumi_episodes.size(); i++)
-            videoPartNames[i] = "第" + bangumiModel.bangumi_episodes.get(i).bangumi_episode_title + "话 " + bangumiModel.bangumi_episodes.get(i).bangumi_episode_title_long;
+            videoPartNames[i] = "第" + (bangumiModel.bangumi_episodes.get(i).position + 1) + bangumiModel.bangumi_type_ep + " " + bangumiModel.bangumi_episodes.get(i).bangumi_episode_title_long;
         for(int i = bangumiModel.bangumi_episodes.size(); i < videoPartNames.length; i++)
             videoPartNames[i] = bangumiModel.bangumi_sections.get(i - bangumiModel.bangumi_episodes.size()).bangumi_episode_title_long.equals("") ?
                     bangumiModel.bangumi_sections.get(i - bangumiModel.bangumi_episodes.size()).bangumi_episode_title :
@@ -871,7 +869,7 @@ public class BangumiActivity extends Activity
     {
         String[] videoPartNames = new String[bangumiModel.bangumi_episodes.size()];
         for(int i = 0; i < bangumiModel.bangumi_episodes.size(); i++)
-            videoPartNames[i] = "第" + bangumiModel.bangumi_episodes.get(i).bangumi_episode_title + "话 " + bangumiModel.bangumi_episodes.get(i).bangumi_episode_title_long;
+            videoPartNames[i] = "第" + (bangumiModel.bangumi_episodes.get(i).position + 1) + bangumiModel.bangumi_type_ep + " " + bangumiModel.bangumi_episodes.get(i).bangumi_episode_title_long;
         Intent intent = new Intent(ctx, SelectPartActivity.class);
         intent.putExtra("title", "选集");
         intent.putExtra("options_name", videoPartNames);
