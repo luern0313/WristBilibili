@@ -44,6 +44,7 @@ import cn.luern0313.wristbilibili.models.FavorBoxModel;
 import cn.luern0313.wristbilibili.models.ReplyModel;
 import cn.luern0313.wristbilibili.models.VideoModel;
 import cn.luern0313.wristbilibili.service.DownloadService;
+import cn.luern0313.wristbilibili.util.DataProcessUtil;
 import cn.luern0313.wristbilibili.util.ImageDownloaderUtil;
 
 public class VideodetailsActivity extends Activity
@@ -720,9 +721,9 @@ public class VideodetailsActivity extends Activity
 
     void setIcon()
     {
-        ((TextView) findViewById(R.id.vd_like_text)).setText(videoModel.video_detail_like == 0 ? "点赞" : String.valueOf(videoModel.video_detail_like));
-        ((TextView) findViewById(R.id.vd_coin_text)).setText(videoModel.video_detail_coin == 0 ? "投币" : String.valueOf(videoModel.video_detail_coin));
-        ((TextView) findViewById(R.id.vd_fav_text)).setText(videoModel.video_detail_fav == 0 ? "收藏" : String.valueOf(videoModel.video_detail_fav));
+        ((TextView) findViewById(R.id.vd_like_text)).setText(videoModel.video_detail_like == 0 ? "点赞" : DataProcessUtil.getView(videoModel.video_detail_like));
+        ((TextView) findViewById(R.id.vd_coin_text)).setText(videoModel.video_detail_coin == 0 ? "投币" : DataProcessUtil.getView(videoModel.video_detail_coin));
+        ((TextView) findViewById(R.id.vd_fav_text)).setText(videoModel.video_detail_fav == 0 ? "收藏" : DataProcessUtil.getView(videoModel.video_detail_fav));
 
         if(videoModel.video_user_like)
         {

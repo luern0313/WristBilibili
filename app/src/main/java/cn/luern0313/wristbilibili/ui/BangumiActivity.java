@@ -859,8 +859,19 @@ public class BangumiActivity extends Activity
 
     public void clickBangumiShare(View view)
     {
+        String title;
+        if(bangumiModel.bangumi_user_progress_mode == 1)
+            title = "第" + (bangumiModel.bangumi_episodes.get(bangumiModel.bangumi_user_progress_position).position + 1) +
+                    bangumiModel.bangumi_type_ep + " " +
+                    bangumiModel.bangumi_episodes.get(bangumiModel.bangumi_user_progress_position).bangumi_episode_title_long;
+        else
+            title = bangumiModel.bangumi_sections.get(bangumiModel.bangumi_user_progress_position).bangumi_episode_title_long.equals("") ?
+                    bangumiModel.bangumi_sections.get(bangumiModel.bangumi_user_progress_position).bangumi_episode_title :
+                    bangumiModel.bangumi_sections.get(bangumiModel.bangumi_user_progress_position).bangumi_episode_title_long;
         Intent intent = new Intent(ctx, SendDynamicActivity.class);
-        intent.putExtra("share_title", bangumiModel.bangumi_title);
+        intent.putExtra("is_share", true);
+        intent.putExtra("share_up", bangumiModel.bangumi_title);
+        intent.putExtra("share_title", title);
         intent.putExtra("share_img", bangumiModel.bangumi_cover_small);
         startActivityForResult(intent, RESULT_DETAIL_SHARE);
     }

@@ -30,7 +30,6 @@ import android.content.Context;
 import android.database.DataSetObserver;
 import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
@@ -455,8 +454,6 @@ public class HorizontalListView extends AdapterView<ListAdapter>{
 			viewRect.set(left, top, right, bottom);
 			if(viewRect.contains((int)xInit, (int)yInit)){
 					if(yNow > yInit ){
-
-						Log.d("relache", "pass� in ");
 						if(mOnItemMoveListener != null){
 							mOnItemMoveListener.onTouch(child, event);
 							this.childSelected = child;

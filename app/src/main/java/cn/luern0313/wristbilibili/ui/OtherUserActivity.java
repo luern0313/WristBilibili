@@ -18,7 +18,6 @@ import android.os.Looper;
 import android.support.v4.util.LruCache;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -360,7 +359,6 @@ public class OtherUserActivity extends Activity
             {
                 try
                 {
-                    Log.i("bilibili", "123");
                     ((TextView) dynamicLayoutLoading.findViewById(R.id.wid_load_text)).setText("  没有更多了...");
                 }
                 catch(Exception e)

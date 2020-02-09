@@ -6,7 +6,6 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.support.v4.util.LruCache;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -160,7 +159,6 @@ public class SearchAdapter extends BaseAdapter
         {
             SearchModel.SearchBangumiModel searchBangumiModel = (SearchModel.SearchBangumiModel) searchArrayList.get(position);
             bangumiViewHolder.bangumi_title.setText(Html.fromHtml(searchBangumiModel.search_bangumi_title, null, htmlTagHandlerUtil));
-            Log.i("bilibili", searchBangumiModel.search_bangumi_title);
             bangumiViewHolder.bangumi_img.setImageResource(R.drawable.img_default_animation);
             bangumiViewHolder.bangumi_score.setText(searchBangumiModel.search_bangumi_score);
             bangumiViewHolder.bangumi_play.setText(searchBangumiModel.search_bangumi_time + " | " + searchBangumiModel.search_bangumi_area);

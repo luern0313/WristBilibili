@@ -60,10 +60,10 @@ public class SendDynamicActivity extends Activity
         if(inIntent.getBooleanExtra("is_share", false))
         {
             findViewById(R.id.senddy_share).setVisibility(View.VISIBLE);
-            up = inIntent.getStringExtra("share_up");
-            img = inIntent.getStringExtra("share_img");
-            title = inIntent.getStringExtra("share_title");
-            text = inIntent.getStringExtra("share_text");
+            up = inIntent.hasExtra("share_up") ? inIntent.getStringExtra("share_up") : "";
+            img = inIntent.hasExtra("share_img") ? inIntent.getStringExtra("share_img") : "";
+            title = inIntent.hasExtra("share_title") ? inIntent.getStringExtra("share_title") : "";
+            text = inIntent.hasExtra("share_text") ? inIntent.getStringExtra("share_text") : "";
 
             uiEdittext.setText(text);
             uiShareUp = findViewById(R.id.senddy_share_up);
@@ -71,9 +71,12 @@ public class SendDynamicActivity extends Activity
             uiShareImg = findViewById(R.id.senddy_share_img_img);
             uiShareTitle = findViewById(R.id.senddy_share_title);
 
-            uiShareUp.setText(Html.fromHtml("转发自 <font color=#3f51b5>@" + up + "</font>："));
+            if(!up.equals(""))
+                uiShareUp.setText(Html.fromHtml("转发自 <font color=#3f51b5>@" + up + "</font>："));
+            else
+                uiShareUp.setVisibility(View.GONE);
             uiShareTitle.setText(title);
-            if(inIntent.hasExtra("share_img") && !img.equals(""))
+            if(!img.equals(""))
             {
                 uiShareCardview.setVisibility(View.VISIBLE);
                 new Thread(new Runnable()

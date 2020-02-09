@@ -86,7 +86,6 @@ public class SendDynamicApi
     {
         try
         {
-            Log.i("bilibili", "...." + dyid);
             JSONObject result = new JSONObject(post(SHAREURL, "uid=" + mid + "&dynamic_id=" + dyid + "&content=" + URLEncoder.encode(text, "UTF-8") + "&extension={\"emoji_type\":1}&at_uids=&ctrl=[]&csrf_token=" + csrf).body().string());
             int code = result.getInt("code");
             if(code == 0)
