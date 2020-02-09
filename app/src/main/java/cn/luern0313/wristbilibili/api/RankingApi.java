@@ -6,6 +6,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 import cn.luern0313.wristbilibili.models.RankingModel;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
@@ -55,29 +56,39 @@ public class RankingApi
         return rankingVideoArrayList;
     }
 
-    public ArrayList<ArrayList<String>> getPickUpVideo() throws IOException
+    public LinkedHashMap<Integer, String> getPickUpVideo()
     {
         try
         {
-            ArrayList<ArrayList<String>> pickUpArrayList = new ArrayList<>();
+            LinkedHashMap<Integer, String> pickUpMap = new LinkedHashMap<>();
             String url = "http://luern0313.cn:8080/bp/getHistoryPickUpVideo";
             JSONObject result = new JSONObject(NetWorkUtil.get(url).body().string());
             JSONArray jsonArray = result.optJSONArray("Data");
             for(int i = 0; i < jsonArray.length(); i++)
             {
                 final JSONObject jsonObject = jsonArray.optJSONObject(i);
-                pickUpArrayList.add(new ArrayList<String>(){{
-                    add(jsonObject.optString("Date"));
-                    add(jsonObject.optString("Aid"));
-                }});
+                pickUpMap.put(Integer.valueOf(jsonObject.optString("Date")), jsonObject.optString("Aid"));
             }
-            return pickUpArrayList;
+            return pickUpMap;
         }
-        catch (JSONException e)
+        catch (JSONException | IOException e)
         {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public void clickPickUpVideo()
+    {
+        try
+        {
+            String url = "http://luern0313.cn:8080/bp/clickPickUpVideo";
+            NetWorkUtil.get(url);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
 }

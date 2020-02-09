@@ -8,7 +8,6 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -210,16 +209,16 @@ public class LoginActivity extends Activity
                         else if((Boolean) loginJson.get("status"))
                         {
                             timeoutHandler.removeCallbacks(runnableTimeout);
-                            String cookies = "";
+                            StringBuilder cookies = new StringBuilder();
                             List<String> cookiesList = response.headers("Set-Cookie");
                             for (int i = 0; i < cookiesList.size(); i++)
-                                cookies += cookiesList.get(i).split("; ")[0] + "; ";
-                            cookies = cookies.substring(0, cookies.length() - 2);
+                                cookies.append(cookiesList.get(i).split("; ")[0]).append("; ");
+                            cookies = new StringBuilder(cookies.substring(0, cookies.length() - 2));
 
-                            editor.putString("access_key", userLoginApi.getAccessKey(cookies));
-                            editor.putString("cookies", cookies);
-                            editor.putString("mid", getInfoFromCookie("DedeUserID", cookies));
-                            editor.putString("csrf", getInfoFromCookie("bili_jct", cookies));
+                            editor.putString("access_key", userLoginApi.getAccessKey(cookies.toString()));
+                            editor.putString("cookies", cookies.toString());
+                            editor.putString("mid", getInfoFromCookie("DedeUserID", cookies.toString()));
+                            editor.putString("csrf", getInfoFromCookie("bili_jct", cookies.toString()));
                             editor.commit();
                             stopFlag = true;
 

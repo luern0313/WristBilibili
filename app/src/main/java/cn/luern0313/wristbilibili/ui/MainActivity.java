@@ -79,14 +79,15 @@ public class MainActivity extends Activity
             PackageInfo pi = pm.getPackageInfo(ctx.getPackageName(), 0);
             if(sharedPreferences.getInt("ver", 0) < pi.versionCode)
             {
-                editor.putInt("ver", pi.versionCode);
-                editor.apply();
-                if(sharedPreferences.getInt("ver", 0) < 12)
+                if(sharedPreferences.getInt("ver", 0) < 12 && sharedPreferences.contains("cookies"))
                 {
                     Toast.makeText(ctx, "抱歉，因为登录功能更新，您需要重新登录，否则某些功能将不可用。", Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(ctx, LogsoffActivity.class);
                     startActivity(intent);
                 }
+                editor.putInt("ver", pi.versionCode);
+                editor.apply();
+
                 if(sharedPreferences.contains("cookies"))
                     startActivity(new Intent(ctx, FollowmeActivity.class));
                 Intent intent = new Intent(ctx, TextActivity.class);

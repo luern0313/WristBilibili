@@ -155,6 +155,7 @@ public class RecommendFragment extends Fragment
             }
         });
 
+        uiListView.setVisibility(View.GONE);
         uiWaveSwipeRefreshLayout.setRefreshing(true);
         getRecommend(2);
 

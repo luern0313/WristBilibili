@@ -55,7 +55,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="腕上哔哩v2.3"
+                android:text="腕上哔哩v2.6"
                 android:textStyle="bold" />
 
             <TextView
@@ -93,7 +93,7 @@
                 android:layout_marginBottom="10dp"
                 android:layout_marginTop="10dp"
                 android:gravity="center_horizontal"
-                android:text="Copyright © 2014-2019 setTile luern0313.\nAll rights reserved.\n哔哩哔哩 - ( ゜- ゜)つロ 乾杯~\n另外祝杨永信及同类机构负责人\n早！日！爆！炸！\nhttps://996.icu/  "
+                android:text="Copyright © 2014-2020 setTile luern0313.\nAll rights reserved.\n哔哩哔哩 - ( ゜- ゜)つロ 乾杯~\n另外祝杨永信及同类机构负责人\n早！日！爆！炸！\nhttps://996.icu/  "
                 android:textSize="10sp" />
         </LinearLayout>
 

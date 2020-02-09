@@ -3,9 +3,7 @@ package cn.luern0313.wristbilibili.api;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
-import android.util.Log;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -17,6 +15,7 @@ import java.security.KeyFactory;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.crypto.Cipher;
@@ -71,14 +70,13 @@ public class UserLoginApi
         try
         {
             JSONObject value = getRequestKey();
-            String key = value.optString("key");
-            String hash = value.optString("hash");
-            //String key = "-----BEGIN PUBLIC KEY-----\n" + "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDjb4V7EidX/ym28t2ybo0U6t0n\n" + "6p4ej8VjqKHg100va6jkNbNTrLQqMCQCAYtXMXXp2Fwkk6WR+12N9zknLjf+C9sx\n" + "/+l48mjUU8RqahiFD1XT/u2e0m2EN029OhCgkHx3Fc/KlFSIbak93EH/XlYis0w+\n" + "Xl69GV6klzgxW6d2xQIDAQAB\n" + "-----END PUBLIC KEY-----\n";
-            //String hash = "84875218f2deaa1c";
+            String key = value.getString("key");
+            String hash = value.getString("hash");
             pw = encrypt(hash + pw, key);
             name = URLEncoder.encode(name, "UTF-8");
             pw = URLEncoder.encode(pw, "UTF-8");
 
+            String url = "https://passport.bilibili.com/api/oauth2/login";
             ArrayList<String> headers = new ArrayList<String>()
             {{
                 add("Referer");
@@ -88,36 +86,24 @@ public class UserLoginApi
                 add("User-Agent");
                 add("");
             }};
-
-            String temp_params = "appkey=" + ConfInfoApi.getConf(
-                    "appkey") + "&password=" + pw + "&username=" + name;
+            String temp_params = "appkey=" + ConfInfoApi.getConf("appkey") + "&build=" + ConfInfoApi.getConf("build") +
+                    "&captcha=&mobi_app=" + ConfInfoApi.getConf("mobi_app") + "&password=" + pw + "&platform=" +
+                    ConfInfoApi.getConf("platform") + "&ts=" + (int) (System.currentTimeMillis() / 1000) + "&username=" + name;
             String sign = ConfInfoApi.calc_sign(temp_params);
-            JSONObject loginResult = new JSONObject(post(
-                    "https://passport.bilibili.com/api/oauth2/login", temp_params + "&sign=" + sign,
-                    headers).body().string());
-            if(loginResult.getInt("code") == -629) return "账号或密码错误";
-            else if(loginResult.getInt("code") != 0)
-            {
-                Log.i("bilibili", loginResult.toString());
-                return loginResult.getInt("code") + "错误，请使用扫码登录";
-            }
-            Log.i("bilibili", loginResult.toString());
+            JSONObject loginResult = new JSONObject(NetWorkUtil.post(url, temp_params + "&sign=" + sign, headers).body().string());
 
-            JSONArray cookieJsonArray = loginResult.optJSONObject("data").optJSONObject(
-                    "cookie_info").optJSONArray("cookies");
-            StringBuilder cookie = new StringBuilder();
-            for (int i = 0; i < cookieJsonArray.length(); i++)
-            {
-                JSONObject j = cookieJsonArray.getJSONObject(i);
-                cookie.append(j.getString("name")).append("=").append(j.getString("value"));
-                if(j.getString("name").equals("DedeUserID")) MainActivity.editor.putString("mid",
-                                                                                           j.getString(
-                                                                                                   "value"));
-                else if(j.getString("name").equals("bili_jct")) MainActivity.editor.putString(
-                        "csrf", j.getString("value"));
-                if(i != cookieJsonArray.length() - 1) cookie.append("; ");
-            }
-            MainActivity.editor.putString("cookies", cookie.toString());
+            if(loginResult.getInt("code") == -629) return "账号或密码错误";
+            else if(loginResult.getInt("code") == -105) return "重试次数达到上线，请使用扫码登录或稍后再试";
+            else if(loginResult.getInt("code") != 0) return loginResult.getInt("code") + "错误，请使用扫码登录";
+
+            JSONObject resultJSON = loginResult.optJSONObject("data");
+            String access_token = resultJSON.getString("access_token");
+            String cookie = getCookie(access_token);
+            if(cookie.equals(""))
+                return "未知错误，请使用扫码登录";
+
+            MainActivity.editor.putString("access_key", access_token);
+            MainActivity.editor.putString("cookies", cookie);
             MainActivity.editor.commit();
             return "";
         }
@@ -133,19 +119,64 @@ public class UserLoginApi
         }
     }
 
+    private String getCookie(String access_key)
+    {
+        try
+        {
+            String url = "https://passport.bilibili.com/api/login/sso";
+            ArrayList<String> headers = new ArrayList<String>()
+            {{
+                add("Content-type"); add("application/x-www-form-urlencoded; charset=UTF-8");
+                add("Cookie"); add("sid=" + sid);
+                add("user-agent"); add("Mozilla/5.0 BiliDroid/4.34.0 (bbcallen@gmail.com)");
+                add("Referer"); add("http://www.bilibili.com/");
+                add("Connection"); add("Keep-Alive");
+            }};
+            String temp_params = "access_key=" + access_key + "&appkey=" + ConfInfoApi.getConf("appkey") +
+                    "&build=" + ConfInfoApi.getConf("build") + "&gourl=" + URLEncoder.encode("https://account.bilibili.com/account/home", "utf-8") +
+                    "&mobi_app=" + ConfInfoApi.getConf("mobi_app") + "&platform=" + ConfInfoApi.getConf("platform") +
+                    "&ts=" + (int) (System.currentTimeMillis() / 1000);
+            String sign = ConfInfoApi.calc_sign(temp_params);
+
+            OkHttpClient client = new OkHttpClient.Builder().connectTimeout(15, TimeUnit.SECONDS)
+                    .followRedirects(false).readTimeout(15, TimeUnit.SECONDS).build();
+            Request.Builder requestBuilder = new Request.Builder().url(url + "?" + temp_params + "&sign=" + sign).get();
+            for(int i = 0; i < headers.size(); i+=2)
+                requestBuilder = requestBuilder.addHeader(headers.get(i), headers.get(i+1));
+            Request request = requestBuilder.build();
+            Response response = client.newCall(request).execute();
+
+            List<String> cookieList = response.headers("Set-Cookie");
+            StringBuilder cookies = new StringBuilder();
+            for(int i = 0; i < cookieList.size(); i++)
+            {
+                String cookie = cookieList.get(i).split("; ")[0];
+                String[] cookie_list = cookie.split("=");
+                if(cookie_list[0].equals("DedeUserID"))
+                    MainActivity.editor.putString("mid", cookie_list[1]);
+                else if(cookie_list[0].equals("bili_jct"))
+                    MainActivity.editor.putString("csrf", cookie_list[1]);
+                cookies.append(i == 0 ? "" : "; ").append(cookie);
+            }
+            MainActivity.editor.commit();
+            return cookies.toString();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
     private static String encrypt(String str, String key) throws Exception
     {
         key = key.replace("-----BEGIN PUBLIC KEY-----", "");
         key = key.replace("-----END PUBLIC KEY-----", "");
-        key = key.replaceAll("\n", "");
-        key = key.replaceAll("\r", "");
         byte[] decoded = Base64.decode(key, Base64.DEFAULT);
-        RSAPublicKey pubKey = (RSAPublicKey) KeyFactory.getInstance("RSA").generatePublic(
-                new X509EncodedKeySpec(decoded));
-        //RSA加密
-        Cipher cipher = Cipher.getInstance("RSA");
+        RSAPublicKey pubKey = (RSAPublicKey) KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(decoded));
+        Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
         cipher.init(Cipher.ENCRYPT_MODE, pubKey);
-        return Base64.encodeToString(cipher.doFinal(str.getBytes("UTF-8")), Base64.DEFAULT);
+        return Base64.encodeToString(cipher.doFinal(str.getBytes("UTF-8")), Base64.NO_PADDING);
     }
 
     private JSONObject getRequestKey() throws IOException
@@ -163,9 +194,7 @@ public class UserLoginApi
             String url = "https://passport.bilibili.com/api/oauth2/getKey";
             String temp_per = "appkey=" + ConfInfoApi.getConf("appkey");
             String sign = ConfInfoApi.calc_sign(temp_per);
-            Response response = post(url,
-                                     "appkey=" + ConfInfoApi.getConf("appkey") + "&sign=" + sign,
-                                     headers);
+            Response response = post(url, "appkey=" + ConfInfoApi.getConf("appkey") + "&sign=" + sign, headers);
             sid = response.header("set-header");
             return new JSONObject(response.body().string()).getJSONObject("data");
         }
@@ -230,10 +259,8 @@ public class UserLoginApi
 
     private Object get(String url, String cookie, int mode) throws Exception
     {
-        OkHttpClient client = new OkHttpClient.Builder().connectTimeout(15, TimeUnit.SECONDS)
-                .readTimeout(15, TimeUnit.SECONDS).build();
-        Request.Builder requestb = new Request.Builder().url(url).header("Referer", "https://www.bilibili.com/")
-                .addHeader("Accept", "*/*").addHeader("User-Agent",
+        OkHttpClient client = new OkHttpClient.Builder().connectTimeout(15, TimeUnit.SECONDS).readTimeout(15, TimeUnit.SECONDS).build();
+        Request.Builder requestb = new Request.Builder().url(url).header("Referer", "https://www.bilibili.com/").addHeader("Accept", "*/*").addHeader("User-Agent",
                                                       "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
         if(!cookie.equals("")) requestb.addHeader("Cookie", cookie);
         Request request = requestb.build();
@@ -254,13 +281,9 @@ public class UserLoginApi
     private Response post(String url, String data, ArrayList<String> headers) throws IOException
     {
         Request.Builder requestBuilder;
-        OkHttpClient client = new OkHttpClient.Builder().connectTimeout(15,
-                                                                        TimeUnit.SECONDS)//设置连接超时时间
-                .readTimeout(15, TimeUnit.SECONDS)//设置读取超时时间
-                .build();
-        //参数传递
-        RequestBody body = RequestBody.create(
-                MediaType.parse("application/x-www-form-urlencoded; charset=utf-8"), data);
+        OkHttpClient client = new OkHttpClient.Builder().connectTimeout(15, TimeUnit.SECONDS)
+                .readTimeout(15, TimeUnit.SECONDS).build();
+        RequestBody body = RequestBody.create(MediaType.parse("application/x-www-form-urlencoded; charset=utf-8"), data);
         requestBuilder = new Request.Builder().url(url).post(body);
         for (int i = 0; i < headers.size(); i += 2)
             requestBuilder = requestBuilder.addHeader(headers.get(i), headers.get(i + 1));

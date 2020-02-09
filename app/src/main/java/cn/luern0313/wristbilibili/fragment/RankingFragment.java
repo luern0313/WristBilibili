@@ -20,7 +20,9 @@ import android.widget.TextView;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.Locale;
 
 import cn.luern0313.wristbilibili.R;
@@ -56,8 +58,8 @@ public class RankingFragment extends Fragment
 
     RankingApi rankingApi;
     ArrayList<RankingModel> rankingVideoArrayList = new ArrayList<>();
-    ArrayList<ArrayList<String>> pickUpHashMap = new ArrayList<>();
-    String today;
+    LinkedHashMap<Integer, String> pickUpHashMap = new LinkedHashMap<>();
+    String pickupday;
     int pn = 1;
     boolean isLoading = true;
     Bitmap bitmapPickUpUpFace;
@@ -85,7 +87,6 @@ public class RankingFragment extends Fragment
         uiPickUpView = inflater.inflate(R.layout.widget_ranking_pickup, null, false);
         uiLoadingView = inflater.inflate(R.layout.widget_loading, null, false);
         uiListView = rootLayout.findViewById(R.id.rk_listview);
-        uiListView.addHeaderView(uiPickUpView);
         uiListView.addFooterView(uiLoadingView);
         uiWaveSwipeRefreshLayout = rootLayout.findViewById(R.id.rk_swipe);
         uiWaveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
@@ -170,7 +171,7 @@ public class RankingFragment extends Fragment
             @Override
             public void run()
             {
-                uiPickUpView.setVisibility(View.GONE);
+                uiPickUpView.findViewById(R.id.rk_pu_lay).setVisibility(View.GONE);
             }
         };
 
@@ -180,16 +181,19 @@ public class RankingFragment extends Fragment
             public void run()
             {
                 SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
-                today = format.format(new Date(System.currentTimeMillis()));
-                for(int i = 0; i < pickUpHashMap.size(); i++)
+                int today_int = Integer.valueOf(format.format(new Date(System.currentTimeMillis())));
+                ArrayList<Integer> dates = new ArrayList<>(pickUpHashMap.keySet());
+                Collections.sort(dates);
+                for(int i = 0; i < dates.size(); i++)
                 {
-                    if(pickUpHashMap.get(i).get(0).equals(today))
+                    if(dates.get(i) <= today_int)
                     {
+                        pickupday = String.valueOf(dates.get(i));
                         videoDetailsApi = new VideoDetailsApi(MainActivity.sharedPreferences.getString("cookies", ""),
                                                               MainActivity.sharedPreferences.getString("csrf", ""),
                                                               MainActivity.sharedPreferences.getString("mid", ""),
                                                               MainActivity.sharedPreferences.getString("access_key", ""),
-                                                              pickUpHashMap.get(i).get(1));
+                                                              pickUpHashMap.get(dates.get(i)));
                         new Thread(new Runnable()
                         {
                             @Override
@@ -206,6 +210,7 @@ public class RankingFragment extends Fragment
                                 }
                             }
                         }).start();
+                        break;
                     }
                 }
             }
@@ -216,10 +221,11 @@ public class RankingFragment extends Fragment
             @Override
             public void run()
             {
+                if(uiListView.getHeaderViewsCount() == 0) uiListView.addHeaderView(uiPickUpView);
                 uiPickUpView.findViewById(R.id.rk_pu_lay).setVisibility(View.VISIBLE);
                 ((TextView) uiPickUpView.findViewById(R.id.rk_pu_video_title)).setText(videoModel.video_title);
                 ((TextView) uiPickUpView.findViewById(R.id.rk_pu_video_up_name)).setText(videoModel.video_up_name);
-                ((TextView) uiPickUpView.findViewById(R.id.rk_pu_date_date)).setText(today.substring(4, 6) + "月" + today.substring(6, 8) + "日");
+                ((TextView) uiPickUpView.findViewById(R.id.rk_pu_date_date)).setText(pickupday.substring(4, 6) + "月" + pickupday.substring(6, 8) + "日");
                 ((TextView) uiPickUpView.findViewById(R.id.rk_pu_video_play)).setText(videoModel.video_play);
                 ((TextView) uiPickUpView.findViewById(R.id.rk_pu_video_danmaku)).setText(videoModel.video_danmaku);
 
@@ -243,7 +249,7 @@ public class RankingFragment extends Fragment
                         MainActivity.editor.apply();
                         Intent intent = new Intent(ctx, TextActivity.class);
                         intent.putExtra("title", "说明");
-                        intent.putExtra("text", "");
+                        intent.putExtra("text", ("Pick Up视频说明\n" + "每天由用户推荐并投票选出一个精选视频，在排行榜的上方Pick Up栏推广展示一天\n" + "目的是让一些制作精良但播放不高的视频获得更多的曝光\n" + "（相关规则和投票系统正在制作中，目前推荐视频为手动设置，你可以在qq或b站私聊开发者推荐你喜欢的视频）\n" + "（相关要求：连续五天不能推荐同一名up主的视频，上榜视频非引战或有争议视频，播放量少的视频优先等）").replaceAll("\n", "<br/><br/>"));
                         startActivity(intent);
                     }
                 });
@@ -264,6 +270,14 @@ public class RankingFragment extends Fragment
                     @Override
                     public void onClick(View v)
                     {
+                        new Thread(new Runnable()
+                        {
+                            @Override
+                            public void run()
+                            {
+                                rankingApi.clickPickUpVideo();
+                            }
+                        }).start();
                         Intent intent = new Intent(ctx, VideodetailsActivity.class);
                         intent.putExtra("aid", videoModel.video_aid);
                         startActivity(intent);
@@ -318,6 +332,7 @@ public class RankingFragment extends Fragment
             }
         });
 
+        uiListView.setVisibility(View.GONE);
         uiWaveSwipeRefreshLayout.setRefreshing(true);
         getRanking();
 
@@ -326,6 +341,7 @@ public class RankingFragment extends Fragment
 
     void getRanking()
     {
+        uiPickUpView.findViewById(R.id.rk_pu_lay).setVisibility(View.GONE);
         new Thread(new Runnable()
         {
             @Override

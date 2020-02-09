@@ -31,6 +31,7 @@ public class SearchModel
             search_mode = 0;
             search_bangumi_title = bangumi.optString("title").replaceAll("<em class=\"keyword\">", "<keyword>");
             search_bangumi_title = search_bangumi_title.replaceAll("</em>", "</keyword>");
+            search_bangumi_title = "<body>" + search_bangumi_title + "</body>";
             search_bangumi_cover = "http:" + bangumi.optString("cover");
             search_bangumi_season_id = String.valueOf(bangumi.optInt("season_id"));
             search_bangumi_episode_count = bangumi.optInt("ep_size");
@@ -88,6 +89,7 @@ public class SearchModel
             search_mode = 2;
             search_video_title = video.optString("title").replaceAll("<em class=\"keyword\">", "<keyword>");
             search_video_title = search_video_title.replaceAll("</em>", "</keyword>");
+            search_video_title = "<body>" + search_video_title + "</body>";
             search_video_aid = String.valueOf(video.optInt("aid"));
             search_video_cover = "http:" + video.optString("pic");
             search_video_play = DataProcessUtil.getView(video.optInt("play"));
