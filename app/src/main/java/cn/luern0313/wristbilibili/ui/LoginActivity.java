@@ -139,6 +139,7 @@ public class LoginActivity extends Activity
             @Override
             public void run()
             {
+                findViewById(R.id.login_pw_loading).setVisibility(View.GONE);
                 if(err.equals(""))
                 {
                     Intent intent1 = new Intent(ctx, FollowmeActivity.class);
@@ -252,6 +253,7 @@ public class LoginActivity extends Activity
 
     private void login_pw(final String user, final String pw)
     {
+        findViewById(R.id.login_pw_loading).setVisibility(View.VISIBLE);
         new Thread(new Runnable()
         {
             @Override

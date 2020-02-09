@@ -155,6 +155,7 @@ public class DynamicFragment extends Fragment
                     @Override
                     public void run()
                     {
+                        isLogin = MainActivity.sharedPreferences.contains("cookies");
                         if(isLogin)
                         {
                             dyListView.setVisibility(View.GONE);
