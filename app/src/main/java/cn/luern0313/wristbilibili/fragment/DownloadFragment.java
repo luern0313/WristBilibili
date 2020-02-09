@@ -117,6 +117,7 @@ public class DownloadFragment extends Fragment
                     mAdapter.notifyDataSetChanged();
                 }
             });
+            rootLayout.findViewById(R.id.dl_loading).setVisibility(View.GONE);
         }
     };
 
@@ -179,6 +180,7 @@ public class DownloadFragment extends Fragment
                 }
             }
         });
+
         uiListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener()
         {
             @Override

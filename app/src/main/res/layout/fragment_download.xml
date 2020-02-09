@@ -61,4 +61,25 @@
         android:textSize="12sp"
         android:visibility="gone" />
 
+    <LinearLayout
+        android:id="@+id/dl_loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingBottom="20dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="92dp"
+            android:src="@drawable/img_loading_1" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="  加载中.." />
+    </LinearLayout>
+
 </RelativeLayout>

@@ -87,7 +87,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/tail_pretext"
                     android:layout_marginTop="0dp"
-                    android:maxLength="50"
+                    android:maxLength="70"
                     android:inputType="textMultiLine"
                     android:paddingTop="0dp"
                     android:textSize="14dp" />
@@ -103,7 +103,7 @@
                 android:paddingLeft="32dp"
                 android:paddingRight="32dp"
                 android:paddingTop="6dp"
-                android:text="小尾巴最多50个字符\n\n在小尾巴中可以插入以下预置字符串\n{{device}}机型数据\n{{appname}}应用名称\n{{appauthor}}应用作者\n{{videoid}}软件介绍视频av号"
+                android:text="小尾巴最多70个字符\n\n在小尾巴中可以插入以下预置字符串\n{{device}}机型数据\n{{appname}}应用名称\n{{appauthor}}应用作者\n{{videoid}}软件介绍视频av号"
                 android:textSize="12dp" />
         </LinearLayout>
     </ScrollView>
