@@ -47,7 +47,6 @@
                 android:id="@+id/tail_switch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tail_title_layout"
                 android:paddingBottom="6dp"
                 android:paddingLeft="44dp"
                 android:paddingRight="44dp"

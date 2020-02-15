@@ -79,7 +79,7 @@ public class MainActivity extends Activity
             PackageInfo pi = pm.getPackageInfo(ctx.getPackageName(), 0);
             if(sharedPreferences.getInt("ver", 0) < pi.versionCode)
             {
-                if(sharedPreferences.getInt("ver", 0) < 12 && sharedPreferences.contains("cookies"))
+                if(sharedPreferences.getInt("ver", 0) < 13 && sharedPreferences.contains("cookies"))
                 {
                     Toast.makeText(ctx, "抱歉，因为登录功能更新，您需要重新登录，否则某些功能将不可用。", Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(ctx, LogsoffActivity.class);

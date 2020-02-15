@@ -6,7 +6,7 @@ android {
         applicationId "cn.luern0313.wristbilibili"
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 12
+        versionCode 13
         versionName "2.6"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true

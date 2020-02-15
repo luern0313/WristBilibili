@@ -184,7 +184,7 @@ public class RankingFragment extends Fragment
                 int today_int = Integer.valueOf(format.format(new Date(System.currentTimeMillis())));
                 ArrayList<Integer> dates = new ArrayList<>(pickUpHashMap.keySet());
                 Collections.sort(dates);
-                for(int i = 0; i < dates.size(); i++)
+                for(int i = dates.size() - 1; i >= 0; i--)
                 {
                     if(dates.get(i) <= today_int)
                     {
