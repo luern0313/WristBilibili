@@ -1,6 +1,6 @@
 package cn.luern0313.wristbilibili.ui;
 
-import android.app.Activity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -17,7 +17,7 @@ import java.io.IOException;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.SendDynamicApi;
 
-public class SueActivity extends Activity
+public class SueActivity extends AppCompatActivity
 {
     Context ctx;
     SharedPreferences sharedPreferences;

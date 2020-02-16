@@ -1,6 +1,6 @@
 package cn.luern0313.wristbilibili.ui;
 
-import android.app.Activity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -29,7 +29,7 @@ import cn.luern0313.wristbilibili.fragment.AnimationTimelineFragment;
 import cn.luern0313.wristbilibili.fragment.DynamicFragment;
 import okhttp3.Response;
 
-public class LoginActivity extends Activity
+public class LoginActivity extends AppCompatActivity
 {
     Context ctx;
     SharedPreferences sharedPreferences;

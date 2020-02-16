@@ -1,6 +1,6 @@
 package cn.luern0313.wristbilibili.ui;
 
-import android.app.Activity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -27,7 +27,7 @@ import cn.luern0313.wristbilibili.api.FavorVideoApi;
 import cn.luern0313.wristbilibili.models.FavorVideoModel;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
-public class FavorvideoActivity extends Activity
+public class FavorvideoActivity extends AppCompatActivity
 {
     Context ctx;
     Intent intent;

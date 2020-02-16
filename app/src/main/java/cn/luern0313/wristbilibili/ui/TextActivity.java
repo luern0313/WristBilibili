@@ -1,6 +1,6 @@
 package cn.luern0313.wristbilibili.ui;
 
-import android.app.Activity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import cn.luern0313.wristbilibili.R;
 
-public class TextActivity extends Activity
+public class TextActivity extends AppCompatActivity
 {
     Context ctx;
     Intent intent;

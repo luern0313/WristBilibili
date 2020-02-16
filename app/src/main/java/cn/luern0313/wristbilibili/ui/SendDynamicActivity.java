@@ -1,13 +1,12 @@
 package cn.luern0313.wristbilibili.ui;
 
-import android.app.Activity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.widget.CardView;
 import android.text.Editable;
 import android.text.Html;
 import android.view.View;
@@ -18,10 +17,11 @@ import android.widget.Toast;
 
 import java.io.IOException;
 
+import androidx.cardview.widget.CardView;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.util.ImageDownloaderUtil;
 
-public class SendDynamicActivity extends Activity
+public class SendDynamicActivity extends AppCompatActivity
 {
     Context ctx;
     Intent inIntent;

@@ -39,7 +39,7 @@
             android:src="@drawable/icon_extra" />
     </RelativeLayout>
 
-    <android.support.v4.view.ViewPager
+    <androidx.viewpager.widget.ViewPager
         android:id="@+id/vd_viewpager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

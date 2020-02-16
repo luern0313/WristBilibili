@@ -3,7 +3,6 @@ package cn.luern0313.wristbilibili.ui;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -15,10 +14,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +29,11 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.adapter.BangumiRecommendAdapter;
 import cn.luern0313.wristbilibili.adapter.ReplyAdapter;
@@ -46,7 +46,7 @@ import cn.luern0313.wristbilibili.models.BangumiRecommendModel;
 import cn.luern0313.wristbilibili.models.ReplyModel;
 import cn.luern0313.wristbilibili.service.DownloadService;
 
-public class BangumiActivity extends Activity
+public class BangumiActivity extends AppCompatActivity
 {
     Context ctx;
     Intent intent;

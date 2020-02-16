@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +24,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 
+import androidx.annotation.Nullable;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.adapter.RankingAdapter;
 import cn.luern0313.wristbilibili.api.RankingApi;

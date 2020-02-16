@@ -3,7 +3,6 @@ package cn.luern0313.wristbilibili.ui;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -15,8 +14,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -33,6 +30,9 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.adapter.ReplyAdapter;
 import cn.luern0313.wristbilibili.adapter.VideoRecommendAdapter;
@@ -47,7 +47,7 @@ import cn.luern0313.wristbilibili.service.DownloadService;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
 import cn.luern0313.wristbilibili.util.ImageDownloaderUtil;
 
-public class VideodetailsActivity extends Activity
+public class VideodetailsActivity extends AppCompatActivity
 {
     Context ctx;
     Intent intent;

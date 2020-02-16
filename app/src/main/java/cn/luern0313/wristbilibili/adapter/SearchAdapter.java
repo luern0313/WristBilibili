@@ -1,10 +1,11 @@
 package cn.luern0313.wristbilibili.adapter;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.support.v4.util.LruCache;
+import android.util.LruCache;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -288,7 +289,7 @@ public class SearchAdapter extends BaseAdapter
         }
         else
         {
-            ImageTask it = new ImageTask();
+            ImageTask it = new ImageTask(listView);
             it.execute(url);
             return null;
         }
@@ -297,6 +298,12 @@ public class SearchAdapter extends BaseAdapter
     class ImageTask extends AsyncTask<String, Void, BitmapDrawable>
     {
         private String imageUrl;
+        private Resources listViewResources;
+
+        ImageTask(ListView listView)
+        {
+            this.listViewResources = listView.getResources();
+        }
 
         @Override
         protected BitmapDrawable doInBackground(String... params)
@@ -306,7 +313,7 @@ public class SearchAdapter extends BaseAdapter
                 imageUrl = params[0];
                 Bitmap bitmap = null;
                 bitmap = ImageDownloaderUtil.downloadImage(imageUrl);
-                BitmapDrawable db = new BitmapDrawable(listView.getResources(), bitmap);
+                BitmapDrawable db = new BitmapDrawable(listViewResources, bitmap);
                 // 如果本地还没缓存该图片，就缓存
                 if(mImageCache.get(imageUrl) == null && bitmap != null)
                 {

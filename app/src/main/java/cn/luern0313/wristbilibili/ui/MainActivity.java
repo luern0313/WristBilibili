@@ -1,6 +1,5 @@
 package cn.luern0313.wristbilibili.ui;
 
-import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
@@ -9,7 +8,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.ImageView;
@@ -20,6 +18,8 @@ import com.liulishuo.filedownloader.FileDownloader;
 
 import java.io.IOException;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.StatisticsApi;
 import cn.luern0313.wristbilibili.fragment.AnimationTimelineFragment;
@@ -38,7 +38,7 @@ import cn.luern0313.wristbilibili.service.DownloadService;
  * fragment.....
  */
 
-public class MainActivity extends Activity
+public class MainActivity extends AppCompatActivity
 {
     Context ctx;
     public static SharedPreferences sharedPreferences;

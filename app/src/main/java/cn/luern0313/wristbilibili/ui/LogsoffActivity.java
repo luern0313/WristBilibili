@@ -1,6 +1,6 @@
 package cn.luern0313.wristbilibili.ui;
 
-import android.app.Activity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,7 +12,7 @@ import java.io.File;
 
 import cn.luern0313.wristbilibili.R;
 
-public class LogsoffActivity extends Activity
+public class LogsoffActivity extends AppCompatActivity
 {
     Context ctx;
     SharedPreferences sharedPreferences;

@@ -1,6 +1,6 @@
 package cn.luern0313.wristbilibili.ui;
 
-import android.app.Activity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -23,7 +23,7 @@ import java.io.IOException;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.UserInfoApi;
 
-public class MenuActivity extends Activity
+public class MenuActivity extends AppCompatActivity
 {
     Context ctx;
     SharedPreferences sharedPreferences;

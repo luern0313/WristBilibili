@@ -1,12 +1,11 @@
 package cn.luern0313.wristbilibili.ui;
 
-import android.app.Activity;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
 import cn.luern0313.wristbilibili.R;
 
-public class JoinqqActivity extends Activity
+public class JoinqqActivity extends AppCompatActivity
 {
     @Override
     protected void onCreate(Bundle savedInstanceState)

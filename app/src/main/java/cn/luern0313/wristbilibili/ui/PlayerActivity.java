@@ -1,6 +1,6 @@
 package cn.luern0313.wristbilibili.ui;
 
-import android.app.Activity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -18,7 +18,7 @@ import android.widget.Toast;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.OnlineVideoApi;
 
-public class PlayerActivity extends Activity
+public class PlayerActivity extends AppCompatActivity
 {
     Context ctx;
     Intent intent;

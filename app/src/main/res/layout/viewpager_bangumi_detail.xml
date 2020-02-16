@@ -237,7 +237,7 @@
                         android:textSize="12sp" />
                 </LinearLayout>
 
-                <android.support.v7.widget.RecyclerView
+                <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/bgm_detail_video_part"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -286,7 +286,7 @@
                         android:textSize="12sp" />
                 </LinearLayout>
 
-                <android.support.v7.widget.RecyclerView
+                <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/bgm_detail_video_other"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"

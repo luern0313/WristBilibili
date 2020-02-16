@@ -3,7 +3,7 @@ package cn.luern0313.wristbilibili.ui;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.app.Activity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,9 +15,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.v4.util.LruCache;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
+import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +36,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.adapter.DynamicAdapter;
 import cn.luern0313.wristbilibili.api.OthersUserApi;
@@ -56,7 +56,7 @@ import okhttp3.Response;
  * 该api去获取去解析的直接在activity文件里完成了
  * 现在要拓展功能才知道当初不该偷懒
  */
-public class OtherUserActivity extends Activity
+public class OtherUserActivity extends AppCompatActivity
 {
     Context ctx;
     Intent intent;

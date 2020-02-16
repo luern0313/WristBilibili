@@ -1,9 +1,10 @@
 package cn.luern0313.wristbilibili.adapter;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
-import android.support.v4.util.LruCache;
+import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -208,12 +209,11 @@ public class ReplyAdapter extends BaseAdapter
     class ImageTask extends AsyncTask<String, Void, BitmapDrawable>
     {
         private String imageUrl;
-        private ListView listView;
+        private Resources listViewResources;
 
         ImageTask(ListView listView)
         {
-            super();
-            this.listView = listView;
+            this.listViewResources = listView.getResources();
         }
 
         @Override
@@ -224,7 +224,7 @@ public class ReplyAdapter extends BaseAdapter
                 imageUrl = params[0];
                 Bitmap bitmap = null;
                 bitmap = ImageDownloaderUtil.downloadImage(imageUrl);
-                BitmapDrawable db = new BitmapDrawable(listView.getResources(), bitmap);
+                BitmapDrawable db = new BitmapDrawable(listViewResources, bitmap);
                 // 如果本地还没缓存该图片，就缓存
                 if(mImageCache.get(imageUrl) == null && bitmap != null)
                 {

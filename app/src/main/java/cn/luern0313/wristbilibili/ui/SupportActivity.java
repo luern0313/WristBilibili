@@ -1,11 +1,11 @@
 package cn.luern0313.wristbilibili.ui;
 
-import android.app.Activity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
 import cn.luern0313.wristbilibili.R;
 
-public class SupportActivity extends Activity
+public class SupportActivity extends AppCompatActivity
 {
 
     @Override

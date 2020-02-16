@@ -1,6 +1,6 @@
 package cn.luern0313.wristbilibili.ui;
 
-import android.app.Activity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -8,7 +8,7 @@ import android.widget.ImageView;
 
 import cn.luern0313.wristbilibili.R;
 
-public class QRActivity extends Activity
+public class QRActivity extends AppCompatActivity
 {
     Context ctx;
     ImageView qrImageView;

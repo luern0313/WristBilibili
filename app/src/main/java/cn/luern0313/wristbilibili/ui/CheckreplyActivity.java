@@ -1,6 +1,6 @@
 package cn.luern0313.wristbilibili.ui;
 
-import android.app.Activity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,7 +12,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.v4.util.LruCache;
+import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,7 +36,7 @@ import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.ReplyApi;
 import cn.luern0313.wristbilibili.models.ReplyModel;
 
-public class CheckreplyActivity extends Activity
+public class CheckreplyActivity extends AppCompatActivity
 {
     Context ctx;
     LayoutInflater inflater;
