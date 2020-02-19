@@ -1,6 +1,5 @@
 package cn.luern0313.wristbilibili.ui;
 
-import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -20,6 +19,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import androidx.appcompat.app.AppCompatActivity;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.UserInfoApi;
 
@@ -58,7 +58,7 @@ public class MenuActivity extends AppCompatActivity
 
         uiUserName.setText(sharedPreferences.getString("userName", "你还没登录呢~"));
         uiUserCoin.setText("硬币 : " + sharedPreferences.getString("userCoin", "0"));
-        uiUserLV.setText("LV" + String.valueOf(sharedPreferences.getInt("userLV", 0)));
+        uiUserLV.setText("LV" + sharedPreferences.getInt("userLV", 0));
         uiUserVip.setVisibility(sharedPreferences.getBoolean("userVip", false) ? View.VISIBLE : View.GONE);
         try
         {

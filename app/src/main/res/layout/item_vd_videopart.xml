@@ -27,16 +27,17 @@
         android:id="@+id/item_video_part_vip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
         android:background="@drawable/shape_bg_vd_videopart_vip"
         android:clickable="false"
         android:focusable="false"
-        android:paddingBottom="1dp"
-        android:paddingEnd="2dp"
         android:paddingStart="2dp"
         android:paddingTop="1dp"
+        android:paddingEnd="2dp"
+        android:paddingBottom="1dp"
         android:text="会员"
         android:textColor="@color/white"
-        android:textSize="10sp" />
+        android:textSize="10sp"
+        android:visibility="gone" />
 </RelativeLayout>

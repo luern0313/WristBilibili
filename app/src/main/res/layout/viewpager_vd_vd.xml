@@ -6,7 +6,8 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="#00DA1E1E">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -20,8 +21,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="22dp"
-                android:layout_marginRight="22dp"
                 android:layout_marginTop="8dp"
+                android:layout_marginRight="22dp"
                 android:textColor="@color/gray_44" />
 
             <TextView
@@ -29,8 +30,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="21dp"
-                android:layout_marginRight="21dp"
                 android:layout_marginTop="4dp"
+                android:layout_marginRight="21dp"
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:textSize="11sp" />
@@ -49,10 +50,10 @@
                 android:id="@+id/vd_video_details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="6dp"
                 android:layout_marginLeft="21dp"
-                android:layout_marginRight="21dp"
                 android:layout_marginTop="6dp"
+                android:layout_marginRight="21dp"
+                android:layout_marginBottom="6dp"
                 android:textSize="13sp"
                 app:etv_MaxLinesOnShrink="5" />
 
@@ -68,8 +69,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="16dp">
+                    android:paddingStart="20dp"
+                    android:paddingEnd="16dp">
 
                     <TextView
                         android:id="@+id/vd_video_part_text"
@@ -89,22 +90,16 @@
                         android:textSize="12sp" />
                 </LinearLayout>
 
-                <HorizontalScrollView
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/vd_video_part"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:clipToPadding="false"
                     android:paddingLeft="21dp"
                     android:paddingRight="21dp"
-                    android:scrollbars="none">
-
-                    <LinearLayout
-                        android:id="@+id/vd_video_part"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:divider="@color/alpha"
-                        android:dividerPadding="4dp"
-                        android:orientation="horizontal" />
-                </HorizontalScrollView>
+                    android:scrollbars="none"
+                    android:divider="@color/alpha"
+                    android:dividerPadding="4dp" />
 
             </LinearLayout>
 
@@ -127,8 +122,8 @@
                         <LinearLayout
                             android:layout_width="55dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="22dp"
-                            android:layout_marginRight="2dp"
+                            android:layout_marginStart="22dp"
+                            android:layout_marginEnd="2dp"
                             android:background="?android:attr/selectableItemBackground"
                             android:clickable="true"
                             android:descendantFocusability="blocksDescendants"
@@ -155,7 +150,7 @@
                             android:id="@+id/vd_bt_play"
                             android:layout_width="55dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginRight="2dp"
+                            android:layout_marginEnd="2dp"
                             android:background="?android:attr/selectableItemBackground"
                             android:clickable="true"
                             android:descendantFocusability="blocksDescendants"
@@ -181,7 +176,7 @@
                         <LinearLayout
                             android:layout_width="55dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginRight="2dp"
+                            android:layout_marginEnd="2dp"
                             android:background="?android:attr/selectableItemBackground"
                             android:clickable="true"
                             android:descendantFocusability="blocksDescendants"
@@ -207,7 +202,7 @@
                         <LinearLayout
                             android:layout_width="55dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginRight="2dp"
+                            android:layout_marginEnd="2dp"
                             android:background="?android:attr/selectableItemBackground"
                             android:clickable="true"
                             android:descendantFocusability="blocksDescendants"
@@ -233,7 +228,7 @@
                         <LinearLayout
                             android:layout_width="55dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginRight="2dp"
+                            android:layout_marginEnd="2dp"
                             android:background="?android:attr/selectableItemBackground"
                             android:clickable="true"
                             android:descendantFocusability="blocksDescendants"
@@ -258,7 +253,7 @@
                         <LinearLayout
                             android:layout_width="55dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginRight="22dp"
+                            android:layout_marginEnd="22dp"
                             android:background="?android:attr/selectableItemBackground"
                             android:clickable="true"
                             android:descendantFocusability="blocksDescendants"
@@ -295,12 +290,13 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
 
+
                         <LinearLayout
                             android:id="@+id/vd_like"
                             android:layout_width="55dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="22dp"
-                            android:layout_marginRight="2dp"
+                            android:layout_marginStart="22dp"
+                            android:layout_marginEnd="2dp"
                             android:background="?android:attr/selectableItemBackground"
                             android:clickable="true"
                             android:descendantFocusability="blocksDescendants"
@@ -309,11 +305,23 @@
                             android:orientation="vertical"
                             android:padding="3dp">
 
-                            <ImageView
-                                android:id="@+id/vd_like_img"
-                                android:layout_width="38dp"
-                                android:layout_height="38dp"
-                                android:src="@drawable/icon_vdd_do_like_no" />
+                            <RelativeLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content">
+
+                                <ImageView
+                                    android:id="@+id/vd_like_img"
+                                    android:layout_width="38dp"
+                                    android:layout_height="38dp"
+                                    android:src="@drawable/icon_vdd_do_like_no_nobg" />
+
+                                <ImageView
+                                    android:id="@+id/vd_like_img_bg"
+                                    android:layout_width="38dp"
+                                    android:layout_height="38dp"
+                                    android:src="@drawable/icon_vdd_do_no_bg" />
+
+                            </RelativeLayout>
 
                             <TextView
                                 android:id="@+id/vd_like_text"
@@ -325,11 +333,12 @@
 
                         </LinearLayout>
 
+
                         <LinearLayout
                             android:id="@+id/vd_coin"
                             android:layout_width="55dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginRight="2dp"
+                            android:layout_marginEnd="2dp"
                             android:background="?android:attr/selectableItemBackground"
                             android:clickable="true"
                             android:descendantFocusability="blocksDescendants"
@@ -338,11 +347,23 @@
                             android:orientation="vertical"
                             android:padding="3dp">
 
-                            <ImageView
-                                android:id="@+id/vd_coin_img"
-                                android:layout_width="38dp"
-                                android:layout_height="38dp"
-                                android:src="@drawable/icon_vdd_do_coin_no" />
+                            <RelativeLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content">
+
+                                <ImageView
+                                    android:id="@+id/vd_coin_img"
+                                    android:layout_width="38dp"
+                                    android:layout_height="38dp"
+                                    android:src="@drawable/icon_vdd_do_coin_no_nobg" />
+
+                                <ImageView
+                                    android:id="@+id/vd_coin_img_bg"
+                                    android:layout_width="38dp"
+                                    android:layout_height="38dp"
+                                    android:src="@drawable/icon_vdd_do_no_bg" />
+
+                            </RelativeLayout>
 
                             <TextView
                                 android:id="@+id/vd_coin_text"
@@ -358,7 +379,7 @@
                             android:id="@+id/vd_fav"
                             android:layout_width="55dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginRight="2dp"
+                            android:layout_marginEnd="2dp"
                             android:background="?android:attr/selectableItemBackground"
                             android:clickable="true"
                             android:descendantFocusability="blocksDescendants"
@@ -367,11 +388,23 @@
                             android:orientation="vertical"
                             android:padding="3dp">
 
-                            <ImageView
-                                android:id="@+id/vd_fav_img"
-                                android:layout_width="38dp"
-                                android:layout_height="38dp"
-                                android:src="@drawable/icon_vdd_do_fav_no" />
+                            <RelativeLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content">
+
+                                <ImageView
+                                    android:id="@+id/vd_fav_img"
+                                    android:layout_width="38dp"
+                                    android:layout_height="38dp"
+                                    android:src="@drawable/icon_vdd_do_fav_no_nobg" />
+
+                                <ImageView
+                                    android:id="@+id/vd_fav_img_bg"
+                                    android:layout_width="38dp"
+                                    android:layout_height="38dp"
+                                    android:src="@drawable/icon_vdd_do_no_bg" />
+
+                            </RelativeLayout>
 
                             <TextView
                                 android:id="@+id/vd_fav_text"
@@ -387,7 +420,7 @@
                             android:id="@+id/vd_dislike"
                             android:layout_width="55dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginRight="22dp"
+                            android:layout_marginEnd="22dp"
                             android:background="?android:attr/selectableItemBackground"
                             android:clickable="true"
                             android:descendantFocusability="blocksDescendants"
@@ -420,10 +453,10 @@
                 android:id="@+id/vd_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
                 android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
                 android:layout_marginTop="6dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="10dp"
                 android:clickable="true"
                 android:descendantFocusability="blocksDescendants"
                 app:cardCornerRadius="4dp"
@@ -444,10 +477,10 @@
                         android:id="@+id/vd_card_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="6dp"
-                        android:layout_marginLeft="5dp"
-                        android:layout_marginRight="2dp"
+                        android:layout_marginStart="5dp"
                         android:layout_marginTop="7dp"
+                        android:layout_marginEnd="2dp"
+                        android:layout_marginBottom="6dp"
                         android:layout_toRightOf="@+id/vd_card_head"
                         android:ellipsize="end"
                         android:maxLines="1"
@@ -460,9 +493,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/vd_card_name"
-                        android:layout_marginLeft="5dp"
-                        android:layout_marginRight="2dp"
-                        android:layout_toRightOf="@+id/vd_card_head"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginEnd="2dp"
+                        android:layout_toEndOf="@+id/vd_card_head"
                         android:ellipsize="end"
                         android:maxLines="1"
                         android:textColor="@color/gray_44"

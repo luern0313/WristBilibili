@@ -14,9 +14,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
-import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -29,12 +28,17 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.adapter.ReplyAdapter;
+import cn.luern0313.wristbilibili.adapter.VideoPartAdapter;
 import cn.luern0313.wristbilibili.adapter.VideoRecommendAdapter;
 import cn.luern0313.wristbilibili.api.FavorBoxApi;
 import cn.luern0313.wristbilibili.api.OnlineVideoApi;
@@ -60,6 +64,7 @@ public class VideodetailsActivity extends AppCompatActivity
     ReplyApi replyApi;
     ArrayList<ReplyModel> replyArrayList;
     ArrayList<VideoModel.VideoRecommendModel> recommendList;
+    VideoPartAdapter videoPartAdapter;
 
     View layoutSendReply;
     View layoutChangeMode;
@@ -71,7 +76,6 @@ public class VideodetailsActivity extends AppCompatActivity
     Runnable runnableImg;
     Runnable runnableSetface;
     Runnable runnableNodata;
-
     Runnable runnableVideoLoadingFin;
 
     Runnable runnableReply;
@@ -90,7 +94,10 @@ public class VideodetailsActivity extends AppCompatActivity
     LinearLayout uiLoading;
     LinearLayout uiNoWeb;
 
-    LinearLayout uiVideoPartLayout;
+    ImageView uiVideoDoLike;
+    ImageView uiVideoDoCoin;
+    ImageView uiVideoDoFav;
+
     ListView uiReplyListView;
     ListView uiRecommendListView;
     ReplyAdapter replyAdapter;
@@ -186,6 +193,10 @@ public class VideodetailsActivity extends AppCompatActivity
             {
                 try
                 {
+                    uiVideoDoLike = findViewById(R.id.vd_like_img);
+                    uiVideoDoCoin = findViewById(R.id.vd_coin_img);
+                    uiVideoDoFav = findViewById(R.id.vd_fav_img);
+
                     ((TextView) findViewById(R.id.vd_video_title)).setText(videoModel.video_title);
                     ((TextView) findViewById(R.id.vd_video_play)).setText("播放:" + videoModel.video_play + "  弹幕:" + videoModel.video_danmaku);
                     ((TextView) findViewById(R.id.vd_video_time)).setText(videoModel.video_time + "  AV" + videoModel.video_aid);
@@ -197,38 +208,33 @@ public class VideodetailsActivity extends AppCompatActivity
                     {
                         findViewById(R.id.vd_video_part_layout).setVisibility(View.VISIBLE);
                         findViewById(R.id.vd_bt_play).setVisibility(View.GONE);
-                        ((TextView) findViewById(R.id.vd_video_part_text)).setText("共" + String.valueOf(videoModel.video_part_array_list.size()) + "P");
-                        for(int i = 0; i < videoModel.video_part_array_list.size(); i++)
-                        {
-                            if(i < 30)
-                                uiVideoPartLayout.addView(getVideoPartButton(videoModel.video_part_array_list.get(i)));
-                            else
-                            {
-                                TextView textView = new TextView(ctx);
-                                textView.setWidth(90);
-                                textView.setBackgroundResource(R.drawable.selector_bg_vd_videopart);
-                                textView.setPadding(12, 6, 12, 6);
-                                textView.setText("查看\n更多");
-                                textView.setLines(2);
-                                textView.setGravity(Gravity.CENTER);
-                                textView.setEllipsize(TextUtils.TruncateAt.END);
-                                textView.setOnClickListener(new View.OnClickListener()
-                                {
-                                    @Override
-                                    public void onClick(View v)
-                                    {
-                                        clickMorePart(null);
-                                    }
-                                });
-                                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                                lp.setMargins(0, 0, 4, 0);
-                                textView.setLayoutParams(lp);
-                                uiVideoPartLayout.addView(textView);
-                                break;
-                            }
-                        }
+                        ((TextView) findViewById(R.id.vd_video_part_text)).setText("共" + videoModel.video_part_array_list.size() + "P");
+                        LinearLayoutManager layoutManager = new LinearLayoutManager(VideodetailsActivity.super.getParent());
+                        layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+                        ((RecyclerView) findViewById(R.id.vd_video_part)).setLayoutManager(layoutManager);
+                        videoPartAdapter = new VideoPartAdapter(videoModel.video_part_array_list);
+                        ((RecyclerView) findViewById(R.id.vd_video_part)).setAdapter(videoPartAdapter);
                     }
-                    else uiVideoPartLayout.setVisibility(View.GONE);
+                    else findViewById(R.id.vd_video_part_layout).setVisibility(View.GONE);
+
+                    findViewById(R.id.vd_like).setOnTouchListener(new View.OnTouchListener()
+                    {
+                        @Override
+                        public boolean onTouch(View view, MotionEvent motionEvent)
+                        {
+                            switch (motionEvent.getAction())
+                            {
+                                case MotionEvent.ACTION_DOWN:
+                                    tripleAnim();
+                                    break;
+                                case MotionEvent.ACTION_UP:
+                                    //view.performClick(); //TODO ？？？？
+                                case MotionEvent.ACTION_CANCEL:
+                                    break;
+                            }
+                            return false;
+                        }
+                    });
 
                     setIcon();
                     isReplyLoading = false;
@@ -399,26 +405,24 @@ public class VideodetailsActivity extends AppCompatActivity
             }
 
             @Override
-            public boolean isViewFromObject(View view, Object object)
+            public boolean isViewFromObject(View view, @NonNull Object object)
             {
                 return view.getTag().equals(object);
             }
 
             @Override
-            public void destroyItem(ViewGroup container, int position, Object object)
+            public void destroyItem(ViewGroup container, int position, @NonNull Object object)
             {
                 container.removeView(container.findViewWithTag(object));
             }
 
             @Override
-            public Object instantiateItem(ViewGroup container, int position)
+            public Object instantiateItem(@NonNull ViewGroup container, int position)
             {
                 if(position == 0)
                 {
                     View v = inflater.inflate(R.layout.viewpager_vd_vd, null);
                     v.setTag(0);
-
-                    uiVideoPartLayout = v.findViewById(R.id.vd_video_part);
 
                     v.findViewById(R.id.vd_card).setOnClickListener(new View.OnClickListener()
                     {
@@ -617,36 +621,6 @@ public class VideodetailsActivity extends AppCompatActivity
         }
     }
 
-    TextView getVideoPartButton(final VideoModel.VideoPartModel part)
-    {
-        TextView textView = new TextView(ctx);
-        textView.setWidth(170);
-        textView.setBackgroundResource(R.drawable.selector_bg_vd_videopart);
-        textView.setPadding(12, 6, 12, 6);
-        textView.setText(part.video_part_name);
-        textView.setLines(2);
-        textView.setEllipsize(TextUtils.TruncateAt.END);
-        textView.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                Intent intent = new Intent(ctx, PlayerActivity.class);
-                intent.putExtra("title", part.video_part_num + " - " + videoModel.video_title);
-                intent.putExtra("aid", videoModel.video_aid);
-                intent.putExtra("part", String.valueOf(part.video_part_num));
-                intent.putExtra("cid", String.valueOf(part.video_part_cid));
-                startActivity(intent);
-            }
-        });
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        lp.setMargins(0, 0, 4, 0);
-        textView.setLayoutParams(lp);
-        return textView;
-    }
-
-
     void getMoreReply()
     {
         isReplyLoading = true;
@@ -712,6 +686,40 @@ public class VideodetailsActivity extends AppCompatActivity
         });
     }
 
+    void tripleAnim()
+    {
+        AnimatorSet animatorSet = new AnimatorSet();
+        ArrayList<ObjectAnimator> objectAnimatorArrayList = new ArrayList<>();
+        Random r = new Random();
+        float translationX = 0f, translationY = 0f, rotation = 0f, scaleX = 1f, scaleY = 1f;
+        for(int i = 0; i < 60; i++)
+        {
+            float tX = DataProcessUtil.getFloatRandom(r, -3, 3);
+            float tY = DataProcessUtil.getFloatRandom(r, -3, 3);
+            float ro = DataProcessUtil.getFloatRandom(r, -3, 3);
+            float sX = DataProcessUtil.getFloatRandom(r, 0.97f, 1.03f);
+            float sY = DataProcessUtil.getFloatRandom(r, 0.97f, 1.03f);
+            objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoCoin, "translationX", translationX, tX));
+            objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoCoin, "translationY", translationY, tY));
+            objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoCoin, "rotation", rotation, ro));
+            objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoCoin, "scaleX", scaleX, sX));
+            objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoCoin, "scaleY", scaleY, sY));
+            if(i == 0)
+                animatorSet.play(objectAnimatorArrayList.get(0)).with(objectAnimatorArrayList.get(1)).with(objectAnimatorArrayList.get(2))
+                        .with(objectAnimatorArrayList.get(3)).with(objectAnimatorArrayList.get(4));
+            else
+                animatorSet.play(objectAnimatorArrayList.get(0)).with(objectAnimatorArrayList.get(1)).with(objectAnimatorArrayList.get(2))
+                        .with(objectAnimatorArrayList.get(3)).with(objectAnimatorArrayList.get(4)).after(objectAnimatorArrayList.get(5));
+            translationX = tX;
+            translationY = tY;
+            rotation = ro;
+            scaleX = sX;
+            scaleY = sY;
+        }
+        animatorSet.setDuration(22);
+        animatorSet.start();
+    }
+
     public void clickVdTip(View view)
     {
         findViewById(R.id.vd_tip).setVisibility(View.GONE);
@@ -727,27 +735,44 @@ public class VideodetailsActivity extends AppCompatActivity
 
         if(videoModel.video_user_like)
         {
-            ((ImageView) findViewById(R.id.vd_like_img)).setImageResource(R.drawable.icon_vdd_do_like_yes);
+            ((ImageView) findViewById(R.id.vd_like_img)).setImageResource(R.drawable.icon_vdd_do_like_yes_nobg);
+            ((ImageView) findViewById(R.id.vd_like_img_bg)).setImageResource(R.drawable.icon_vdd_do_yes_bg);
             ((ImageView) findViewById(R.id.vd_dislike_img)).setImageResource(R.drawable.icon_vdd_do_dislike_no);
         }
         else if(videoModel.video_user_dislike)
         {
-            ((ImageView) findViewById(R.id.vd_like_img)).setImageResource(R.drawable.icon_vdd_do_like_no);
+            ((ImageView) findViewById(R.id.vd_like_img)).setImageResource(R.drawable.icon_vdd_do_like_no_nobg);
+            ((ImageView) findViewById(R.id.vd_like_img_bg)).setImageResource(R.drawable.icon_vdd_do_no_bg);
             ((ImageView) findViewById(R.id.vd_dislike_img)).setImageResource(R.drawable.icon_vdd_do_dislike_yes);
         }
         else
         {
-            ((ImageView) findViewById(R.id.vd_like_img)).setImageResource(R.drawable.icon_vdd_do_like_no);
+            ((ImageView) findViewById(R.id.vd_like_img)).setImageResource(R.drawable.icon_vdd_do_like_no_nobg);
+            ((ImageView) findViewById(R.id.vd_like_img_bg)).setImageResource(R.drawable.icon_vdd_do_no_bg);
             ((ImageView) findViewById(R.id.vd_dislike_img)).setImageResource(R.drawable.icon_vdd_do_dislike_no);
         }
+
         if(videoModel.video_user_coin > 0)
-            ((ImageView) findViewById(R.id.vd_coin_img)).setImageResource(R.drawable.icon_vdd_do_coin_yes);
+        {
+            ((ImageView) findViewById(R.id.vd_coin_img)).setImageResource(R.drawable.icon_vdd_do_coin_yes_nobg);
+            ((ImageView) findViewById(R.id.vd_coin_img_bg)).setImageResource(R.drawable.icon_vdd_do_yes_bg);
+        }
         else
-            ((ImageView) findViewById(R.id.vd_coin_img)).setImageResource(R.drawable.icon_vdd_do_coin_no);
+        {
+            ((ImageView) findViewById(R.id.vd_coin_img)).setImageResource(R.drawable.icon_vdd_do_coin_no_nobg);
+            ((ImageView) findViewById(R.id.vd_coin_img_bg)).setImageResource(R.drawable.icon_vdd_do_no_bg);
+        }
+
         if(videoModel.video_user_fav)
-            ((ImageView) findViewById(R.id.vd_fav_img)).setImageResource(R.drawable.icon_vdd_do_fav_yes);
+        {
+            ((ImageView) findViewById(R.id.vd_fav_img)).setImageResource(R.drawable.icon_vdd_do_fav_yes_nobg);
+            ((ImageView) findViewById(R.id.vd_fav_img_bg)).setImageResource(R.drawable.icon_vdd_do_yes_bg);
+        }
         else
-            ((ImageView) findViewById(R.id.vd_fav_img)).setImageResource(R.drawable.icon_vdd_do_fav_no);
+        {
+            ((ImageView) findViewById(R.id.vd_fav_img)).setImageResource(R.drawable.icon_vdd_do_fav_no_nobg);
+            ((ImageView) findViewById(R.id.vd_fav_img_bg)).setImageResource(R.drawable.icon_vdd_do_no_bg);
+        }
     }
 
 
@@ -1096,6 +1121,7 @@ public class VideodetailsActivity extends AppCompatActivity
     @Override
     public void onActivityResult(final int requestCode, int resultCode, final Intent data)
     {
+        super.onActivityResult(requestCode, resultCode, data);
         if(resultCode != 0) return;
         switch (requestCode)
         {
@@ -1110,10 +1136,11 @@ public class VideodetailsActivity extends AppCompatActivity
                             String result = videoDetail.favVideo(data.getStringExtra("option_id"));
                             if(result.equals(""))
                             {
-                                videoModel.video_detail_fav += videoModel.video_user_fav ? 0 :1;
+                                videoModel.video_detail_fav += videoModel.video_user_fav ? 0 : 1;
                                 videoModel.video_user_fav = true;
                                 Looper.prepare();
-                                Toast.makeText(ctx, "已收藏至 " + data.getStringExtra("option_name") + " 收藏夹！", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ctx, "已收藏至 " + data.getStringExtra("option_name") + " 收藏夹！",
+                                               Toast.LENGTH_SHORT).show();
                                 handler.post(runnableImg);
                             }
                             else
@@ -1140,13 +1167,15 @@ public class VideodetailsActivity extends AppCompatActivity
                     {
                         try
                         {
-                            onlineVideoApi = new OnlineVideoApi(sharedPreferences.getString("cookies", ""),
-                                                                sharedPreferences.getString("csrf", ""),
-                                                                sharedPreferences.getString("mid", ""),
-                                                                videoModel.video_aid, data.getStringExtra("option_id"));
+                            onlineVideoApi = new OnlineVideoApi(
+                                    sharedPreferences.getString("cookies", ""),
+                                    sharedPreferences.getString("csrf", ""),
+                                    sharedPreferences.getString("mid", ""), videoModel.video_aid,
+                                    data.getStringExtra("option_id"));
                             onlineVideoApi.connectionVideoUrl();
                             handler.post(runnableVideoLoadingFin);
-                            connection.setVideoPartData(data.getStringExtra("option_name") + " - " + videoModel.video_title, data.getStringExtra("option_id"));
+                            connection.setVideoPartData(data.getStringExtra("option_name") + " - " + videoModel.video_title,
+                                                        data.getStringExtra("option_id"));
                             connection.downloadVideo();
                         }
                         catch (IOException e)

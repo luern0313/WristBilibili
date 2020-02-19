@@ -37,7 +37,7 @@ import androidx.viewpager.widget.ViewPager;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.adapter.BangumiRecommendAdapter;
 import cn.luern0313.wristbilibili.adapter.ReplyAdapter;
-import cn.luern0313.wristbilibili.adapter.VideoPartAdapter;
+import cn.luern0313.wristbilibili.adapter.BangumiEpisodeAdapter;
 import cn.luern0313.wristbilibili.api.BangumiApi;
 import cn.luern0313.wristbilibili.api.OnlineVideoApi;
 import cn.luern0313.wristbilibili.api.ReplyApi;
@@ -70,8 +70,8 @@ public class BangumiActivity extends AppCompatActivity
 
     RecyclerView uiDetailEpisodesRecyclerView;
     RecyclerView uiDetailSectionsRecyclerView;
-    VideoPartAdapter episodesRecyclerViewAdapter;
-    VideoPartAdapter sectionsRecyclerViewAdapter;
+    BangumiEpisodeAdapter episodesRecyclerViewAdapter;
+    BangumiEpisodeAdapter sectionsRecyclerViewAdapter;
     ListView uiReplyListView;
     ReplyAdapter replyAdapter;
     ReplyAdapter.ReplyAdapterListener replyAdapterListener;
@@ -181,8 +181,8 @@ public class BangumiActivity extends AppCompatActivity
                     LinearLayoutManager layoutManager = new LinearLayoutManager(BangumiActivity.super.getParent());
                     layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
                     uiDetailEpisodesRecyclerView.setLayoutManager(layoutManager);
-                    episodesRecyclerViewAdapter = new VideoPartAdapter(bangumiModel.bangumi_episodes, bangumiModel, 1);
-                    episodesRecyclerViewAdapter.setOnItemClickListener(new VideoPartAdapter.OnItemClickListener()
+                    episodesRecyclerViewAdapter = new BangumiEpisodeAdapter(bangumiModel.bangumi_episodes, bangumiModel, 1);
+                    episodesRecyclerViewAdapter.setOnItemClickListener(new BangumiEpisodeAdapter.OnItemClickListener()
                     {
                         @Override
                         public void onItemClick(View view, int position)
@@ -193,8 +193,7 @@ public class BangumiActivity extends AppCompatActivity
                     uiDetailEpisodesRecyclerView.setAdapter(episodesRecyclerViewAdapter);
                     if(bangumiModel.bangumi_user_progress_mode == 1)
                         ((LinearLayoutManager) uiDetailEpisodesRecyclerView.getLayoutManager()).
-                                scrollToPositionWithOffset(bangumiModel.bangumi_user_progress_position,
-                                                           0);
+                                scrollToPositionWithOffset(bangumiModel.bangumi_user_progress_position, 0);
                 }
 
                 if(bangumiModel.bangumi_sections.size() != 0)
@@ -204,8 +203,8 @@ public class BangumiActivity extends AppCompatActivity
                     LinearLayoutManager layoutManager = new LinearLayoutManager(BangumiActivity.super.getParent());
                     layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
                     uiDetailSectionsRecyclerView.setLayoutManager(layoutManager);
-                    sectionsRecyclerViewAdapter = new VideoPartAdapter(bangumiModel.bangumi_sections, bangumiModel, 2);
-                    sectionsRecyclerViewAdapter.setOnItemClickListener(new VideoPartAdapter.OnItemClickListener()
+                    sectionsRecyclerViewAdapter = new BangumiEpisodeAdapter(bangumiModel.bangumi_sections, bangumiModel, 2);
+                    sectionsRecyclerViewAdapter.setOnItemClickListener(new BangumiEpisodeAdapter.OnItemClickListener()
                     {
                         @Override
                         public void onItemClick(View view, int position)
@@ -216,8 +215,7 @@ public class BangumiActivity extends AppCompatActivity
                     uiDetailSectionsRecyclerView.setAdapter(sectionsRecyclerViewAdapter);
                     if(bangumiModel.bangumi_user_progress_mode == 2)
                         ((LinearLayoutManager) uiDetailSectionsRecyclerView.getLayoutManager()).
-                                scrollToPositionWithOffset(bangumiModel.bangumi_user_progress_position,
-                                                           0);
+                                scrollToPositionWithOffset(bangumiModel.bangumi_user_progress_position, 0);
                 }
 
                 if(bangumiModel.bangumi_seasons.size() > 1)
