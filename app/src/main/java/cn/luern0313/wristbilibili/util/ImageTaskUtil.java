@@ -1,5 +1,6 @@
 package cn.luern0313.wristbilibili.util;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
@@ -17,6 +18,7 @@ public class ImageTaskUtil extends AsyncTask<String, Void, BitmapDrawable>
 {
     private String imageUrl;
     private ListView listView;
+    private Resources listViewResources;
     private LruCache<String, BitmapDrawable> mImageCache;
 
 
@@ -24,6 +26,7 @@ public class ImageTaskUtil extends AsyncTask<String, Void, BitmapDrawable>
     {
         super();
         this.listView = listView;
+        this.listViewResources = listView.getResources();
         this.mImageCache = mImageCache;
     }
 
@@ -35,7 +38,7 @@ public class ImageTaskUtil extends AsyncTask<String, Void, BitmapDrawable>
             imageUrl = params[0];
             Bitmap bitmap = null;
             bitmap = ImageDownloaderUtil.downloadImage(imageUrl);
-            BitmapDrawable db = new BitmapDrawable(listView.getResources(), bitmap);
+            BitmapDrawable db = new BitmapDrawable(listViewResources, bitmap);
             // 如果本地还没缓存该图片，就缓存
             if(mImageCache.get(imageUrl) == null && bitmap != null)
             {

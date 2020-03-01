@@ -49,7 +49,7 @@ public class BangumiModel
     public BangumiModel(JSONObject bangumi)
     {
         bangumi_title = bangumi.optString("season_title");
-        bangumi_score = bangumi.has("rating") ? String.valueOf(bangumi.optJSONObject("rating").optDouble("score")) + "分" : "";
+        bangumi_score = bangumi.has("rating") ? bangumi.optJSONObject("rating").optDouble("score") + "分" : "";
         bangumi_play = DataProcessUtil.getView(bangumi.optJSONObject("stat").optInt("views"));
         bangumi_like = DataProcessUtil.getView(bangumi.optJSONObject("stat").optInt("favorites"));
         bangumi_series = bangumi.optJSONObject("publish").optString("time_length_show");
@@ -125,6 +125,156 @@ public class BangumiModel
         bangumi_type_name = (bangumi_detail_typename.equals("番剧") || bangumi_detail_typename.equals("国创")) ? "番剧" : "影视";
         bangumi_type_follow = bangumi_type_name.equals("番剧") ? "追番" : "追剧";
         bangumi_type_ep = bangumi_type_name.equals("番剧") ? "话" : "集";
+    }
+
+    public String getBangumi_title()
+    {
+        return bangumi_title;
+    }
+
+    public String getBangumi_score()
+    {
+        return bangumi_score;
+    }
+
+    public String getBangumi_play()
+    {
+        return bangumi_play;
+    }
+
+    public String getBangumi_like()
+    {
+        return bangumi_like;
+    }
+
+    public String getBangumi_series()
+    {
+        return bangumi_series;
+    }
+
+    public String getBangumi_needvip()
+    {
+        return bangumi_needvip;
+    }
+
+    public String getBangumi_cover()
+    {
+        return bangumi_cover;
+    }
+
+    public String getBangumi_cover_small()
+    {
+        return bangumi_cover_small;
+    }
+
+    public ArrayList<BangumiEpisodeModel> getBangumi_episodes()
+    {
+        return bangumi_episodes;
+    }
+
+    public StringBuilder getBangumi_section_name()
+    {
+        return bangumi_section_name;
+    }
+
+    public ArrayList<BangumiEpisodeModel> getBangumi_sections()
+    {
+        return bangumi_sections;
+    }
+
+    public ArrayList<BangumiSeasonModel> getBangumi_seasons()
+    {
+        return bangumi_seasons;
+    }
+
+    public boolean isBangumi_user_is_follow()
+    {
+        return bangumi_user_is_follow;
+    }
+
+    public String getBangumi_user_progress_epid()
+    {
+        return bangumi_user_progress_epid;
+    }
+
+    public int getBangumi_user_progress_mode()
+    {
+        return bangumi_user_progress_mode;
+    }
+
+    public int getBangumi_user_progress_position()
+    {
+        return bangumi_user_progress_position;
+    }
+
+    public String getBangumi_user_progress_aid()
+    {
+        return bangumi_user_progress_aid;
+    }
+
+    public String getBangumi_detail_typename()
+    {
+        return bangumi_detail_typename;
+    }
+
+    public StringBuilder getBangumi_detail_areas()
+    {
+        return bangumi_detail_areas;
+    }
+
+    public String getBangumi_detail_publish_date()
+    {
+        return bangumi_detail_publish_date;
+    }
+
+    public String getBangumi_detail_publish_ep()
+    {
+        return bangumi_detail_publish_ep;
+    }
+
+    public StringBuilder getBangumi_detail_styles()
+    {
+        return bangumi_detail_styles;
+    }
+
+    public String getBangumi_detail_evaluate()
+    {
+        return bangumi_detail_evaluate;
+    }
+
+    public String getBangumi_detail_actor_title()
+    {
+        return bangumi_detail_actor_title;
+    }
+
+    public String getBangumi_detail_actor_info()
+    {
+        return bangumi_detail_actor_info;
+    }
+
+    public String getBangumi_detail_staff_title()
+    {
+        return bangumi_detail_staff_title;
+    }
+
+    public String getBangumi_detail_staff_info()
+    {
+        return bangumi_detail_staff_info;
+    }
+
+    public String getBangumi_type_name()
+    {
+        return bangumi_type_name;
+    }
+
+    public String getBangumi_type_follow()
+    {
+        return bangumi_type_follow;
+    }
+
+    public String getBangumi_type_ep()
+    {
+        return bangumi_type_ep;
     }
 
     public class BangumiEpisodeModel

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="74dp"
+    android:layout_marginLeft="18dp"
+    android:layout_marginTop="1dp"
+    android:layout_marginRight="18dp"
+    android:layout_marginBottom="1dp"
+    android:descendantFocusability="blocksDescendants"
+    app:cardCornerRadius="6dp"
+    app:cardElevation="0dp">
+
+    <RelativeLayout
+        android:id="@+id/item_search_bangumi_lay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:gravity="center_vertical"
+        android:clickable="true"
+        android:focusable="true"
+        android:descendantFocusability="blocksDescendants">
+
+        <ImageView
+            android:id="@+id/item_search_bangumi_img"
+            android:layout_width="56dp"
+            android:layout_height="74dp"
+            android:layout_centerVertical="true"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            android:src="@drawable/img_default_animation" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_toEndOf="@+id/item_search_bangumi_img">
+
+            <TextView
+                android:id="@+id/item_search_bangumi_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:lines="2"
+                android:text="狼与香辛料啊水水水水水水水水水水"
+                android:textColor="@color/gray_44"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/item_search_bangumi_score"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/item_search_bangumi_title"
+                android:layout_alignParentEnd="true"
+                android:text="9.8"
+                android:textColor="@color/orange"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/item_search_bangumi_title"
+                android:layout_alignParentStart="true"
+                android:layout_toStartOf="@+id/item_search_bangumi_score"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/item_search_bangumi_play"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textSize="12sp"
+                    android:text="日本"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/shape_bg_article_card_identity"
+                        android:paddingStart="2dp"
+                        android:paddingTop="1dp"
+                        android:paddingEnd="2dp"
+                        android:paddingBottom="1dp"
+                        android:text="番剧"
+                        android:textColor="@color/mainColor"
+                        android:textSize="11sp" />
+
+                    <TextView
+                        android:id="@+id/item_search_bangumi_ep_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="1.1"
+                        android:layout_marginStart="4dp"
+                        android:textSize="12sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </RelativeLayout>
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>

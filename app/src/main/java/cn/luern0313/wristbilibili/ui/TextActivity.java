@@ -1,12 +1,12 @@
 package cn.luern0313.wristbilibili.ui;
 
-import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
 import cn.luern0313.wristbilibili.R;
 
 public class TextActivity extends AppCompatActivity
@@ -16,6 +16,7 @@ public class TextActivity extends AppCompatActivity
 
     TextView uiTitle;
     TextView uiText;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -28,5 +29,6 @@ public class TextActivity extends AppCompatActivity
         uiText = findViewById(R.id.text_textview);
         uiTitle.setText(intent.getStringExtra("title"));
         uiText.setText(Html.fromHtml(intent.getStringExtra("text")));
+        //fromHtml(, new MImageGetter(uiText, ctx), null)
     }
 }

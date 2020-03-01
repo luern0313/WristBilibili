@@ -17,7 +17,7 @@ import cn.luern0313.wristbilibili.R;
  * 被 luern0313 创建于 2020/2/4.
  */
 
-public class HtmlTagHandlerUtil implements Html.TagHandler
+public class SearchHtmlTagHandlerUtil implements Html.TagHandler
 {
     private Context ctx;
     private static final String TAG_KEYWORD = "keyword";
@@ -26,7 +26,7 @@ public class HtmlTagHandlerUtil implements Html.TagHandler
     private int stopIndex = 0;
     final HashMap<String, String> attributes = new HashMap<String, String>();
 
-    public HtmlTagHandlerUtil(Context ctx)
+    public SearchHtmlTagHandlerUtil(Context ctx)
     {
         this.ctx = ctx;
     }

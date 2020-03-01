@@ -31,7 +31,7 @@ import cn.luern0313.wristbilibili.ui.BangumiActivity;
 import cn.luern0313.wristbilibili.ui.MainActivity;
 import cn.luern0313.wristbilibili.ui.OtherUserActivity;
 import cn.luern0313.wristbilibili.ui.VideodetailsActivity;
-import cn.luern0313.wristbilibili.util.HtmlTagHandlerUtil;
+import cn.luern0313.wristbilibili.util.SearchHtmlTagHandlerUtil;
 
 /**
  * Created by liupe on 2018/11/16.
@@ -44,7 +44,7 @@ public class SearchFragment extends Fragment
     SearchApi searchApi;
     SearchAdapter searchAdapter;
     SearchAdapter.SearchAdapterListener searchAdapterListener;
-    HtmlTagHandlerUtil htmlTagHandlerUtil;
+    SearchHtmlTagHandlerUtil htmlTagHandlerUtil;
 
     View rootLayout;
     TextView seaHotWordText;
@@ -78,7 +78,7 @@ public class SearchFragment extends Fragment
         ctx = getActivity();
         rootLayout = inflater.inflate(R.layout.fragment_search, container, false);
         searchApi = new SearchApi(MainActivity.sharedPreferences.getString("cookies", ""));
-        htmlTagHandlerUtil = new HtmlTagHandlerUtil(ctx);
+        htmlTagHandlerUtil = new SearchHtmlTagHandlerUtil(ctx);
         searchAdapterListener = new SearchAdapter.SearchAdapterListener()
         {
             @Override

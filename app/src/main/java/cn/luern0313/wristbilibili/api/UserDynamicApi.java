@@ -157,7 +157,7 @@ public class UserDynamicApi
         catch (IOException e)
         {
             e.printStackTrace();
-            return "网络不好，点赞失败惹。。";
+            return "网络不好，点赞失败了。。";
         }
         catch (JSONException e)
         {

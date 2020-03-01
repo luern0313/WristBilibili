@@ -21,7 +21,7 @@ import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.models.SearchModel;
-import cn.luern0313.wristbilibili.util.HtmlTagHandlerUtil;
+import cn.luern0313.wristbilibili.util.SearchHtmlTagHandlerUtil;
 import cn.luern0313.wristbilibili.util.ImageDownloaderUtil;
 
 /**
@@ -35,11 +35,11 @@ public class SearchAdapter extends BaseAdapter
     private LruCache<String, BitmapDrawable> mImageCache;
     private ListView listView;
     private SearchAdapterListener searchAdapterListener;
-    private HtmlTagHandlerUtil htmlTagHandlerUtil;
+    private SearchHtmlTagHandlerUtil htmlTagHandlerUtil;
 
     private ArrayList<SearchModel> searchArrayList;
 
-    public SearchAdapter(LayoutInflater inflater, ArrayList<SearchModel> searchArrayList, ListView listView, SearchAdapterListener searchAdapterListener, HtmlTagHandlerUtil htmlTagHandlerUtil)
+    public SearchAdapter(LayoutInflater inflater, ArrayList<SearchModel> searchArrayList, ListView listView, SearchAdapterListener searchAdapterListener, SearchHtmlTagHandlerUtil htmlTagHandlerUtil)
     {
         mInflater = inflater;
         this.searchArrayList = searchArrayList;

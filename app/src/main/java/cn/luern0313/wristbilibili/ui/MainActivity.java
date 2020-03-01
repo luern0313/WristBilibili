@@ -120,6 +120,11 @@ public class MainActivity extends AppCompatActivity
             }).start();
         }
 
+
+        Intent intent111 = new Intent(ctx, ArticleActivity.class);
+        intent111.putExtra("article_id", "4807000");
+        startActivity(intent111);
+
         serviceIntent = new Intent(this, DownloadService.class);
         startService(serviceIntent);
     }

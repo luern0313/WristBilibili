@@ -50,5 +50,7 @@ dependencies {
     implementation 'org.jsoup:jsoup:1.11.3'
     implementation 'me.panpf:sketch:2.7.0'
     implementation 'com.liulishuo.filedownloader:library:1.7.7'
-    implementation 'com.airbnb.android:lottie:3.3.1'
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+    implementation 'org.sufficientlysecure:html-textview:3.9'
 }
