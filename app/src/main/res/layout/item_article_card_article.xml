@@ -12,8 +12,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackground"
-        android:clickable="true"
         android:descendantFocusability="blocksDescendants"
+        android:clickable="true"
         android:focusable="true"
         app:cardCornerRadius="6dp"
         app:cardElevation="0dp">
@@ -23,17 +23,17 @@
             android:layout_height="wrap_content">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/artcard_video_img_lay"
+                android:id="@+id/artcard_article_img_lay"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <ImageView
-                    android:id="@+id/artcard_video_img"
+                    android:id="@+id/artcard_article_img"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:scaleType="centerCrop"
                     android:src="@drawable/img_default_vid"
-                    app:layout_constraintDimensionRatio="68:40"
+                    app:layout_constraintDimensionRatio="17:6"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -43,7 +43,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignBottom="@id/artcard_video_img_lay"
+                android:layout_alignBottom="@id/artcard_article_img_lay"
                 android:background="@drawable/shape_bg_article_card_video_info"
                 android:orientation="horizontal"
                 android:paddingStart="4dp"
@@ -52,7 +52,7 @@
                 android:paddingBottom="2dp">
 
                 <TextView
-                    android:id="@+id/artcard_video_play"
+                    android:id="@+id/artcard_article_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
@@ -62,23 +62,11 @@
                     android:textSize="11sp" />
 
                 <TextView
-                    android:id="@+id/artcard_video_danmaku"
+                    android:id="@+id/artcard_article_reply"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="6dp"
                     android:ellipsize="end"
-                    android:maxLines="1"
-                    android:text="都十分何"
-                    android:textColor="@color/white"
-                    android:textSize="11sp" />
-
-                <TextView
-                    android:id="@+id/artcard_video_time"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="6dp"
-                    android:ellipsize="end"
-                    android:gravity="end"
                     android:maxLines="1"
                     android:text="都十分何"
                     android:textColor="@color/white"
@@ -88,13 +76,13 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/artcard_video_img_lay"
+                android:layout_below="@+id/artcard_article_img_lay"
                 android:layout_centerVertical="true"
                 android:orientation="vertical"
                 android:padding="4dp">
 
                 <TextView
-                    android:id="@+id/artcard_video_title"
+                    android:id="@+id/artcard_article_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
@@ -118,12 +106,12 @@
                         android:paddingTop="1dp"
                         android:paddingEnd="2dp"
                         android:paddingBottom="1dp"
-                        android:text="视频"
+                        android:text="专栏"
                         android:textColor="@color/mainColor"
                         android:textSize="11sp" />
 
                     <TextView
-                        android:id="@+id/artcard_video_up"
+                        android:id="@+id/artcard_article_up"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/artcard_video_title"
@@ -133,6 +121,8 @@
 
                 </LinearLayout>
             </LinearLayout>
+
+
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
 </LinearLayout>

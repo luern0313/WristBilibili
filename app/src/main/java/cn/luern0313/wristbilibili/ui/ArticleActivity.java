@@ -145,7 +145,7 @@ public class ArticleActivity extends AppCompatActivity
 
                 setArticleIcon();
 
-                articleAdapter = new ArticleAdapter(inflater, img_width, articleModel.article_article_nodes, uiArticleListView);
+                articleAdapter = new ArticleAdapter(inflater, img_width, articleModel.article_article_card_model_list, uiArticleListView);
                 uiArticleListView.addHeaderView(layoutArticleHeader);
                 uiArticleListView.setAdapter(articleAdapter);
 

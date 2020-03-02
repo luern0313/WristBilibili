@@ -4,12 +4,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.models.article.ArticleModel;
+import cn.luern0313.wristbilibili.util.DataProcessUtil;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
 
 /**
@@ -51,13 +54,31 @@ public class ArticleApi
         try
         {
             Document document = Jsoup.connect("https://www.bilibili.com/read/mobile/" + article_id).get();
+            Elements elements = document.getElementsByClass("article-holder").first()
+                    .select("figure[class=img-box] > img[class~=^(?:(video)|(fanju)|(article)|(music)|(shop)|(caricature)|(live))-card]");
+            ArrayList<String> perList = new ArrayList<>();
+            for (Element ele : elements)
+            {
+                String[] ids = ele.attr("aid").split(",");
+                String type = ele.attr("class");
+                for(String id : ids)
+                {
+                    if(type.indexOf("video") == 0) perList.add("av" + id);
+                    else if(type.indexOf("article") == 0) perList.add("cv" + id);
+                    else if(type.indexOf("caricature") == 0) perList.add("mc" + id);
+                    else if(type.indexOf("live") == 0) perList.add("lv" + id);
+                    else perList.add(id);
+                }
+            }
+            String cardUrl = "https://api.bilibili.com/x/article/cards?ids=" + DataProcessUtil.joinArrayList(perList, ",");
+            JSONObject cardJson = new JSONObject(NetWorkUtil.get(cardUrl, webHeaders).body().string()).optJSONObject("data");
 
             String infoUrl = "https://api.bilibili.com/x/article/viewinfo?id=" + article_id;
             JSONObject infoJson = new JSONObject(NetWorkUtil.get(infoUrl, webHeaders).body().string()).optJSONObject("data");
 
             String upUrl = "https://api.bilibili.com/x/article/more?aid=" + article_id;
             JSONObject upJson = new JSONObject(NetWorkUtil.get(upUrl, webHeaders).body().string()).optJSONObject("data");
-            articleModel = new ArticleModel(article_id, infoJson, upJson, document);
+            articleModel = new ArticleModel(article_id, infoJson, upJson, document, cardJson);
             return articleModel;
         }
         catch (JSONException e)

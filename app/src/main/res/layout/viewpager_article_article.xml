@@ -8,7 +8,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:divider="@color/alpha"
-        android:dividerHeight="0dp" />
+        android:dividerHeight="0dp"
+        android:paddingBottom="28dp"
+        android:clipToPadding="false"/>
 
     <LinearLayout
         android:id="@+id/article_article_loading"

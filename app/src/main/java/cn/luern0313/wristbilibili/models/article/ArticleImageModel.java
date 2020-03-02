@@ -13,7 +13,7 @@ public class ArticleImageModel
     public ArticleImageModel(Attributes attributes)
     {
         article_image_src = attributes.getIgnoreCase("data-src");
-        article_image_width = Integer.valueOf(attributes.getIgnoreCase("width"));
-        article_image_height = Integer.valueOf(attributes.getIgnoreCase("height"));
+        article_image_width = Integer.valueOf(attributes.hasKey("width") ? attributes.getIgnoreCase("width") : "0");
+        article_image_height = Integer.valueOf(attributes.hasKey("height") ? attributes.getIgnoreCase("height") : "0");
     }
 }

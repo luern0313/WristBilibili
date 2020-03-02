@@ -38,9 +38,8 @@ public class ArticleModel
     public boolean article_user_fav;
 
     public Element article_article;
-    public Elements article_article_nodes;
-    public ArrayList<ArticleImageModel> article_article_img_list;
-    public ArticleModel(String id, JSONObject article, JSONObject more, Document element)
+    public ArrayList<ArticleCardModel> article_article_card_model_list = new ArrayList<>();
+    public ArticleModel(String id, JSONObject article, JSONObject more, Document element, JSONObject card)
     {
         article_id = id;
         article_title = article.optString("title");
@@ -71,45 +70,72 @@ public class ArticleModel
         article_user_fav = article.optBoolean("favorite");
 
         article_article = element.getElementsByClass("article-holder").first();
-        article_article_nodes = article_article.children();
-        for(int i = 0; i < article_article_nodes.size(); i++)
-        {
-            Element e = article_article_nodes.get(i);
-            if(e.tagName().equals("figure") && e.attr("class").equals("img-box"))
-            {
-                Element img = e.getElementsByTag("img").first();
-                article_article_img_list.add(new ArticleImageModel(img.attributes()));
-                img.attr("src", img.attr("data-src"));
-                img.removeAttr("data-src");
-                e.getElementsByTag("img").first().remove();
-                e.prependChild(img);
-                article_article_nodes.set(i, e);
-            }
 
-            Elements es = article_article_nodes.get(i).select("span[class*=color-]");
-            for(Element el : es)
+        Elements imgs = article_article.select("figure[class=img-box] > img");
+        for(Element img : imgs)
+        {
+            img.attr("src", img.attr("data-src"));
+            img.append("<br>");
+        }
+        Elements colors = article_article.select("span[class*=color-]");
+        for(Element color : colors)
+        {
+            String[] class_list = color.className().split(" ");
+            for (String ii : class_list)
             {
-                String[] class_list = el.attr("class").split(" ");
-                for (String ii : class_list)
+                if(colorMap.containsKey(ii))
                 {
-                    if(colorMap.containsKey(ii))
-                    {
-                        el.tagName("font");
-                        el.attr("color", colorMap.get(ii));
-                    }
+                    color.tagName("font");
+                    color.attr("color", colorMap.get(ii));
                 }
             }
-            article_article_nodes.get(i).select("figure > img").append("<br>");
-            article_article_nodes.get(i).select("blockquote").tagName("em");
-            article_article_nodes.get(i).select("span[style*=line-through], font[style*=line-through]").wrap("<s></s>");
-            article_article_nodes.get(i).select("figcaption").wrap("<small></small>");
-            article_article_nodes.get(i).select("span[class*=font-size-2], font[class*=font-size-2]").wrap("<big></big>");
-            article_article_nodes.get(i).select("span[class*=font-size-1], font[class*=font-size-1]").wrap("<small></small>");
-            Elements figeles = article_article_nodes.get(i).select("figcaption");
-            for(int j = 0; j < figeles.size(); j ++)
-                if(!figeles.get(j).text().equals(""))
-                    figeles.get(j).wrap("<center></center>");
         }
+        article_article.select("blockquote").tagName("em");
+        article_article.select("span[style*=line-through], font[style*=line-through]").wrap("<s></s>");
+        article_article.select("figcaption").wrap("<small></small>");
+        article_article.select("span[class*=font-size-2], font[class*=font-size-2]").wrap("<big></big>");
+        article_article.select("span[class*=font-size-1], font[class*=font-size-1]").wrap("<small></small>");
+        Elements figeles = article_article.select("figcaption");
+        for(int j = 0; j < figeles.size(); j++)
+            if(!figeles.get(j).text().equals(""))
+                figeles.get(j).wrap("<center></center>");
+
+        Elements arts = article_article.children();
+        ArticleCardModel articleCardModel = new ArticleCardModel();
+        for(Element art : arts)
+        {
+            if(art.tagName().equals("figure") && art.className().equals("img-box") && art.child(0).tagName().equals("img") && art.child(0).hasAttr("aid"))
+            {
+                Element img = art.child(0);
+                String[] tagids = img.attr("aid").split(",");
+                String type = img.attr("class");
+                for(String tagid : tagids)
+                {
+                    if(type.indexOf("video") == 0)
+                        article_article_card_model_list.add(articleCardModel.new ArticleVideoCardModel("av" + tagid, card.optJSONObject("av" + tagid)));
+                    else if(type.indexOf("article") == 0)
+                        article_article_card_model_list.add(articleCardModel.new ArticleArticleCardModel("cv" + tagid, card.optJSONObject("cv" + tagid)));
+                    else if(type.indexOf("fanju") == 0)
+                        article_article_card_model_list.add(articleCardModel.new ArticleBangumiCardModel(tagid, card.optJSONObject(tagid)));
+                    else if(type.indexOf("music") == 0)
+                        article_article_card_model_list.add(articleCardModel.new ArticleMusicCardModel(tagid, card.optJSONObject(tagid)));
+                    else if(type.indexOf("shop") == 0)
+                    {
+                        if(tagid.indexOf("pw") == 0)
+                            article_article_card_model_list.add(articleCardModel.new ArticleTicketCardModel(tagid, card.optJSONObject(tagid)));
+                        else if(tagid.indexOf("sp") == 0)
+                            article_article_card_model_list.add(articleCardModel.new ArticleShopCardModel(tagid, card.optJSONObject(tagid)));
+                    }
+                    else if(type.indexOf("caricature") == 0)
+                        article_article_card_model_list.add(articleCardModel.new ArticleContainerCardModel("mc" + tagid, card.optJSONObject("mc" + tagid)));
+                    else if(type.indexOf("live") == 0)
+                        article_article_card_model_list.add(articleCardModel.new ArticleLiveCardModel("lv" + tagid, card.optJSONObject("lv" + tagid)));
+                }
+            }
+            else
+                article_article_card_model_list.add(articleCardModel.new ArticleTextModel(art));
+        }
+
     }
 
     private HashMap<String, String> colorMap = new HashMap<String, String>()

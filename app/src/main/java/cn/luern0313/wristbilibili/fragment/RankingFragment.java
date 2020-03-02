@@ -202,7 +202,10 @@ public class RankingFragment extends Fragment
                                 try
                                 {
                                     videoModel = videoDetailsApi.getVideoDetails();
-                                    handler.post(runnablePickUi);
+                                    if(videoModel != null)
+                                        handler.post(runnablePickUi);
+                                    else
+                                        handler.post(runnablePickNodata);
                                 }
                                 catch (IOException e)
                                 {

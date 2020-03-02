@@ -1,5 +1,6 @@
 package cn.luern0313.wristbilibili.util;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -27,5 +28,21 @@ public class DataProcessUtil
         if(m.length() == 1) m = "0" + m;
         if(s.length() == 1) s = "0" + s;
         return m + ":" + s;
+    }
+
+    public static String joinList(String[] list, String split)
+    {
+        StringBuilder stringBuilder = new StringBuilder();
+        for(int i = 0; i < list.length; i++)
+            stringBuilder.append(i == 0 ? "" : split).append(list[i]);
+        return stringBuilder.toString();
+    }
+
+    public static String joinArrayList(ArrayList<String> list, String split)
+    {
+        StringBuilder stringBuilder = new StringBuilder();
+        for(int i = 0; i < list.size(); i++)
+            stringBuilder.append(i == 0 ? "" : split).append(list.get(i));
+        return stringBuilder.toString();
     }
 }

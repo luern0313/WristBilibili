@@ -23,12 +23,12 @@
             android:layout_height="wrap_content">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/artcard_video_img_lay"
+                android:id="@+id/artcard_live_img_lay"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <ImageView
-                    android:id="@+id/artcard_video_img"
+                    android:id="@+id/artcard_live_img"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:scaleType="centerCrop"
@@ -39,11 +39,29 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <TextView
+                android:id="@+id/artcard_live_stat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/artcard_live_img_lay"
+                android:layout_alignEnd="@id/artcard_live_img_lay"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/shape_bg_article_card_live_notlive"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:paddingStart="3dp"
+                android:paddingTop="2dp"
+                android:paddingEnd="3dp"
+                android:paddingBottom="2dp"
+                android:text="未开播"
+                android:textColor="@color/white"
+                android:textSize="11sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignBottom="@id/artcard_video_img_lay"
+                android:layout_alignBottom="@id/artcard_live_img_lay"
                 android:background="@drawable/shape_bg_article_card_video_info"
                 android:orientation="horizontal"
                 android:paddingStart="4dp"
@@ -52,35 +70,26 @@
                 android:paddingBottom="2dp">
 
                 <TextView
-                    android:id="@+id/artcard_video_play"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/artcard_live_area"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:text="撒旦撒"
+                    android:text="学习"
                     android:textColor="@color/white"
                     android:textSize="11sp" />
 
-                <TextView
-                    android:id="@+id/artcard_video_danmaku"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="6dp"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:text="都十分何"
-                    android:textColor="@color/white"
-                    android:textSize="11sp" />
 
                 <TextView
-                    android:id="@+id/artcard_video_time"
-                    android:layout_width="match_parent"
+                    android:id="@+id/artcard_live_online"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="6dp"
                     android:ellipsize="end"
                     android:gravity="end"
                     android:maxLines="1"
-                    android:text="都十分何"
+                    android:text="--"
                     android:textColor="@color/white"
                     android:textSize="11sp" />
             </LinearLayout>
@@ -88,18 +97,18 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/artcard_video_img_lay"
+                android:layout_below="@+id/artcard_live_img_lay"
                 android:layout_centerVertical="true"
                 android:orientation="vertical"
                 android:padding="4dp">
 
                 <TextView
-                    android:id="@+id/artcard_video_title"
+                    android:id="@+id/artcard_live_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:maxLines="2"
-                    android:text="理他骚得很大帅藕丝"
+                    android:text="日常写代码"
                     android:textColor="@color/gray_44"
                     android:textSize="13sp" />
 
@@ -118,21 +127,23 @@
                         android:paddingTop="1dp"
                         android:paddingEnd="2dp"
                         android:paddingBottom="1dp"
-                        android:text="视频"
+                        android:text="直播"
                         android:textColor="@color/mainColor"
                         android:textSize="11sp" />
 
                     <TextView
-                        android:id="@+id/artcard_video_up"
+                        android:id="@+id/artcard_live_up"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/artcard_video_title"
+                        android:layout_below="@id/artcard_live_title"
                         android:layout_marginStart="4dp"
-                        android:text="雕塑湖底"
+                        android:text="luern0313"
                         android:textSize="12sp" />
 
                 </LinearLayout>
             </LinearLayout>
+
+
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
 </LinearLayout>
