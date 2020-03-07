@@ -19,6 +19,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:targetApi="n">
+        <activity android:name=".ui.UnsupportedLinkActivity"></activity>
 
         <meta-data
             android:name="com.google.android.wearable.standalone"
@@ -59,7 +60,7 @@
         <activity android:name=".ui.SendDynamicActivity" />
         <activity android:name=".ui.SelectPartActivity" />
         <activity android:name=".ui.BangumiActivity" />
-        <activity android:name=".ui.ArticleActivity"/>
+        <activity android:name=".ui.ArticleActivity" />
     </application>
 
 </manifest>

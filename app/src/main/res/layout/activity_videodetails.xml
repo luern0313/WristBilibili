@@ -12,15 +12,35 @@
         android:paddingBottom="4dp"
         android:paddingTop="10dp">
 
-        <TextView
+
+        <ViewFlipper
             android:id="@+id/vd_title_title"
             android:layout_width="wrap_content"
             android:layout_height="19dp"
-            android:layout_centerHorizontal="true"
-            android:gravity="center_vertical"
-            android:text="视频详情"
-            android:textColor="@color/white"
-            android:textSize="13sp" />
+            android:layout_centerHorizontal="true">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="视频详情"
+                android:textColor="@color/white"
+                android:textSize="13sp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="视频评论"
+                android:textColor="@color/white"
+                android:textSize="13sp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="相关推荐"
+                android:textColor="@color/white"
+                android:textSize="13sp"/>
+
+        </ViewFlipper>
 
         <ImageView
             android:id="@+id/vd_title_extraicon"

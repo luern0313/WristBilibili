@@ -143,12 +143,6 @@ public class FavorVideoAdapter extends BaseAdapter
         }
     }
 
-    private String getView(int view)
-    {
-        if(view > 10000) return view / 1000 / 10.0 + "万";
-        else return String.valueOf(view);
-    }
-
     class ImageTask extends AsyncTask<String, Void, BitmapDrawable>
     {
         private String imageUrl;

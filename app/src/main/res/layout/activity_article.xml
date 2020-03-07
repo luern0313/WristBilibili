@@ -12,21 +12,33 @@
         android:paddingBottom="4dp"
         android:paddingTop="10dp">
 
-        <TextView
+        <ViewFlipper
             android:id="@+id/art_title_title"
             android:layout_width="wrap_content"
             android:layout_height="19dp"
-            android:layout_centerHorizontal="true"
-            android:gravity="center_vertical"
-            android:text="专栏"
-            android:textColor="@color/white"
-            android:textSize="13sp" />
+            android:layout_centerHorizontal="true">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="专栏"
+                android:textColor="@color/white"
+                android:textSize="13sp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="评论"
+                android:textColor="@color/white"
+                android:textSize="13sp"/>
+
+        </ViewFlipper>
 
         <ImageView
             android:id="@+id/art_title_extraicon"
             android:layout_width="12dp"
             android:layout_height="19dp"
-            android:layout_toLeftOf="@+id/art_title_title"
+            android:layout_toStartOf="@+id/art_title_title"
             android:rotation="90"
             android:src="@drawable/icon_extra" />
 
@@ -34,7 +46,7 @@
             android:id="@+id/art_title_extraicon2"
             android:layout_width="12dp"
             android:layout_height="19dp"
-            android:layout_toRightOf="@+id/art_title_title"
+            android:layout_toEndOf="@+id/art_title_title"
             android:rotation="270"
             android:src="@drawable/icon_extra" />
     </RelativeLayout>

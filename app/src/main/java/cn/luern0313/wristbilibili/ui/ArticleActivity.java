@@ -1,8 +1,5 @@
 package cn.luern0313.wristbilibili.ui;
 
-import android.animation.Animator;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -21,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewFlipper;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,8 +31,9 @@ import cn.luern0313.wristbilibili.adapter.ArticleAdapter;
 import cn.luern0313.wristbilibili.adapter.ReplyAdapter;
 import cn.luern0313.wristbilibili.api.ArticleApi;
 import cn.luern0313.wristbilibili.api.ReplyApi;
-import cn.luern0313.wristbilibili.models.article.ArticleModel;
 import cn.luern0313.wristbilibili.models.ReplyModel;
+import cn.luern0313.wristbilibili.models.article.ArticleCardModel;
+import cn.luern0313.wristbilibili.models.article.ArticleModel;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
 
 
@@ -52,7 +51,7 @@ public class ArticleActivity extends AppCompatActivity
     String article_id;
     int img_width;
 
-    TextView uiTitle;
+    ViewFlipper uiTitle;
     ViewPager uiViewPager;
     ImageView uiLoadingImg;
     LinearLayout uiLoading;
@@ -62,6 +61,7 @@ public class ArticleActivity extends AppCompatActivity
 
     ListView uiArticleListView;
     ArticleAdapter articleAdapter;
+    ArticleAdapter.ArticleListener articleListener;
     ListView uiReplyListView;
     ReplyAdapter replyAdapter;
     ReplyAdapter.ReplyAdapterListener replyAdapterListener;
@@ -124,6 +124,15 @@ public class ArticleActivity extends AppCompatActivity
         loadingImgAnim.start();
         uiLoading.setVisibility(View.VISIBLE);
 
+        articleListener = new ArticleAdapter.ArticleListener()
+        {
+            @Override
+            public void onClick(int viewId, int position)
+            {
+                onArticleViewClick(viewId, position);
+            }
+        };
+
         replyAdapterListener = new ReplyAdapter.ReplyAdapterListener()
         {
             @Override
@@ -145,7 +154,7 @@ public class ArticleActivity extends AppCompatActivity
 
                 setArticleIcon();
 
-                articleAdapter = new ArticleAdapter(inflater, img_width, articleModel.article_article_card_model_list, uiArticleListView);
+                articleAdapter = new ArticleAdapter(inflater, img_width, articleModel.article_article_card_model_list, uiArticleListView, articleListener);
                 uiArticleListView.addHeaderView(layoutArticleHeader);
                 uiArticleListView.setAdapter(articleAdapter);
 
@@ -362,12 +371,57 @@ public class ArticleActivity extends AppCompatActivity
             @Override
             public void onPageSelected(int position)
             {
-                if(position == 0) titleAnim("专栏");
-                else if(position == 1) titleAnim("评论");
+                if(uiTitle.getDisplayedChild() != position)
+                {
+                    if(uiTitle.getDisplayedChild() < position)
+                    {
+                        uiTitle.setInAnimation(ctx, R.anim.slide_in_right);
+                        uiTitle.setOutAnimation(ctx, R.anim.slide_out_left);
+                        uiTitle.showNext();
+                    }
+                    else
+                    {
+                        uiTitle.setInAnimation(ctx, android.R.anim.slide_in_left);
+                        uiTitle.setOutAnimation(ctx, android.R.anim.slide_out_right);
+                        uiTitle.showPrevious();
+                    }
+                }
             }
         });
 
         uiViewPager.setAdapter(pagerAdapter);
+    }
+
+    private void onArticleViewClick(int viewId, int position)
+    {
+        ArticleCardModel articleCardModel = articleModel.article_article_card_model_list.get(position);
+        if(articleCardModel.article_card_support)
+        {
+            if(articleCardModel.article_card_identity.substring(0, 2).equals("av"))
+            {
+                Intent intent = new Intent(ctx, VideodetailsActivity.class);
+                intent.putExtra("aid", ((ArticleCardModel.ArticleVideoCardModel) articleCardModel).article_video_card_id);
+                startActivity(intent);
+            }
+            else if(articleCardModel.article_card_identity.substring(0, 2).equals("ss"))
+            {
+                Intent intent = new Intent(ctx, BangumiActivity.class);
+                intent.putExtra("season_id", ((ArticleCardModel.ArticleBangumiCardModel) articleCardModel).article_bangumi_card_id);
+                startActivity(intent);
+            }
+            else if(articleCardModel.article_card_identity.substring(0, 2).equals("cv"))
+            {
+                Intent intent = new Intent(ctx, ArticleActivity.class);
+                intent.putExtra("article_id", ((ArticleCardModel.ArticleArticleCardModel) articleCardModel).article_article_card_id);
+                startActivity(intent);
+            }
+        }
+        else
+        {
+            Intent intent = new Intent(ctx, UnsupportedLinkActivity.class);
+            intent.putExtra("url", articleCardModel.article_card_url);
+            startActivity(intent);
+        }
     }
 
     private void onReplyViewClick(int viewId, int position)
@@ -771,40 +825,6 @@ public class ArticleActivity extends AppCompatActivity
         replyIntent.putExtra("oid", articleModel.article_id);
         replyIntent.putExtra("type", "12");
         startActivityForResult(replyIntent, RESULT_REPLY_SEND);
-    }
-
-
-    void titleAnim(final String title)
-    {
-        ObjectAnimator alpha = ObjectAnimator.ofFloat(uiTitle, "alpha", 1f, 0f);
-        AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.play(alpha);
-        animatorSet.setDuration(500);
-        animatorSet.start();
-        animatorSet.addListener(new Animator.AnimatorListener()
-        {
-            @Override
-            public void onAnimationStart(Animator animation)
-            {
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation)
-            {
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation)
-            {
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation)
-            {
-                uiTitle.setText(title);
-                uiTitle.setAlpha(1);
-            }
-        });
     }
 
     private static int dip2px(Context context, float dpValue)

@@ -1,8 +1,5 @@
 package cn.luern0313.wristbilibili.ui;
 
-import android.animation.Animator;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -25,6 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewFlipper;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,9 +33,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import cn.luern0313.wristbilibili.R;
+import cn.luern0313.wristbilibili.adapter.BangumiEpisodeAdapter;
 import cn.luern0313.wristbilibili.adapter.BangumiRecommendAdapter;
 import cn.luern0313.wristbilibili.adapter.ReplyAdapter;
-import cn.luern0313.wristbilibili.adapter.BangumiEpisodeAdapter;
 import cn.luern0313.wristbilibili.api.BangumiApi;
 import cn.luern0313.wristbilibili.api.OnlineVideoApi;
 import cn.luern0313.wristbilibili.api.ReplyApi;
@@ -61,7 +59,7 @@ public class BangumiActivity extends AppCompatActivity
     OnlineVideoApi onlineVideoApi;
     String seasonId;
 
-    TextView uiTitle;
+    ViewFlipper uiTitle;
     ViewPager uiViewPager;
     ImageView uiLoadingImg;
     LinearLayout uiLoading;
@@ -155,7 +153,9 @@ public class BangumiActivity extends AppCompatActivity
             @Override
             public void run()
             {
-                uiTitle.setText(bangumiModel.bangumi_type_name + "详情");
+                ((TextView) uiTitle.findViewWithTag("1")).setText(bangumiModel.bangumi_type_name + "详情");
+                ((TextView) uiTitle.findViewWithTag("2")).setText("单" + bangumiModel.bangumi_type_ep + "评论");
+
                 ((TextView) findViewById(R.id.bgm_detail_title)).setText(bangumiModel.bangumi_title);
                 if(bangumiModel.bangumi_score.equals("")) findViewById(R.id.bgm_detail_score).setVisibility(View.GONE);
                 else ((TextView) findViewById(R.id.bgm_detail_score)).setText(bangumiModel.bangumi_score);
@@ -472,9 +472,21 @@ public class BangumiActivity extends AppCompatActivity
             @Override
             public void onPageSelected(int position)
             {
-                if(position == 0) titleAnim(bangumiModel.bangumi_type_name + "详情");
-                else if(position == 1) titleAnim("单" + bangumiModel.bangumi_type_ep + "评论");
-                else if(position == 2) titleAnim("相关推荐");
+                if(uiTitle.getDisplayedChild() != position)
+                {
+                    if(uiTitle.getDisplayedChild() < position)
+                    {
+                        uiTitle.setInAnimation(ctx, R.anim.slide_in_right);
+                        uiTitle.setOutAnimation(ctx, R.anim.slide_out_left);
+                        uiTitle.showNext();
+                    }
+                    else
+                    {
+                        uiTitle.setInAnimation(ctx, android.R.anim.slide_in_left);
+                        uiTitle.setOutAnimation(ctx, android.R.anim.slide_out_right);
+                        uiTitle.showPrevious();
+                    }
+                }
             }
         });
 
@@ -677,6 +689,7 @@ public class BangumiActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(final int requestCode, int resultCode, final Intent data)
     {
+        super.onActivityResult(requestCode, resultCode, data);
         if(resultCode != 0) return;
         if(requestCode == RESULT_DETAIL_EPISODE)
         {
@@ -697,15 +710,18 @@ public class BangumiActivity extends AppCompatActivity
                     try
                     {
                         int position = data.getIntExtra("option_position", 0);
-                        String aid = String.valueOf(position < bangumiModel.bangumi_episodes.size() ?
-                                                            bangumiModel.bangumi_episodes.get(position).bangumi_episode_aid :
-                                                            bangumiModel.bangumi_sections.get(position - bangumiModel.bangumi_episodes.size()).bangumi_episode_aid);
-                        String cid = String.valueOf(position < bangumiModel.bangumi_episodes.size() ?
-                                                            bangumiModel.bangumi_episodes.get(position).bangumi_episode_cid :
-                                                            bangumiModel.bangumi_sections.get(position - bangumiModel.bangumi_episodes.size()).bangumi_episode_cid);
-                        onlineVideoApi = new OnlineVideoApi(sharedPreferences.getString("cookies", ""),
-                                                            sharedPreferences.getString("csrf", ""),
-                                                            sharedPreferences.getString("mid", ""), aid, cid);
+                        String aid = String.valueOf(position < bangumiModel.bangumi_episodes
+                                .size() ? bangumiModel.bangumi_episodes
+                                .get(position).bangumi_episode_aid : bangumiModel.bangumi_sections
+                                .get(position - bangumiModel.bangumi_episodes.size()).bangumi_episode_aid);
+                        String cid = String.valueOf(position < bangumiModel.bangumi_episodes
+                                .size() ? bangumiModel.bangumi_episodes
+                                .get(position).bangumi_episode_cid : bangumiModel.bangumi_sections
+                                .get(position - bangumiModel.bangumi_episodes.size()).bangumi_episode_cid);
+                        onlineVideoApi = new OnlineVideoApi(
+                                sharedPreferences.getString("cookies", ""),
+                                sharedPreferences.getString("csrf", ""),
+                                sharedPreferences.getString("mid", ""), aid, cid);
                         onlineVideoApi.connectionVideoUrl();
                         handler.post(runnableDetailLoadingFin);
                         connection.downloadVideo(data.getStringExtra("option_name") + " - " + bangumiModel.bangumi_title, aid, cid);
@@ -971,39 +987,6 @@ public class BangumiActivity extends AppCompatActivity
             else Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
             Looper.loop();
         }
-    }
-
-    void titleAnim(final String title)
-    {
-        ObjectAnimator alpha = ObjectAnimator.ofFloat(uiTitle, "alpha", 1f, 0f);
-        AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.play(alpha);
-        animatorSet.setDuration(500);
-        animatorSet.start();
-        animatorSet.addListener(new Animator.AnimatorListener()
-        {
-            @Override
-            public void onAnimationStart(Animator animation)
-            {
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation)
-            {
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation)
-            {
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation)
-            {
-                uiTitle.setText(title);
-                uiTitle.setAlpha(1);
-            }
-        });
     }
 
     String join(ArrayList arrayList, String split)

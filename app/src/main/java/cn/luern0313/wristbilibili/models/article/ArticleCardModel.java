@@ -15,6 +15,8 @@ import cn.luern0313.wristbilibili.util.DataProcessUtil;
 public class ArticleCardModel
 {
     public String article_card_identity;
+    public boolean article_card_support;
+    public String article_card_url;
 
     public class ArticleTextModel extends ArticleCardModel
     {
@@ -23,6 +25,9 @@ public class ArticleCardModel
         public ArticleTextModel(Element element)
         {
             article_card_identity = "te";
+            article_card_support = false;
+            article_card_url = "";
+
             article_text_element = element;
             Element imgElement = element.select("figure[class=img-box] > img").first();
             if(imgElement != null)
@@ -43,6 +48,9 @@ public class ArticleCardModel
         public ArticleVideoCardModel(String identity, JSONObject videoCard)
         {
             article_card_identity = identity;
+            article_card_support = true;
+            article_card_url = "https://www.bilibili.com/video/av" + videoCard.optInt("aid");
+
             article_video_card_id = String.valueOf(videoCard.optInt("aid"));
             article_video_card_title = videoCard.optString("title");
             article_video_card_cover = videoCard.optString("pic");
@@ -70,6 +78,9 @@ public class ArticleCardModel
         public ArticleBangumiCardModel(String identity, JSONObject bangumiCard)
         {
             article_card_identity = identity;
+            article_card_support = true;
+            article_card_url = "https://www.bilibili.com/bangumi/play/ss" + bangumiCard.optInt("season_id");
+
             article_bangumi_card_id = String.valueOf(bangumiCard.optInt("season_id"));
             article_bangumi_card_title = bangumiCard.optString("title");
             article_bangumi_card_cover = bangumiCard.optString("cover");
@@ -93,6 +104,9 @@ public class ArticleCardModel
         public ArticleArticleCardModel(String identity, JSONObject articleCard)
         {
             article_card_identity = identity;
+            article_card_support = true;
+            article_card_url = "https://www.bilibili.com/read/cv" + articleCard.optInt("id");
+
             article_article_card_id = String.valueOf(articleCard.optInt("id"));
             article_article_card_title = articleCard.optString("title");
             article_article_card_cover = articleCard.has("image_urls") ?
@@ -119,6 +133,9 @@ public class ArticleCardModel
         public ArticleMusicCardModel(String identity, JSONObject musicCard)
         {
             article_card_identity = identity;
+            article_card_support = false;
+            article_card_url = "https://www.bilibili.com/audio/au" + musicCard.optInt("song_id");
+
             article_music_card_id = String.valueOf(musicCard.optInt("song_id"));
             article_music_card_title = musicCard.optString("title");
             article_music_card_cover = musicCard.optString("cover_url");
@@ -140,6 +157,9 @@ public class ArticleCardModel
         public ArticleTicketCardModel(String identity, JSONObject ticketCard)
         {
             article_card_identity = identity;
+            article_card_support = false;
+            article_card_url = "https://show.bilibili.com/platform/detail.html?id=" + ticketCard.optInt("id");
+
             article_ticket_card_id = String.valueOf(ticketCard.optInt("id"));
             article_ticket_card_title = ticketCard.optString("name");
             article_ticket_card_cover = "http:" + ticketCard.optString("performance_image");
@@ -148,7 +168,7 @@ public class ArticleCardModel
             article_ticket_card_time = format.format(new Date(ticketCard.optInt("start_time") * 1000L));
 
             article_ticket_card_location = ticketCard.optString("city_name") + " " + ticketCard.optString("venue_name");
-            article_ticket_card_price = "￥" + ticketCard.optInt("price_low");
+            article_ticket_card_price = "¥" + ticketCard.optInt("price_low");
         }
     }
 
@@ -162,6 +182,9 @@ public class ArticleCardModel
         public ArticleShopCardModel(String identity, JSONObject shopCard)
         {
             article_card_identity = identity;
+            article_card_support = false;
+            article_card_url = "https://mall.bilibili.com/detail.html?itemsId=" + shopCard.optInt("itemsId");
+
             article_shop_card_id = String.valueOf(shopCard.optInt("itemsId"));
             article_shop_card_title = shopCard.optString("name");
             article_shop_card_cover = shopCard.has("img") ?
@@ -182,6 +205,9 @@ public class ArticleCardModel
         public ArticleContainerCardModel(String identity, JSONObject containerCard)
         {
             article_card_identity = identity;
+            article_card_support = false;
+            article_card_url = "https://manga.bilibili.com/detail/mc" + containerCard.optInt("id");
+
             article_container_card_id = String.valueOf(containerCard.optInt("id"));
             article_container_card_title = containerCard.optString("title");
             article_container_card_cover = containerCard.optString("vertical_cover");
@@ -203,6 +229,9 @@ public class ArticleCardModel
         public ArticleLiveCardModel(String identity, JSONObject liveCard)
         {
             article_card_identity = identity;
+            article_card_support = false;
+            article_card_url = "https://live.bilibili.com/" + liveCard.optInt("room_id");
+
             article_live_card_id = String.valueOf(liveCard.optInt("room_id"));
             article_live_card_title = liveCard.optString("title");
             article_live_card_cover = liveCard.optString("cover");

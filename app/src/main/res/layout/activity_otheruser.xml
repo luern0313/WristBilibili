@@ -12,19 +12,47 @@
         android:paddingBottom="4dp"
         android:paddingTop="10dp">
 
-        <TextView
+        <ViewFlipper
             android:id="@+id/ou_title_title"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:text="用户"
-            android:textColor="@color/white" />
+            android:layout_height="19dp"
+            android:layout_centerHorizontal="true">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="用户信息"
+                android:textColor="@color/white"
+                android:textSize="13sp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="用户动态"
+                android:textColor="@color/white"
+                android:textSize="13sp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="关注列表"
+                android:textColor="@color/white"
+                android:textSize="13sp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="粉丝列表"
+                android:textColor="@color/white"
+                android:textSize="13sp"/>
+
+        </ViewFlipper>
 
         <ImageView
             android:id="@+id/ou_title_extraicon"
             android:layout_width="12dp"
             android:layout_height="19dp"
-            android:layout_toLeftOf="@+id/ou_title_title"
+            android:layout_toStartOf="@+id/ou_title_title"
             android:rotation="90"
             android:src="@drawable/icon_extra" />
 
@@ -32,7 +60,7 @@
             android:id="@+id/ou_title_extraicon2"
             android:layout_width="12dp"
             android:layout_height="19dp"
-            android:layout_toRightOf="@+id/ou_title_title"
+            android:layout_toEndOf="@+id/ou_title_title"
             android:rotation="270"
             android:src="@drawable/icon_extra" />
 

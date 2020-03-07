@@ -53,8 +53,9 @@ public class ArticleApi
     {
         try
         {
-            Document document = Jsoup.connect("https://www.bilibili.com/read/mobile/" + article_id).get();
-            Elements elements = document.getElementsByClass("article-holder").first()
+            String html = NetWorkUtil.get("https://www.bilibili.com/read/mobile/" + article_id, webHeaders).body().string();
+            Document document = Jsoup.parse(html);
+            Elements elements = document.selectFirst("*[class~=(:?(^)|(\\s))article-holder(:?(\\s)|($))]")
                     .select("figure[class=img-box] > img[class~=^(?:(video)|(fanju)|(article)|(music)|(shop)|(caricature)|(live))-card]");
             ArrayList<String> perList = new ArrayList<>();
             for (Element ele : elements)
@@ -81,7 +82,7 @@ public class ArticleApi
             articleModel = new ArticleModel(article_id, infoJson, upJson, document, cardJson);
             return articleModel;
         }
-        catch (JSONException e)
+        catch (JSONException | NullPointerException e)
         {
             e.printStackTrace();
         }

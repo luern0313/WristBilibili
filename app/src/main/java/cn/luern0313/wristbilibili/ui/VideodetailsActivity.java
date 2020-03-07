@@ -1,6 +1,5 @@
 package cn.luern0313.wristbilibili.ui;
 
-import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.ComponentName;
@@ -25,6 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewFlipper;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -87,7 +87,7 @@ public class VideodetailsActivity extends AppCompatActivity
     AnimationDrawable loadingImgAnim;
     Bitmap videoUpFace;
 
-    TextView titleTextView;
+    ViewFlipper uiTitle;
     ViewPager viewPager;
 
     ImageView uiLoadingImg;
@@ -135,7 +135,7 @@ public class VideodetailsActivity extends AppCompatActivity
         layoutLoading = inflater.inflate(R.layout.widget_loading, null);
         layoutChangeMode = inflater.inflate(R.layout.widget_reply_changemode, null);
 
-        titleTextView = findViewById(R.id.vd_title_title);
+        uiTitle = findViewById(R.id.vd_title_title);
         viewPager = findViewById(R.id.vd_viewpager);
         viewPager.setOffscreenPageLimit(2);
         uiLoadingImg = findViewById(R.id.vd_loading_img);
@@ -557,9 +557,21 @@ public class VideodetailsActivity extends AppCompatActivity
             @Override
             public void onPageSelected(int position)
             {
-                if(position == 0) titleAnim("视频详情");
-                else if(position == 1) titleAnim("视频评论");
-                else if(position == 2) titleAnim("相关推荐");
+                if(uiTitle.getDisplayedChild() != position)
+                {
+                    if(uiTitle.getDisplayedChild() < position)
+                    {
+                        uiTitle.setInAnimation(ctx, R.anim.slide_in_right);
+                        uiTitle.setOutAnimation(ctx, R.anim.slide_out_left);
+                        uiTitle.showNext();
+                    }
+                    else
+                    {
+                        uiTitle.setInAnimation(ctx, android.R.anim.slide_in_left);
+                        uiTitle.setOutAnimation(ctx, android.R.anim.slide_out_right);
+                        uiTitle.showPrevious();
+                    }
+                }
             }
         });
 
@@ -651,39 +663,6 @@ public class VideodetailsActivity extends AppCompatActivity
                 }
             }
         }).start();
-    }
-
-    void titleAnim(final String title)
-    {
-        ObjectAnimator alpha = ObjectAnimator.ofFloat(titleTextView, "alpha", 1f, 0f);
-        AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.play(alpha);
-        animatorSet.setDuration(500);
-        animatorSet.start();
-        animatorSet.addListener(new Animator.AnimatorListener()
-        {
-            @Override
-            public void onAnimationStart(Animator animation)
-            {
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation)
-            {
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation)
-            {
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation)
-            {
-                titleTextView.setText(title);
-                titleTextView.setAlpha(1);
-            }
-        });
     }
 
     void tripleAnim()
@@ -1174,9 +1153,8 @@ public class VideodetailsActivity extends AppCompatActivity
                                     data.getStringExtra("option_id"));
                             onlineVideoApi.connectionVideoUrl();
                             handler.post(runnableVideoLoadingFin);
-                            connection.setVideoPartData(data.getStringExtra("option_name") + " - " + videoModel.video_title,
-                                                        data.getStringExtra("option_id"));
-                            connection.downloadVideo();
+                            connection.downloadVideo(data.getStringExtra("option_name") + " - " + videoModel.video_title,
+                                                     data.getStringExtra("option_id"));
                         }
                         catch (IOException e)
                         {
@@ -1267,9 +1245,6 @@ public class VideodetailsActivity extends AppCompatActivity
 
     class VideoDownloadServiceConnection implements ServiceConnection
     {
-        String title;
-        String cid;
-
         @Override
         public void onServiceDisconnected(ComponentName name)
         {
@@ -1281,13 +1256,7 @@ public class VideodetailsActivity extends AppCompatActivity
             myBinder = (DownloadService.MyBinder) service;
         }
 
-        void setVideoPartData(String title, String cid)
-        {
-            this.title = title;
-            this.cid = cid;
-        }
-
-        void downloadVideo()
+        void downloadVideo(String title, String cid)
         {
             String result = myBinder.startDownload(videoModel.video_aid, cid, title,
                                                    videoModel.video_cover, onlineVideoApi.getVideoUrl(),

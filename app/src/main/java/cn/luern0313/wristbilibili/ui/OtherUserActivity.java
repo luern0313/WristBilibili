@@ -1,12 +1,9 @@
 package cn.luern0313.wristbilibili.ui;
 
-import android.animation.Animator;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
-import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.AnimationDrawable;
@@ -26,6 +23,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewFlipper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,6 +34,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import cn.luern0313.wristbilibili.R;
@@ -91,7 +90,7 @@ public class OtherUserActivity extends AppCompatActivity
     Runnable runnableFollowMoreErr;
     Runnable runnableFansMoreErr;
 
-    TextView uiTitleTextView;
+    ViewFlipper uiTitle;
     ViewPager uiViewpager;
     ImageView uiLoading;
     View dynamicLayoutLoading;
@@ -139,7 +138,7 @@ public class OtherUserActivity extends AppCompatActivity
         sendDynamicApi = new SendDynamicApi(MainActivity.sharedPreferences.getString("cookies", ""),
                                             MainActivity.sharedPreferences.getString("mid", ""),
                                             MainActivity.sharedPreferences.getString("csrf", ""));
-        uiTitleTextView = findViewById(R.id.ou_title_title);
+        uiTitle = findViewById(R.id.ou_title_title);
         uiViewpager = findViewById(R.id.ou_viewpager);
         uiLoading = findViewById(R.id.ou_loading_img);
         dynamicLayoutLoading = inflater.inflate(R.layout.widget_loading, null);
@@ -752,10 +751,21 @@ public class OtherUserActivity extends AppCompatActivity
             @Override
             public void onPageSelected(int position)
             {
-                if(position == 0) titleAnim("用户");
-                else if(position == 1) titleAnim("动态");
-                else if(position == 2) titleAnim("关注");
-                else if(position == 3) titleAnim("粉丝");
+                if(uiTitle.getDisplayedChild() != position)
+                {
+                    if(uiTitle.getDisplayedChild() < position)
+                    {
+                        uiTitle.setInAnimation(ctx, R.anim.slide_in_right);
+                        uiTitle.setOutAnimation(ctx, R.anim.slide_out_left);
+                        uiTitle.showNext();
+                    }
+                    else
+                    {
+                        uiTitle.setInAnimation(ctx, android.R.anim.slide_in_left);
+                        uiTitle.setOutAnimation(ctx, android.R.anim.slide_out_right);
+                        uiTitle.showPrevious();
+                    }
+                }
             }
         });
         uiViewpager.setAdapter(pagerAdapter);
@@ -859,39 +869,6 @@ public class OtherUserActivity extends AppCompatActivity
                 }
             }
         }).start();
-    }
-
-    void titleAnim(final String title)
-    {
-        ObjectAnimator alpha = ObjectAnimator.ofFloat(uiTitleTextView, "alpha", 1f, 0f);
-        AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.play(alpha);
-        animatorSet.setDuration(500);
-        animatorSet.start();
-        animatorSet.addListener(new Animator.AnimatorListener()
-        {
-            @Override
-            public void onAnimationStart(Animator animation)
-            {
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation)
-            {
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation)
-            {
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation)
-            {
-                uiTitleTextView.setText(title);
-                uiTitleTextView.setAlpha(1);
-            }
-        });
     }
 
     private String getView(String v)
@@ -1320,7 +1297,7 @@ public class OtherUserActivity extends AppCompatActivity
             }
             else
             {
-                ImageTask it = new ImageTask();
+                ImageTask it = new ImageTask((ListView) uiViewpager.findViewWithTag(mode).findViewById(R.id.ou_pp_listview));
                 it.execute(url);
                 return null;
             }
@@ -1338,6 +1315,12 @@ public class OtherUserActivity extends AppCompatActivity
         class ImageTask extends AsyncTask<String, Void, BitmapDrawable>
         {
             private String imageUrl;
+            private Resources listViewResources;
+
+            ImageTask(ListView listView)
+            {
+                this.listViewResources = listView.getResources();
+            }
 
             @Override
             protected BitmapDrawable doInBackground(String... params)
@@ -1347,7 +1330,7 @@ public class OtherUserActivity extends AppCompatActivity
                     imageUrl = params[0];
                     Bitmap bitmap = null;
                     bitmap = ImageDownloaderUtil.downloadImage(imageUrl);
-                    BitmapDrawable db = new BitmapDrawable(uiViewpager.findViewWithTag(mode).findViewById(R.id.ou_pp_listview).getResources(), bitmap);
+                    BitmapDrawable db = new BitmapDrawable(listViewResources, bitmap);
                     if(mImageCache.get(imageUrl) == null && bitmap != null)
                     {
                         mImageCache.put(imageUrl, db);

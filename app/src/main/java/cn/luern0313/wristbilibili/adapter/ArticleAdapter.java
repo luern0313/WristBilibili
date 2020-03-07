@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.sufficientlysecure.htmltextview.HtmlTextView;
@@ -32,18 +33,20 @@ public class ArticleAdapter extends BaseAdapter
     private LayoutInflater mInflater;
 
     private LruCache<String, BitmapDrawable> mImageCache;
+    private ArticleListener articleListener;
 
     private ArrayList<ArticleCardModel> articleCardModelArrayList;
     private ListView listView;
 
     private int img_width;
 
-    public ArticleAdapter(LayoutInflater inflater, int img_width, ArrayList<ArticleCardModel> articleCardModelArrayList, ListView listView)
+    public ArticleAdapter(LayoutInflater inflater, int img_width, ArrayList<ArticleCardModel> articleCardModelArrayList, ListView listView, ArticleListener articleListener)
     {
         mInflater = inflater;
         this.img_width = img_width;
         this.articleCardModelArrayList = articleCardModelArrayList;
         this.listView = listView;
+        this.articleListener = articleListener;
 
         int maxCache = (int) Runtime.getRuntime().maxMemory();
         int cacheSize = maxCache / 8;
@@ -144,6 +147,7 @@ public class ArticleAdapter extends BaseAdapter
                 convertView = mInflater.inflate(R.layout.item_article_card_video, null);
                 articleVideoCardViewHolder = new ArticleVideoCardViewHolder();
                 convertView.setTag(articleVideoCardViewHolder);
+                articleVideoCardViewHolder.video_lay = convertView.findViewById(R.id.artcard_video_lay);
                 articleVideoCardViewHolder.video_title = convertView.findViewById(R.id.artcard_video_title);
                 articleVideoCardViewHolder.video_cover = convertView.findViewById(R.id.artcard_video_img);
                 articleVideoCardViewHolder.video_play = convertView.findViewById(R.id.artcard_video_play);
@@ -156,6 +160,7 @@ public class ArticleAdapter extends BaseAdapter
                 convertView = mInflater.inflate(R.layout.item_article_card_bangumi, null);
                 articleBangumiCardViewHolder = new ArticleBangumiCardViewHolder();
                 convertView.setTag(articleBangumiCardViewHolder);
+                articleBangumiCardViewHolder.bangumi_lay = convertView.findViewById(R.id.artcard_bangumi_lay);
                 articleBangumiCardViewHolder.bangumi_title = convertView.findViewById(R.id.artcard_bangumi_title);
                 articleBangumiCardViewHolder.bangumi_cover = convertView.findViewById(R.id.artcard_bangumi_img);
                 articleBangumiCardViewHolder.bangumi_play = convertView.findViewById(R.id.artcard_bangumi_play);
@@ -168,6 +173,7 @@ public class ArticleAdapter extends BaseAdapter
                 convertView = mInflater.inflate(R.layout.item_article_card_article, null);
                 articleArticleCardViewHolder = new ArticleArticleCardViewHolder();
                 convertView.setTag(articleArticleCardViewHolder);
+                articleArticleCardViewHolder.article_lay = convertView.findViewById(R.id.artcard_article_lay);
                 articleArticleCardViewHolder.article_title = convertView.findViewById(R.id.artcard_article_title);
                 articleArticleCardViewHolder.article_cover = convertView.findViewById(R.id.artcard_article_img);
                 articleArticleCardViewHolder.article_view = convertView.findViewById(R.id.artcard_article_view);
@@ -179,6 +185,7 @@ public class ArticleAdapter extends BaseAdapter
                 convertView = mInflater.inflate(R.layout.item_article_card_music, null);
                 articleMusicCardViewHolder = new ArticleMusicCardViewHolder();
                 convertView.setTag(articleMusicCardViewHolder);
+                articleMusicCardViewHolder.music_lay = convertView.findViewById(R.id.artcard_music_lay);
                 articleMusicCardViewHolder.music_title = convertView.findViewById(R.id.artcard_music_title);
                 articleMusicCardViewHolder.music_cover = convertView.findViewById(R.id.artcard_music_img);
                 articleMusicCardViewHolder.music_play = convertView.findViewById(R.id.artcard_music_play);
@@ -190,6 +197,7 @@ public class ArticleAdapter extends BaseAdapter
                 convertView = mInflater.inflate(R.layout.item_article_card_ticket, null);
                 articleTicketCardViewHolder = new ArticleTicketCardViewHolder();
                 convertView.setTag(articleTicketCardViewHolder);
+                articleTicketCardViewHolder.ticket_lay = convertView.findViewById(R.id.artcard_ticket_lay);
                 articleTicketCardViewHolder.ticket_title = convertView.findViewById(R.id.artcard_ticket_title);
                 articleTicketCardViewHolder.ticket_cover = convertView.findViewById(R.id.artcard_ticket_img);
                 articleTicketCardViewHolder.ticket_time = convertView.findViewById(R.id.artcard_ticket_time);
@@ -201,6 +209,7 @@ public class ArticleAdapter extends BaseAdapter
                 convertView = mInflater.inflate(R.layout.item_article_card_shop, null);
                 articleShopCardViewHolder = new ArticleShopCardViewHolder();
                 convertView.setTag(articleShopCardViewHolder);
+                articleShopCardViewHolder.shop_lay = convertView.findViewById(R.id.artcard_shop_lay);
                 articleShopCardViewHolder.shop_title = convertView.findViewById(R.id.artcard_shop_title);
                 articleShopCardViewHolder.shop_cover = convertView.findViewById(R.id.artcard_shop_img);
                 articleShopCardViewHolder.shop_detail = convertView.findViewById(R.id.artcard_shop_detail);
@@ -211,6 +220,7 @@ public class ArticleAdapter extends BaseAdapter
                 convertView = mInflater.inflate(R.layout.item_article_card_container, null);
                 articleContainerCardViewHolder = new ArticleContainerCardViewHolder();
                 convertView.setTag(articleContainerCardViewHolder);
+                articleContainerCardViewHolder.container_lay = convertView.findViewById(R.id.artcard_container_lay);
                 articleContainerCardViewHolder.container_title = convertView.findViewById(R.id.artcard_container_title);
                 articleContainerCardViewHolder.container_cover = convertView.findViewById(R.id.artcard_container_img);
                 articleContainerCardViewHolder.container_detail = convertView.findViewById(R.id.artcard_container_detail);
@@ -221,6 +231,7 @@ public class ArticleAdapter extends BaseAdapter
                 convertView = mInflater.inflate(R.layout.item_article_card_live, null);
                 articleLiveCardViewHolder = new ArticleLiveCardViewHolder();
                 convertView.setTag(articleLiveCardViewHolder);
+                articleLiveCardViewHolder.live_lay = convertView.findViewById(R.id.artcard_live_lay);
                 articleLiveCardViewHolder.live_title = convertView.findViewById(R.id.artcard_live_title);
                 articleLiveCardViewHolder.live_cover = convertView.findViewById(R.id.artcard_live_img);
                 articleLiveCardViewHolder.live_status = convertView.findViewById(R.id.artcard_live_stat);
@@ -274,6 +285,8 @@ public class ArticleAdapter extends BaseAdapter
             articleVideoCardViewHolder.video_time.setText(articleVideoCardModel.article_video_card_time);
             articleVideoCardViewHolder.video_up_name.setText(articleVideoCardModel.article_video_card_up_name);
 
+            articleVideoCardViewHolder.video_lay.setOnClickListener(onViewClick(position));
+
             articleVideoCardViewHolder.video_cover.setTag(articleVideoCardModel.article_video_card_cover);
             BitmapDrawable c = setImageFormWeb(articleVideoCardModel.article_video_card_cover);
             if(c != null) articleVideoCardViewHolder.video_cover.setImageDrawable(c);
@@ -295,6 +308,8 @@ public class ArticleAdapter extends BaseAdapter
             articleBangumiCardViewHolder.bangumi_follow.setText(articleBangumiCardModel.article_bangumi_card_follow);
             articleBangumiCardViewHolder.bangumi_type.setText(articleBangumiCardModel.article_bangumi_card_type_name);
             articleBangumiCardViewHolder.bangumi_score.setText(articleBangumiCardModel.article_bangumi_card_score);
+
+            articleBangumiCardViewHolder.bangumi_lay.setOnClickListener(onViewClick(position));
 
             articleBangumiCardViewHolder.bangumi_cover.setTag(articleBangumiCardModel.article_bangumi_card_cover);
             BitmapDrawable c = setImageFormWeb(articleBangumiCardModel.article_bangumi_card_cover);
@@ -320,6 +335,8 @@ public class ArticleAdapter extends BaseAdapter
             articleArticleCardViewHolder.article_reply.setText(articleArticleCardModel.article_article_card_reply);
             articleArticleCardViewHolder.article_up_name.setText(articleArticleCardModel.article_article_card_up_name);
 
+            articleArticleCardViewHolder.article_lay.setOnClickListener(onViewClick(position));
+
             articleArticleCardViewHolder.article_cover.setTag(articleArticleCardModel.article_article_card_cover);
             BitmapDrawable c = setImageFormWeb(articleArticleCardModel.article_article_card_cover);
             if(c != null) articleArticleCardViewHolder.article_cover.setImageDrawable(c);
@@ -344,6 +361,8 @@ public class ArticleAdapter extends BaseAdapter
             articleMusicCardViewHolder.music_reply.setText(articleMusicCardModel.article_music_card_reply);
             articleMusicCardViewHolder.music_up_name.setText(articleMusicCardModel.article_music_card_up_name);
 
+            articleMusicCardViewHolder.music_lay.setOnClickListener(onViewClick(position));
+
             articleMusicCardViewHolder.music_cover.setTag(articleMusicCardModel.article_music_card_cover);
             BitmapDrawable c = setImageFormWeb(articleMusicCardModel.article_music_card_cover);
             if(c != null) articleMusicCardViewHolder.music_cover.setImageDrawable(c);
@@ -358,6 +377,8 @@ public class ArticleAdapter extends BaseAdapter
             articleTicketCardViewHolder.ticket_location.setText(articleTicketCardModel.article_ticket_card_location);
             articleTicketCardViewHolder.ticket_price.setText(articleTicketCardModel.article_ticket_card_price);
 
+            articleTicketCardViewHolder.ticket_lay.setOnClickListener(onViewClick(position));
+
             articleTicketCardViewHolder.ticket_cover.setTag(articleTicketCardModel.article_ticket_card_cover);
             BitmapDrawable c = setImageFormWeb(articleTicketCardModel.article_ticket_card_cover);
             if(c != null) articleTicketCardViewHolder.ticket_cover.setImageDrawable(c);
@@ -371,6 +392,8 @@ public class ArticleAdapter extends BaseAdapter
             articleShopCardViewHolder.shop_detail.setText(articleShopCardModel.article_shop_card_detail);
             articleShopCardViewHolder.shop_price.setText(articleShopCardModel.article_shop_card_price);
 
+            articleShopCardViewHolder.shop_lay.setOnClickListener(onViewClick(position));
+
             articleShopCardViewHolder.shop_cover.setTag(articleShopCardModel.article_shop_card_cover);
             BitmapDrawable c = setImageFormWeb(articleShopCardModel.article_shop_card_cover);
             if(c != null) articleShopCardViewHolder.shop_cover.setImageDrawable(c);
@@ -383,6 +406,8 @@ public class ArticleAdapter extends BaseAdapter
             articleContainerCardViewHolder.container_cover.setImageResource(R.drawable.img_default_animation);
             articleContainerCardViewHolder.container_detail.setText(articleContainerCardModel.article_container_card_detail);
             articleContainerCardViewHolder.container_author.setText(articleContainerCardModel.article_container_card_author);
+
+            articleContainerCardViewHolder.container_lay.setOnClickListener(onViewClick(position));
 
             articleContainerCardViewHolder.container_cover.setTag(articleContainerCardModel.article_container_card_cover);
             BitmapDrawable c = setImageFormWeb(articleContainerCardModel.article_container_card_cover);
@@ -417,6 +442,8 @@ public class ArticleAdapter extends BaseAdapter
             articleLiveCardViewHolder.live_area.setText(articleLiveCardModel.article_live_card_area);
             articleLiveCardViewHolder.live_up_name.setText(articleLiveCardModel.article_live_card_up_name);
 
+            articleLiveCardViewHolder.live_lay.setOnClickListener(onViewClick(position));
+
             articleLiveCardViewHolder.live_cover.setTag(articleLiveCardModel.article_live_card_cover);
             BitmapDrawable c = setImageFormWeb(articleLiveCardModel.article_live_card_cover);
             if(c != null) articleLiveCardViewHolder.live_cover.setImageDrawable(c);
@@ -432,6 +459,7 @@ public class ArticleAdapter extends BaseAdapter
 
     class ArticleVideoCardViewHolder
     {
+        RelativeLayout video_lay;
         TextView video_title;
         ImageView video_cover;
         TextView video_play;
@@ -442,6 +470,7 @@ public class ArticleAdapter extends BaseAdapter
 
     class ArticleBangumiCardViewHolder
     {
+        RelativeLayout bangumi_lay;
         TextView bangumi_title;
         ImageView bangumi_cover;
         TextView bangumi_play;
@@ -452,6 +481,7 @@ public class ArticleAdapter extends BaseAdapter
 
     class ArticleArticleCardViewHolder
     {
+        RelativeLayout article_lay;
         TextView article_title;
         ImageView article_cover;
         TextView article_view;
@@ -461,6 +491,7 @@ public class ArticleAdapter extends BaseAdapter
 
     class ArticleMusicCardViewHolder
     {
+        RelativeLayout music_lay;
         TextView music_title;
         ImageView music_cover;
         TextView music_play;
@@ -470,6 +501,7 @@ public class ArticleAdapter extends BaseAdapter
 
     class ArticleTicketCardViewHolder
     {
+        RelativeLayout ticket_lay;
         TextView ticket_title;
         ImageView ticket_cover;
         TextView ticket_time;
@@ -479,6 +511,7 @@ public class ArticleAdapter extends BaseAdapter
 
     class ArticleShopCardViewHolder
     {
+        RelativeLayout shop_lay;
         TextView shop_title;
         ImageView shop_cover;
         TextView shop_detail;
@@ -487,6 +520,7 @@ public class ArticleAdapter extends BaseAdapter
 
     class ArticleContainerCardViewHolder
     {
+        RelativeLayout container_lay;
         TextView container_title;
         ImageView container_cover;
         TextView container_detail;
@@ -495,12 +529,25 @@ public class ArticleAdapter extends BaseAdapter
 
     class ArticleLiveCardViewHolder
     {
+        RelativeLayout live_lay;
         TextView live_title;
         ImageView live_cover;
         TextView live_status;
         TextView live_area;
         TextView live_online;
         TextView live_up_name;
+    }
+
+    private View.OnClickListener onViewClick(final int position)
+    {
+        return new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                articleListener.onClick(v.getId(), position);
+            }
+        };
     }
 
     private BitmapDrawable setImageFormWeb(String url)
