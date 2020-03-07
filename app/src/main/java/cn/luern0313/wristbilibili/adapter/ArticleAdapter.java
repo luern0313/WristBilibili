@@ -16,10 +16,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.sufficientlysecure.htmltextview.HtmlTextView;
+import org.sufficientlysecure.htmltextview.OnClickATagListener;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
+import androidx.annotation.Nullable;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.models.article.ArticleCardModel;
 import cn.luern0313.wristbilibili.util.ArticleHtmlImageHandlerUtil;
@@ -261,6 +263,14 @@ public class ArticleAdapter extends BaseAdapter
             else
             {
                 articleTextViewHolder.text_text.setHtml(articleTextModel.article_text_element.outerHtml(), new ArticleHtmlImageHandlerUtil(listView.getContext(), mImageCache, articleTextViewHolder.text_text, img_width, articleTextModel.article_text_articleImageModel));
+                articleTextViewHolder.text_text.setOnClickATagListener(new OnClickATagListener()
+                {
+                    @Override
+                    public void onClick(View widget, @Nullable String href)
+                    {
+                        articleListener.onLinkClick(href);
+                    }
+                });
                 articleTextViewHolder.text_text.setVisibility(View.VISIBLE);
             }
         }
@@ -545,7 +555,7 @@ public class ArticleAdapter extends BaseAdapter
             @Override
             public void onClick(View v)
             {
-                articleListener.onClick(v.getId(), position);
+                articleListener.onCardClick(v.getId(), position);
             }
         };
     }
@@ -611,6 +621,7 @@ public class ArticleAdapter extends BaseAdapter
 
     public interface ArticleListener
     {
-        void onClick(int viewId, int position);
+        void onCardClick(int viewId, int position);
+        void onLinkClick(String url);
     }
 }

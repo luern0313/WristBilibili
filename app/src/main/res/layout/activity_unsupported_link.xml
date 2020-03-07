@@ -61,6 +61,13 @@
             android:id="@+id/ul_qr"
             android:layout_width="120dp"
             android:layout_height="120dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:text="使用其他应用打开链接"
+            android:onClick="clickUnsupported"/>
         
         <LinearLayout
             android:id="@+id/ul_loading"
@@ -85,7 +92,7 @@
 
         <org.sufficientlysecure.htmltextview.HtmlTextView
             android:id="@+id/ul_info"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"

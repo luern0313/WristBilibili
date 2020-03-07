@@ -1,12 +1,16 @@
 package cn.luern0313.wristbilibili.ui;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Browser;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.sufficientlysecure.htmltextview.HtmlTextView;
 
@@ -81,5 +85,21 @@ public class UnsupportedLinkActivity extends AppCompatActivity
                 }
             }
         }).start();
+    }
+
+    public void clickUnsupported(View view)
+    {
+        try
+        {
+            Uri uri = Uri.parse(url);
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            intent.putExtra(Browser.EXTRA_APPLICATION_ID, getPackageName());
+            startActivity(intent);
+        }
+        catch (ActivityNotFoundException e)
+        {
+            e.printStackTrace();
+            Toast.makeText(ctx, "无应用可打开链接", Toast.LENGTH_SHORT).show();
+        }
     }
 }

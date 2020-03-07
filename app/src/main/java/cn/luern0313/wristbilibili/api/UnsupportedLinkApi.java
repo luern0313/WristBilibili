@@ -1,7 +1,5 @@
 package cn.luern0313.wristbilibili.api;
 
-import android.util.Log;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -34,8 +32,6 @@ public class UnsupportedLinkApi
     {
         try
         {
-            Log.i("bilibili", url + "a");
-            Log.i("bilibili", String.valueOf(NetWorkUtil.get(url, webHeaders).code()));
             String html = NetWorkUtil.get(url, webHeaders).body().string();
             Document document = Jsoup.parse(html);
             unsupportedLinkModel = new UnsupportedLinkModel(document);

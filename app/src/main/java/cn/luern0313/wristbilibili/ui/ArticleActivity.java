@@ -127,9 +127,17 @@ public class ArticleActivity extends AppCompatActivity
         articleListener = new ArticleAdapter.ArticleListener()
         {
             @Override
-            public void onClick(int viewId, int position)
+            public void onCardClick(int viewId, int position)
             {
                 onArticleViewClick(viewId, position);
+            }
+
+            @Override
+            public void onLinkClick(String url)
+            {
+                Intent intent = new Intent(ctx, UnsupportedLinkActivity.class);
+                intent.putExtra("url", url);
+                startActivity(intent);
             }
         };
 
@@ -147,21 +155,29 @@ public class ArticleActivity extends AppCompatActivity
             @Override
             public void run()
             {
-                ((TextView) layoutArticleHeader.findViewById(R.id.article_article_title)).setText(articleModel.article_title);
-                ((TextView) layoutArticleHeader.findViewById(R.id.article_article_channel)).setText(articleModel.article_channel);
-                ((TextView) layoutArticleHeader.findViewById(R.id.article_article_view)).setText(DataProcessUtil.getView(articleModel.article_view));
-                ((TextView) layoutArticleHeader.findViewById(R.id.article_article_time)).setText(articleModel.article_time);
+                try
+                {
+                    ((TextView) layoutArticleHeader.findViewById(R.id.article_article_title)).setText(articleModel.article_title);
+                    ((TextView) layoutArticleHeader.findViewById(R.id.article_article_channel)).setText(articleModel.article_channel);
+                    ((TextView) layoutArticleHeader.findViewById(R.id.article_article_view)).setText(DataProcessUtil.getView(articleModel.article_view));
+                    ((TextView) layoutArticleHeader.findViewById(R.id.article_article_time)).setText(articleModel.article_time);
 
-                setArticleIcon();
+                    setArticleIcon();
 
-                articleAdapter = new ArticleAdapter(inflater, img_width, articleModel.article_article_card_model_list, uiArticleListView, articleListener);
-                uiArticleListView.addHeaderView(layoutArticleHeader);
-                uiArticleListView.setAdapter(articleAdapter);
+                    articleAdapter = new ArticleAdapter(inflater, img_width, articleModel.article_article_card_model_list, uiArticleListView, articleListener);
+                    uiArticleListView.addHeaderView(layoutArticleHeader);
+                    uiArticleListView.setAdapter(articleAdapter);
 
-                uiLoading.setVisibility(View.GONE);
-                uiNoWeb.setVisibility(View.GONE);
+                    uiLoading.setVisibility(View.GONE);
+                    uiNoWeb.setVisibility(View.GONE);
 
-                getReply();
+                    getReply();
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                    handler.post(runnableDetailNodata);
+                }
             }
         };
 
