@@ -3,6 +3,7 @@ package cn.luern0313.wristbilibili.models.article;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -12,15 +13,15 @@ import cn.luern0313.wristbilibili.util.DataProcessUtil;
 /**
  * 被 luern0313 创建于 2020/2/28.
  */
-public class ArticleCardModel
+public class ArticleCardModel implements Serializable
 {
     public String article_card_identity;
     public boolean article_card_support;
     public String article_card_url;
 
-    public class ArticleTextModel extends ArticleCardModel
+    public class ArticleTextModel extends ArticleCardModel implements Serializable
     {
-        public Element article_text_element;
+        public String article_text_element;
         public ArticleImageModel article_text_articleImageModel;
         public ArticleTextModel(Element element)
         {
@@ -28,14 +29,14 @@ public class ArticleCardModel
             article_card_support = false;
             article_card_url = "";
 
-            article_text_element = element;
+            article_text_element = element.outerHtml();
             Element imgElement = element.select("figure[class=img-box] > img").first();
             if(imgElement != null)
                 article_text_articleImageModel = new ArticleImageModel(imgElement.attributes());
         }
     }
 
-    public class ArticleVideoCardModel extends ArticleCardModel
+    public class ArticleVideoCardModel extends ArticleCardModel implements Serializable
     {
         public String article_video_card_id;
         public String article_video_card_title;
@@ -65,7 +66,7 @@ public class ArticleCardModel
         }
     }
 
-    public class ArticleBangumiCardModel extends ArticleCardModel
+    public class ArticleBangumiCardModel extends ArticleCardModel implements Serializable
     {
         public String article_bangumi_card_id;
         public String article_bangumi_card_title;
@@ -92,7 +93,7 @@ public class ArticleCardModel
         }
     }
 
-    public class ArticleArticleCardModel extends ArticleCardModel
+    public class ArticleArticleCardModel extends ArticleCardModel implements Serializable
     {
         public String article_article_card_id;
         public String article_article_card_title;
@@ -121,7 +122,7 @@ public class ArticleCardModel
         }
     }
 
-    public class ArticleMusicCardModel extends ArticleCardModel
+    public class ArticleMusicCardModel extends ArticleCardModel implements Serializable
     {
         public String article_music_card_id;
         public String article_music_card_title;
@@ -145,7 +146,7 @@ public class ArticleCardModel
         }
     }
 
-    public class ArticleTicketCardModel extends ArticleCardModel
+    public class ArticleTicketCardModel extends ArticleCardModel implements Serializable
     {
         public String article_ticket_card_id;
         public String article_ticket_card_title;
@@ -172,7 +173,7 @@ public class ArticleCardModel
         }
     }
 
-    public class ArticleShopCardModel extends ArticleCardModel
+    public class ArticleShopCardModel extends ArticleCardModel implements Serializable
     {
         public String article_shop_card_id;
         public String article_shop_card_title;
@@ -194,7 +195,7 @@ public class ArticleCardModel
         }
     }
 
-    public class ArticleContainerCardModel extends ArticleCardModel
+    public class ArticleContainerCardModel extends ArticleCardModel implements Serializable
     {
         public String article_container_card_id;
         public String article_container_card_title;
@@ -217,7 +218,7 @@ public class ArticleCardModel
         }
     }
 
-    public class ArticleLiveCardModel extends ArticleCardModel
+    public class ArticleLiveCardModel extends ArticleCardModel implements Serializable
     {
         public String article_live_card_id;
         public String article_live_card_title;

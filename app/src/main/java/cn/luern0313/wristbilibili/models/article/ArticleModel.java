@@ -7,6 +7,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,7 +17,7 @@ import java.util.Locale;
 /**
  * 被 luern0313 创建于 2020/2/20.
  */
-public class ArticleModel
+public class ArticleModel implements Serializable
 {
     public String article_id;
     public String article_title;
@@ -37,7 +38,8 @@ public class ArticleModel
     public int article_user_coin;
     public boolean article_user_fav;
 
-    public Element article_article;
+    public String article_article;
+    public ArrayList<String> article_article_img_url = new ArrayList<>();
     public ArrayList<ArticleCardModel> article_article_card_model_list = new ArrayList<>();
     public ArticleModel(String id, JSONObject article, JSONObject more, Document element, JSONObject card)
     {
@@ -54,6 +56,7 @@ public class ArticleModel
             article_cover[i] = cover.optString(i);
         Elements info = element.getElementsByClass("info").first().children();
         article_channel = info.get(0).text();
+        article_channel = article_channel.substring(0, article_channel.length() - 2);
         String timestamp = info.get(1).attr("data-ts");
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
         article_time = format.format(new Date(Integer.valueOf(timestamp) * 1000L));
@@ -69,15 +72,15 @@ public class ArticleModel
         article_user_coin = article.optInt("coin");
         article_user_fav = article.optBoolean("favorite");
 
-        article_article = element.getElementsByClass("article-holder").first();
+        Element article_element = element.getElementsByClass("article-holder").first();
 
-        Elements imgs = article_article.select("figure[class=img-box] > img");
+        Elements imgs = article_element.select("figure[class=img-box] > img");
         for(Element img : imgs)
         {
             img.attr("src", img.attr("data-src"));
             img.append("<br>");
         }
-        Elements colors = article_article.select("span[class*=color-]");
+        Elements colors = article_element.select("span[class*=color-]");
         for(Element color : colors)
         {
             String[] class_list = color.className().split(" ");
@@ -90,17 +93,17 @@ public class ArticleModel
                 }
             }
         }
-        article_article.select("blockquote").tagName("em");
-        article_article.select("span[style*=line-through], font[style*=line-through]").wrap("<s></s>");
-        article_article.select("figcaption").wrap("<small></small>");
-        article_article.select("span[class*=font-size-2], font[class*=font-size-2]").wrap("<big></big>");
-        article_article.select("span[class*=font-size-1], font[class*=font-size-1]").wrap("<small></small>");
-        Elements figeles = article_article.select("figcaption");
+        article_element.select("blockquote").tagName("em");
+        article_element.select("span[style*=line-through], font[style*=line-through]").wrap("<s></s>");
+        article_element.select("figcaption").wrap("<small></small>");
+        article_element.select("span[class*=font-size-2], font[class*=font-size-2]").wrap("<big></big>");
+        article_element.select("span[class*=font-size-1], font[class*=font-size-1]").wrap("<small></small>");
+        Elements figeles = article_element.select("figcaption");
         for(int j = 0; j < figeles.size(); j++)
             if(!figeles.get(j).text().equals(""))
                 figeles.get(j).wrap("<center></center>");
 
-        Elements arts = article_article.children();
+        Elements arts = article_element.children();
         ArticleCardModel articleCardModel = new ArticleCardModel();
         for(Element art : arts)
         {
@@ -133,9 +136,23 @@ public class ArticleModel
                 }
             }
             else
+            {
+                Element imgElement = art.selectFirst("img");
+                if(imgElement != null && (!imgElement.hasAttr("class") ||
+                        (imgElement.hasAttr("class") &&
+                                (!imgElement.attr("class").contains("cut-off-") && !imgElement.attr("class").contains("vote-display")))))
+                {
+                    String url = imgElement.attr("data-src");
+                    if(url.indexOf("//") == 0)
+                        url = "http:" + url;
+                    if(url.endsWith(".webp"))
+                        url = url.substring(0, url.lastIndexOf("@"));
+                    article_article_img_url.add(url);
+                }
                 article_article_card_model_list.add(articleCardModel.new ArticleTextModel(art));
+            }
         }
-
+        article_article = article_element.outerHtml();
     }
 
     private HashMap<String, String> colorMap = new HashMap<String, String>()
@@ -169,5 +186,4 @@ public class ArticleModel
         put("color-gray-03", "#5f5f5f");
         put("color-default", "#222222");
     }};
-
 }

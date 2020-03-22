@@ -15,6 +15,8 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.sufficientlysecure.htmltextview.HtmlTextView;
 import org.sufficientlysecure.htmltextview.OnClickATagListener;
 
@@ -258,11 +260,12 @@ public class ArticleAdapter extends BaseAdapter
         if(type == 0)
         {
             ArticleCardModel.ArticleTextModel articleTextModel = (ArticleCardModel.ArticleTextModel) articleCardModelArrayList.get(position);
-            if(articleTextModel.article_text_element.text().equals("") && !articleTextModel.article_text_element.attr("class").equals("img-box"))
+            Document e = Jsoup.parse(articleTextModel.article_text_element);
+            if(e.text().equals("") && !e.attr("class").equals("img-box"))
                 articleTextViewHolder.text_text.setVisibility(View.GONE);
             else
             {
-                articleTextViewHolder.text_text.setHtml(articleTextModel.article_text_element.outerHtml(), new ArticleHtmlImageHandlerUtil(listView.getContext(), mImageCache, articleTextViewHolder.text_text, img_width, articleTextModel.article_text_articleImageModel));
+                articleTextViewHolder.text_text.setHtml(articleTextModel.article_text_element, new ArticleHtmlImageHandlerUtil(listView.getContext(), mImageCache, articleTextViewHolder.text_text, img_width, articleTextModel.article_text_articleImageModel));
                 articleTextViewHolder.text_text.setOnClickATagListener(new OnClickATagListener()
                 {
                     @Override
@@ -272,6 +275,7 @@ public class ArticleAdapter extends BaseAdapter
                     }
                 });
                 articleTextViewHolder.text_text.setVisibility(View.VISIBLE);
+                articleTextViewHolder.text_text.setOnClickListener(onViewClick(position));
             }
         }
         else if(type == 1)
