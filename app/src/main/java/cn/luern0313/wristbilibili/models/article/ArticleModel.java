@@ -80,24 +80,27 @@ public class ArticleModel implements Serializable
             img.attr("src", img.attr("data-src"));
             img.append("<br>");
         }
-        Elements colors = article_element.select("span[class*=color-]");
-        for(Element color : colors)
+        Elements styles = article_element.select("span[class~=(color-)|(font-size-)]");
+        for(Element style : styles)
         {
-            String[] class_list = color.className().split(" ");
-            for (String ii : class_list)
+            String[] style_list = style.className().split(" ");
+            for (String ii : style_list)
             {
                 if(colorMap.containsKey(ii))
                 {
-                    color.tagName("font");
-                    color.attr("color", colorMap.get(ii));
+                    style.tagName("font");
+                    style.attr("color", colorMap.get(ii));
+                }
+                else if(ii.contains("font-size-"))
+                {
+                    style.tagName("font");
+                    style.attr("size", ii.substring(10));
                 }
             }
         }
         article_element.select("blockquote").tagName("em");
         article_element.select("span[style*=line-through], font[style*=line-through]").wrap("<s></s>");
         article_element.select("figcaption").wrap("<small></small>");
-        article_element.select("span[class*=font-size-2], font[class*=font-size-2]").wrap("<big></big>");
-        article_element.select("span[class*=font-size-1], font[class*=font-size-1]").wrap("<small></small>");
         Elements figeles = article_element.select("figcaption");
         for(int j = 0; j < figeles.size(); j++)
             if(!figeles.get(j).text().equals(""))

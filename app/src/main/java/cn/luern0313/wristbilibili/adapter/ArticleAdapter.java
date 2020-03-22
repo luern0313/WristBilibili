@@ -261,7 +261,7 @@ public class ArticleAdapter extends BaseAdapter
         {
             ArticleCardModel.ArticleTextModel articleTextModel = (ArticleCardModel.ArticleTextModel) articleCardModelArrayList.get(position);
             Document e = Jsoup.parse(articleTextModel.article_text_element);
-            if(e.text().equals("") && !e.attr("class").equals("img-box"))
+            if(e.text().equals("") && e.getElementsByTag("img").isEmpty())
                 articleTextViewHolder.text_text.setVisibility(View.GONE);
             else
             {

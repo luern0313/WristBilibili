@@ -165,10 +165,16 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
         {
             if(((ArticleCardModel.ArticleTextModel) articleCardModel).article_text_articleImageModel != null)
             {
-                Intent intent = new Intent(ctx, ImgActivity.class);
-                intent.putExtra("imgUrl", articleModel.article_article_img_url.toArray(new String[0]));
-                //intent.putExtra("position", );
-                startActivity(intent);
+                int p = DataProcessUtil.getPositionInArrayList(
+                        articleModel.article_article_img_url,
+                        ((ArticleCardModel.ArticleTextModel) articleCardModel).article_text_articleImageModel.article_image_src);
+                if(p != -1)
+                {
+                    Intent intent = new Intent(ctx, ImgActivity.class);
+                    intent.putExtra("imgUrl", articleModel.article_article_img_url.toArray(new String[0]));
+                    intent.putExtra("position", p);
+                    startActivity(intent);
+                }
             }
         }
         else

@@ -23,7 +23,7 @@ public class ArticleCardModel implements Serializable
     {
         public String article_text_element;
         public ArticleImageModel article_text_articleImageModel;
-        public ArticleTextModel(Element element)
+        ArticleTextModel(Element element)
         {
             article_card_identity = "te";
             article_card_support = false;
@@ -46,7 +46,7 @@ public class ArticleCardModel implements Serializable
         public String article_video_card_danmaku;
         public String article_video_card_up_name;
 
-        public ArticleVideoCardModel(String identity, JSONObject videoCard)
+        ArticleVideoCardModel(String identity, JSONObject videoCard)
         {
             article_card_identity = identity;
             article_card_support = true;
@@ -76,7 +76,7 @@ public class ArticleCardModel implements Serializable
         public String article_bangumi_card_type_name;
         public String article_bangumi_card_score;
 
-        public ArticleBangumiCardModel(String identity, JSONObject bangumiCard)
+        ArticleBangumiCardModel(String identity, JSONObject bangumiCard)
         {
             article_card_identity = identity;
             article_card_support = true;
@@ -102,7 +102,7 @@ public class ArticleCardModel implements Serializable
         public String article_article_card_reply;
         public String article_article_card_up_name;
 
-        public ArticleArticleCardModel(String identity, JSONObject articleCard)
+        ArticleArticleCardModel(String identity, JSONObject articleCard)
         {
             article_card_identity = identity;
             article_card_support = true;
@@ -131,7 +131,7 @@ public class ArticleCardModel implements Serializable
         public String article_music_card_reply;
         public String article_music_card_up_name;
 
-        public ArticleMusicCardModel(String identity, JSONObject musicCard)
+        ArticleMusicCardModel(String identity, JSONObject musicCard)
         {
             article_card_identity = identity;
             article_card_support = false;
@@ -155,7 +155,7 @@ public class ArticleCardModel implements Serializable
         public String article_ticket_card_location;
         public String article_ticket_card_price;
 
-        public ArticleTicketCardModel(String identity, JSONObject ticketCard)
+        ArticleTicketCardModel(String identity, JSONObject ticketCard)
         {
             article_card_identity = identity;
             article_card_support = false;
@@ -180,7 +180,7 @@ public class ArticleCardModel implements Serializable
         public String article_shop_card_cover;
         public String article_shop_card_detail;
         public String article_shop_card_price;
-        public ArticleShopCardModel(String identity, JSONObject shopCard)
+        ArticleShopCardModel(String identity, JSONObject shopCard)
         {
             article_card_identity = identity;
             article_card_support = false;
@@ -203,7 +203,7 @@ public class ArticleCardModel implements Serializable
         public String article_container_card_detail;
         public String article_container_card_author;
 
-        public ArticleContainerCardModel(String identity, JSONObject containerCard)
+        ArticleContainerCardModel(String identity, JSONObject containerCard)
         {
             article_card_identity = identity;
             article_card_support = false;
@@ -227,7 +227,7 @@ public class ArticleCardModel implements Serializable
         public int article_live_card_status;
         public String article_live_card_online;
         public String article_live_card_up_name;
-        public ArticleLiveCardModel(String identity, JSONObject liveCard)
+        ArticleLiveCardModel(String identity, JSONObject liveCard)
         {
             article_card_identity = identity;
             article_card_support = false;
