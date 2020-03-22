@@ -112,7 +112,7 @@ public class ArticleApi
         try
         {
             String url = "https://api.bilibili.com/x/web-interface/coin/add";
-            String per = "aid=" + article_id + "&multiply=1&avtype=2&csrf=" + csrf;
+            String per = "aid=" + article_id + "&multiply=1&upid=" + articleModel.article_up_mid + "&avtype=2&csrf=" + csrf;
             JSONObject result = new JSONObject(NetWorkUtil.post(url, per, webHeaders).body().string());
             if(result.optInt("code") == 0)
                 return "";
