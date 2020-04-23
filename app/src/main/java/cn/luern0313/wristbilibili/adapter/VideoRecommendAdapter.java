@@ -19,6 +19,7 @@ import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.models.VideoModel;
+import cn.luern0313.wristbilibili.util.DataProcessUtil;
 import cn.luern0313.wristbilibili.util.ImageDownloaderUtil;
 
 /**
@@ -102,9 +103,9 @@ public class VideoRecommendAdapter extends BaseAdapter
         Drawable upDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_up);
         Drawable playNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_play_num);
         Drawable danmakuNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_danmu_num);
-        upDrawable.setBounds(0,0,24,24);
-        playNumDrawable.setBounds(0,0,24,24);
-        danmakuNumDrawable.setBounds(0,0,24,24);
+        upDrawable.setBounds(0, 0, DataProcessUtil.dip2px(listView.getContext(), 10), DataProcessUtil.dip2px(listView.getContext(), 10));
+        playNumDrawable.setBounds(0, 0, DataProcessUtil.dip2px(listView.getContext(), 10), DataProcessUtil.dip2px(listView.getContext(), 10));
+        danmakuNumDrawable.setBounds(0, 0, DataProcessUtil.dip2px(listView.getContext(), 10), DataProcessUtil.dip2px(listView.getContext(), 10));
         viewHolder.up.setCompoundDrawables(upDrawable,null, null,null);
         viewHolder.play.setCompoundDrawables(playNumDrawable,null, null,null);
         viewHolder.danmaku.setCompoundDrawables(danmakuNumDrawable,null, null,null);

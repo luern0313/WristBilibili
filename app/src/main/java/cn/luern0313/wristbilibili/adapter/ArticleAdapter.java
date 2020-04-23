@@ -27,6 +27,7 @@ import androidx.annotation.Nullable;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.models.article.ArticleCardModel;
 import cn.luern0313.wristbilibili.util.ArticleHtmlImageHandlerUtil;
+import cn.luern0313.wristbilibili.util.DataProcessUtil;
 import cn.luern0313.wristbilibili.util.ImageDownloaderUtil;
 
 /**
@@ -285,9 +286,9 @@ public class ArticleAdapter extends BaseAdapter
             Drawable upDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_up);
             Drawable playNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_play_num_white);
             Drawable danmakuNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_danmu_num_white);
-            upDrawable.setBounds(0,0,24,24);
-            playNumDrawable.setBounds(0,0,24,24);
-            danmakuNumDrawable.setBounds(0,0,24,24);
+            upDrawable.setBounds(0, 0, DataProcessUtil.dip2px(listView.getContext(), 12), DataProcessUtil.dip2px(listView.getContext(), 12));
+            playNumDrawable.setBounds(0,0, DataProcessUtil.dip2px(listView.getContext(), 12), DataProcessUtil.dip2px(listView.getContext(), 12));
+            danmakuNumDrawable.setBounds(0,0, DataProcessUtil.dip2px(listView.getContext(), 12), DataProcessUtil.dip2px(listView.getContext(), 12));
             articleVideoCardViewHolder.video_up_name.setCompoundDrawables(upDrawable,null, null,null);
             articleVideoCardViewHolder.video_play.setCompoundDrawables(playNumDrawable,null, null,null);
             articleVideoCardViewHolder.video_danmaku.setCompoundDrawables(danmakuNumDrawable,null, null,null);
@@ -311,8 +312,8 @@ public class ArticleAdapter extends BaseAdapter
 
             Drawable playNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_play_num);
             Drawable followNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_like_num);
-            playNumDrawable.setBounds(0,0,24,24);
-            followNumDrawable.setBounds(0,0,24,24);
+            playNumDrawable.setBounds(0,0, DataProcessUtil.dip2px(listView.getContext(), 12), DataProcessUtil.dip2px(listView.getContext(), 12));
+            followNumDrawable.setBounds(0,0, DataProcessUtil.dip2px(listView.getContext(), 12), DataProcessUtil.dip2px(listView.getContext(), 12));
             articleBangumiCardViewHolder.bangumi_play.setCompoundDrawables(playNumDrawable,null, null,null);
             articleBangumiCardViewHolder.bangumi_follow.setCompoundDrawables(followNumDrawable,null, null,null);
 
@@ -336,9 +337,9 @@ public class ArticleAdapter extends BaseAdapter
             Drawable upDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_up);
             Drawable playNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_play_num_white);
             Drawable replyNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_reply_num_white);
-            upDrawable.setBounds(0,0,24,24);
-            playNumDrawable.setBounds(0,0,24,24);
-            replyNumDrawable.setBounds(0,0,24,24);
+            upDrawable.setBounds(0,0, DataProcessUtil.dip2px(listView.getContext(), 12), DataProcessUtil.dip2px(listView.getContext(), 12));
+            playNumDrawable.setBounds(0,0, DataProcessUtil.dip2px(listView.getContext(), 12), DataProcessUtil.dip2px(listView.getContext(), 12));
+            replyNumDrawable.setBounds(0,0, DataProcessUtil.dip2px(listView.getContext(), 12), DataProcessUtil.dip2px(listView.getContext(), 12));
             articleArticleCardViewHolder.article_up_name.setCompoundDrawables(upDrawable,null, null,null);
             articleArticleCardViewHolder.article_view.setCompoundDrawables(playNumDrawable,null, null,null);
             articleArticleCardViewHolder.article_reply.setCompoundDrawables(replyNumDrawable,null, null,null);
@@ -362,9 +363,9 @@ public class ArticleAdapter extends BaseAdapter
             Drawable upDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_up);
             Drawable playNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_play_num);
             Drawable danmakuNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_danmu_num);
-            upDrawable.setBounds(0,0,24,24);
-            playNumDrawable.setBounds(0,0,24,24);
-            danmakuNumDrawable.setBounds(0,0,24,24);
+            upDrawable.setBounds(0,0, DataProcessUtil.dip2px(listView.getContext(), 12), DataProcessUtil.dip2px(listView.getContext(), 12));
+            playNumDrawable.setBounds(0,0, DataProcessUtil.dip2px(listView.getContext(), 12), DataProcessUtil.dip2px(listView.getContext(), 12));
+            danmakuNumDrawable.setBounds(0,0, DataProcessUtil.dip2px(listView.getContext(), 12), DataProcessUtil.dip2px(listView.getContext(), 12));
             articleMusicCardViewHolder.music_up_name.setCompoundDrawables(upDrawable,null, null,null);
             articleMusicCardViewHolder.music_play.setCompoundDrawables(playNumDrawable,null, null,null);
             articleMusicCardViewHolder.music_reply.setCompoundDrawables(danmakuNumDrawable,null, null,null);
@@ -433,8 +434,8 @@ public class ArticleAdapter extends BaseAdapter
 
             Drawable upDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_up);
             Drawable viewerDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_viewer_num_white);
-            upDrawable.setBounds(0,0,24,24);
-            viewerDrawable.setBounds(0,0,24,24);
+            upDrawable.setBounds(0, 0, DataProcessUtil.dip2px(listView.getContext(), 12), DataProcessUtil.dip2px(listView.getContext(), 12));
+            viewerDrawable.setBounds(0, 0, DataProcessUtil.dip2px(listView.getContext(), 12), DataProcessUtil.dip2px(listView.getContext(), 12));
             articleLiveCardViewHolder.live_up_name.setCompoundDrawables(upDrawable,null, null,null);
             articleLiveCardViewHolder.live_online.setCompoundDrawables(viewerDrawable,null, null,null);
 

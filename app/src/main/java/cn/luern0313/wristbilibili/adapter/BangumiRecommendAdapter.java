@@ -15,6 +15,7 @@ import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.models.BangumiRecommendModel;
+import cn.luern0313.wristbilibili.util.DataProcessUtil;
 import cn.luern0313.wristbilibili.util.ImageTaskUtil;
 
 /**
@@ -105,8 +106,8 @@ public class BangumiRecommendAdapter extends BaseAdapter
 
         Drawable playNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_play_num);
         Drawable likeNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_like_num);
-        playNumDrawable.setBounds(0,0,24,24);
-        likeNumDrawable.setBounds(0,0,24,24);
+        playNumDrawable.setBounds(0, 0, DataProcessUtil.dip2px(listView.getContext(), 10), DataProcessUtil.dip2px(listView.getContext(), 10));
+        likeNumDrawable.setBounds(0, 0, DataProcessUtil.dip2px(listView.getContext(), 10), DataProcessUtil.dip2px(listView.getContext(), 10));
         viewHolder.play.setCompoundDrawables(playNumDrawable,null, null,null);
         viewHolder.follow.setCompoundDrawables(likeNumDrawable,null, null,null);
 

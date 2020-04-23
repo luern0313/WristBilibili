@@ -35,6 +35,7 @@ import cn.luern0313.wristbilibili.ui.MainActivity;
 import cn.luern0313.wristbilibili.ui.OtherUserActivity;
 import cn.luern0313.wristbilibili.ui.TextActivity;
 import cn.luern0313.wristbilibili.ui.VideodetailsActivity;
+import cn.luern0313.wristbilibili.util.DataProcessUtil;
 import cn.luern0313.wristbilibili.util.ImageDownloaderUtil;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
@@ -237,8 +238,8 @@ public class RankingFragment extends Fragment
 
                 Drawable playNumDrawable = ctx.getResources().getDrawable(R.drawable.icon_video_play_num);
                 Drawable danmakuNumDrawable = ctx.getResources().getDrawable(R.drawable.icon_video_danmu_num);
-                playNumDrawable.setBounds(0,0,24,24);
-                danmakuNumDrawable.setBounds(0,0,24,24);
+                playNumDrawable.setBounds(0, 0, DataProcessUtil.dip2px(ctx, 10), DataProcessUtil.dip2px(ctx, 10));
+                danmakuNumDrawable.setBounds(0, 0, DataProcessUtil.dip2px(ctx, 10), DataProcessUtil.dip2px(ctx, 10));
                 ((TextView) uiPickUpView.findViewById(R.id.rk_pu_video_play)).setCompoundDrawables(playNumDrawable,null, null,null);
                 ((TextView) uiPickUpView.findViewById(R.id.rk_pu_video_danmaku)).setCompoundDrawables(danmakuNumDrawable,null, null,null);
 

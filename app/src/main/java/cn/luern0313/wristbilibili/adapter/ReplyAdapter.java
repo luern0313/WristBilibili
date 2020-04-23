@@ -19,6 +19,7 @@ import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.models.ReplyModel;
+import cn.luern0313.wristbilibili.util.DataProcessUtil;
 import cn.luern0313.wristbilibili.util.ImageDownloaderUtil;
 
 /**
@@ -123,12 +124,27 @@ public class ReplyAdapter extends BaseAdapter
 
                 case 1:
                     convertView = mInflater.inflate(R.layout.widget_reply_changemode, null);
-                    ((TextView) convertView.findViewById(R.id.item_reply_sign)).setText("热门评论");
+                    ((TextView) convertView.findViewById(R.id.item_reply_sort_sign)).setText("热门评论");
+                    Drawable changeNewDrawable = convertView.getResources().getDrawable(R.drawable.icon_reply_sort);
+                    changeNewDrawable.setBounds(0, 0, DataProcessUtil.dip2px(listView.getContext(), 12), DataProcessUtil.dip2px(listView.getContext(), 12));
+                    ((TextView) convertView.findViewById(R.id.item_reply_sort_change)).setCompoundDrawables(changeNewDrawable,null, null,null);
+                    if(isHasRoot)
+                        convertView.findViewById(R.id.item_reply_sort_change).setVisibility(View.GONE);
+                    else
+                        convertView.findViewById(R.id.item_reply_sort_change).setVisibility(View.VISIBLE);
                     break;
 
                 case 2:
                     convertView = mInflater.inflate(R.layout.widget_reply_changemode, null);
-                    ((TextView) convertView.findViewById(R.id.item_reply_sign)).setText("最新评论");
+                    ((TextView) convertView.findViewById(R.id.item_reply_sort_sign)).setText("最新评论");
+                    Drawable changeHotDrawable = convertView.getResources().getDrawable(R.drawable.icon_reply_sort);
+                    changeHotDrawable.setBounds(0, 0,DataProcessUtil.dip2px(listView.getContext(), 12), DataProcessUtil.dip2px(listView.getContext(), 12));
+                    ((TextView) convertView.findViewById(R.id.item_reply_sort_change))
+                            .setCompoundDrawables(changeHotDrawable,null, null,null);
+                    if(isHasRoot)
+                        convertView.findViewById(R.id.item_reply_sort_change).setVisibility(View.GONE);
+                    else
+                        convertView.findViewById(R.id.item_reply_sort_change).setVisibility(View.VISIBLE);
                     break;
             }
         }
