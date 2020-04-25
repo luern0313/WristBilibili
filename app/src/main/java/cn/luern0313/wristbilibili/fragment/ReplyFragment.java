@@ -1,0 +1,459 @@
+package cn.luern0313.wristbilibili.fragment;
+
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.IOException;
+
+import androidx.fragment.app.Fragment;
+import cn.luern0313.wristbilibili.R;
+import cn.luern0313.wristbilibili.adapter.ReplyAdapter;
+import cn.luern0313.wristbilibili.api.ReplyApi;
+import cn.luern0313.wristbilibili.models.ReplyModel;
+import cn.luern0313.wristbilibili.ui.BangumiActivity;
+import cn.luern0313.wristbilibili.ui.CheckreplyActivity;
+import cn.luern0313.wristbilibili.ui.UserActivity;
+import cn.luern0313.wristbilibili.ui.ReplyActivity;
+import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
+
+/**
+ * 被 luern0313 创建于 2020/3/7.
+ */
+public class ReplyFragment extends Fragment
+{
+    private static final String ARG_OID = "oidArg";
+    private static final String ARG_TYPE = "typeArg";
+    private static final String ARG_ROOT = "rootArg";
+    private static final String ARG_POSITION = "positionArg";
+    private final int RESULT_SEND = 101;
+    private final int RESULT_VIEW = 102;
+
+    Context ctx;
+    View rootLayout;
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
+    Intent resultIntent;
+
+    private String oid;
+    private String type;
+    private ReplyModel root;
+    private int position;
+    private String sort;
+    private ReplyApi replyApi;
+
+    private WaveSwipeRefreshLayout waveSwipeRefreshLayout;
+    private ListView uiReplyListView;
+    private View layoutLoading;
+
+    private ReplyAdapter replyAdapter;
+    private ReplyAdapter.ReplyAdapterListener replyAdapterListener;
+
+    private Handler handler = new Handler();
+    private Runnable runnableUi, runnableNoWeb, runnableNothing, runnableMoreNoMore, runnableMoreErr, runnableUpdate;
+
+    private int replyPage = 1;
+    private boolean isReplyLoading = true;
+
+    public static Fragment newInstance(String oid, String type, ReplyModel root, int position)
+    {
+        ReplyFragment fragment = new ReplyFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_OID, oid);
+        args.putString(ARG_TYPE, type);
+        args.putSerializable(ARG_ROOT, root);
+        args.putInt(ARG_POSITION, position);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+        if(getArguments() != null)
+        {
+            oid = getArguments().getString(ARG_OID);
+            type = getArguments().getString(ARG_TYPE);
+            root = (ReplyModel) getArguments().getSerializable(ARG_ROOT);
+            position = getArguments().getInt(ARG_POSITION);
+            sort = root == null ? "2" : "0";
+        }
+        if(getActivity() instanceof BangumiActivity)
+        {
+            ((BangumiActivity) getActivity()).setBangumiReplyActivityListener(new BangumiActivity.BangumiReplyActivityListener()
+            {
+                @Override
+                public void onBangumiReplyUpdate(String oid, String type)
+                {
+                    getReply(oid, type, sort);
+                }
+            });
+        }
+    }
+
+    @Override
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    {
+        ctx = getActivity();
+        rootLayout = inflater.inflate(R.layout.fragment_reply, container, false);
+        sharedPreferences = ctx.getSharedPreferences("default", Context.MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+        resultIntent = new Intent();
+        resultIntent.putExtra("position", position);
+        getActivity().setResult(-1, resultIntent);
+        replyApi = new ReplyApi(sharedPreferences.getString("cookies", ""),
+                                sharedPreferences.getString("csrf", ""), oid, type);
+
+        replyAdapterListener = new ReplyAdapter.ReplyAdapterListener()
+        {
+            @Override
+            public void onClick(int viewId, int position, int mode)
+            {
+                onReplyViewClick(viewId, position, mode);
+            }
+
+            @Override
+            public void onSortModeChange()
+            {
+                sort = sort.equals("0") ? "2" : "0";
+                waveSwipeRefreshLayout.setRefreshing(true);
+                isReplyLoading = true;
+                getReply(oid, type, sort);
+            }
+        };
+
+        layoutLoading = inflater.inflate(R.layout.widget_loading, null);
+        uiReplyListView = rootLayout.findViewById(R.id.reply_listview);
+        uiReplyListView.addFooterView(layoutLoading, null, true);
+        uiReplyListView.setHeaderDividersEnabled(false);
+        uiReplyListView.setOnScrollListener(new AbsListView.OnScrollListener()
+        {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState)
+            {
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
+            {
+                if(visibleItemCount + firstVisibleItem == totalItemCount && !isReplyLoading)
+                {
+                    getMoreReply();
+                }
+            }
+        });
+
+        waveSwipeRefreshLayout = rootLayout.findViewById(R.id.reply_swipe);
+        waveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
+        waveSwipeRefreshLayout.setWaveColor(Color.argb(255, 250, 114, 152));
+        waveSwipeRefreshLayout.setOnRefreshListener(new WaveSwipeRefreshLayout.OnRefreshListener()
+        {
+            @Override
+            public void onRefresh()
+            {
+                handler.post(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        rootLayout.findViewById(R.id.reply_listview).setVisibility(View.GONE);
+                        getReply(oid, type, sort);
+                    }
+                });
+            }
+        });
+
+        layoutLoading.findViewById(R.id.wid_load_button).setOnClickListener(
+                new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        ((TextView) layoutLoading.findViewById(R.id.wid_load_text)).setText(" 加载中. . .");
+                        layoutLoading.findViewById(R.id.wid_load_button).setVisibility(View.GONE);
+                        getMoreReply();
+                    }
+                });
+
+        runnableUi = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    isReplyLoading = false;
+                    waveSwipeRefreshLayout.setRefreshing(false);
+                    rootLayout.findViewById(R.id.reply_nothing).setVisibility(View.GONE);
+                    rootLayout.findViewById(R.id.reply_noweb).setVisibility(View.GONE);
+                    rootLayout.findViewById(R.id.reply_loading).setVisibility(View.GONE);
+                    rootLayout.findViewById(R.id.reply_listview).setVisibility(View.VISIBLE);
+                    replyAdapter = new ReplyAdapter(inflater, uiReplyListView, replyApi.replyArrayList, replyApi.replyIsShowFloor, root != null, replyApi.replyCount, replyAdapterListener);
+                    uiReplyListView.setAdapter(replyAdapter);
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        runnableNoWeb = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                rootLayout.findViewById(R.id.reply_nothing).setVisibility(View.GONE);
+                rootLayout.findViewById(R.id.reply_noweb).setVisibility(View.VISIBLE);
+                rootLayout.findViewById(R.id.reply_loading).setVisibility(View.GONE);
+            }
+        };
+
+        runnableNothing = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                rootLayout.findViewById(R.id.reply_nothing).setVisibility(View.VISIBLE);
+                rootLayout.findViewById(R.id.reply_noweb).setVisibility(View.GONE);
+                rootLayout.findViewById(R.id.reply_loading).setVisibility(View.GONE);
+            }
+        };
+
+        runnableMoreNoMore = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                ((TextView) layoutLoading.findViewById(R.id.wid_load_text)).setText("  没有更多了...");
+            }
+        };
+
+        runnableMoreErr = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                ((TextView) layoutLoading.findViewById(R.id.wid_load_text)).setText("好像没有网络...\n检查下网络？");
+                layoutLoading.findViewById(R.id.wid_load_button).setVisibility(View.VISIBLE);
+                isReplyLoading = false;
+            }
+        };
+
+        runnableUpdate = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    if(root != null)
+                    {
+                        resultIntent.putExtra("replyModel", replyApi.replyArrayList.get(0));
+                        getActivity().setResult(0, resultIntent);
+                    }
+
+                    isReplyLoading = false;
+                    replyAdapter.notifyDataSetChanged();
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        waveSwipeRefreshLayout.setRefreshing(true);
+        waveSwipeRefreshLayout.setRefreshing(false);
+        getReply(oid, type, sort);
+
+        return rootLayout;
+    }
+
+    private void getReply(String oid, String type, final String sort)
+    {
+        this.oid = oid;
+        this.type = type;
+        replyPage = 1;
+        new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    ReplyModel r = (root != null ? (replyApi.replyArrayList.size() > 0 ? replyApi.replyArrayList.get(0) : root) : null);
+                    int l = replyApi.getReply(1, sort, 0, r);
+                    if(l != 0)
+                        handler.post(runnableUi);
+                    else
+                        handler.post(runnableNothing);
+                }
+                catch (IOException | NullPointerException e)
+                {
+                    e.printStackTrace();
+                    handler.post(runnableNoWeb);
+                }
+            }
+        }).start();
+    }
+
+    private void getMoreReply()
+    {
+        isReplyLoading = true;
+        replyPage++;
+        new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    ReplyModel r = (root != null ? (replyApi.replyArrayList.size() > 0 ? replyApi.replyArrayList.get(0) : root) : null);
+                    int l = replyApi.getReply(replyPage, sort, 0, r);
+                    if(l != 0)
+                        handler.post(runnableUpdate);
+                    else
+                        handler.post(runnableMoreNoMore);
+                }
+                catch (IOException e)
+                {
+                    handler.post(runnableMoreErr);
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    private void onReplyViewClick(int viewId, final int position, int mode)
+    {
+        if(mode == 0)
+        {
+            final ReplyModel replyModel = replyApi.replyArrayList.get(position);
+            if(viewId == R.id.item_reply_head)
+            {
+                Intent intent = new Intent(ctx, UserActivity.class);
+                intent.putExtra("mid", replyModel.reply_owner_mid);
+                startActivity(intent);
+            }
+            else if(viewId == R.id.item_reply_like)
+            {
+                new Thread(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        String va = replyApi.likeReply(replyModel, replyModel.reply_user_like ? 0 : 1, type);
+                        if(va.equals("")) handler.post(runnableUpdate);
+                        else
+                        {
+                            Looper.prepare();
+                            Toast.makeText(ctx, (replyModel.reply_user_like ? "取消" : "点赞") + "失败：\n" + va,
+                                           Toast.LENGTH_SHORT).show();
+                            Looper.loop();
+                        }
+                    }
+                }).start();
+            }
+            else if(viewId == R.id.item_reply_dislike)
+            {
+                new Thread(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        String va = replyApi.hateReply(replyModel, replyModel.reply_user_dislike ? 0 : 1, type);
+                        if(va.equals("")) handler.post(runnableUpdate);
+                        else
+                        {
+                            Looper.prepare();
+                            Toast.makeText(ctx, (replyModel.reply_user_dislike ? "取消" : "点踩") + "失败：\n" + va,
+                                           Toast.LENGTH_SHORT).show();
+                            Looper.loop();
+                        }
+                    }
+                }).start();
+            }
+            else if(viewId == R.id.item_reply_reply)
+            {
+                Intent intent = new Intent(ctx, CheckreplyActivity.class);
+                intent.putExtra("oid", oid);
+                intent.putExtra("type", type);
+                intent.putExtra("root", replyModel);
+                intent.putExtra("position", position);
+                startActivityForResult(intent, RESULT_VIEW);
+            }
+        }
+        else if(mode == 1)
+        {
+            Intent replyIntent = new Intent(ctx, ReplyActivity.class);
+            replyIntent.putExtra("oid", oid);
+            replyIntent.putExtra("type", type);
+            startActivityForResult(replyIntent, RESULT_SEND);
+        }
+    }
+
+    @Override
+    public void onActivityResult(final int requestCode, int resultCode, final Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode != 0) return;
+        if(requestCode == RESULT_SEND)
+        {
+            new Thread(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    try
+                    {
+                        String result = replyApi.sendReply("", data.getStringExtra("text"));
+                        if(result.equals(""))
+                        {
+                            Looper.prepare();
+                            Toast.makeText(ctx, "发送成功！", Toast.LENGTH_SHORT).show();
+                            Looper.loop();
+                        }
+                        else
+                        {
+                            Looper.prepare();
+                            Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
+                            Looper.loop();
+                        }
+                    }
+                    catch (IOException e)
+                    {
+                        e.printStackTrace();
+                        Looper.prepare();
+                        Toast.makeText(ctx, "评论发送失败。。请检查网络？", Toast.LENGTH_SHORT).show();
+                        Looper.loop();
+                    }
+                }
+            }).start();
+        }
+        else if(requestCode == RESULT_VIEW)
+        {
+            int p = data.getIntExtra("position", -1);
+            ReplyModel r = data.hasExtra("replyModel") ? (ReplyModel) data.getSerializableExtra("replyModel") : null;
+            if(p != -1 && r != null)
+            {
+                r.reply_mode = 0;
+                replyApi.replyArrayList.set(p, r);
+            }
+            replyAdapter.notifyDataSetChanged();
+        }
+    }
+}
+

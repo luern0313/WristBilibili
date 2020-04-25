@@ -3,6 +3,7 @@ package cn.luern0313.wristbilibili.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -12,6 +13,8 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -23,10 +26,9 @@ import cn.luern0313.wristbilibili.adapter.ArticleAdapter;
 import cn.luern0313.wristbilibili.models.article.ArticleCardModel;
 import cn.luern0313.wristbilibili.models.article.ArticleModel;
 import cn.luern0313.wristbilibili.ui.ArticleActivity;
-import cn.luern0313.wristbilibili.ui.BangumiActivity;
 import cn.luern0313.wristbilibili.ui.ImgActivity;
+import cn.luern0313.wristbilibili.ui.UserActivity;
 import cn.luern0313.wristbilibili.ui.UnsupportedLinkActivity;
-import cn.luern0313.wristbilibili.ui.VideodetailsActivity;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
 
 public class ArticleDetailFragment extends Fragment implements View.OnClickListener
@@ -40,13 +42,11 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
     private ArticleModel articleModel;
     private ArticleAdapter articleAdapter;
     private ArticleDetailFragmentListener articleDetailFragmentListener;
-    private ArticleAdapter.ArticleListener articleListener;
-
-    private int img_width;
+    private ArticleAdapter.ArticleAdapterListener articleListener;
 
     private ListView uiArticleListView;
     private View layoutArticleHeader;
-
+    private View layoutArticleFooter;
 
     public ArticleDetailFragment() {}
 
@@ -71,7 +71,7 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         ctx = getActivity();
         rootLayout = inflater.inflate(R.layout.fragment_article_detail, container, false);
@@ -81,9 +81,9 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
         WindowManager manager = getActivity().getWindowManager();
         DisplayMetrics outMetrics = new DisplayMetrics();
         manager.getDefaultDisplay().getMetrics(outMetrics);
-        img_width = outMetrics.widthPixels - DataProcessUtil.dip2px(ctx, 28) * 2;
+        int img_width = outMetrics.widthPixels - DataProcessUtil.dip2px(ctx, 28) * 2;
 
-        articleListener = new ArticleAdapter.ArticleListener()
+        articleListener = new ArticleAdapter.ArticleAdapterListener()
         {
             @Override
             public void onCardClick(int viewId, int position)
@@ -102,12 +102,32 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
 
         uiArticleListView = rootLayout.findViewById(R.id.article_article_listview);
         layoutArticleHeader = inflater.inflate(R.layout.widget_article_header, null);
+        layoutArticleFooter = inflater.inflate(R.layout.widget_article_return_top, null);
 
         ((TextView) layoutArticleHeader.findViewById(R.id.article_article_title)).setText(articleModel.article_title);
         ((TextView) layoutArticleHeader.findViewById(R.id.article_article_channel)).setText(articleModel.article_channel);
         ((TextView) layoutArticleHeader.findViewById(R.id.article_article_view)).setText(DataProcessUtil.getView(articleModel.article_view) + "观看");
         ((TextView) layoutArticleHeader.findViewById(R.id.article_article_time)).setText(articleModel.article_time);
         ((TextView) layoutArticleHeader.findViewById(R.id.article_article_id)).setText("CV" + articleModel.article_id);
+
+        Glide.with(ctx).load(articleModel.article_up_face).into((ImageView) layoutArticleHeader.findViewById(R.id.article_card_head));
+        ((TextView) layoutArticleHeader.findViewById(R.id.article_card_name)).setText(articleModel.article_up_name);
+        ((TextView) layoutArticleHeader.findViewById(R.id.article_card_sen)).setText("粉丝：" + DataProcessUtil.getView(articleModel.article_up_fans_num));
+        if(articleModel.article_up_vip == 2)
+            ((TextView) rootLayout.findViewById(R.id.article_card_name)).setTextColor(getResources().getColor(R.color.mainColor));
+        if(articleModel.article_up_official == 0)
+            rootLayout.findViewById(R.id.article_card_off_1).setVisibility(View.VISIBLE);
+        else if(articleModel.article_up_official == 1)
+            rootLayout.findViewById(R.id.article_card_off_2).setVisibility(View.VISIBLE);
+
+        layoutArticleHeader.findViewById(R.id.article_card_follow).setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                articleDetailFragmentListener.onArticleDetailFragmentViewClick(v.getId());
+            }
+        });
 
         setArticleIcon();
 
@@ -119,7 +139,28 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
 
         articleAdapter = new ArticleAdapter(inflater, img_width, articleModel.article_article_card_model_list, uiArticleListView, articleListener);
         uiArticleListView.addHeaderView(layoutArticleHeader);
+        uiArticleListView.addFooterView(layoutArticleFooter);
         uiArticleListView.setAdapter(articleAdapter);
+
+        layoutArticleFooter.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                uiArticleListView.smoothScrollToPosition(0);
+            }
+        });
+
+        layoutArticleHeader.findViewById(R.id.article_card_lay).setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Intent intent = new Intent(ctx, UserActivity.class);
+                intent.putExtra("mid", articleModel.article_up_mid);
+                startActivity(intent);
+            }
+        });
 
         return rootLayout;
     }
@@ -156,6 +197,9 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
             ((TextView) layoutArticleHeader.findViewById(R.id.article_article_bt_fav_text)).setText("收藏");
         else
             ((TextView) layoutArticleHeader.findViewById(R.id.article_article_bt_fav_text)).setText(DataProcessUtil.getView(articleModel.article_fav));
+
+        if(articleModel.article_user_follow_up)
+            layoutArticleHeader.findViewById(R.id.article_card_follow).setVisibility(View.GONE);
     }
 
     private void onArticleViewClick(int viewId, int position)
@@ -165,8 +209,7 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
         {
             if(((ArticleCardModel.ArticleTextModel) articleCardModel).article_text_articleImageModel != null)
             {
-                int p = DataProcessUtil.getPositionInArrayList(
-                        articleModel.article_article_img_url,
+                int p = DataProcessUtil.getPositionInArrayList(articleModel.article_article_img_url,
                         ((ArticleCardModel.ArticleTextModel) articleCardModel).article_text_articleImageModel.article_image_src);
                 if(p != -1)
                 {
@@ -179,33 +222,10 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
         }
         else
         {
-            if(articleCardModel.article_card_support)
-            {
-                if(articleCardModel.article_card_identity.substring(0, 2).equals("av"))
-                {
-                    Intent intent = new Intent(ctx, VideodetailsActivity.class);
-                    intent.putExtra("aid", ((ArticleCardModel.ArticleVideoCardModel) articleCardModel).article_video_card_id);
-                    startActivity(intent);
-                }
-                else if(articleCardModel.article_card_identity.substring(0, 2).equals("ss"))
-                {
-                    Intent intent = new Intent(ctx, BangumiActivity.class);
-                    intent.putExtra("season_id", ((ArticleCardModel.ArticleBangumiCardModel) articleCardModel).article_bangumi_card_id);
-                    startActivity(intent);
-                }
-                else if(articleCardModel.article_card_identity.substring(0, 2).equals("cv"))
-                {
-                    Intent intent = new Intent(ctx, ArticleActivity.class);
-                    intent.putExtra("article_id", ((ArticleCardModel.ArticleArticleCardModel) articleCardModel).article_article_card_id);
-                    startActivity(intent);
-                }
-            }
-            else
-            {
-                Intent intent = new Intent(ctx, UnsupportedLinkActivity.class);
-                intent.putExtra("url", articleCardModel.article_card_url);
-                startActivity(intent);
-            }
+            Uri uri = Uri.parse(articleCardModel.article_card_url);
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            intent.setClassName("cn.luern0313.wristbilibili","cn.luern0313.wristbilibili.ui.UnsupportedLinkActivity");
+            startActivity(intent);
         }
     }
 

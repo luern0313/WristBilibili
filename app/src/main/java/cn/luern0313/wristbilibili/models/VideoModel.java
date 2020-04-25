@@ -3,6 +3,7 @@ package cn.luern0313.wristbilibili.models;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,9 +15,10 @@ import cn.luern0313.wristbilibili.util.DataProcessUtil;
  * 被 luern0313 创建于 2020/2/2.
  */
 
-public class VideoModel
+public class VideoModel implements Serializable
 {
     public String video_aid;
+    public String video_bvid;
     public String video_cid;
     public String video_title;
     public String video_cover;
@@ -34,8 +36,11 @@ public class VideoModel
     public String video_up_name;
     public String video_up_face;
     public String video_up_mid;
-    public String video_up_official;
+    public int video_up_official; // -1 0 1
+    public int video_up_vip; // 2
+    public int video_up_fan_num;
 
+    public boolean video_user_follow_up;
     public boolean video_user_like;
     public boolean video_user_dislike;
     public int video_user_coin;
@@ -44,7 +49,8 @@ public class VideoModel
     public ArrayList<VideoRecommendModel> video_recommend_array_list = new ArrayList<>();
     public VideoModel(JSONObject video)
     {
-        video_aid = String.valueOf(video.optInt("aid"));
+        video_aid = video.has("aid") ? String.valueOf(video.optInt("aid")) : "";
+        video_bvid = video.has("bvid") ? String.valueOf(video.optString("bvid")) : "";
         video_cid = String.valueOf(video.optInt("cid"));
         video_title = video.optString("title");
         video_cover = video.optString("pic");
@@ -68,12 +74,16 @@ public class VideoModel
         JSONObject video_owner = video.has("owner") ? video.optJSONObject("owner") : new JSONObject();
         JSONObject video_owner_other = video.has("owner_ext") ? video.optJSONObject("owner_ext") : new JSONObject();
         JSONObject video_owner_other_official = video_owner_other.has("official_verify") ? video_owner_other.optJSONObject("official_verify") : new JSONObject();
+        JSONObject video_owner_other_vip = video_owner_other.has("vip") ? video_owner_other.optJSONObject("vip") : new JSONObject();
         video_up_name = video_owner.optString("name");
         video_up_face = video_owner.optString("face");
         video_up_mid = String.valueOf(video_owner.optInt("mid"));
-        video_up_official = video_owner_other_official.optString("desc");
+        video_up_official = video_owner_other_official.optInt("type");
+        video_up_fan_num = video_owner_other.optInt("fans");
+        video_up_vip = video_owner_other_vip.optInt("vipType");
 
         JSONObject video_user = video.has("req_user") ? video.optJSONObject("req_user") : new JSONObject();
+        video_user_follow_up = video_user.optInt("attention") == 1;
         video_user_like = video_user.optInt("like") == 1;
         video_user_dislike = video_user.optInt("dislike") == 1;
         video_user_coin = video_user.optInt("coin");
@@ -88,7 +98,7 @@ public class VideoModel
         }
     }
 
-    public class VideoPartModel
+    public class VideoPartModel implements Serializable
     {
         public String video_part_cid;
         public int video_part_num;
@@ -101,7 +111,7 @@ public class VideoModel
         }
     }
 
-    public class VideoRecommendModel
+    public class VideoRecommendModel implements Serializable
     {
         public String video_recommend_video_aid;
         public String video_recommend_video_title;
