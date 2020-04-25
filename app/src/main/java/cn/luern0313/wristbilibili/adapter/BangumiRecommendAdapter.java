@@ -14,7 +14,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.R;
-import cn.luern0313.wristbilibili.models.BangumiRecommendModel;
+import cn.luern0313.wristbilibili.models.bangumi.BangumiRecommendModel;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
 import cn.luern0313.wristbilibili.util.ImageTaskUtil;
 

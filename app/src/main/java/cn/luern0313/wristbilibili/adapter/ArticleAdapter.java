@@ -38,14 +38,14 @@ public class ArticleAdapter extends BaseAdapter
     private LayoutInflater mInflater;
 
     private LruCache<String, BitmapDrawable> mImageCache;
-    private ArticleListener articleListener;
+    private ArticleAdapterListener articleListener;
 
     private ArrayList<ArticleCardModel> articleCardModelArrayList;
     private ListView listView;
 
     private int img_width;
 
-    public ArticleAdapter(LayoutInflater inflater, int img_width, ArrayList<ArticleCardModel> articleCardModelArrayList, ListView listView, ArticleListener articleListener)
+    public ArticleAdapter(LayoutInflater inflater, int img_width, ArrayList<ArticleCardModel> articleCardModelArrayList, ListView listView, ArticleAdapterListener articleListener)
     {
         mInflater = inflater;
         this.img_width = img_width;
@@ -261,8 +261,8 @@ public class ArticleAdapter extends BaseAdapter
         if(type == 0)
         {
             ArticleCardModel.ArticleTextModel articleTextModel = (ArticleCardModel.ArticleTextModel) articleCardModelArrayList.get(position);
-            Document e = Jsoup.parse(articleTextModel.article_text_element);
-            if(e.text().equals("") && e.getElementsByTag("img").isEmpty())
+            Document e = Jsoup.parseBodyFragment(articleTextModel.article_text_element);
+            if(e.text().equals("") && articleTextModel.article_text_articleImageModel == null)
                 articleTextViewHolder.text_text.setVisibility(View.GONE);
             else
             {
@@ -598,7 +598,6 @@ public class ArticleAdapter extends BaseAdapter
                 Bitmap bitmap = null;
                 bitmap = ImageDownloaderUtil.downloadImage(imageUrl);
                 BitmapDrawable db = new BitmapDrawable(listViewResources, bitmap);
-                // 如果本地还没缓存该图片，就缓存
                 if(mImageCache.get(imageUrl) == null && bitmap != null)
                 {
                     mImageCache.put(imageUrl, db);
@@ -615,7 +614,6 @@ public class ArticleAdapter extends BaseAdapter
         @Override
         protected void onPostExecute(BitmapDrawable result)
         {
-            // 通过Tag找到我们需要的ImageView，如果该ImageView所在的item已被移出页面，就会直接返回null
             ImageView iv = listView.findViewWithTag(imageUrl);
             if(iv != null && result != null)
             {
@@ -624,7 +622,7 @@ public class ArticleAdapter extends BaseAdapter
         }
     }
 
-    public interface ArticleListener
+    public interface ArticleAdapterListener
     {
         void onCardClick(int viewId, int position);
         void onLinkClick(String url);

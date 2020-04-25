@@ -1,6 +1,8 @@
-package cn.luern0313.wristbilibili.models;
+package cn.luern0313.wristbilibili.models.bangumi;
 
 import org.json.JSONObject;
+
+import java.io.Serializable;
 
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
 
@@ -8,7 +10,7 @@ import cn.luern0313.wristbilibili.util.DataProcessUtil;
  * 被 luern0313 创建于 2020/1/31.
  */
 
-public class BangumiRecommendModel
+public class BangumiRecommendModel implements Serializable
 {
     public String bangumi_title;
     public String bangumi_season_id;

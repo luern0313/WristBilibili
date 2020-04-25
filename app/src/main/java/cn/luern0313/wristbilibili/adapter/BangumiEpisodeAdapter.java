@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import cn.luern0313.wristbilibili.R;
-import cn.luern0313.wristbilibili.models.BangumiModel;
+import cn.luern0313.wristbilibili.models.bangumi.BangumiModel;
 
 /**
  * 被 luern0313 创建于 2020/1/30.
