@@ -1,6 +1,5 @@
 package cn.luern0313.wristbilibili.fragment;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -22,6 +21,7 @@ import android.widget.TextView;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import androidx.fragment.app.Fragment;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.FavorBoxApi;
 import cn.luern0313.wristbilibili.models.FavorBoxModel;

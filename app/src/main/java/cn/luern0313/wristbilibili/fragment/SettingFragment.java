@@ -1,6 +1,5 @@
 package cn.luern0313.wristbilibili.fragment;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,6 +14,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import androidx.fragment.app.Fragment;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.ui.AboutActivity;
 import cn.luern0313.wristbilibili.ui.FollowmeActivity;

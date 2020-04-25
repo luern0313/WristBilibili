@@ -1,6 +1,5 @@
 package cn.luern0313.wristbilibili.fragment;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -22,6 +21,7 @@ import android.widget.TextView;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import androidx.fragment.app.Fragment;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.WatchLaterApi;
 import cn.luern0313.wristbilibili.models.WatchLaterModel;

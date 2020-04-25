@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.app.AlertDialog;
-import android.app.Fragment;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -37,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import androidx.fragment.app.Fragment;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.models.DownloadModel;
 import cn.luern0313.wristbilibili.service.DownloadService;
