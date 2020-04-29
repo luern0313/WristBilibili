@@ -46,7 +46,6 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:lines="2"
-                    android:text="狼与香辛料啊水水水水水水水水水水"
                     android:textColor="@color/gray_44"
                     android:textSize="13sp" />
 
@@ -63,7 +62,6 @@
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:maxLines="1"
-                        android:text="日本"
                         android:textSize="12sp" />
 
                     <TextView
@@ -73,7 +71,6 @@
                         android:layout_marginStart="4dp"
                         android:ellipsize="end"
                         android:maxLines="1"
-                        android:text="日本"
                         android:textSize="12sp" />
                 </LinearLayout>
 
@@ -84,7 +81,6 @@
                     android:layout_alignParentEnd="true"
                     android:layout_below="@id/artcard_bangumi_infolay"
                     android:layout_marginEnd="4dp"
-                    android:text="9.8"
                     android:textColor="@color/orange"
                     android:textSize="16sp"
                     android:textStyle="bold" />

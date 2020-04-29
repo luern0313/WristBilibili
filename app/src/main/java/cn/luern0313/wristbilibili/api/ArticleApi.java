@@ -54,7 +54,7 @@ public class ArticleApi
         try
         {
             String html = NetWorkUtil.get("https://www.bilibili.com/read/mobile/" + article_id, webHeaders).body().string();
-            Document document = Jsoup.parse(html);
+            Document document = Jsoup.parseBodyFragment(html);
             Elements elements = document.selectFirst("*[class~=(:?(^)|(\\s))article-holder(:?(\\s)|($))]")
                     .select("figure[class=img-box] > img[class~=^(?:(video)|(fanju)|(article)|(music)|(shop)|(caricature)|(live))-card]");
             ArrayList<String> perList = new ArrayList<>();
@@ -180,4 +180,20 @@ public class ArticleApi
         return "发送评论失败";
     }
 
+    public String followUp() throws IOException
+    {
+        try
+        {
+            String url = "https://api.bilibili.com/x/relation/modify";
+            String per = "fid=" + articleModel.article_up_mid + "&act=1&re_src=115&jsonp=jsonp&csrf=" + csrf;
+            JSONObject result = new JSONObject(NetWorkUtil.post(url, per, webHeaders).body().string());
+            if(result.optInt("code") == 0)
+                return "";
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+        return "关注UP主失败";
+    }
 }

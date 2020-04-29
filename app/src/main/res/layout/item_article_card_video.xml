@@ -58,7 +58,6 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:text="撒旦撒"
                     android:textColor="@color/white"
                     android:textSize="11sp" />
 
@@ -69,7 +68,6 @@
                     android:layout_marginStart="6dp"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:text="都十分何"
                     android:textColor="@color/white"
                     android:textSize="11sp" />
 
@@ -81,7 +79,6 @@
                     android:ellipsize="end"
                     android:gravity="end"
                     android:maxLines="1"
-                    android:text="都十分何"
                     android:textColor="@color/white"
                     android:textSize="11sp" />
             </LinearLayout>
@@ -100,7 +97,6 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:maxLines="2"
-                    android:text="理他骚得很大帅藕丝"
                     android:textColor="@color/gray_44"
                     android:textSize="13sp" />
 
@@ -129,7 +125,6 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/artcard_video_title"
                         android:layout_marginStart="4dp"
-                        android:text="雕塑湖底"
                         android:textSize="12sp" />
 
                 </LinearLayout>

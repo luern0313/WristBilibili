@@ -46,7 +46,6 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:lines="1"
-                    android:text="狼与香辛料啊水水水水水水水水水水"
                     android:textColor="@color/gray_44"
                     android:textSize="13sp" />
 
@@ -67,7 +66,6 @@
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
                             android:maxLines="1"
-                            android:text="4050"
                             android:textSize="12sp" />
 
                         <TextView
@@ -77,7 +75,6 @@
                             android:layout_marginStart="4dp"
                             android:ellipsize="end"
                             android:maxLines="1"
-                            android:text="505"
                             android:textSize="12sp" />
                     </LinearLayout>
 
@@ -105,7 +102,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="4dp"
-                            android:text="啊啊啊啊"
                             android:textSize="12sp" />
                     </LinearLayout>
                 </LinearLayout>

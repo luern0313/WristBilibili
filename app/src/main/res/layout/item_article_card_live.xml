@@ -77,7 +77,6 @@
                     android:layout_weight="1"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:text="学习"
                     android:textColor="@color/white"
                     android:textSize="11sp" />
 
@@ -109,7 +108,6 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:maxLines="2"
-                    android:text="日常写代码"
                     android:textColor="@color/gray_44"
                     android:textSize="13sp" />
 
@@ -138,7 +136,6 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/artcard_live_title"
                         android:layout_marginStart="4dp"
-                        android:text="luern0313"
                         android:textSize="12sp" />
 
                 </LinearLayout>

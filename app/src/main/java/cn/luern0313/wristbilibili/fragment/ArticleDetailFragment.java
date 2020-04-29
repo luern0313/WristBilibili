@@ -63,7 +63,6 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
         if(getArguments() != null)
         {
             articleModel = (ArticleModel) getArguments().getSerializable(ARG_ARTICLE_MODEL);
@@ -114,11 +113,11 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
         ((TextView) layoutArticleHeader.findViewById(R.id.article_card_name)).setText(articleModel.article_up_name);
         ((TextView) layoutArticleHeader.findViewById(R.id.article_card_sen)).setText("粉丝：" + DataProcessUtil.getView(articleModel.article_up_fans_num));
         if(articleModel.article_up_vip == 2)
-            ((TextView) rootLayout.findViewById(R.id.article_card_name)).setTextColor(getResources().getColor(R.color.mainColor));
+            ((TextView) layoutArticleHeader.findViewById(R.id.article_card_name)).setTextColor(getResources().getColor(R.color.mainColor));
         if(articleModel.article_up_official == 0)
-            rootLayout.findViewById(R.id.article_card_off_1).setVisibility(View.VISIBLE);
+            layoutArticleHeader.findViewById(R.id.article_card_off_1).setVisibility(View.VISIBLE);
         else if(articleModel.article_up_official == 1)
-            rootLayout.findViewById(R.id.article_card_off_2).setVisibility(View.VISIBLE);
+            layoutArticleHeader.findViewById(R.id.article_card_off_2).setVisibility(View.VISIBLE);
 
         layoutArticleHeader.findViewById(R.id.article_card_follow).setOnClickListener(new View.OnClickListener()
         {
@@ -147,7 +146,15 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
             @Override
             public void onClick(View v)
             {
-                uiArticleListView.smoothScrollToPosition(0);
+                uiArticleListView.smoothScrollToPositionFromTop(0, 0, 500);
+                uiArticleListView.postDelayed(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        uiArticleListView.setSelection(0);
+                    }
+                }, 500);
             }
         });
 
@@ -278,9 +285,16 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
     }
 
     @Override
-    public void onDestroy()
+    public void onResume()
     {
-        super.onDestroy();
+        super.onResume();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onPause()
+    {
+        super.onPause();
         EventBus.getDefault().unregister(this);
     }
 

@@ -16,7 +16,6 @@ import cn.luern0313.wristbilibili.util.DataProcessUtil;
 public class ArticleCardModel implements Serializable
 {
     public String article_card_identity;
-    public boolean article_card_support;
     public String article_card_url;
 
     public class ArticleTextModel extends ArticleCardModel implements Serializable
@@ -26,7 +25,6 @@ public class ArticleCardModel implements Serializable
         ArticleTextModel(Element element)
         {
             article_card_identity = "te";
-            article_card_support = false;
             article_card_url = "";
 
             article_text_element = element.outerHtml();
@@ -49,10 +47,9 @@ public class ArticleCardModel implements Serializable
         ArticleVideoCardModel(String identity, JSONObject videoCard)
         {
             article_card_identity = identity;
-            article_card_support = true;
-            article_card_url = "https://www.bilibili.com/video/av" + videoCard.optInt("aid");
+            article_card_url = "bilibili://video/" + videoCard.optString("bvid");
 
-            article_video_card_id = String.valueOf(videoCard.optInt("aid"));
+            article_video_card_id = String.valueOf(videoCard.optString("bvid"));
             article_video_card_title = videoCard.optString("title");
             article_video_card_cover = videoCard.optString("pic");
             article_video_card_time = DataProcessUtil.getMinFromSec(videoCard.optInt("duration"));
@@ -79,8 +76,7 @@ public class ArticleCardModel implements Serializable
         ArticleBangumiCardModel(String identity, JSONObject bangumiCard)
         {
             article_card_identity = identity;
-            article_card_support = true;
-            article_card_url = "https://www.bilibili.com/bangumi/play/ss" + bangumiCard.optInt("season_id");
+            article_card_url = "bilibili://bangumi/season/" + bangumiCard.optInt("season_id");
 
             article_bangumi_card_id = String.valueOf(bangumiCard.optInt("season_id"));
             article_bangumi_card_title = bangumiCard.optString("title");
@@ -105,8 +101,7 @@ public class ArticleCardModel implements Serializable
         ArticleArticleCardModel(String identity, JSONObject articleCard)
         {
             article_card_identity = identity;
-            article_card_support = true;
-            article_card_url = "https://www.bilibili.com/read/cv" + articleCard.optInt("id");
+            article_card_url = "bilibili://article/" + articleCard.optInt("id");
 
             article_article_card_id = String.valueOf(articleCard.optInt("id"));
             article_article_card_title = articleCard.optString("title");
@@ -134,8 +129,7 @@ public class ArticleCardModel implements Serializable
         ArticleMusicCardModel(String identity, JSONObject musicCard)
         {
             article_card_identity = identity;
-            article_card_support = false;
-            article_card_url = "https://www.bilibili.com/audio/au" + musicCard.optInt("song_id");
+            article_card_url = "bilibili://music/detail/" + musicCard.optInt("song_id");
 
             article_music_card_id = String.valueOf(musicCard.optInt("song_id"));
             article_music_card_title = musicCard.optString("title");
@@ -158,8 +152,7 @@ public class ArticleCardModel implements Serializable
         ArticleTicketCardModel(String identity, JSONObject ticketCard)
         {
             article_card_identity = identity;
-            article_card_support = false;
-            article_card_url = "https://show.bilibili.com/platform/detail.html?id=" + ticketCard.optInt("id");
+            article_card_url = "bilibili://show/" + ticketCard.optInt("id");
 
             article_ticket_card_id = String.valueOf(ticketCard.optInt("id"));
             article_ticket_card_title = ticketCard.optString("name");
@@ -183,8 +176,7 @@ public class ArticleCardModel implements Serializable
         ArticleShopCardModel(String identity, JSONObject shopCard)
         {
             article_card_identity = identity;
-            article_card_support = false;
-            article_card_url = "https://mall.bilibili.com/detail.html?itemsId=" + shopCard.optInt("itemsId");
+            article_card_url = "bilibili://mall/" + shopCard.optInt("itemsId");
 
             article_shop_card_id = String.valueOf(shopCard.optInt("itemsId"));
             article_shop_card_title = shopCard.optString("name");
@@ -206,8 +198,7 @@ public class ArticleCardModel implements Serializable
         ArticleContainerCardModel(String identity, JSONObject containerCard)
         {
             article_card_identity = identity;
-            article_card_support = false;
-            article_card_url = "https://manga.bilibili.com/detail/mc" + containerCard.optInt("id");
+            article_card_url = "bilibili://manga/" + containerCard.optInt("id");
 
             article_container_card_id = String.valueOf(containerCard.optInt("id"));
             article_container_card_title = containerCard.optString("title");
@@ -230,8 +221,7 @@ public class ArticleCardModel implements Serializable
         ArticleLiveCardModel(String identity, JSONObject liveCard)
         {
             article_card_identity = identity;
-            article_card_support = false;
-            article_card_url = "https://live.bilibili.com/" + liveCard.optInt("room_id");
+            article_card_url = "bilibili://live/" + liveCard.optInt("room_id");
 
             article_live_card_id = String.valueOf(liveCard.optInt("room_id"));
             article_live_card_title = liveCard.optString("title");

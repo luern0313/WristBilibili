@@ -32,8 +32,11 @@ public class ArticleModel implements Serializable
     public String article_up_name;
     public String article_up_face;
     public String article_up_mid;
-    public int article_up_official;
+    public int article_up_official; // -1 0 1
+    public int article_up_vip; // 2
+    public int article_up_fans_num;
 
+    public boolean article_user_follow_up;
     public boolean article_user_like;
     public int article_user_coin;
     public boolean article_user_fav;
@@ -62,12 +65,16 @@ public class ArticleModel implements Serializable
         article_time = format.format(new Date(Integer.valueOf(timestamp) * 1000L));
 
         JSONObject up = more.has("author") ? more.optJSONObject("author") : new JSONObject();
+        JSONObject up_off = up.has("official_verify") ? up.optJSONObject("official_verify") : new JSONObject();
+        JSONObject up_vip = up.has("vip") ? up.optJSONObject("vip") : new JSONObject();
         article_up_name = up.optString("name");
         article_up_face = up.optString("face");
         article_up_mid = up.optString("mid");
-        JSONObject up_off = up.has("official_verify") ? up.optJSONObject("official_verify") : new JSONObject();
+        article_up_fans_num = up.optInt("fans");
         article_up_official = up_off.optInt("type");
+        article_up_vip = up_vip.optInt("vipType");
 
+        article_user_follow_up = more.optBoolean("attention", false);
         article_user_like = article.optInt("like") == 1;
         article_user_coin = article.optInt("coin");
         article_user_fav = article.optBoolean("favorite");
@@ -151,6 +158,8 @@ public class ArticleModel implements Serializable
                     if(url.endsWith(".webp"))
                         url = url.substring(0, url.lastIndexOf("@"));
                     article_article_img_url.add(url);
+                    imgElement.attr("src", url);
+                    imgElement.attr("data-src", url);
                 }
                 article_article_card_model_list.add(articleCardModel.new ArticleTextModel(art));
             }
