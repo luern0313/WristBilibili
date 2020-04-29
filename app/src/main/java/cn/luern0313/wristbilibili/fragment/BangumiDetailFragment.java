@@ -73,7 +73,6 @@ public class BangumiDetailFragment extends Fragment implements View.OnClickListe
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
         if(getArguments() != null)
         {
             seasonId = getArguments().getString(ARG_SEASON_ID);
@@ -158,7 +157,7 @@ public class BangumiDetailFragment extends Fragment implements View.OnClickListe
         {
             rootLayout.findViewById(R.id.bgm_detail_video_season_layout).setVisibility(View.VISIBLE);
             LinearLayout episodesLinearLayout = rootLayout.findViewById(R.id.bgm_detail_video_season);
-            for (int i = 0; i < bangumiModel.bangumi_seasons.size(); i++)
+            for(int i = 0; i < bangumiModel.bangumi_seasons.size(); i++)
                 episodesLinearLayout.addView(getVideoSeasonButton(bangumiModel.bangumi_seasons.get(i)));
         }
 
@@ -215,7 +214,7 @@ public class BangumiDetailFragment extends Fragment implements View.OnClickListe
     }
 
 
-    public void clickBangumiMorePart(View view)
+    private void clickBangumiMorePart(View view)
     {
         String[] videoPartNames = new String[bangumiModel.bangumi_episodes.size()];
         for(int i = 0; i < bangumiModel.bangumi_episodes.size(); i++)
@@ -226,7 +225,7 @@ public class BangumiDetailFragment extends Fragment implements View.OnClickListe
         startActivityForResult(intent, RESULT_DETAIL_EPISODE);
     }
 
-    public void clickBangumiMoreOther(View view)
+    private void clickBangumiMoreOther(View view)
     {
         String[] videoPartNames = new String[bangumiModel.bangumi_sections.size()];
         for(int i = 0; i < bangumiModel.bangumi_sections.size(); i++)
@@ -365,7 +364,7 @@ public class BangumiDetailFragment extends Fragment implements View.OnClickListe
         }
         else
         {
-            throw new RuntimeException(context.toString() + " must implement OnFragmentInteractionListener");
+            throw new RuntimeException(context.toString() + " must implement BangumiDetailFragmentListener");
         }
     }
 
@@ -377,9 +376,16 @@ public class BangumiDetailFragment extends Fragment implements View.OnClickListe
     }
 
     @Override
-    public void onDestroy()
+    public void onResume()
     {
-        super.onDestroy();
+        super.onResume();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onPause()
+    {
+        super.onPause();
         EventBus.getDefault().unregister(this);
     }
 
