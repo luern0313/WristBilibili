@@ -9,12 +9,13 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.R;
-import cn.luern0313.wristbilibili.models.bangumi.BangumiRecommendModel;
+import cn.luern0313.wristbilibili.models.ListBangumiModel;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
 import cn.luern0313.wristbilibili.util.ImageTaskUtil;
 
@@ -22,20 +23,22 @@ import cn.luern0313.wristbilibili.util.ImageTaskUtil;
  * 被 luern0313 创建于 2020/1/31.
  */
 
-public class BangumiRecommendAdapter extends BaseAdapter
+public class ListBangumiAdapter extends BaseAdapter
 {
     private LayoutInflater mInflater;
 
     private LruCache<String, BitmapDrawable> mImageCache;
+    private ListBangumiAdapterListener listBangumiAdapterListener;
 
-    private ArrayList<BangumiRecommendModel> bangumiRecommendModelArrayList;
+    private ArrayList<ListBangumiModel> listBangumiModelArrayList;
     private ListView listView;
 
-    public BangumiRecommendAdapter(LayoutInflater inflater,  ListView listView, ArrayList<BangumiRecommendModel> bangumiRecommendModelArrayList)
+    public ListBangumiAdapter(LayoutInflater inflater, ListView listView, ArrayList<ListBangumiModel> listBangumiModelArrayList, ListBangumiAdapterListener listBangumiAdapterListener)
     {
         mInflater = inflater;
-        this.bangumiRecommendModelArrayList = bangumiRecommendModelArrayList;
+        this.listBangumiModelArrayList = listBangumiModelArrayList;
         this.listView = listView;
+        this.listBangumiAdapterListener = listBangumiAdapterListener;
 
         int maxCache = (int) Runtime.getRuntime().maxMemory();
         int cacheSize = maxCache / 8;
@@ -60,7 +63,7 @@ public class BangumiRecommendAdapter extends BaseAdapter
     @Override
     public int getCount()
     {
-        return bangumiRecommendModelArrayList.size();
+        return listBangumiModelArrayList.size();
     }
 
     @Override
@@ -78,19 +81,20 @@ public class BangumiRecommendAdapter extends BaseAdapter
     @Override
     public View getView(int position, View convertView, ViewGroup parent)
     {
-        BangumiRecommendModel bangumiRecommendModel = bangumiRecommendModelArrayList.get(position);
+        ListBangumiModel bangumiRecommendModel = listBangumiModelArrayList.get(position);
         ViewHolder viewHolder;
         if(convertView == null)
         {
-            convertView = mInflater.inflate(R.layout.item_bangumi_recommend_bangumi, null);
+            convertView = mInflater.inflate(R.layout.item_list_bangumi, null);
             viewHolder = new ViewHolder();
             convertView.setTag(viewHolder);
-            viewHolder.cover = convertView.findViewById(R.id.item_bgm_recommend_bangumi_img);
-            viewHolder.title = convertView.findViewById(R.id.item_bgm_recommend_bangumi_title);
-            viewHolder.play = convertView.findViewById(R.id.item_bgm_recommend_bangumi_play);
-            viewHolder.follow = convertView.findViewById(R.id.item_bgm_recommend_bangumi_follow);
-            viewHolder.newep = convertView.findViewById(R.id.item_bgm_recommend_bangumi_new);
-            viewHolder.score = convertView.findViewById(R.id.item_bgm_recommend_bangumi_score);
+            viewHolder.lay = convertView.findViewById(R.id.item_list_bangumi_lay);
+            viewHolder.cover = convertView.findViewById(R.id.item_list_bangumi_img);
+            viewHolder.title = convertView.findViewById(R.id.item_list_bangumi_title);
+            viewHolder.play = convertView.findViewById(R.id.item_list_bangumi_play);
+            viewHolder.follow = convertView.findViewById(R.id.item_list_bangumi_follow);
+            viewHolder.newep = convertView.findViewById(R.id.item_list_bangumi_new);
+            viewHolder.score = convertView.findViewById(R.id.item_list_bangumi_score);
         }
         else
         {
@@ -111,6 +115,8 @@ public class BangumiRecommendAdapter extends BaseAdapter
         viewHolder.play.setCompoundDrawables(playNumDrawable,null, null,null);
         viewHolder.follow.setCompoundDrawables(likeNumDrawable,null, null,null);
 
+        viewHolder.lay.setOnClickListener(onViewClick(position));
+
         viewHolder.cover.setTag(bangumiRecommendModel.bangumi_cover);
         BitmapDrawable c = setImageFormWeb(bangumiRecommendModel.bangumi_cover);
         if(c != null) viewHolder.cover.setImageDrawable(c);
@@ -119,12 +125,25 @@ public class BangumiRecommendAdapter extends BaseAdapter
 
     class ViewHolder
     {
+        RelativeLayout lay;
         ImageView cover;
         TextView title;
         TextView play;
         TextView follow;
         TextView newep;
         TextView score;
+    }
+
+    private View.OnClickListener onViewClick(final int position)
+    {
+        return new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                listBangumiAdapterListener.onListBangumiAdapterClick(v.getId(), position);
+            }
+        };
     }
 
     private BitmapDrawable setImageFormWeb(String url)
@@ -139,5 +158,10 @@ public class BangumiRecommendAdapter extends BaseAdapter
             it.execute(url);
             return null;
         }
+    }
+
+    public interface ListBangumiAdapterListener
+    {
+        void onListBangumiAdapterClick(int viewId, int position);
     }
 }

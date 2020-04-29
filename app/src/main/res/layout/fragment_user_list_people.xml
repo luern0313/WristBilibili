@@ -4,11 +4,12 @@
     android:layout_height="match_parent">
 
     <LinearLayout
-        android:id="@+id/ou_pp_nonthing"
+        android:id="@+id/user_list_people_nothing"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/activityBG"
         android:clickable="true"
+        android:focusable="true"
         android:gravity="center"
         android:orientation="vertical"
         android:paddingBottom="33dp"
@@ -23,12 +24,37 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="什么都没找到. . ." />
+            android:text="  什么都没找到..." />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/user_list_people_no_web"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/activityBG"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingBottom="33dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="94dp"
+            android:padding="6dp"
+            android:src="@drawable/img_noweb" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="  没有网络连接..." />
 
     </LinearLayout>
 
     <ListView
-        android:id="@+id/ou_pp_listview"
+        android:id="@+id/user_list_people_listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:divider="@color/alpha"

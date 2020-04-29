@@ -20,7 +20,8 @@ public class FavorBoxModel
         count = String.valueOf(box.optInt("count"));
         see = box.optInt("state") % 2 == 0;
         fid = String.valueOf(box.opt("fav_box"));
-        id = String.valueOf(box.opt("fav_box")) + "31";
-        img = box.optJSONArray("videos").optJSONObject(0).optString("pic");
+        id = box.opt("fav_box") + "31";
+        img = box.has("videos") && box.optJSONArray("videos") != null ?
+                box.optJSONArray("videos").optJSONObject(0).optString("pic") : "";
     }
 }

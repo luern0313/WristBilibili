@@ -1,10 +1,9 @@
-package cn.luern0313.wristbilibili.fragment;
+package cn.luern0313.wristbilibili.fragment.user;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,17 +27,14 @@ public class UserDetailFragment extends Fragment implements View.OnClickListener
 {
     private static final String ARG_DETAIL_MODEL = "argDetailModel";
 
-    Context ctx;
-    View rootLayout;
+    private Context ctx;
+    private View rootLayout;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
 
     private UserModel userModel;
 
     private UserDetailFragmentListener userDetailFragmentListener;
-
-    private Handler handler = new Handler();
-    private Runnable runnableLoadingStart;
 
     public UserDetailFragment() { }
 
@@ -55,7 +51,6 @@ public class UserDetailFragment extends Fragment implements View.OnClickListener
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
         if(getArguments() != null)
         {
             userModel = (UserModel) getArguments().getSerializable(ARG_DETAIL_MODEL);
@@ -72,9 +67,11 @@ public class UserDetailFragment extends Fragment implements View.OnClickListener
 
         Glide.with(ctx).load(userModel.user_card_face).skipMemoryCache(true)
                 .diskCacheStrategy(DiskCacheStrategy.NONE).into((ImageView) rootLayout.findViewById(R.id.user_detail_head));
-        if(userModel.user_card_nameplate_img != null)
+        if(userModel.user_card_nameplate_img != null && !userModel.user_card_nameplate_img.equals(""))
             Glide.with(ctx).load(userModel.user_card_nameplate_img).skipMemoryCache(true)
                     .diskCacheStrategy(DiskCacheStrategy.NONE).into((ImageView) rootLayout.findViewById(R.id.user_detail_nameplate));
+        else
+            rootLayout.findViewById(R.id.user_detail_nameplate).setVisibility(View.GONE);
 
         rootLayout.findViewById(R.id.user_detail_follow).setOnClickListener(this);
         rootLayout.findViewById(R.id.user_detail_head).setOnClickListener(new View.OnClickListener()
@@ -88,6 +85,12 @@ public class UserDetailFragment extends Fragment implements View.OnClickListener
             }
         });
 
+        rootLayout.findViewById(R.id.user_detail_video).setOnClickListener(this);
+        rootLayout.findViewById(R.id.user_detail_favor).setOnClickListener(this);
+        rootLayout.findViewById(R.id.user_detail_bangumi).setOnClickListener(this);
+        rootLayout.findViewById(R.id.user_detail_howfollow).setOnClickListener(this);
+        rootLayout.findViewById(R.id.user_detail_howfans).setOnClickListener(this);
+
         initView();
         return rootLayout;
     }
@@ -96,12 +99,33 @@ public class UserDetailFragment extends Fragment implements View.OnClickListener
     {
         ((TextView) rootLayout.findViewById(R.id.user_detail_name)).setText(userModel.user_card_name);
         ((TextView) rootLayout.findViewById(R.id.user_detail_lv)).setText("LV" + userModel.user_card_lv);
+        ((TextView) rootLayout.findViewById(R.id.user_detail_video)).setText("投稿：" + DataProcessUtil.getView(userModel.user_video_num));
+
+        if(userModel.user_favor_num != 0)
+        {
+            rootLayout.findViewById(R.id.user_detail_favor).setVisibility(View.VISIBLE);
+            ((TextView) rootLayout.findViewById(R.id.user_detail_favor)).setText("收藏：" + DataProcessUtil.getView(userModel.user_favor_num));
+        }
+        if(userModel.user_bangumi_num != 0)
+        {
+            rootLayout.findViewById(R.id.user_detail_bangumi).setVisibility(View.VISIBLE);
+            ((TextView) rootLayout.findViewById(R.id.user_detail_bangumi)).setText("追番：" + DataProcessUtil.getView(userModel.user_bangumi_num));
+        }
         ((TextView) rootLayout.findViewById(R.id.user_detail_howfollow)).setText("关注：" + DataProcessUtil.getView(userModel.user_card_follow_num));
         ((TextView) rootLayout.findViewById(R.id.user_detail_howfans)).setText("粉丝：" + DataProcessUtil.getView(userModel.user_card_fans_num));
-        ((TextView) rootLayout.findViewById(R.id.user_detail_other)).setText("投稿：" + DataProcessUtil.getView(userModel.user_video_num));
 
         if(userModel.user_card_vip == 2)
+        {
+            rootLayout.findViewById(R.id.user_detail_vip).setVisibility(View.VISIBLE);
+            ((TextView) rootLayout.findViewById(R.id.user_detail_vip)).setText("年度大会员");
             ((TextView) rootLayout.findViewById(R.id.user_detail_name)).setTextColor(getResources().getColor(R.color.mainColor));
+        }
+        else if(userModel.user_card_vip == 1)
+        {
+            rootLayout.findViewById(R.id.user_detail_vip).setVisibility(View.VISIBLE);
+            ((TextView) rootLayout.findViewById(R.id.user_detail_vip)).setText("大会员");
+        }
+
         if(userModel.user_card_official_type == 0)
         {
             rootLayout.findViewById(R.id.user_detail_official_1).setVisibility(View.VISIBLE);
@@ -131,6 +155,8 @@ public class UserDetailFragment extends Fragment implements View.OnClickListener
             ((TextView) rootLayout.findViewById(R.id.user_detail_follow)).setText("+关注");
             rootLayout.findViewById(R.id.user_detail_follow).setBackgroundResource(R.drawable.shape_anre_followbg);
         }
+        if(userModel.user_card_mid.equals(sharedPreferences.getString("uid", "")))
+            rootLayout.findViewById(R.id.user_detail_follow).setVisibility(View.GONE);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -155,17 +181,24 @@ public class UserDetailFragment extends Fragment implements View.OnClickListener
     }
 
     @Override
+    public void onResume()
+    {
+        super.onResume();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
     public void onDetach()
     {
         super.onDetach();
         userDetailFragmentListener = null;
-    }
-
-    @Override
-    public void onDestroy()
-    {
-        super.onDestroy();
-        EventBus.getDefault().unregister(this);
     }
 
     @Override

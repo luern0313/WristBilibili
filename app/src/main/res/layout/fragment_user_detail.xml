@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="30dp"
+        android:paddingTop="5dp"
+        android:paddingEnd="30dp"
+        android:paddingBottom="34dp">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/user_detail_head"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/img_default_avatar" />
+
+        <ImageView
+            android:id="@+id/user_detail_official_1"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_alignEnd="@id/user_detail_head"
+            android:layout_alignBottom="@id/user_detail_head"
+            android:layout_marginEnd="-2dp"
+            android:src="@drawable/icon_ou_ver_1"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/user_detail_official_2"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_alignEnd="@id/user_detail_head"
+            android:layout_alignBottom="@id/user_detail_head"
+            android:layout_marginEnd="-2dp"
+            android:src="@drawable/icon_ou_ver_2"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/user_detail_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/user_detail_head"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="2dp"
+            android:layout_toStartOf="@+id/user_detail_follow"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/colorAccent"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/user_detail_follow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/user_detail_name"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="1dp"
+            android:background="@drawable/shape_anre_followbg"
+            android:paddingLeft="6dp"
+            android:paddingTop="4dp"
+            android:paddingRight="6dp"
+            android:paddingBottom="4dp"
+            android:text="+关注"
+            android:textColor="@color/white"
+            android:textSize="13sp" />
+
+        <LinearLayout
+            android:id="@+id/user_detail_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/user_detail_name"
+            android:layout_marginTop="2dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/user_detail_lv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shape_lvbg_fme"
+                android:paddingLeft="4dp"
+                android:paddingTop="1dp"
+                android:paddingRight="4dp"
+                android:paddingBottom="1dp"
+                android:textColor="@color/gray_44"
+                android:textSize="9sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/user_detail_nameplate"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="4dp"/>
+
+            <TextView
+                android:id="@+id/user_detail_vip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:background="@drawable/shape_anre_followbg"
+                android:paddingLeft="4dp"
+                android:paddingTop="1dp"
+                android:paddingRight="4dp"
+                android:paddingBottom="1dp"
+                android:textColor="@color/white"
+                android:textSize="10sp"
+                android:visibility="gone"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/user_detail_official"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/user_detail_info"
+            android:layout_marginTop="2dp"
+            android:textColor="@color/gray_44"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/user_detail_sign"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/user_detail_official"
+            android:layout_marginBottom="4dp"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
+        <cn.luern0313.wristbilibili.widget.AutoLineLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/user_detail_sign"
+            android:layout_marginTop="4dp">
+
+            <TextView
+                android:id="@+id/user_detail_video"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/layer_bg_user_card"
+                android:paddingStart="6dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="8dp"
+                android:textColor="@color/white"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/user_detail_favor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/layer_bg_user_card"
+                android:paddingStart="6dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="8dp"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/user_detail_bangumi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/layer_bg_user_card"
+                android:paddingStart="6dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="8dp"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/user_detail_howfollow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/layer_bg_user_card"
+                android:paddingStart="6dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="8dp"
+                android:textColor="@color/white"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/user_detail_howfans"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:background="@drawable/layer_bg_user_card"
+                android:paddingStart="6dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="8dp"
+                android:textColor="@color/white"
+                android:textSize="12sp" />
+
+        </cn.luern0313.wristbilibili.widget.AutoLineLayout>
+    </RelativeLayout>
+</ScrollView>

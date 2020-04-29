@@ -3,43 +3,43 @@ package cn.luern0313.wristbilibili.adapter;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
+import androidx.collection.LruCache;
 import cn.luern0313.wristbilibili.R;
-import cn.luern0313.wristbilibili.models.FavorVideoModel;
-import cn.luern0313.wristbilibili.util.DataProcessUtil;
+import cn.luern0313.wristbilibili.models.FavorBoxModel;
 import cn.luern0313.wristbilibili.util.ImageDownloaderUtil;
 
 /**
- * 被 luern0313 创建于 2020/2/2.
+ * 被 luern0313 创建于 2020/4/25.
  */
-
-public class FavorVideoAdapter extends BaseAdapter
+public class FavorBoxAdapter extends BaseAdapter
 {
     private LayoutInflater mInflater;
 
     private LruCache<String, BitmapDrawable> mImageCache;
+    private FavorBoxAdapterListener favorBoxAdapterListener;
+
+    private ArrayList<FavorBoxModel> favList;
     private ListView listView;
 
-    private ArrayList<FavorVideoModel> favList;
-
-    public FavorVideoAdapter(LayoutInflater inflater, ArrayList<FavorVideoModel> favList, ListView listView)
+    public FavorBoxAdapter(LayoutInflater inflater, ArrayList<FavorBoxModel> favList, ListView listView, FavorBoxAdapterListener favorBoxAdapterListener)
     {
         mInflater = inflater;
         this.favList = favList;
         this.listView = listView;
+        this.favorBoxAdapterListener = favorBoxAdapterListener;
 
         int maxCache = (int) Runtime.getRuntime().maxMemory();
         int cacheSize = maxCache / 8;
@@ -82,55 +82,56 @@ public class FavorVideoAdapter extends BaseAdapter
     @Override
     public View getView(int position, View convertView, ViewGroup viewGroup)
     {
-        FavorVideoModel video = favList.get(position);
+        FavorBoxModel box = favList.get(position);
         ViewHolder viewHolder;
         if(convertView == null)
         {
-            convertView = mInflater.inflate(R.layout.item_favor_video, null);
+            convertView = mInflater.inflate(R.layout.item_favor_box, null);
             viewHolder = new ViewHolder();
             convertView.setTag(viewHolder);
-            viewHolder.img = convertView.findViewById(R.id.vid_img);
-            viewHolder.title = convertView.findViewById(R.id.vid_title);
-            viewHolder.up = convertView.findViewById(R.id.vid_up);
-            viewHolder.play = convertView.findViewById(R.id.vid_play);
-            viewHolder.danmaku = convertView.findViewById(R.id.vid_danmaku);
+            viewHolder.lay = convertView.findViewById(R.id.favor_lay);
+            viewHolder.img = convertView.findViewById(R.id.favor_img);
+            viewHolder.countt = convertView.findViewById(R.id.favor_countt);
+            viewHolder.title = convertView.findViewById(R.id.favor_title);
+            viewHolder.see = convertView.findViewById(R.id.favor_see);
+            viewHolder.count = convertView.findViewById(R.id.favor_count);
         }
         else
         {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        Drawable upDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_up);
-        Drawable playNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_play_num);
-        Drawable danmakuNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_danmu_num);
-        upDrawable.setBounds(0, 0, DataProcessUtil.dip2px(listView.getContext(), 10), DataProcessUtil.dip2px(listView.getContext(), 10));
-        playNumDrawable.setBounds(0,0, DataProcessUtil.dip2px(listView.getContext(), 10), DataProcessUtil.dip2px(listView.getContext(), 10));
-        danmakuNumDrawable.setBounds(0,0, DataProcessUtil.dip2px(listView.getContext(), 10), DataProcessUtil.dip2px(listView.getContext(), 10));
-        viewHolder.up.setCompoundDrawables(upDrawable,null, null,null);
-        viewHolder.play.setCompoundDrawables(playNumDrawable,null, null,null);
-        viewHolder.danmaku.setCompoundDrawables(danmakuNumDrawable,null, null,null);
 
         viewHolder.img.setImageResource(R.drawable.img_default_vid);
-        viewHolder.title.setText(video.video_title);
-        viewHolder.up.setText(video.video_owner_name);
-        viewHolder.play.setText(video.video_play);
-        viewHolder.danmaku.setText(video.video_danmaku);
+        viewHolder.countt.setText(box.count);
+        viewHolder.title.setText(box.title);
+        viewHolder.see.setText(box.see ? "公开" : "私有");
+        viewHolder.count.setText(box.count + "个视频");
+        viewHolder.lay.setOnClickListener(onViewClick(position));
 
-        viewHolder.img.setTag(video.video_cover);
-        BitmapDrawable c = setImageFormWeb(video.video_cover);
-        if(c != null) viewHolder.img.setImageDrawable(c);
+        try
+        {
+            viewHolder.img.setTag(box.img);
+            BitmapDrawable c = setImageFormWeb(box.img);
+            if(c != null) viewHolder.img.setImageDrawable(c);
+        }
+        catch (Exception e)
+        {
+            viewHolder.img.setImageResource(R.drawable.img_default_vid);
+        }
         return convertView;
     }
 
     class ViewHolder
     {
+        RelativeLayout lay;
         ImageView img;
+        TextView countt;
         TextView title;
-        TextView up;
-        TextView play;
-        TextView danmaku;
+        TextView see;
+        TextView count;
     }
 
-    private BitmapDrawable setImageFormWeb(String url)
+    BitmapDrawable setImageFormWeb(String url)
     {
         if(mImageCache.get(url) != null)
         {
@@ -142,6 +143,18 @@ public class FavorVideoAdapter extends BaseAdapter
             it.execute(url);
             return null;
         }
+    }
+
+    private View.OnClickListener onViewClick(final int position)
+    {
+        return new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                favorBoxAdapterListener.onClick(v.getId(), position);
+            }
+        };
     }
 
     class ImageTask extends AsyncTask<String, Void, BitmapDrawable>
@@ -163,7 +176,6 @@ public class FavorVideoAdapter extends BaseAdapter
                 Bitmap bitmap = null;
                 bitmap = ImageDownloaderUtil.downloadImage(imageUrl);
                 BitmapDrawable db = new BitmapDrawable(listViewResources, bitmap);
-                // 如果本地还没缓存该图片，就缓存
                 if(mImageCache.get(imageUrl) == null && bitmap != null)
                 {
                     mImageCache.put(imageUrl, db);
@@ -180,12 +192,16 @@ public class FavorVideoAdapter extends BaseAdapter
         @Override
         protected void onPostExecute(BitmapDrawable result)
         {
-            // 通过Tag找到我们需要的ImageView，如果该ImageView所在的item已被移出页面，就会直接返回null
             ImageView iv = listView.findViewWithTag(imageUrl);
             if(iv != null && result != null)
             {
                 iv.setImageDrawable(result);
             }
         }
+    }
+
+    public interface FavorBoxAdapterListener
+    {
+        void onClick(int viewId, int position);
     }
 }

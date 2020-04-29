@@ -30,7 +30,7 @@ import okhttp3.Response;
  * 我只做了五种23333
  */
 
-public class UserDynamicApi
+public class DynamicApi
 {
     private final String DYNAMICAPIURL_SELF = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/dynamic_new";
     private final String DYNAMICAPIURL_OTHER = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/space_history";
@@ -45,7 +45,7 @@ public class UserDynamicApi
 
     private String lastDynamicId;
 
-    public UserDynamicApi(String cookie, String csrf, String selfMid, String mid, boolean isSelf)
+    public DynamicApi(String cookie, String csrf, String selfMid, String mid, boolean isSelf)
     {
         this.cookie = cookie;
         this.csrf = csrf;

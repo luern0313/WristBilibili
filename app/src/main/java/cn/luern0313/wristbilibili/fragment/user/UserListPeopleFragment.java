@@ -1,6 +1,7 @@
-package cn.luern0313.wristbilibili.fragment;
+package cn.luern0313.wristbilibili.fragment.user;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,12 +13,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import androidx.fragment.app.Fragment;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.adapter.UserListPeopleAdapter;
 import cn.luern0313.wristbilibili.api.UserApi;
 import cn.luern0313.wristbilibili.models.UserListPeopleModel;
+import cn.luern0313.wristbilibili.ui.UserActivity;
 
 public class UserListPeopleFragment extends Fragment
 {
@@ -31,7 +34,8 @@ public class UserListPeopleFragment extends Fragment
     private String mid;
     private int mode;
     private UserApi userApi;
-    private UserListPeopleModel userListPeopleModel;
+    private ArrayList<UserListPeopleModel> userListPeopleModelArrayList = new ArrayList<>();
+    private int page = 1;
 
     private UserListPeopleAdapter userListPeopleAdapter;
     private UserListPeopleAdapter.UserListPeopleAdapterListener userListPeopleAdapterListener;
@@ -79,13 +83,14 @@ public class UserListPeopleFragment extends Fragment
         String csrf = sharedPreferences.getString("csrf", "");
         String access_key = sharedPreferences.getString("access_key", "");
         userApi = new UserApi(cookie, csrf, access_key, mid);
-        userListPeopleModel = userApi.userListPeopleModel;
         userListPeopleAdapterListener = new UserListPeopleAdapter.UserListPeopleAdapterListener()
         {
             @Override
-            public void onClick(int viewId, int position)
+            public void onUserListPeopleAdapterClick(int viewId, int position)
             {
-
+                Intent intent = new Intent(ctx, UserActivity.class);
+                intent.putExtra("mid", userListPeopleModelArrayList.get(position).people_uid);
+                startActivity(intent);
             }
         };
 
@@ -101,7 +106,7 @@ public class UserListPeopleFragment extends Fragment
                 isLoading = false;
                 rootLayout.findViewById(R.id.user_list_people_no_web).setVisibility(View.GONE);
                 rootLayout.findViewById(R.id.user_list_people_nothing).setVisibility(View.GONE);
-                userListPeopleAdapter = new UserListPeopleAdapter(inflater, userListPeopleModel.userListPeoplePeopleModelArrayList, mode, uiListView, userListPeopleAdapterListener);
+                userListPeopleAdapter = new UserListPeopleAdapter(inflater, userListPeopleModelArrayList, mode, uiListView, userListPeopleAdapterListener);
                 uiListView.setAdapter(userListPeopleAdapter);
             }
         };
@@ -190,15 +195,18 @@ public class UserListPeopleFragment extends Fragment
             {
                 try
                 {
-                    int result;
+                    ArrayList<UserListPeopleModel> p;
                     if(mode == 0)
-                        result = userApi.getUserFollow();
+                        p = userApi.getUserFollow(page);
                     else
-                        result = userApi.getUserFans();
+                        p = userApi.getUserFans(page);
                     isLoading = false;
 
-                    if(result == 0)
+                    if(p != null && p.size() != 0)
+                    {
+                        userListPeopleModelArrayList.addAll(p);
                         handler.post(runnableUi);
+                    }
                     else
                         handler.post(runnableNothing);
                 }
@@ -222,15 +230,19 @@ public class UserListPeopleFragment extends Fragment
             {
                 try
                 {
-                    int result;
+                    page++;
+                    ArrayList<UserListPeopleModel> p;
                     if(mode == 0)
-                        result = userApi.getUserFollow();
+                        p = userApi.getUserFollow(page);
                     else
-                        result = userApi.getUserFans();
+                        p = userApi.getUserFans(page);
                     isLoading = false;
 
-                    if(result == 0)
+                    if(p != null && p.size() != 0)
+                    {
+                        userListPeopleModelArrayList.addAll(p);
                         handler.post(runnableMore);
+                    }
                     else
                         handler.post(runnableMoreNothing);
                 }

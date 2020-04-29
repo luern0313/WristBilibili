@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 import cn.carbs.android.expandabletextview.library.ExpandableTextView;
 import cn.luern0313.wristbilibili.R;
-import cn.luern0313.wristbilibili.api.UserDynamicApi;
+import cn.luern0313.wristbilibili.api.DynamicApi;
 import cn.luern0313.wristbilibili.util.ImageTaskUtil;
 
 /**
@@ -88,11 +88,11 @@ public class DynamicAdapter extends BaseAdapter
     @Override
     public int getItemViewType(int position)
     {
-        if(dyList.get(position) instanceof UserDynamicApi.cardOriginalVideo) return 4;
-        else if(dyList.get(position) instanceof UserDynamicApi.cardOriginalText) return 3;
-        else if(dyList.get(position) instanceof UserDynamicApi.cardUnknow) return 2;
-        else if(dyList.get(position) instanceof UserDynamicApi.cardShareVideo) return 1;
-        else if(dyList.get(position) instanceof UserDynamicApi.cardShareText) return 0;
+        if(dyList.get(position) instanceof DynamicApi.cardOriginalVideo) return 4;
+        else if(dyList.get(position) instanceof DynamicApi.cardOriginalText) return 3;
+        else if(dyList.get(position) instanceof DynamicApi.cardUnknow) return 2;
+        else if(dyList.get(position) instanceof DynamicApi.cardShareVideo) return 1;
+        else if(dyList.get(position) instanceof DynamicApi.cardShareText) return 0;
         return 2;
     }
 
@@ -231,7 +231,7 @@ public class DynamicAdapter extends BaseAdapter
 
         if(type == 4) //原创视频
         {
-            final UserDynamicApi.cardOriginalVideo dy = (UserDynamicApi.cardOriginalVideo) dyList.get(position);
+            final DynamicApi.cardOriginalVideo dy = (DynamicApi.cardOriginalVideo) dyList.get(position);
             viewHolderOriVid.name.setText(Html.fromHtml("<b>" + dy.getOwnerName() + "</b>投稿了视频"));
             viewHolderOriVid.time.setText(dy.getDynamicTime());
             if(!dy.getDynamic().equals(""))
@@ -262,7 +262,7 @@ public class DynamicAdapter extends BaseAdapter
         }
         else if(type == 3)// 原创文字
         {
-            final UserDynamicApi.cardOriginalText dy = (UserDynamicApi.cardOriginalText) dyList.get(position);
+            final DynamicApi.cardOriginalText dy = (DynamicApi.cardOriginalText) dyList.get(position);
             viewHolderOriText.name.setText(dy.getUserName());
             viewHolderOriText.time.setText(dy.getDynamicTime());
             viewHolderOriText.text.setText(dy.getDynamicText());
@@ -290,7 +290,7 @@ public class DynamicAdapter extends BaseAdapter
         }
         else if(type == 2) //未知类型
         {
-            final UserDynamicApi.cardUnknow dy = (UserDynamicApi.cardUnknow) dyList.get(position);
+            final DynamicApi.cardUnknow dy = (DynamicApi.cardUnknow) dyList.get(position);
             viewHolderUnktyp.name.setText(dy.getOwnerName());
             viewHolderUnktyp.time.setText(dy.getDynamicTime());
             viewHolderUnktyp.head.setImageResource(R.drawable.img_default_head);
@@ -306,8 +306,8 @@ public class DynamicAdapter extends BaseAdapter
         }
         else if(type == 1) //转发视频
         {
-            final UserDynamicApi.cardShareVideo dy = (UserDynamicApi.cardShareVideo) dyList.get(position);
-            final UserDynamicApi.cardOriginalVideo sdy = dy.getOriginalVideo();
+            final DynamicApi.cardShareVideo dy = (DynamicApi.cardShareVideo) dyList.get(position);
+            final DynamicApi.cardOriginalVideo sdy = dy.getOriginalVideo();
             viewHolderShaVid.name.setText(dy.getUserName());
             viewHolderShaVid.time.setText(dy.getDynamicTime());
             viewHolderShaVid.text.setText(dy.getDynamicText());
@@ -341,8 +341,8 @@ public class DynamicAdapter extends BaseAdapter
         }
         else if(type == 0) //转发文字
         {
-            final UserDynamicApi.cardShareText dy = (UserDynamicApi.cardShareText) dyList.get(position);
-            final UserDynamicApi.cardOriginalText sdy = dy.getOriginalText();
+            final DynamicApi.cardShareText dy = (DynamicApi.cardShareText) dyList.get(position);
+            final DynamicApi.cardOriginalText sdy = dy.getOriginalText();
             viewHolderShaText.name.setText(dy.getUserName());
             viewHolderShaText.time.setText(dy.getDynamicTime());
             viewHolderShaText.text.setText(dy.getDynamicText());
