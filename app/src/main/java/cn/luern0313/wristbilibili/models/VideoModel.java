@@ -40,6 +40,13 @@ public class VideoModel implements Serializable
     public int video_up_vip; // 2
     public int video_up_fan_num;
 
+    public String video_season_id;
+    public String video_season_title;
+    public String video_season_cover;
+    public boolean video_season_is_finish;
+    public String video_season_new_ep;
+    public String video_season_total;
+
     public boolean video_user_follow_up;
     public boolean video_user_like;
     public boolean video_user_dislike;
@@ -81,6 +88,14 @@ public class VideoModel implements Serializable
         video_up_official = video_owner_other_official.optInt("type");
         video_up_fan_num = video_owner_other.optInt("fans");
         video_up_vip = video_owner_other_vip.optInt("vipType");
+
+        JSONObject video_season = video.has("season") ? video.optJSONObject("season") : new JSONObject();
+        video_season_id = String.valueOf(video_season.optInt("season_id"));
+        video_season_title = video_season.optString("title");
+        video_season_cover = video_season.optString("cover");
+        video_season_is_finish = video_season.optInt("is_finish") == 1;
+        video_season_new_ep = video_season.optString("newest_ep_index");
+        video_season_total = video_season.optString("total_count");
 
         JSONObject video_user = video.has("req_user") ? video.optJSONObject("req_user") : new JSONObject();
         video_user_follow_up = video_user.optInt("attention") == 1;

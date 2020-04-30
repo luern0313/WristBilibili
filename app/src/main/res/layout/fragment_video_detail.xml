@@ -13,45 +13,69 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="18dp">
-
+            android:paddingBottom="20dp">
 
             <TextView
                 android:id="@+id/vd_video_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="22dp"
+                android:layout_marginStart="25dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginRight="22dp"
-                android:textColor="@color/gray_44" />
+                android:layout_marginEnd="22dp"
+                android:textColor="@color/gray_44"
+                android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/vd_video_play"
+            <cn.luern0313.wristbilibili.widget.AutoLineLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="21dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginRight="21dp"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:textSize="11sp" />
+                android:orientation="horizontal"
+                android:paddingLeft="25dp"
+                android:paddingTop="4dp"
+                android:paddingRight="25dp"
+                android:paddingBottom="4dp">
 
-            <TextView
-                android:id="@+id/vd_video_time"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="21dp"
-                android:layout_marginRight="21dp"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:textSize="11sp" />
+                <TextView
+                    android:id="@+id/vd_video_play"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingEnd="4dp"
+                    android:textSize="11sp" />
+
+                <TextView
+                    android:id="@+id/vd_video_danamku"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingEnd="4dp"
+                    android:textSize="11sp" />
+
+                <TextView
+                    android:id="@+id/vd_video_aid"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingEnd="4dp"
+                    android:textSize="11sp" />
+
+                <TextView
+                    android:id="@+id/vd_video_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingEnd="4dp"
+                    android:textSize="11sp" />
+
+                <TextView
+                    android:id="@+id/vd_video_bvid"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="11sp" />
+
+            </cn.luern0313.wristbilibili.widget.AutoLineLayout>
 
             <cn.carbs.android.expandabletextview.library.ExpandableTextView
                 android:id="@+id/vd_video_details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="21dp"
-                android:layout_marginTop="6dp"
+                android:layout_marginTop="2dp"
                 android:layout_marginRight="21dp"
                 android:layout_marginBottom="6dp"
                 android:textSize="13sp"
@@ -61,6 +85,10 @@
                 android:id="@+id/vd_video_part_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:descendantFocusability="blocksDescendants"
+                android:focusable="true"
                 android:gravity="center_vertical"
                 android:orientation="vertical"
                 android:visibility="gone">
@@ -84,9 +112,8 @@
                         android:id="@+id/vd_video_part_more"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:onClick="clickMorePart"
                         android:text="查看全部>"
-                        android:textColor="@color/colorPrimary"
+                        android:textColor="@color/gray_44"
                         android:textSize="12sp" />
                 </LinearLayout>
 
@@ -95,11 +122,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:clipToPadding="false"
+                    android:divider="@color/alpha"
+                    android:dividerPadding="4dp"
                     android:paddingLeft="21dp"
                     android:paddingRight="21dp"
-                    android:scrollbars="none"
-                    android:divider="@color/alpha"
-                    android:dividerPadding="4dp" />
+                    android:scrollbars="none" />
 
             </LinearLayout>
 
@@ -120,15 +147,16 @@
                         android:orientation="horizontal">
 
                         <LinearLayout
+                            android:id="@+id/vd_bt_cover"
                             android:layout_width="55dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="22dp"
+                            android:layout_marginStart="20dp"
                             android:layout_marginEnd="2dp"
                             android:background="?android:attr/selectableItemBackground"
                             android:clickable="true"
                             android:descendantFocusability="blocksDescendants"
+                            android:focusable="true"
                             android:gravity="center_horizontal"
-                            android:onClick="clickCover"
                             android:orientation="vertical"
                             android:padding="3dp">
 
@@ -154,8 +182,8 @@
                             android:background="?android:attr/selectableItemBackground"
                             android:clickable="true"
                             android:descendantFocusability="blocksDescendants"
+                            android:focusable="true"
                             android:gravity="center_horizontal"
-                            android:onClick="clickPlay"
                             android:orientation="vertical"
                             android:padding="3dp">
 
@@ -174,14 +202,15 @@
                         </LinearLayout>
 
                         <LinearLayout
+                            android:id="@+id/vd_bt_watchlater"
                             android:layout_width="55dp"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="2dp"
                             android:background="?android:attr/selectableItemBackground"
                             android:clickable="true"
                             android:descendantFocusability="blocksDescendants"
+                            android:focusable="true"
                             android:gravity="center_horizontal"
-                            android:onClick="clickCoverLater"
                             android:orientation="vertical"
                             android:padding="3dp">
 
@@ -200,14 +229,15 @@
                         </LinearLayout>
 
                         <LinearLayout
+                            android:id="@+id/vd_bt_download"
                             android:layout_width="55dp"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="2dp"
                             android:background="?android:attr/selectableItemBackground"
                             android:clickable="true"
                             android:descendantFocusability="blocksDescendants"
+                            android:focusable="true"
                             android:gravity="center_horizontal"
-                            android:onClick="clickDownload"
                             android:orientation="vertical"
                             android:padding="3dp">
 
@@ -226,14 +256,15 @@
                         </LinearLayout>
 
                         <LinearLayout
+                            android:id="@+id/vd_bt_history"
                             android:layout_width="55dp"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="2dp"
                             android:background="?android:attr/selectableItemBackground"
                             android:clickable="true"
                             android:descendantFocusability="blocksDescendants"
+                            android:focusable="true"
                             android:gravity="center_horizontal"
-                            android:onClick="clickHistory"
                             android:orientation="vertical"
                             android:padding="3dp">
 
@@ -251,14 +282,15 @@
                         </LinearLayout>
 
                         <LinearLayout
+                            android:id="@+id/vd_bt_share"
                             android:layout_width="55dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginEnd="22dp"
+                            android:layout_marginEnd="20dp"
                             android:background="?android:attr/selectableItemBackground"
                             android:clickable="true"
                             android:descendantFocusability="blocksDescendants"
+                            android:focusable="true"
                             android:gravity="center_horizontal"
-                            android:onClick="clickShare"
                             android:orientation="vertical"
                             android:padding="3dp">
 
@@ -295,13 +327,13 @@
                             android:id="@+id/vd_like"
                             android:layout_width="55dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="22dp"
+                            android:layout_marginStart="20dp"
                             android:layout_marginEnd="2dp"
                             android:background="?android:attr/selectableItemBackground"
                             android:clickable="true"
                             android:descendantFocusability="blocksDescendants"
+                            android:focusable="true"
                             android:gravity="center_horizontal"
-                            android:onClick="clickLike"
                             android:orientation="vertical"
                             android:padding="3dp">
 
@@ -342,8 +374,8 @@
                             android:background="?android:attr/selectableItemBackground"
                             android:clickable="true"
                             android:descendantFocusability="blocksDescendants"
+                            android:focusable="true"
                             android:gravity="center_horizontal"
-                            android:onClick="clickCoin"
                             android:orientation="vertical"
                             android:padding="3dp">
 
@@ -362,6 +394,18 @@
                                     android:layout_width="38dp"
                                     android:layout_height="38dp"
                                     android:src="@drawable/icon_vdd_do_no_bg" />
+
+                                <com.king.view.circleprogressview.CircleProgressView
+                                    android:id="@+id/vd_coin_progress"
+                                    android:layout_width="38dp"
+                                    android:layout_height="38dp"
+                                    android:visibility="gone"
+                                    app:cpvCirclePadding="0dp"
+                                    app:cpvNormalColor="#00000000"
+                                    app:cpvProgressColor="@color/mainColor"
+                                    app:cpvShowLabel="false"
+                                    app:cpvShowTick="false"
+                                    app:cpvStrokeWidth="3dp" />
 
                             </RelativeLayout>
 
@@ -383,8 +427,8 @@
                             android:background="?android:attr/selectableItemBackground"
                             android:clickable="true"
                             android:descendantFocusability="blocksDescendants"
+                            android:focusable="true"
                             android:gravity="center_horizontal"
-                            android:onClick="clickFav"
                             android:orientation="vertical"
                             android:padding="3dp">
 
@@ -404,6 +448,18 @@
                                     android:layout_height="38dp"
                                     android:src="@drawable/icon_vdd_do_no_bg" />
 
+                                <com.king.view.circleprogressview.CircleProgressView
+                                    android:id="@+id/vd_fav_progress"
+                                    android:layout_width="38dp"
+                                    android:layout_height="38dp"
+                                    android:visibility="gone"
+                                    app:cpvCirclePadding="0dp"
+                                    app:cpvNormalColor="#00000000"
+                                    app:cpvProgressColor="@color/mainColor"
+                                    app:cpvShowLabel="false"
+                                    app:cpvShowTick="false"
+                                    app:cpvStrokeWidth="3dp" />
+
                             </RelativeLayout>
 
                             <TextView
@@ -420,12 +476,11 @@
                             android:id="@+id/vd_dislike"
                             android:layout_width="55dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginEnd="22dp"
+                            android:layout_marginEnd="20dp"
                             android:background="?android:attr/selectableItemBackground"
                             android:clickable="true"
                             android:descendantFocusability="blocksDescendants"
                             android:gravity="center_horizontal"
-                            android:onClick="clickDislike"
                             android:orientation="vertical"
                             android:padding="3dp">
 
@@ -449,59 +504,134 @@
                 </HorizontalScrollView>
             </LinearLayout>
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/vd_card"
+            <RelativeLayout
+                android:id="@+id/vd_season"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="6dp"
-                android:layout_marginRight="20dp"
+                android:gravity="center_vertical"
+                android:paddingStart="22dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="22dp"
+                android:paddingBottom="4dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:descendantFocusability="blocksDescendants"
+                android:background="?android:attr/selectableItemBackground"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/vd_season_img"
+                    android:layout_width="49dp"
+                    android:layout_height="67dp" />
+
+                <TextView
+                    android:id="@+id/vd_season_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_toEndOf="@id/vd_season_img"
+                    android:ellipsize="end"
+                    android:maxLines="3"
+                    android:textColor="@color/gray_44"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/vd_season_detail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_toEndOf="@id/vd_season_img"
+                    android:layout_below="@id/vd_season_title"
+                    android:layout_alignParentBottom="true"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:textSize="12sp" />
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/vd_card_lay"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_marginBottom="10dp"
+                android:background="?android:attr/selectableItemBackground"
                 android:clickable="true"
                 android:descendantFocusability="blocksDescendants"
-                app:cardCornerRadius="4dp"
-                app:cardElevation="6dp">
+                android:focusable="true"
+                android:layout_marginTop="4dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp">
 
-                <RelativeLayout
-                    android:id="@+id/vd_card_lay"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/vd_card_head"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:layout_marginStart="22dp"
+                    android:src="@drawable/img_default_animation" />
 
-                    <ImageView
-                        android:id="@+id/vd_card_head"
-                        android:layout_width="52dp"
-                        android:layout_height="52dp"
-                        android:src="@drawable/img_default_animation" />
+                <ImageView
+                    android:id="@+id/vd_card_off_1"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_alignEnd="@id/vd_card_head"
+                    android:layout_alignBottom="@id/vd_card_head"
+                    android:layout_marginEnd="-2dp"
+                    android:src="@drawable/icon_ou_ver_1"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/vd_card_off_2"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_alignEnd="@id/vd_card_head"
+                    android:layout_alignBottom="@id/vd_card_head"
+                    android:layout_marginEnd="-2dp"
+                    android:src="@drawable/icon_ou_ver_2"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/vd_card_follow"
+                    style="@style/Widget.AppCompat.Button.Colored"
+                    android:layout_width="52dp"
+                    android:layout_height="34dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="16dp"
+                    android:text="+关注"
+                    android:textColor="@color/white"
+                    android:textSize="11sp" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="5dp"
+                    android:layout_toStartOf="@id/vd_card_follow"
+                    android:layout_toEndOf="@id/vd_card_head"
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/vd_card_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginTop="7dp"
-                        android:layout_marginEnd="2dp"
-                        android:layout_marginBottom="6dp"
-                        android:layout_toRightOf="@+id/vd_card_head"
                         android:ellipsize="end"
                         android:maxLines="1"
                         android:textColor="@color/gray_44"
-                        android:textSize="13sp"
                         android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/vd_card_sen"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/vd_card_name"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginEnd="2dp"
-                        android:layout_toEndOf="@+id/vd_card_head"
+                        android:layout_marginTop="3dp"
                         android:ellipsize="end"
                         android:maxLines="1"
                         android:textColor="@color/gray_44"
-                        android:textSize="10sp" />
-                </RelativeLayout>
-            </androidx.cardview.widget.CardView>
+                        android:textSize="11sp" />
+                </LinearLayout>
+
+            </RelativeLayout>
         </LinearLayout>
 
     </ScrollView>

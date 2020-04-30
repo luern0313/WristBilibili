@@ -19,7 +19,7 @@ import cn.luern0313.wristbilibili.models.VideoModel;
 
 public class VideoPartAdapter extends RecyclerView.Adapter<VideoPartAdapter.ViewHolder>
 {
-    private OnItemClickListener itemClickListener;
+    private VideoPartListener videoPartListener;
     private ArrayList<VideoModel.VideoPartModel> videoPartArrayList;
 
     public VideoPartAdapter(ArrayList<VideoModel.VideoPartModel> videoPartArrayList)
@@ -45,7 +45,7 @@ public class VideoPartAdapter extends RecyclerView.Adapter<VideoPartAdapter.View
             @Override
             public void onClick(View v)
             {
-                itemClickListener.onItemClick(v, position);
+                videoPartListener.onItemClick(v, position);
             }
         });
     }
@@ -56,14 +56,9 @@ public class VideoPartAdapter extends RecyclerView.Adapter<VideoPartAdapter.View
         return videoPartArrayList.size();
     }
 
-    public void setOnItemClickListener(OnItemClickListener mOnItemClickListener)
+    public void setOnItemClickListener(VideoPartListener videoPartListener)
     {
-        this.itemClickListener = mOnItemClickListener;
-    }
-
-    public interface OnItemClickListener
-    {
-        void onItemClick(View view, int position);
+        this.videoPartListener = videoPartListener;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder
@@ -76,5 +71,10 @@ public class VideoPartAdapter extends RecyclerView.Adapter<VideoPartAdapter.View
             lay = itemView.findViewById(R.id.item_video_part);
             text = itemView.findViewById(R.id.item_video_part_text);
         }
+    }
+
+    public interface VideoPartListener
+    {
+        void onItemClick(View view, int position);
     }
 }

@@ -86,14 +86,14 @@ public class VideoRecommendAdapter extends BaseAdapter
         ViewHolder viewHolder;
         if(convertView == null)
         {
-            convertView = mInflater.inflate(R.layout.item_favor_video, null);
+            convertView = mInflater.inflate(R.layout.item_list_video, null);
             viewHolder = new ViewHolder();
             convertView.setTag(viewHolder);
-            viewHolder.img = convertView.findViewById(R.id.vid_img);
-            viewHolder.title = convertView.findViewById(R.id.vid_title);
-            viewHolder.up = convertView.findViewById(R.id.vid_up);
-            viewHolder.play = convertView.findViewById(R.id.vid_play);
-            viewHolder.danmaku = convertView.findViewById(R.id.vid_danmaku);
+            viewHolder.img = convertView.findViewById(R.id.item_list_video_img);
+            viewHolder.title = convertView.findViewById(R.id.item_list_video_title);
+            viewHolder.up = convertView.findViewById(R.id.item_list_video_up);
+            viewHolder.play = convertView.findViewById(R.id.item_list_video_play);
+            viewHolder.danmaku = convertView.findViewById(R.id.item_list_video_danmaku);
         }
         else
         {

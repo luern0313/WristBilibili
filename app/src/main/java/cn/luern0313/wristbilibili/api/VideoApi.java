@@ -18,25 +18,27 @@ import cn.luern0313.wristbilibili.util.NetWorkUtil;
  * ...我错了，有这个api，我自罚重写
  */
 
-public class VideoDetailsApi
+public class VideoApi
 {
     private String cookie;
     private String csrf;
     private String mid;
     private String access_key;
     public String aid;
+    public String bvid;
     private ArrayList<String> appHeaders = new ArrayList<>();
     private ArrayList<String> webHeaders = new ArrayList<String>();
 
     private VideoModel videoModel;
 
-    public VideoDetailsApi(final String cookie, String csrf, String mid, String access_key, String aid)
+    public VideoApi(final String cookie, String csrf, String mid, String access_key, String aid, String bvid)
     {
         this.cookie = cookie;
         this.csrf = csrf;
         this.mid = mid;
         this.access_key = access_key;
         this.aid = aid;
+        this.bvid = bvid;
         appHeaders = new ArrayList<String>(){{
             add("Cookie"); add(cookie);
             add("User-Agent"); add(ConfInfoApi.USER_AGENT_OWN);
@@ -53,14 +55,22 @@ public class VideoDetailsApi
         try
         {
             String url = "https://app.bilibili.com/x/v2/view";
-            String temp_per = "access_key=" + access_key + "&aid=" + aid + "&appkey=" + ConfInfoApi.getConf("appkey") +
-                    "&build=" + ConfInfoApi.getConf("build") + "&mobi_app=" + ConfInfoApi.getConf("mobi_app") +
-                    "&plat=0&platform=" + ConfInfoApi.getConf("platform") + "&ts=" + (int) (System.currentTimeMillis() / 1000);
-            String sign = ConfInfoApi.calc_sign(temp_per);
+            String temp_per;
+            if(!bvid.equals(""))
+                temp_per = "access_key=" + access_key + "&appkey=" + ConfInfoApi.getConf("appkey") +
+                        "&build=" + ConfInfoApi.getConf("build") + "&bvid=" + bvid + "&mobi_app=" + ConfInfoApi.getConf("mobi_app") +
+                        "&plat=0&platform=" + ConfInfoApi.getConf("platform") + "&ts=" + (int) (System.currentTimeMillis() / 1000);
+            else
+                temp_per = "access_key=" + access_key + "&aid=" + aid + "&appkey=" + ConfInfoApi.getConf("appkey") +
+                        "&build=" + ConfInfoApi.getConf("build") + "&mobi_app=" + ConfInfoApi.getConf("mobi_app") +
+                        "&plat=0&platform=" + ConfInfoApi.getConf("platform") + "&ts=" + (int) (System.currentTimeMillis() / 1000);
+            String sign = ConfInfoApi.calc_sign(temp_per, ConfInfoApi.getConf("app_secret"));
             JSONObject result = new JSONObject(NetWorkUtil.get(url + "?" + temp_per + "&sign=" + sign, appHeaders).body().string());
             if(result.optInt("code") == 0)
             {
                 videoModel = new VideoModel(result.optJSONObject("data"));
+                this.aid = videoModel.video_aid;
+                this.bvid = videoModel.video_bvid;
                 return videoModel;
             }
         }
@@ -114,14 +124,27 @@ public class VideoDetailsApi
             JSONObject result = new JSONObject(NetWorkUtil.post(url, per, webHeaders).body().string());
             if(result.optInt("code") == 0)
                 return "";
-            else
-                return result.optString("message");
         }
         catch (JSONException | NullPointerException e)
         {
             e.printStackTrace();
         }
         return "未知错误";
+    }
+
+    public JSONObject tripleVideo() throws IOException
+    {
+        try
+        {
+            String url = "https://api.bilibili.com/x/web-interface/archive/like/triple";
+            String per = "aid=" + aid + "&csrf=" + csrf;
+            return new JSONObject(NetWorkUtil.post(url, per, webHeaders).body().string());
+        }
+        catch (JSONException | NullPointerException e)
+        {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public String playLater() throws IOException
@@ -181,23 +204,6 @@ public class VideoDetailsApi
         {
             String url = "https://api.bilibili.com/x/stein/mark";
             String per = "aid=" + aid + "&mark=" + score + "&csrf=" + csrf;
-            JSONObject result = new JSONObject(NetWorkUtil.post(url, per, webHeaders).body().string());
-            if(result.optInt("code") == 0)
-                return "";
-        }
-        catch (JSONException | NullPointerException e)
-        {
-            e.printStackTrace();
-        }
-        return "未知错误";
-    }
-
-    public String sendReply(String text) throws IOException
-    {
-        try
-        {
-            String url = "https://api.bilibili.com/x/v2/reply/add";
-            String per = "oid=" + aid + "&type=1&message=" + text + "&plat=1&jsonp=jsonp&csrf=" + csrf;
             JSONObject result = new JSONObject(NetWorkUtil.post(url, per, webHeaders).body().string());
             if(result.optInt("code") == 0)
                 return "";

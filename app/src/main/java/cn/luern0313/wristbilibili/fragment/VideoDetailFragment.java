@@ -14,8 +14,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.king.view.circleprogressview.CircleProgressView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -30,6 +33,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.adapter.VideoPartAdapter;
 import cn.luern0313.wristbilibili.models.VideoModel;
+import cn.luern0313.wristbilibili.ui.BangumiActivity;
 import cn.luern0313.wristbilibili.ui.UserActivity;
 import cn.luern0313.wristbilibili.ui.VideoActivity;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
@@ -47,8 +51,11 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
     private VideoModel videoModel;
 
     private ImageView uiVideoDoLike, uiVideoDoCoin, uiVideoDoFav;
+    private CircleProgressView uiVideoCoinProgress, uiVideoFavProgress;
     private VideoPartAdapter videoPartAdapter;
     private VideoPartAdapter.VideoPartListener videoPartListener;
+    private AnimatorSet animatorSet, animatorCancelSet, animatorEndSet;
+    private CircleProgressView.OnChangeListener onChangeListener;
 
     private Handler handler = new Handler();
     private Runnable runnableLoadingStart, runnableLoadingFin;
@@ -68,7 +75,6 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
         if(getArguments() != null)
         {
             videoModel = (VideoModel) getArguments().getSerializable(ARG_VIDEO_MODEL);
@@ -76,7 +82,7 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         ctx = getActivity();
         rootLayout = inflater.inflate(R.layout.fragment_video_detail, container, false);
@@ -119,6 +125,8 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
         uiVideoDoLike = rootLayout.findViewById(R.id.vd_like_img);
         uiVideoDoCoin = rootLayout.findViewById(R.id.vd_coin_img);
         uiVideoDoFav = rootLayout.findViewById(R.id.vd_fav_img);
+        uiVideoCoinProgress = rootLayout.findViewById(R.id.vd_coin_progress);
+        uiVideoFavProgress = rootLayout.findViewById(R.id.vd_fav_progress);
 
         Drawable playDrawable = getResources().getDrawable(R.drawable.icon_video_play_num);
         Drawable danmakuDrawable = getResources().getDrawable(R.drawable.icon_video_danmu_num);
@@ -149,8 +157,21 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
         else if(videoModel.video_up_official == 1)
             rootLayout.findViewById(R.id.vd_card_off_2).setVisibility(View.VISIBLE);
 
+        if(!videoModel.video_season_title.equals(""))
+        {
+            rootLayout.findViewById(R.id.vd_season).setVisibility(View.VISIBLE);
+            Glide.with(ctx).load(videoModel.video_season_cover).skipMemoryCache(true)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE).into((ImageView) rootLayout.findViewById(R.id.vd_season_img));
+            ((TextView) rootLayout.findViewById(R.id.vd_season_title)).setText(videoModel.video_season_title);
+            StringBuilder title = new StringBuilder();
+            if(videoModel.video_season_is_finish)
+                title.append("已看完，");
+            title.append("共").append(videoModel.video_season_new_ep).append("集");
+            ((TextView) rootLayout.findViewById(R.id.vd_season_detail)).setText(title);
+        }
 
-        Glide.with(ctx).load(videoModel.video_up_face).into((ImageView) rootLayout.findViewById(R.id.vd_card_head));
+        Glide.with(ctx).load(videoModel.video_up_face).skipMemoryCache(true)
+                .diskCacheStrategy(DiskCacheStrategy.NONE).into((ImageView) rootLayout.findViewById(R.id.vd_card_head));
         if(videoModel.video_part_array_list.size() > 1)
         {
             rootLayout.findViewById(R.id.vd_video_part_layout).setVisibility(View.VISIBLE);
@@ -179,15 +200,47 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
             {
                 switch (motionEvent.getAction())
                 {
-                    case MotionEvent.ACTION_DOWN:
-                        tripleAnim();
-                        break;
                     case MotionEvent.ACTION_UP:
-                            //view.performClick(); //TODO ？？？？
                     case MotionEvent.ACTION_CANCEL:
+                        if(animatorSet != null)
+                            animatorSet.cancel();
+                        tripleAnimCancel();
+                        uiVideoCoinProgress.setVisibility(View.GONE);
+                        uiVideoFavProgress.setVisibility(View.GONE);
                         break;
                 }
                 return false;
+            }
+        });
+
+        rootLayout.findViewById(R.id.vd_like).setOnLongClickListener(new View.OnLongClickListener()
+        {
+            @Override
+            public boolean onLongClick(View v)
+            {
+                if(!videoModel.video_user_like || !videoModel.video_user_fav || videoModel.video_user_coin == 0)
+                {
+                    tripleAnim();
+                    uiVideoCoinProgress.setVisibility(View.VISIBLE);
+                    uiVideoFavProgress.setVisibility(View.VISIBLE);
+                    uiVideoCoinProgress.setOnChangeListener(onChangeListener);
+                    uiVideoCoinProgress.showAnimation(0, 100, 4000);
+                    uiVideoFavProgress.showAnimation(0, 100, 4000);
+                    return true;
+                }
+                else Toast.makeText(ctx, "已完成三连", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        });
+
+        rootLayout.findViewById(R.id.vd_season).setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Intent intent = new Intent(ctx, BangumiActivity.class);
+                intent.putExtra("season_id", videoModel.video_season_id);
+                startActivity(intent);
             }
         });
 
@@ -212,42 +265,82 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
                 startActivity(intent);
             }
         });
+
+        onChangeListener = new CircleProgressView.OnChangeListener()
+        {
+            @Override
+            public void onProgressChanged(float progress, float max)
+            {
+                if(progress == max && uiVideoCoinProgress.getVisibility() == View.VISIBLE)
+                {
+                    animatorSet.cancel();
+                    tripleAnimCancel();
+                    tripleAnimEnd();
+                    uiVideoCoinProgress.setVisibility(View.GONE);
+                    uiVideoFavProgress.setVisibility(View.GONE);
+                    videoDetailFragmentListener.onVideoDetailFragmentTriple();
+                }
+            }
+        };
         setIcon();
         return rootLayout;
     }
 
     private void tripleAnim()
     {
-        AnimatorSet animatorSet = new AnimatorSet();
+        if(animatorSet != null)
+            animatorSet.cancel();
+        animatorSet = new AnimatorSet();
         ArrayList<ObjectAnimator> objectAnimatorArrayList = new ArrayList<>();
         Random r = new Random();
-        float translationX = 0f, translationY = 0f, rotation = 0f, scaleX = 1f, scaleY = 1f;
-        for(int i = 0; i < 60; i++)
+        float translationX = 0f, translationY = 0f;
+        for(int i = 0; i < 200; i++)
         {
             float tX = DataProcessUtil.getFloatRandom(r, -3, 3);
             float tY = DataProcessUtil.getFloatRandom(r, -3, 3);
-            float ro = DataProcessUtil.getFloatRandom(r, -3, 3);
-            float sX = DataProcessUtil.getFloatRandom(r, 0.97f, 1.03f);
-            float sY = DataProcessUtil.getFloatRandom(r, 0.97f, 1.03f);
             objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoCoin, "translationX", translationX, tX));
             objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoCoin, "translationY", translationY, tY));
-            objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoCoin, "rotation", rotation, ro));
-            objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoCoin, "scaleX", scaleX, sX));
-            objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoCoin, "scaleY", scaleY, sY));
+            objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoFav, "translationX", translationX, tX));
+            objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoFav, "translationY", translationY, tY));
             if(i == 0)
                 animatorSet.play(objectAnimatorArrayList.get(0)).with(objectAnimatorArrayList.get(1)).with(objectAnimatorArrayList.get(2))
-                        .with(objectAnimatorArrayList.get(3)).with(objectAnimatorArrayList.get(4));
+                        .with(objectAnimatorArrayList.get(3));
             else
                 animatorSet.play(objectAnimatorArrayList.get(0)).with(objectAnimatorArrayList.get(1)).with(objectAnimatorArrayList.get(2))
-                        .with(objectAnimatorArrayList.get(3)).with(objectAnimatorArrayList.get(4)).after(objectAnimatorArrayList.get(5));
+                        .with(objectAnimatorArrayList.get(3)).after(objectAnimatorArrayList.get(4));
             translationX = tX;
             translationY = tY;
-            rotation = ro;
-            scaleX = sX;
-            scaleY = sY;
         }
-        animatorSet.setDuration(22);
+        animatorSet.setDuration(30);
         animatorSet.start();
+    }
+
+    private void tripleAnimCancel()
+    {
+        animatorCancelSet = new AnimatorSet();
+        ArrayList<ObjectAnimator> objectAnimatorArrayList = new ArrayList<>();
+        objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoCoin, "translationX", 0));
+        objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoCoin, "translationY", 0));
+        objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoFav, "translationX", 0));
+        objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoFav, "translationY", 0));
+        animatorCancelSet.play(objectAnimatorArrayList.get(0)).with(objectAnimatorArrayList.get(1)).with(objectAnimatorArrayList.get(2))
+                    .with(objectAnimatorArrayList.get(3));
+        animatorCancelSet.setDuration(30);
+        animatorCancelSet.start();
+    }
+
+    private void tripleAnimEnd()
+    {
+        animatorEndSet = new AnimatorSet();
+        ArrayList<ObjectAnimator> objectAnimatorArrayList = new ArrayList<>();
+        objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoCoin, "scaleX", 1.0f, 1.4f, 1.0f));
+        objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoCoin, "scaleY", 1.0f, 1.4f, 1.0f));
+        objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoFav, "scaleX", 1.0f, 1.4f, 1.0f));
+        objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoFav, "scaleY", 1.0f, 1.4f, 1.0f));
+        animatorEndSet.play(objectAnimatorArrayList.get(0)).with(objectAnimatorArrayList.get(1)).with(objectAnimatorArrayList.get(2))
+                .with(objectAnimatorArrayList.get(3));
+        animatorEndSet.setDuration(500);
+        animatorEndSet.start();
     }
 
     private void setIcon()
@@ -255,6 +348,9 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
         ((TextView) rootLayout.findViewById(R.id.vd_like_text)).setText(videoModel.video_detail_like == 0 ? "点赞" : DataProcessUtil.getView(videoModel.video_detail_like));
         ((TextView) rootLayout.findViewById(R.id.vd_coin_text)).setText(videoModel.video_detail_coin == 0 ? "投币" : DataProcessUtil.getView(videoModel.video_detail_coin));
         ((TextView) rootLayout.findViewById(R.id.vd_fav_text)).setText(videoModel.video_detail_fav == 0 ? "收藏" : DataProcessUtil.getView(videoModel.video_detail_fav));
+
+        if(videoModel.video_user_follow_up)
+            rootLayout.findViewById(R.id.vd_card_follow).setVisibility(View.GONE);
 
         if(videoModel.video_user_like)
         {
@@ -347,9 +443,16 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
     }
 
     @Override
-    public void onDestroy()
+    public void onResume()
     {
-        super.onDestroy();
+        super.onResume();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onPause()
+    {
+        super.onPause();
         EventBus.getDefault().unregister(this);
     }
 
@@ -357,5 +460,6 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
     {
         void onVideoDetailFragmentViewClick(int viewId);
         void onVideoDetailFragmentPartClick(int position);
+        void onVideoDetailFragmentTriple();
     }
 }
