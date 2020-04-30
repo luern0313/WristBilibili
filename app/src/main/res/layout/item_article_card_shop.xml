@@ -46,7 +46,6 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:lines="2"
-                    android:text="世嘉 VOCALOID 初音未来 景品Q版手办 国内独家发售"
                     android:textColor="@color/gray_44"
                     android:textSize="13sp" />
 
@@ -64,7 +63,6 @@
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:lines="2"
-                        android:text="你滴小可爱突然出现！\ (๑╹◡╹)ﾉ"
                         android:textSize="12sp" />
 
                     <LinearLayout
@@ -91,7 +89,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="4dp"
-                            android:text="¥88"
                             android:textColor="@color/mainColor"
                             android:textSize="16sp" />
                     </LinearLayout>

@@ -24,8 +24,8 @@ public class ArticleApi
     private String mid;
     private String csrf;
     private String access_key;
-    private ArrayList<String> appHeaders = new ArrayList<String>();
-    private ArrayList<String> webHeaders = new ArrayList<String>();
+    private ArrayList<String> appHeaders;
+    private ArrayList<String> webHeaders;
 
     private String article_id;
     private ArticleModel articleModel;

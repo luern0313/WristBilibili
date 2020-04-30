@@ -46,7 +46,6 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:lines="2"
-                    android:text="【官方总代理】Wonder Festival 2020上海［Shanghai］"
                     android:textColor="@color/gray_44"
                     android:textSize="13sp" />
 
@@ -64,7 +63,6 @@
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:maxLines="1"
-                        android:text="2020/12/06"
                         android:textSize="12sp" />
 
                     <TextView
@@ -73,7 +71,6 @@
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:maxLines="1"
-                        android:text="上海新国际博览中心"
                         android:textSize="12sp" />
 
                     <LinearLayout
@@ -100,7 +97,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="4dp"
-                            android:text="¥120"
                             android:textColor="@color/mainColor"
                             android:textSize="16sp" />
                     </LinearLayout>

@@ -46,7 +46,6 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:lines="2"
-                    android:text="鬼灭之刃"
                     android:textColor="@color/gray_44"
                     android:textSize="13sp" />
 
@@ -64,7 +63,6 @@
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:lines="2"
-                        android:text="【此漫画的翻译由版权方提供】卖炭少年·炭治郎，他那平凡而幸福的日常生活，在家人遭到恶鬼袭击的那一天发生剧变。母亲与四个弟妹惨遭杀害，而与他一起生还的妹妹：祢豆子亦异变成凶暴的鬼。↵在猎鬼人的指引下，立志成为猎鬼人的炭治郎与变成鬼却尚存理智的祢豆子二人踏上了旅程。通过艰苦的剑术修行与赌命试炼，炭治郎成为了鬼猎人组织“鬼杀队”的一员。↵为了让妹妹祢豆子变回人类，为了讨伐杀害家人的恶鬼，为了斩断悲伤的连锁，少年与鬼的战斗不曾停歇。"
                         android:textSize="12sp" />
 
                     <LinearLayout
@@ -91,7 +89,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="4dp"
-                            android:text="吾峠呼世晴"
                             android:textSize="12sp" />
                     </LinearLayout>
                 </LinearLayout>

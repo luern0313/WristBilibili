@@ -172,7 +172,7 @@ public class ArticleActivity extends AppCompatActivity implements ArticleDetailF
                 if(position == 0)
                     return ArticleDetailFragment.newInstance(articleModel);
                 else if(position == 1)
-                    return ReplyFragment.newInstance(articleModel.article_id, "12");
+                    return ReplyFragment.newInstance(articleModel.article_id, "12", null, -1);
                 return null;
             }
         };
@@ -188,7 +188,7 @@ public class ArticleActivity extends AppCompatActivity implements ArticleDetailF
             @Override
             public void onPageSelected(int position)
             {
-                if(uiTitle.getDisplayedChild() != position)
+                while(uiTitle.getDisplayedChild() != position)
                 {
                     if(uiTitle.getDisplayedChild() < position)
                     {
@@ -411,6 +411,42 @@ public class ArticleActivity extends AppCompatActivity implements ArticleDetailF
             intent.putExtra("share_title", articleModel.article_title);
             intent.putExtra("share_img", articleModel.article_cover[0]);
             startActivityForResult(intent, RESULT_DETAIL_SHARE);
+        }
+        else if(viewId == R.id.article_card_follow)
+        {
+            new Thread(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    try
+                    {
+                        String result = articleApi.followUp();
+                        if(result.equals(""))
+                        {
+                            articleModel.article_up_fans_num++;
+                            Looper.prepare();
+                            Toast.makeText(ctx, "已关注UP主", Toast.LENGTH_SHORT).show();
+                        }
+                        else
+                        {
+                            Looper.prepare();
+                            Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    catch (IOException e)
+                    {
+                        e.printStackTrace();
+                        Looper.prepare();
+                        Toast.makeText(ctx, "操作失败，请检查你的网络..", Toast.LENGTH_SHORT).show();
+                    }
+                    finally
+                    {
+                        EventBus.getDefault().post(articleModel);
+                        Looper.loop();
+                    }
+                }
+            }).start();
         }
     }
 

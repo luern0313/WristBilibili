@@ -10,10 +10,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="25dp"
+        android:layout_marginTop="8dp"
         android:layout_marginRight="25dp"
-        android:layout_marginTop="10dp"
         android:textColor="@color/gray_44"
-        android:textStyle="bold"/>
+        android:textStyle="bold" />
 
     <cn.luern0313.wristbilibili.widget.AutoLineLayout
         android:layout_width="match_parent"
@@ -50,7 +50,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingEnd="6dp"
-            android:textSize="12sp"/>
+            android:textSize="12sp" />
 
     </cn.luern0313.wristbilibili.widget.AutoLineLayout>
 
@@ -72,8 +72,8 @@
                 android:layout_marginEnd="2dp"
                 android:background="?android:attr/selectableItemBackground"
                 android:clickable="true"
-                android:focusable="true"
                 android:descendantFocusability="blocksDescendants"
+                android:focusable="true"
                 android:gravity="center_horizontal"
                 android:orientation="vertical"
                 android:padding="3dp">
@@ -100,8 +100,8 @@
                 android:layout_marginEnd="2dp"
                 android:background="?android:attr/selectableItemBackground"
                 android:clickable="true"
-                android:focusable="true"
                 android:descendantFocusability="blocksDescendants"
+                android:focusable="true"
                 android:gravity="center_horizontal"
                 android:orientation="vertical"
                 android:padding="3dp">
@@ -130,8 +130,8 @@
                 android:layout_marginEnd="2dp"
                 android:background="?android:attr/selectableItemBackground"
                 android:clickable="true"
-                android:focusable="true"
                 android:descendantFocusability="blocksDescendants"
+                android:focusable="true"
                 android:gravity="center_horizontal"
                 android:orientation="vertical"
                 android:padding="3dp">
@@ -160,8 +160,8 @@
                 android:layout_marginEnd="2dp"
                 android:background="?android:attr/selectableItemBackground"
                 android:clickable="true"
-                android:focusable="true"
                 android:descendantFocusability="blocksDescendants"
+                android:focusable="true"
                 android:gravity="center_horizontal"
                 android:orientation="vertical"
                 android:padding="3dp">
@@ -189,8 +189,8 @@
                 android:layout_marginEnd="20dp"
                 android:background="?android:attr/selectableItemBackground"
                 android:clickable="true"
-                android:focusable="true"
                 android:descendantFocusability="blocksDescendants"
+                android:focusable="true"
                 android:gravity="center_horizontal"
                 android:orientation="vertical"
                 android:padding="3dp">
@@ -211,5 +211,91 @@
 
         </LinearLayout>
     </HorizontalScrollView>
+
+    <RelativeLayout
+        android:id="@+id/article_card_lay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="10dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:descendantFocusability="blocksDescendants"
+        android:paddingStart="22dp"
+        android:paddingEnd="22dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/article_card_head"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:src="@drawable/img_default_animation" />
+
+        <ImageView
+            android:id="@+id/article_card_off_1"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginEnd="-2dp"
+            android:layout_marginBottom="-2dp"
+            android:layout_alignEnd="@id/article_card_head"
+            android:layout_alignBottom="@id/article_card_head"
+            android:src="@drawable/icon_ou_ver_1"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/article_card_off_2"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginEnd="-2dp"
+            android:layout_marginBottom="-2dp"
+            android:layout_alignEnd="@id/article_card_head"
+            android:layout_alignBottom="@id/article_card_head"
+            android:src="@drawable/icon_ou_ver_2"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/article_card_follow"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="52dp"
+            android:layout_height="34dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="-6dp"
+            android:text="+关注"
+            android:textColor="@color/white"
+            android:textSize="11sp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_toStartOf="@id/article_card_follow"
+            android:layout_toEndOf="@id/article_card_head"
+            android:layout_centerVertical="true"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/article_card_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/gray_44"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/article_card_sen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/gray_44"
+                android:textSize="11sp"/>
+        </LinearLayout>
+
+    </RelativeLayout>
 
 </LinearLayout>

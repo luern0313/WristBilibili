@@ -24,67 +24,16 @@
             android:id="@+id/cr_title_extraicon"
             android:layout_width="12dp"
             android:layout_height="19dp"
-            android:layout_marginLeft="2dp"
-            android:layout_toLeftOf="@+id/cr_title_title"
+            android:layout_marginStart="2dp"
+            android:layout_toStartOf="@+id/cr_title_title"
             android:rotation="90"
             android:src="@drawable/icon_extra" />
-
     </RelativeLayout>
 
-    <ListView
-        android:id="@+id/cr_reply_listview"
+    <FrameLayout
+        android:id="@+id/cr_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/cr_title_layout"
-        android:divider="@color/alpha" />
+        android:layout_below="@id/cr_title_layout"/>
 
-    <LinearLayout
-        android:id="@+id/cr_reply_nothing"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/cr_title_layout"
-        android:background="@color/white"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:paddingBottom="33dp"
-        android:visibility="gone">
-
-        <ImageView
-            android:layout_width="97dp"
-            android:layout_height="92dp"
-            android:padding="6dp"
-            android:src="@drawable/img_nodata" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="这里没有任何内容. . ."
-            android:textSize="13sp" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/cr_loading"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/cr_title_layout"
-        android:background="@color/white"
-        android:clickable="true"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:paddingBottom="33dp"
-        android:visibility="visible">
-
-        <ImageView
-            android:id="@+id/cr_loading_img"
-            android:layout_width="wrap_content"
-            android:layout_height="92dp"
-            android:padding="6dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="加载中. . ."
-            android:textSize="13sp" />
-    </LinearLayout>
 </RelativeLayout>
