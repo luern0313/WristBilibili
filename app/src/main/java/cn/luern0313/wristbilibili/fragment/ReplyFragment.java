@@ -386,7 +386,7 @@ public class ReplyFragment extends Fragment
                     }
                 }).start();
             }
-            else if(viewId == R.id.item_reply_reply)
+            else if(viewId == R.id.item_reply_reply || viewId == R.id.item_reply_reply_show_1 || viewId == R.id.item_reply_reply_show_2 || viewId == R.id.item_reply_reply_show_3)
             {
                 Intent intent = new Intent(ctx, CheckreplyActivity.class);
                 intent.putExtra("oid", oid);
