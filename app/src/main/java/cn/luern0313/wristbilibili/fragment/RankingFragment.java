@@ -28,13 +28,13 @@ import androidx.fragment.app.Fragment;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.adapter.RankingAdapter;
 import cn.luern0313.wristbilibili.api.RankingApi;
-import cn.luern0313.wristbilibili.api.VideoDetailsApi;
+import cn.luern0313.wristbilibili.api.VideoApi;
 import cn.luern0313.wristbilibili.models.RankingModel;
 import cn.luern0313.wristbilibili.models.VideoModel;
 import cn.luern0313.wristbilibili.ui.MainActivity;
-import cn.luern0313.wristbilibili.ui.OtherUserActivity;
 import cn.luern0313.wristbilibili.ui.TextActivity;
-import cn.luern0313.wristbilibili.ui.VideodetailsActivity;
+import cn.luern0313.wristbilibili.ui.UserActivity;
+import cn.luern0313.wristbilibili.ui.VideoActivity;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
 import cn.luern0313.wristbilibili.util.ImageDownloaderUtil;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
@@ -47,34 +47,28 @@ public class RankingFragment extends Fragment
 {
     Context ctx;
     View rootLayout;
-    RankingAdapter rankingAdapter;
-    RankingAdapter.RankingAdapterListener adapterListener;
-    VideoDetailsApi videoDetailsApi;
-    VideoModel videoModel;
+    private RankingAdapter rankingAdapter;
+    private RankingAdapter.RankingAdapterListener adapterListener;
+    private VideoApi videoDetailsApi;
+    private VideoModel videoModel;
 
-    ListView uiListView;
-    WaveSwipeRefreshLayout uiWaveSwipeRefreshLayout;
-    View uiPickUpView;
-    View uiLoadingView;
+    private ListView uiListView;
+    private WaveSwipeRefreshLayout uiWaveSwipeRefreshLayout;
+    private View uiPickUpView;
+    private View uiLoadingView;
 
-    RankingApi rankingApi;
-    ArrayList<RankingModel> rankingVideoArrayList = new ArrayList<>();
-    LinkedHashMap<Integer, String> pickUpHashMap = new LinkedHashMap<>();
-    String pickupday;
-    int pn = 1;
-    boolean isLoading = true;
-    Bitmap bitmapPickUpUpFace;
-    Bitmap bitmapPickUpVideoCover;
+    private RankingApi rankingApi;
+    private ArrayList<RankingModel> rankingVideoArrayList = new ArrayList<>();
+    private LinkedHashMap<Integer, String> pickUpHashMap = new LinkedHashMap<>();
+    private String pickupday;
+    private int pn = 1;
+    private boolean isLoading = true;
+    private Bitmap bitmapPickUpUpFace;
+    private Bitmap bitmapPickUpVideoCover;
 
     Handler handler = new Handler();
-    Runnable runnableUi;
-    Runnable runnableNoWeb;
-    Runnable runnableNoMore;
-    Runnable runnableNoWebH;
-    Runnable runnablePickNodata;
-    Runnable runnablePick;
-    Runnable runnablePickUi;
-    Runnable runnablePickImg;
+    private Runnable runnableUi, runnableNoWeb, runnableNoMore, runnableNoWebH, runnablePickNodata;
+    private Runnable runnablePick, runnablePickUi, runnablePickImg;
 
     @Override
     public View onCreateView(final LayoutInflater inflater, @Nullable ViewGroup container, final Bundle savedInstanceState)
@@ -190,11 +184,11 @@ public class RankingFragment extends Fragment
                     if(dates.get(i) <= today_int)
                     {
                         pickupday = String.valueOf(dates.get(i));
-                        videoDetailsApi = new VideoDetailsApi(MainActivity.sharedPreferences.getString("cookies", ""),
-                                                              MainActivity.sharedPreferences.getString("csrf", ""),
-                                                              MainActivity.sharedPreferences.getString("mid", ""),
-                                                              MainActivity.sharedPreferences.getString("access_key", ""),
-                                                              pickUpHashMap.get(dates.get(i)));
+                        videoDetailsApi = new VideoApi(MainActivity.sharedPreferences.getString("cookies", ""),
+                                                       MainActivity.sharedPreferences.getString("csrf", ""),
+                                                       MainActivity.sharedPreferences.getString("mid", ""),
+                                                       MainActivity.sharedPreferences.getString("access_key", ""),
+                                                       pickUpHashMap.get(dates.get(i)), "");
                         new Thread(new Runnable()
                         {
                             @Override
@@ -263,7 +257,7 @@ public class RankingFragment extends Fragment
                     @Override
                     public void onClick(View v)
                     {
-                        Intent intent = new Intent(ctx, OtherUserActivity.class);
+                        Intent intent = new Intent(ctx, UserActivity.class);
                         intent.putExtra("mid", videoModel.video_up_mid);
                         startActivity(intent);
                     }
@@ -282,9 +276,7 @@ public class RankingFragment extends Fragment
                                 rankingApi.clickPickUpVideo();
                             }
                         }).start();
-                        Intent intent = new Intent(ctx, VideodetailsActivity.class);
-                        intent.putExtra("aid", videoModel.video_aid);
-                        startActivity(intent);
+                        startActivity(VideoActivity.getActivityIntent(ctx, videoModel.video_aid, ""));
                     }
                 });
 
@@ -382,15 +374,12 @@ public class RankingFragment extends Fragment
         if(viewId == R.id.rk_video_lay)
         {
             if(!rankingVideoArrayList.get(position).video_aid.equals(""))
-            {
-                Intent intent = new Intent(ctx, VideodetailsActivity.class);
-                intent.putExtra("aid", rankingVideoArrayList.get(position).video_aid);
-                startActivity(intent);
-            }
+                startActivity(VideoActivity
+                                      .getActivityIntent(ctx, rankingVideoArrayList.get(position).video_aid, ""));
         }
         else if(viewId == R.id.rk_video_video_up)
         {
-            Intent intent = new Intent(ctx, OtherUserActivity.class);
+            Intent intent = new Intent(ctx, UserActivity.class);
             intent.putExtra("mid", rankingVideoArrayList.get(position).up_mid);
             startActivity(intent);
         }

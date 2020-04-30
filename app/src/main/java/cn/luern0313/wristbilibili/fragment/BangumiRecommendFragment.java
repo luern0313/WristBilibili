@@ -8,15 +8,14 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
 
 import androidx.fragment.app.Fragment;
 import cn.luern0313.wristbilibili.R;
-import cn.luern0313.wristbilibili.adapter.BangumiRecommendAdapter;
-import cn.luern0313.wristbilibili.models.bangumi.BangumiRecommendModel;
+import cn.luern0313.wristbilibili.adapter.ListBangumiAdapter;
+import cn.luern0313.wristbilibili.models.ListBangumiModel;
 import cn.luern0313.wristbilibili.ui.BangumiActivity;
 
 /**
@@ -32,12 +31,13 @@ public class BangumiRecommendFragment extends Fragment
     SharedPreferences.Editor editor;
 
     private ListView uiRecommendListView;
-    private BangumiRecommendAdapter bangumiRecommendAdapter;
-    private ArrayList<BangumiRecommendModel> bangumiRecommendModelArrayList;
+    private ListBangumiAdapter bangumiRecommendAdapter;
+    private ArrayList<ListBangumiModel> bangumiRecommendModelArrayList;
+    private ListBangumiAdapter.ListBangumiAdapterListener listBangumiAdapterListener;
 
     public BangumiRecommendFragment() { }
 
-    public static BangumiRecommendFragment newInstance(ArrayList<BangumiRecommendModel> bangumiRecommendModelArrayList)
+    public static BangumiRecommendFragment newInstance(ArrayList<ListBangumiModel> bangumiRecommendModelArrayList)
     {
         BangumiRecommendFragment fragment = new BangumiRecommendFragment();
         Bundle args = new Bundle();
@@ -52,7 +52,7 @@ public class BangumiRecommendFragment extends Fragment
         super.onCreate(savedInstanceState);
         if(getArguments() != null)
         {
-            bangumiRecommendModelArrayList = (ArrayList<BangumiRecommendModel>) getArguments().getSerializable(ARG_BANGUMI_RECOMMEND);
+            bangumiRecommendModelArrayList = (ArrayList<ListBangumiModel>) getArguments().getSerializable(ARG_BANGUMI_RECOMMEND);
         }
     }
 
@@ -64,22 +64,31 @@ public class BangumiRecommendFragment extends Fragment
         sharedPreferences = ctx.getSharedPreferences("default", Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
 
-        uiRecommendListView = rootLayout.findViewById(R.id.bgm_recommend_listview);
-        uiRecommendListView.setEmptyView(rootLayout.findViewById(R.id.bgm_recommend_nothing));
-        uiRecommendListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        listBangumiAdapterListener = new ListBangumiAdapter.ListBangumiAdapterListener()
         {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            public void onListBangumiAdapterClick(int viewId, int position)
             {
-                Intent intent = new Intent(ctx, BangumiActivity.class);
-                intent.putExtra("season_id", bangumiRecommendModelArrayList.get(position).bangumi_season_id);
-                startActivity(intent);
+                onViewClick(viewId, position);
             }
-        });
+        };
 
-        bangumiRecommendAdapter = new BangumiRecommendAdapter(inflater, uiRecommendListView, bangumiRecommendModelArrayList);
+        uiRecommendListView = rootLayout.findViewById(R.id.bgm_recommend_listview);
+        uiRecommendListView.setEmptyView(rootLayout.findViewById(R.id.bgm_recommend_nothing));
+
+        bangumiRecommendAdapter = new ListBangumiAdapter(inflater, uiRecommendListView, bangumiRecommendModelArrayList, listBangumiAdapterListener);
         uiRecommendListView.setAdapter(bangumiRecommendAdapter);
 
         return rootLayout;
+    }
+
+    private void onViewClick(int viewId, int position)
+    {
+        if(viewId == R.id.item_list_bangumi_lay)
+        {
+            Intent intent = new Intent(ctx, BangumiActivity.class);
+            intent.putExtra("season_id", bangumiRecommendModelArrayList.get(position).bangumi_season_id);
+            startActivity(intent);
+        }
     }
 }

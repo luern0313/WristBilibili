@@ -437,7 +437,7 @@ public class ReplyFragment extends Fragment
                     {
                         e.printStackTrace();
                         Looper.prepare();
-                        Toast.makeText(ctx, "评论发送失败。。请检查网络？", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ctx, "评论发送失败，请检查网络", Toast.LENGTH_SHORT).show();
                         Looper.loop();
                     }
                 }

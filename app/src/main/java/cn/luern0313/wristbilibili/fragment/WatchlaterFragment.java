@@ -1,33 +1,25 @@
 package cn.luern0313.wristbilibili.fragment;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
 import androidx.fragment.app.Fragment;
 import cn.luern0313.wristbilibili.R;
+import cn.luern0313.wristbilibili.adapter.WatchlaterAdapter;
 import cn.luern0313.wristbilibili.api.WatchLaterApi;
 import cn.luern0313.wristbilibili.models.WatchLaterModel;
 import cn.luern0313.wristbilibili.ui.MainActivity;
-import cn.luern0313.wristbilibili.ui.VideodetailsActivity;
-import cn.luern0313.wristbilibili.util.ImageDownloaderUtil;
+import cn.luern0313.wristbilibili.ui.VideoActivity;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
 /**
@@ -39,18 +31,16 @@ public class WatchlaterFragment extends Fragment
 {
     Context ctx;
     View rootLayout;
-    ListView wlListView;
-    WaveSwipeRefreshLayout waveSwipeRefreshLayout;
-    WatchLaterApi watchLaterApi;
+    private ListView wlListView;
+    private WaveSwipeRefreshLayout waveSwipeRefreshLayout;
+    private WatchLaterApi watchLaterApi;
 
     public static boolean isLogin;
 
     Handler handler = new Handler();
-    Runnable runnableUi;
-    Runnable runnableNoWeb;
-    Runnable runnableNoData;
+    private Runnable runnableUi, runnableNoWeb, runnableNoData;
 
-    ArrayList<WatchLaterModel> watchLaterVideoArrayList;
+    private ArrayList<WatchLaterModel> watchLaterVideoArrayList;
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -91,7 +81,7 @@ public class WatchlaterFragment extends Fragment
                 rootLayout.findViewById(R.id.wl_nologin).setVisibility(View.GONE);
                 rootLayout.findViewById(R.id.wl_noweb).setVisibility(View.GONE);
                 rootLayout.findViewById(R.id.wl_nonthing).setVisibility(View.GONE);
-                wlListView.setAdapter(new mAdapter(inflater, watchLaterVideoArrayList));
+                wlListView.setAdapter(new WatchlaterAdapter(inflater, watchLaterVideoArrayList, wlListView));
                 wlListView.setVisibility(View.VISIBLE);
                 waveSwipeRefreshLayout.setRefreshing(false);
             }
@@ -126,9 +116,8 @@ public class WatchlaterFragment extends Fragment
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id)
             {
-                Intent intent = new Intent(ctx, VideodetailsActivity.class);
-                intent.putExtra("aid", watchLaterVideoArrayList.get(position).aid);
-                startActivity(intent);
+                startActivity(VideoActivity
+                                      .getActivityIntent(ctx, watchLaterVideoArrayList.get(position).aid, ""));
             }
         });
 
@@ -147,7 +136,7 @@ public class WatchlaterFragment extends Fragment
         return rootLayout;
     }
 
-    void getWatchLater()
+    private void getWatchLater()
     {
         new Thread(new Runnable()
         {
@@ -181,153 +170,5 @@ public class WatchlaterFragment extends Fragment
                 }
             }
         }).start();
-    }
-
-    class mAdapter extends BaseAdapter
-    {
-        private LayoutInflater mInflater;
-
-        private LruCache<String, BitmapDrawable> mImageCache;
-
-        private ArrayList<WatchLaterModel> wlList;
-
-        public mAdapter(LayoutInflater inflater, ArrayList<WatchLaterModel> wlList)
-        {
-            mInflater = inflater;
-            this.wlList = wlList;
-
-            int maxCache = (int) Runtime.getRuntime().maxMemory();
-            int cacheSize = maxCache / 8;
-            mImageCache = new LruCache<String, BitmapDrawable>(cacheSize)
-            {
-                @Override
-                protected int sizeOf(String key, BitmapDrawable value)
-                {
-                    try
-                    {
-                        return value.getBitmap().getByteCount();
-                    }
-                    catch (Exception e)
-                    {
-                        e.printStackTrace();
-                    }
-                    return 0;
-                }
-            };
-        }
-
-        @Override
-        public int getCount()
-        {
-            return wlList.size();
-        }
-
-        @Override
-        public Object getItem(int position)
-        {
-            return position;
-        }
-
-        @Override
-        public long getItemId(int position)
-        {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup viewGroup)
-        {
-            ViewHolder viewHolder;
-            if(convertView == null)
-            {
-                convertView = mInflater.inflate(R.layout.item_favor_video, null);
-                viewHolder = new ViewHolder();
-                convertView.setTag(viewHolder);
-                viewHolder.title = convertView.findViewById(R.id.vid_title);
-                viewHolder.img = convertView.findViewById(R.id.vid_img);
-                viewHolder.up = convertView.findViewById(R.id.vid_up);
-                viewHolder.play = convertView.findViewById(R.id.vid_play);
-                viewHolder.pro = convertView.findViewById(R.id.vid_pro);
-            }
-            else
-            {
-                viewHolder = (ViewHolder) convertView.getTag();
-            }
-
-            WatchLaterModel video = wlList.get(position);
-            viewHolder.title.setText(video.title);
-            viewHolder.img.setImageResource(R.drawable.img_default_vid);
-            viewHolder.up.setText("UP : " + video.up);
-            viewHolder.play.setText("播放 : " + video.play + "  弹幕 : " + video.danmaku);
-            viewHolder.pro.setVisibility(View.VISIBLE);
-            viewHolder.pro.setProgress((int) (video.progress * 100.0 / video.duration));
-
-            viewHolder.img.setTag(video.cover);
-            final BitmapDrawable c = setImageFormWeb(video.cover);
-            if(c != null) viewHolder.img.setImageDrawable(c);
-            return convertView;
-        }
-
-        class ViewHolder
-        {
-            TextView title;
-            ImageView img;
-            TextView up;
-            TextView play;
-            ProgressBar pro;
-        }
-
-        BitmapDrawable setImageFormWeb(String url)
-        {
-            if(mImageCache.get(url) != null)
-            {
-                return mImageCache.get(url);
-            }
-            else
-            {
-                ImageTask it = new ImageTask();
-                it.execute(url);
-                return null;
-            }
-        }
-
-        class ImageTask extends AsyncTask<String, Void, BitmapDrawable>
-        {
-            private String imageUrl;
-
-            @Override
-            protected BitmapDrawable doInBackground(String... params)
-            {
-                try
-                {
-                    imageUrl = params[0];
-                    Bitmap bitmap = null;
-                    bitmap = ImageDownloaderUtil.downloadImage(imageUrl);
-                    BitmapDrawable db = new BitmapDrawable(wlListView.getResources(), bitmap);
-                    // 如果本地还没缓存该图片，就缓存
-                    if(mImageCache.get(imageUrl) == null && bitmap != null)
-                    {
-                        mImageCache.put(imageUrl, db);
-                    }
-                    return db;
-                }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(BitmapDrawable result)
-            {
-                // 通过Tag找到我们需要的ImageView，如果该ImageView所在的item已被移出页面，就会直接返回null
-                ImageView iv = wlListView.findViewWithTag(imageUrl);
-                if(iv != null && result != null)
-                {
-                    iv.setImageDrawable(result);
-                }
-            }
-        }
     }
 }

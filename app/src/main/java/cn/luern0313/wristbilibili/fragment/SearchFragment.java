@@ -29,8 +29,8 @@ import cn.luern0313.wristbilibili.api.SearchApi;
 import cn.luern0313.wristbilibili.models.SearchModel;
 import cn.luern0313.wristbilibili.ui.BangumiActivity;
 import cn.luern0313.wristbilibili.ui.MainActivity;
-import cn.luern0313.wristbilibili.ui.OtherUserActivity;
-import cn.luern0313.wristbilibili.ui.VideodetailsActivity;
+import cn.luern0313.wristbilibili.ui.UserActivity;
+import cn.luern0313.wristbilibili.ui.VideoActivity;
 import cn.luern0313.wristbilibili.util.SearchHtmlTagHandlerUtil;
 
 /**
@@ -41,36 +41,30 @@ import cn.luern0313.wristbilibili.util.SearchHtmlTagHandlerUtil;
 public class SearchFragment extends Fragment
 {
     Context ctx;
-    SearchApi searchApi;
-    SearchAdapter searchAdapter;
-    SearchAdapter.SearchAdapterListener searchAdapterListener;
-    SearchHtmlTagHandlerUtil htmlTagHandlerUtil;
+    private SearchApi searchApi;
+    private SearchAdapter searchAdapter;
+    private SearchAdapter.SearchAdapterListener searchAdapterListener;
+    private SearchHtmlTagHandlerUtil htmlTagHandlerUtil;
 
     View rootLayout;
-    TextView seaHotWordText;
-    GridView seaHotWordList;
-    ListView seaListView;
-    View loadingView;
-    EditText seaEdittext;
-    TextView inButton;
-    TextView seaButton;
-    ImageView seaLoadImg;
+    private TextView seaHotWordText;
+    private GridView seaHotWordList;
+    private ListView seaListView;
+    private View loadingView;
+    private EditText seaEdittext;
+    private TextView inButton;
+    private TextView seaButton;
+    private ImageView seaLoadImg;
 
     Handler handler = new Handler();
-    Runnable runnableHotWord;
-    Runnable runnableHotWordErr;
-    Runnable runnableNoweb;
-    Runnable runnableUi;
-    Runnable runnableAddlist;
-    Runnable runnableNoWebH;
-    Runnable runnableNoresult;
-    Runnable runnableNomore;
+    private Runnable runnableHotWord, runnableHotWordErr, runnableNoweb, runnableUi;
+    private Runnable runnableAddlist, runnableNoWebH, runnableNoresult, runnableNomore;
 
-    String[] hotWordArray;
-    ArrayList<SearchModel> searchResult;
-    HotWordAdapter hotwordAdapter;
+    private String[] hotWordArray;
+    private ArrayList<SearchModel> searchResult;
+    private HotWordAdapter hotwordAdapter;
 
-    boolean isLoading = true;
+    private boolean isLoading = true;
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -381,16 +375,12 @@ public class SearchFragment extends Fragment
         }
         else if(searchModel.search_mode == 1)
         {
-            Intent intent = new Intent(ctx, OtherUserActivity.class);
+            Intent intent = new Intent(ctx, UserActivity.class);
             intent.putExtra("mid", ((SearchModel.SearchUserModel) searchModel).search_user_mid);
             startActivity(intent);
         }
         else if(searchModel.search_mode == 2)
-        {
-            Intent intent = new Intent(ctx, VideodetailsActivity.class);
-            intent.putExtra("aid", ((SearchModel.SearchVideoModel) searchModel).search_video_aid);
-            startActivity(intent);
-        }
+            startActivity(VideoActivity.getActivityIntent(ctx, ((SearchModel.SearchVideoModel) searchModel).search_video_aid, ""));
     }
 
     @Override

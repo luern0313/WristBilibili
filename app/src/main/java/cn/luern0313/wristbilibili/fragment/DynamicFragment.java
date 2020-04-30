@@ -2,6 +2,7 @@ package cn.luern0313.wristbilibili.fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,13 +23,12 @@ import androidx.fragment.app.Fragment;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.adapter.DynamicAdapter;
 import cn.luern0313.wristbilibili.api.SendDynamicApi;
-import cn.luern0313.wristbilibili.api.UserDynamicApi;
+import cn.luern0313.wristbilibili.api.DynamicApi;
 import cn.luern0313.wristbilibili.ui.CheckreplyActivity;
 import cn.luern0313.wristbilibili.ui.ImgActivity;
-import cn.luern0313.wristbilibili.ui.MainActivity;
-import cn.luern0313.wristbilibili.ui.OtherUserActivity;
 import cn.luern0313.wristbilibili.ui.SendDynamicActivity;
-import cn.luern0313.wristbilibili.ui.VideodetailsActivity;
+import cn.luern0313.wristbilibili.ui.UserActivity;
+import cn.luern0313.wristbilibili.ui.VideoActivity;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
 /**
@@ -37,48 +37,87 @@ import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
 public class DynamicFragment extends Fragment
 {
+    private static final String ARG_DYNAMIC_IS_SHOW_SEND_BUTTON = "argDynamicIsShowSendButton";
+    private static final String ARG_DYNAMIC_MID = "argDynamicMid";
     Context ctx;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
+    private String cookie;
+    private String selfMid;
+    private String csrf;
+    private boolean isShowSendButton;
+    private String mid;
 
-    UserDynamicApi userDynamicApi;
-    SendDynamicApi sendDynamicApi;
-    ArrayList<Object> dynamicList;
+    private DynamicApi userDynamicApi;
+    private SendDynamicApi sendDynamicApi;
+    private ArrayList<Object> dynamicList;
 
     View rootLayout;
-    ListView dyListView;
-    WaveSwipeRefreshLayout waveSwipeRefreshLayout;
-    View sendDynamicView;
-    Button sendDynamicButton;
-    View loadingView;
+    private ListView dyListView;
+    private WaveSwipeRefreshLayout waveSwipeRefreshLayout;
+    private View sendDynamicView;
+    private Button sendDynamicButton;
+    private View loadingView;
     DynamicAdapter adapter;
-    DynamicAdapter.DynamicAdapterListener adapterListener;
+    private DynamicAdapter.DynamicAdapterListener adapterListener;
 
     Handler handler = new Handler();
-    Runnable runnableUi;
-    Runnable runnableNoWeb;
-    Runnable runnableNoWebH;
-    Runnable runnableAddlist;
-    Runnable runnableNodata;
+    private Runnable runnableUi;
+    private Runnable runnableNoWeb;
+    private Runnable runnableNoWebH;
+    private Runnable runnableAddlist;
+    private Runnable runnableNodata;
 
-    boolean isLoading = true;
+    private boolean isLoading = true;
     public static boolean isLogin = false;
+
+    public DynamicFragment() {}
+
+    public static DynamicFragment newInstance(boolean isShowSendButton, String mid)
+    {
+        DynamicFragment fragment = new DynamicFragment();
+        Bundle args = new Bundle();
+        args.putBoolean(ARG_DYNAMIC_IS_SHOW_SEND_BUTTON, isShowSendButton);
+        args.putString(ARG_DYNAMIC_MID, mid);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+        if(getArguments() != null)
+        {
+            isShowSendButton = getArguments().getBoolean(ARG_DYNAMIC_IS_SHOW_SEND_BUTTON);
+            mid = getArguments().getString(ARG_DYNAMIC_MID);
+        }
+    }
 
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         ctx = getActivity();
         rootLayout = inflater.inflate(R.layout.fragment_dynamic, container, false);
+        sharedPreferences = ctx.getSharedPreferences("default", Context.MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+
+        cookie = sharedPreferences.getString("cookies", "");
+        selfMid = sharedPreferences.getString("mid", "");
+        csrf = sharedPreferences.getString("csrf", "");
+
         dyListView = rootLayout.findViewById(R.id.dy_listview);
         loadingView = inflater.inflate(R.layout.widget_loading, null);
         sendDynamicView = inflater.inflate(R.layout.widget_dy_senddynamic, null);
         sendDynamicButton = sendDynamicView.findViewById(R.id.wid_dy_senddynamic);
-        dyListView.addHeaderView(sendDynamicView);
+
+        if(isShowSendButton)
+            dyListView.addHeaderView(sendDynamicView);
         dyListView.addFooterView(loadingView);
         dyListView.setHeaderDividersEnabled(false);
 
-        isLogin = MainActivity.sharedPreferences.contains("cookies");
+        isLogin = sharedPreferences.contains("cookies");
 
-        sendDynamicApi = new SendDynamicApi(MainActivity.sharedPreferences.getString("cookies", ""),
-                MainActivity.sharedPreferences.getString("mid", ""),
-                MainActivity.sharedPreferences.getString("csrf", ""));
+        sendDynamicApi = new SendDynamicApi(cookie, selfMid, csrf);
 
         runnableUi = new Runnable()
         {
@@ -126,8 +165,8 @@ public class DynamicFragment extends Fragment
             public void run()
             {
                 rootLayout.findViewById(R.id.dy_noweb).setVisibility(View.GONE);
-                rootLayout.findViewById(R.id.dy_nologin).setVisibility(View.VISIBLE);
-                rootLayout.findViewById(R.id.dy_nonthing).setVisibility(View.GONE);
+                rootLayout.findViewById(R.id.dy_nologin).setVisibility(View.GONE);
+                rootLayout.findViewById(R.id.dy_nonthing).setVisibility(View.VISIBLE);
                 dyListView.setVisibility(View.GONE);
                 waveSwipeRefreshLayout.setRefreshing(false);
             }
@@ -155,9 +194,12 @@ public class DynamicFragment extends Fragment
                     @Override
                     public void run()
                     {
-                        isLogin = MainActivity.sharedPreferences.contains("cookies");
+                        isLogin = sharedPreferences.contains("cookies");
                         if(isLogin)
                         {
+                            cookie = sharedPreferences.getString("cookies", "");
+                            selfMid = sharedPreferences.getString("mid", "");
+                            csrf = sharedPreferences.getString("csrf", "");
                             dyListView.setVisibility(View.GONE);
                             getDynamic();
                         }
@@ -172,7 +214,7 @@ public class DynamicFragment extends Fragment
             @Override
             public void onClick(View v)
             {
-                ((TextView) loadingView.findViewById(R.id.wid_load_button)).setText(" 加载中. . .");
+                ((TextView) loadingView.findViewById(R.id.wid_load_button)).setText("  加载中...");
                 loadingView.findViewById(R.id.wid_load_button).setVisibility(View.GONE);
                 getMoreDynamic();
             }
@@ -281,7 +323,7 @@ public class DynamicFragment extends Fragment
         }
     }
 
-    void getDynamic()
+    private void getDynamic()
     {
         new Thread(new Runnable()
         {
@@ -290,10 +332,7 @@ public class DynamicFragment extends Fragment
             {
                 try
                 {
-                    userDynamicApi = new UserDynamicApi(MainActivity.sharedPreferences.getString("cookies", ""),
-                                                        MainActivity.sharedPreferences.getString("csrf", ""),
-                                                        MainActivity.sharedPreferences.getString("mid", ""),
-                                                        MainActivity.sharedPreferences.getString("mid", ""), true);
+                    userDynamicApi = new DynamicApi(cookie, csrf, selfMid, mid, isShowSendButton);
                     userDynamicApi.getDynamic();
                     dynamicList = userDynamicApi.getDynamicList();
                     if(dynamicList != null && dynamicList.size() != 0)
@@ -320,7 +359,7 @@ public class DynamicFragment extends Fragment
         }).start();
     }
 
-    void getMoreDynamic()
+    private void getMoreDynamic()
     {
         new Thread(new Runnable()
         {
@@ -343,20 +382,18 @@ public class DynamicFragment extends Fragment
         }).start();
     }
 
-    void onViewClick(int id, int position, int mode)
+    private void onViewClick(int id, int position, int mode)
     {
         if(mode == 4)
         {
-            final UserDynamicApi.cardOriginalVideo dy = (UserDynamicApi.cardOriginalVideo) dynamicList.get(position);
+            final DynamicApi.cardOriginalVideo dy = (DynamicApi.cardOriginalVideo) dynamicList.get(position);
             if(id == R.id.liov_lay)
             {
-                Intent intent = new Intent(ctx, VideodetailsActivity.class);
-                intent.putExtra("aid", dy.getVideoAid());
-                startActivity(intent);
+                startActivity(VideoActivity.getActivityIntent(ctx, dy.getVideoAid(), ""));
             }
             else if(id == R.id.liov_head)
             {
-                Intent intent = new Intent(ctx, OtherUserActivity.class);
+                Intent intent = new Intent(ctx, UserActivity.class);
                 intent.putExtra("mid", dy.getOwnerUid());
                 startActivity(intent);
             }
@@ -386,7 +423,7 @@ public class DynamicFragment extends Fragment
         }
         else if(mode == 3)
         {
-            final UserDynamicApi.cardOriginalText dy = (UserDynamicApi.cardOriginalText) dynamicList.get(position);
+            final DynamicApi.cardOriginalText dy = (DynamicApi.cardOriginalText) dynamicList.get(position);
             if(id == R.id.liot_textimg)
             {
                 Intent intent = new Intent(ctx, ImgActivity.class);
@@ -395,7 +432,7 @@ public class DynamicFragment extends Fragment
             }
             else if(id == R.id.liot_head)
             {
-                Intent intent = new Intent(ctx, OtherUserActivity.class);
+                Intent intent = new Intent(ctx, UserActivity.class);
                 intent.putExtra("mid", dy.getUserUid());
                 startActivity(intent);
             }
@@ -414,7 +451,6 @@ public class DynamicFragment extends Fragment
                 Intent intent = new Intent(ctx, CheckreplyActivity.class);
                 intent.putExtra("oid", dy.getDynamicId(1));
                 intent.putExtra("type", dy.getReplyType());
-                intent.putExtra("root", "");
                 startActivity(intent);
             }
             else if(id == R.id.liot_likebu)
@@ -443,33 +479,31 @@ public class DynamicFragment extends Fragment
         }
         else if(mode == 2)
         {
-            final UserDynamicApi.cardUnknow dy = (UserDynamicApi.cardUnknow) dynamicList.get(position);
+            final DynamicApi.cardUnknow dy = (DynamicApi.cardUnknow) dynamicList.get(position);
             if(id == R.id.liuk_head)
             {
-                Intent intent = new Intent(ctx, OtherUserActivity.class);
+                Intent intent = new Intent(ctx, UserActivity.class);
                 intent.putExtra("mid", dy.getOwnerUid());
                 startActivity(intent);
             }
         }
         else if(mode == 1)
         {
-            final UserDynamicApi.cardShareVideo dy = (UserDynamicApi.cardShareVideo) dynamicList.get(position);
-            final UserDynamicApi.cardOriginalVideo sdy = dy.getOriginalVideo();
+            final DynamicApi.cardShareVideo dy = (DynamicApi.cardShareVideo) dynamicList.get(position);
+            final DynamicApi.cardOriginalVideo sdy = dy.getOriginalVideo();
             if(id == R.id.lisv_share_lay)
             {
-                Intent intent = new Intent(ctx, VideodetailsActivity.class);
-                intent.putExtra("aid", sdy.getVideoAid());
-                startActivity(intent);
+                startActivity(VideoActivity.getActivityIntent(ctx, sdy.getVideoAid(), ""));
             }
             else if(id == R.id.lisv_head)
             {
-                Intent intent = new Intent(ctx, OtherUserActivity.class);
+                Intent intent = new Intent(ctx, UserActivity.class);
                 intent.putExtra("mid", dy.getUserUid());
                 startActivity(intent);
             }
             else if(id == R.id.lisv_share_user)
             {
-                Intent intent = new Intent(ctx, OtherUserActivity.class);
+                Intent intent = new Intent(ctx, UserActivity.class);
                 intent.putExtra("mid", sdy.getOwnerUid());
                 startActivity(intent);
             }
@@ -489,7 +523,6 @@ public class DynamicFragment extends Fragment
                 Intent intent = new Intent(ctx, CheckreplyActivity.class);
                 intent.putExtra("oid", dy.getDynamicId());
                 intent.putExtra("type", dy.getReplyType());
-                intent.putExtra("root", "");
                 startActivity(intent);
             }
             else if(id == R.id.lisv_likebu)
@@ -518,8 +551,8 @@ public class DynamicFragment extends Fragment
         }
         else if(mode == 0)
         {
-            final UserDynamicApi.cardShareText dy = (UserDynamicApi.cardShareText) dynamicList.get(position);
-            final UserDynamicApi.cardOriginalText sdy = dy.getOriginalText();
+            final DynamicApi.cardShareText dy = (DynamicApi.cardShareText) dynamicList.get(position);
+            final DynamicApi.cardOriginalText sdy = dy.getOriginalText();
             if(id == R.id.list_share_textimg)
             {
                 Intent intent = new Intent(ctx, ImgActivity.class);
@@ -528,13 +561,13 @@ public class DynamicFragment extends Fragment
             }
             else if(id == R.id.list_head)
             {
-                Intent intent = new Intent(ctx, OtherUserActivity.class);
+                Intent intent = new Intent(ctx, UserActivity.class);
                 intent.putExtra("mid", dy.getUserUid());
                 startActivity(intent);
             }
             else if(id == R.id.list_share_user)
             {
-                Intent intent = new Intent(ctx, OtherUserActivity.class);
+                Intent intent = new Intent(ctx, UserActivity.class);
                 intent.putExtra("mid", sdy.getUserUid());
                 startActivity(intent);
             }
@@ -554,7 +587,6 @@ public class DynamicFragment extends Fragment
                 Intent intent = new Intent(ctx, CheckreplyActivity.class);
                 intent.putExtra("oid", dy.getDynamicId());
                 intent.putExtra("type", dy.getReplyType());
-                intent.putExtra("root", "");
                 startActivity(intent);
             }
             else if(id == R.id.list_likebu)

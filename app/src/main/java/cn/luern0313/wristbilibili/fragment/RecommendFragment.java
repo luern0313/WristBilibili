@@ -1,11 +1,9 @@
 package cn.luern0313.wristbilibili.fragment;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +21,7 @@ import cn.luern0313.wristbilibili.adapter.RecommendAdapter;
 import cn.luern0313.wristbilibili.api.RecommendApi;
 import cn.luern0313.wristbilibili.models.RecommendModel;
 import cn.luern0313.wristbilibili.ui.MainActivity;
-import cn.luern0313.wristbilibili.ui.VideodetailsActivity;
+import cn.luern0313.wristbilibili.ui.VideoActivity;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
 /**
@@ -34,21 +32,18 @@ public class RecommendFragment extends Fragment
 {
     Context ctx;
     View rootLayout;
-    RecommendAdapter recommendAdapter;
-    RecommendAdapter.RecommendAdapterListener adapterListener;
-    ListView uiListView;
-    WaveSwipeRefreshLayout uiWaveSwipeRefreshLayout;
-    View uiLoadingView;
+    private RecommendAdapter recommendAdapter;
+    private RecommendAdapter.RecommendAdapterListener adapterListener;
+    private ListView uiListView;
+    private WaveSwipeRefreshLayout uiWaveSwipeRefreshLayout;
+    private View uiLoadingView;
 
-    RecommendApi recommendApi;
-    ArrayList<RecommendModel> recommendVideoArrayList = new ArrayList<>();
-    boolean isLoading = false;
+    private RecommendApi recommendApi;
+    private ArrayList<RecommendModel> recommendVideoArrayList = new ArrayList<>();
+    private boolean isLoading = false;
 
     Handler handler = new Handler();
-    Runnable runnableUi;
-    Runnable runnableNoWeb;
-    Runnable runnableNoMore;
-    Runnable RunnableNoWebH;
+    private Runnable runnableUi, runnableNoWeb, runnableNoMore, RunnableNoWebH;
 
     @Override
     public View onCreateView(final LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState)
@@ -203,11 +198,8 @@ public class RecommendFragment extends Fragment
         if(viewId == R.id.rc_video)
         {
             if(!recommendVideoArrayList.get(position).video_aid.equals(""))
-            {
-                Intent intent = new Intent(ctx, VideodetailsActivity.class);
-                intent.putExtra("aid", recommendVideoArrayList.get(position).video_aid);
-                startActivity(intent);
-            }
+                startActivity(VideoActivity
+                                      .getActivityIntent(ctx, recommendVideoArrayList.get(position).video_aid, ""));
         }
         else if(viewId == R.id.widget_recommend_update_lay)
         {

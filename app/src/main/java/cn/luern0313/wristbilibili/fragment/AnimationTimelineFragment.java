@@ -30,18 +30,17 @@ public class AnimationTimelineFragment extends Fragment
 {
     Context ctx;
     View rootLayout;
-    ListView arListView;
-    WaveSwipeRefreshLayout waveSwipeRefreshLayout;
+    private ListView arListView;
+    private WaveSwipeRefreshLayout waveSwipeRefreshLayout;
 
     public static boolean isLogin;
-    AnimationTimelineApi animationTimelineApi;
-    ArrayList<AnimationTimelineModel> animationTimelineList;
+    private AnimationTimelineApi animationTimelineApi;
+    private ArrayList<AnimationTimelineModel> animationTimelineList;
     AnimationTimelineAdapter adapter;
-    AnimationTimelineAdapter.AnimationTimelineListener adapterListener;
+    private AnimationTimelineAdapter.AnimationTimelineListener adapterListener;
 
     Handler handler = new Handler();
-    Runnable runnableUi;
-    Runnable runnableNoWeb;
+    private Runnable runnableUi, runnableNoWeb;
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)

@@ -25,7 +25,7 @@ import cn.luern0313.wristbilibili.ui.SueActivity;
 import cn.luern0313.wristbilibili.ui.SupportActivity;
 import cn.luern0313.wristbilibili.ui.TailActivity;
 import cn.luern0313.wristbilibili.ui.TextActivity;
-import cn.luern0313.wristbilibili.ui.VideodetailsActivity;
+import cn.luern0313.wristbilibili.ui.VideoActivity;
 
 /**
  * Created by liupe on 2018/11/15.
@@ -37,7 +37,7 @@ public class SettingFragment extends Fragment
     Context ctx;
 
     View rootLayout;
-    ListView setList;
+    private ListView setList;
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
@@ -77,9 +77,7 @@ public class SettingFragment extends Fragment
                 }
                 else if(list.get(position).equals("查看介绍视频"))
                 {
-                    Intent intent = new Intent(ctx, VideodetailsActivity.class);
-                    intent.putExtra("aid", "37132444");
-                    startActivity(intent);
+                    startActivity(VideoActivity.getActivityIntent(ctx, "37132444", ""));
                 }
                 else if(list.get(position).equals("支持作者"))
                 {
