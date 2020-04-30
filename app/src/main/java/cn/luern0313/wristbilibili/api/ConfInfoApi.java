@@ -35,6 +35,16 @@ public class ConfInfoApi
         put("app_secret", "59b43e04ad6965f34319062b478f83dd");
     }};
 
+    private static final HashMap<String, String> bConf = new HashMap<String, String>(){{
+        put("appkey", "07da50c9a0bf829f");
+        put("actionKey", "appkey");
+        put("build", "520001");
+        put("device", "android_b");
+        put("mobi_app", "android");
+        put("platform", "android");
+        put("app_secret", "25bdede4e1581c836cab73a48790ca6e");
+    }};
+
     static String getConf(String key)
     {
         return conf.get(key);
@@ -43,6 +53,11 @@ public class ConfInfoApi
     static String getTVConf(String key)
     {
         return tvConf.get(key);
+    }
+
+    static String getBConf(String key)
+    {
+        return bConf.get(key);
     }
 
     static String calc_sign(String str, String salt)

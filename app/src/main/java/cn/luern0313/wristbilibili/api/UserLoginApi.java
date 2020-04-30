@@ -82,10 +82,10 @@ public class UserLoginApi
                 add("Cookie"); add("sid=" + sid);
                 add("User-Agent"); add("");
             }};
-            String temp_params = "appkey=" + ConfInfoApi.getTVConf("appkey") + "&build=" + ConfInfoApi.getTVConf("build") +
-                    "&captcha=&mobi_app=" + ConfInfoApi.getTVConf("mobi_app") + "&password=" + pw + "&platform=" +
-                    ConfInfoApi.getTVConf("platform") + "&ts=" + (int) (System.currentTimeMillis() / 1000) + "&username=" + name;
-            String sign = ConfInfoApi.calc_sign(temp_params, ConfInfoApi.getTVConf("app_secret"));
+            String temp_params = "appkey=" + ConfInfoApi.getBConf("appkey") + "&build=" + ConfInfoApi.getBConf("build") +
+                    "&captcha=&mobi_app=" + ConfInfoApi.getBConf("mobi_app") + "&password=" + pw + "&platform=" +
+                    ConfInfoApi.getBConf("platform") + "&ts=" + (int) (System.currentTimeMillis() / 1000) + "&username=" + name;
+            String sign = ConfInfoApi.calc_sign(temp_params, ConfInfoApi.getBConf("app_secret"));
             JSONObject loginResult = new JSONObject(NetWorkUtil.post(url, temp_params + "&sign=" + sign, headers).body().string());
 
             if(loginResult.getInt("code") == -629) return "账号或密码错误";
@@ -128,11 +128,11 @@ public class UserLoginApi
                 add("Referer"); add("http://www.bilibili.com/");
                 add("Connection"); add("Keep-Alive");
             }};
-            String temp_params = "access_key=" + access_key + "&appkey=" + ConfInfoApi.getTVConf("appkey") +
-                    "&build=" + ConfInfoApi.getTVConf("build") + "&gourl=" + URLEncoder.encode("https://account.bilibili.com/account/home", "utf-8") +
-                    "&mobi_app=" + ConfInfoApi.getTVConf("mobi_app") + "&platform=" + ConfInfoApi.getTVConf("platform") +
+            String temp_params = "access_key=" + access_key + "&appkey=" + ConfInfoApi.getBConf("appkey") +
+                    "&build=" + ConfInfoApi.getBConf("build") + "&gourl=" + URLEncoder.encode("https://account.bilibili.com/account/home", "utf-8") +
+                    "&mobi_app=" + ConfInfoApi.getBConf("mobi_app") + "&platform=" + ConfInfoApi.getBConf("platform") +
                     "&ts=" + (int) (System.currentTimeMillis() / 1000);
-            String sign = ConfInfoApi.calc_sign(temp_params, ConfInfoApi.getTVConf("app_secret"));
+            String sign = ConfInfoApi.calc_sign(temp_params, ConfInfoApi.getBConf("app_secret"));
 
             OkHttpClient client = new OkHttpClient.Builder().connectTimeout(15, TimeUnit.SECONDS)
                     .followRedirects(false).readTimeout(15, TimeUnit.SECONDS).build();
@@ -186,9 +186,9 @@ public class UserLoginApi
             }};
 
             String url = "https://passport.bilibili.com/api/oauth2/getKey";
-            String temp_per = "appkey=" + ConfInfoApi.getTVConf("appkey");
-            String sign = ConfInfoApi.calc_sign(temp_per, ConfInfoApi.getTVConf("app_secret"));
-            Response response = NetWorkUtil.post(url, "appkey=" + ConfInfoApi.getTVConf("appkey") + "&sign=" + sign, headers);
+            String temp_per = "appkey=" + ConfInfoApi.getBConf("appkey");
+            String sign = ConfInfoApi.calc_sign(temp_per, ConfInfoApi.getBConf("app_secret"));
+            Response response = NetWorkUtil.post(url, "appkey=" + ConfInfoApi.getBConf("appkey") + "&sign=" + sign, headers);
             sid = response.header("set-header");
             return new JSONObject(response.body().string()).getJSONObject("data");
         }
