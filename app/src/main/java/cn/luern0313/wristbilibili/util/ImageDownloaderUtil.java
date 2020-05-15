@@ -47,15 +47,14 @@ public class ImageDownloaderUtil
      */
     public static int getInSampleSize(BitmapFactory.Options options, int width) {
         int inSampleSize = 1;
-        int realWith = width;
         float realHeight = options.outHeight * 1.0f / options.outWidth * width;
 
         int outWidth = options.outWidth;
         int outHeight = options.outHeight;
 
         //获取比率最大的那个
-        if (outWidth > realWith || outHeight > realHeight) {
-            int withRadio = Math.round(outWidth / realWith);
+        if (outWidth > width || outHeight > realHeight) {
+            int withRadio = Math.round(outWidth / width);
             int heightRadio = Math.round(outHeight / realHeight);
             inSampleSize = withRadio > heightRadio ? withRadio : heightRadio;
         }

@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import cn.luern0313.wristbilibili.models.FavorBoxModel;
+import cn.luern0313.wristbilibili.util.NetWorkUtil;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -28,28 +29,41 @@ public class FavorBoxApi
 {
     private String cookie;
     private String mid;
+    private ArrayList<String> webHeaders;
 
-    public FavorBoxApi(String cookie, String mid)
+    private ArrayList<FavorBoxModel> favorBoxArrayList = new ArrayList<FavorBoxModel>();
+
+    public FavorBoxApi(final String cookie, String mid)
     {
         this.cookie = cookie;
         this.mid = mid;
+        webHeaders = new ArrayList<String>(){{
+            add("Cookie"); add(cookie);
+            add("Referer"); add("https://www.bilibili.com/");
+            add("User-Agent"); add(ConfInfoApi.USER_AGENT_WEB);
+        }};
     }
 
     public ArrayList<FavorBoxModel> getFavorbox() throws IOException
     {
         try
         {
-            ArrayList<FavorBoxModel> favorBoxArrayList = new ArrayList<FavorBoxModel>();
-            JSONArray favorboxJSONArray = new JSONObject((String) get("http://space.bilibili.com/ajax/fav/getBoxList?mid=" + mid, 1)).getJSONObject("data").getJSONArray("list");
-            for(int i = 0; i < favorboxJSONArray.length(); i++)
-                favorBoxArrayList.add(new FavorBoxModel(favorboxJSONArray.getJSONObject(i)));
-            return favorBoxArrayList;
+            String url = "http://space.bilibili.com/ajax/fav/getBoxList";
+            String arg = "mid=" + mid;
+            JSONObject result = new JSONObject(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string());
+            if(result.optInt("code") == 0)
+            {
+                JSONArray favorBoxJSONArray = result.getJSONObject("data").getJSONArray("list");
+                for(int i = 0; i < favorBoxJSONArray.length(); i++)
+                    favorBoxArrayList.add(new FavorBoxModel(favorBoxJSONArray.getJSONObject(i)));
+                return favorBoxArrayList;
+            }
         }
         catch (JSONException e)
         {
             e.printStackTrace();
         }
-        return new ArrayList<>();
+        return null;
     }
 
     private Object get(String url, int mode) throws IOException

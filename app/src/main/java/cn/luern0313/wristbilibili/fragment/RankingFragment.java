@@ -335,7 +335,7 @@ public class RankingFragment extends Fragment
         return rootLayout;
     }
 
-    void getRanking()
+    private void getRanking()
     {
         uiPickUpView.findViewById(R.id.rk_pu_lay).setVisibility(View.GONE);
         new Thread(new Runnable()
@@ -369,7 +369,7 @@ public class RankingFragment extends Fragment
         }).start();
     }
 
-    void onViewClick(int viewId, int position)
+    private void onViewClick(int viewId, int position)
     {
         if(viewId == R.id.rk_video_lay)
         {

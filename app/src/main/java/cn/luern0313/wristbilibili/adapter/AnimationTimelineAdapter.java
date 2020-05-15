@@ -148,18 +148,6 @@ public class AnimationTimelineAdapter extends BaseAdapter
         }
     }
 
-    private View.OnClickListener onViewClick(final int position, final int mode)
-    {
-        return new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                animationTimelineListener.onClick(v.getId(), position);
-            }
-        };
-    }
-
     public interface AnimationTimelineListener
     {
         void onClick(int viewId, int position);

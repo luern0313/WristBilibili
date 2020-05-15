@@ -194,3 +194,8 @@
 #下载
 -keep class com.liulishuo.filedownloader.** {*;}
 -keep class org.sufficientlysecure.** {*;}
+-keepattributes *Annotation*
+-keepclassmembers class ** {
+    @org.greenrobot.eventbus.Subscribe <methods>;
+}
+-keep enum org.greenrobot.eventbus.ThreadMode { *; }

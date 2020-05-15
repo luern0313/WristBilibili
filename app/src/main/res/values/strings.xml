@@ -9,4 +9,15 @@
     <string name="dl_tip_1">视频储存位置：</string>
     <string name="dl_tip_2">\n\n点击暂停或开始，长按删除本地文件。\n\n创建任务后时间过长链接会失效，请尝试删除后重新下载。</string>
 
+    <string name="menu_dynamic">动态</string>
+    <string name="menu_recommend">推荐</string>
+    <string name="menu_ranking">排行榜</string>
+    <string name="menu_remind">追番提醒</string>
+    <string name="menu_download">离线缓存</string>
+    <string name="menu_search">搜索</string>
+    <string name="menu_collect">收藏</string>
+    <string name="menu_watchlater">稍后再看</string>
+    <string name="menu_history">历史记录</string>
+    <string name="menu_setting">设置</string>
+
 </resources>

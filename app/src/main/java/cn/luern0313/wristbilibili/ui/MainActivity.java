@@ -1,7 +1,5 @@
 package cn.luern0313.wristbilibili.ui;
 
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -20,12 +18,15 @@ import java.io.IOException;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.StatisticsApi;
 import cn.luern0313.wristbilibili.fragment.AnimationTimelineFragment;
 import cn.luern0313.wristbilibili.fragment.DownloadFragment;
 import cn.luern0313.wristbilibili.fragment.DynamicFragment;
 import cn.luern0313.wristbilibili.fragment.FavorBoxFragment;
+import cn.luern0313.wristbilibili.fragment.HistoryFragment;
 import cn.luern0313.wristbilibili.fragment.RankingFragment;
 import cn.luern0313.wristbilibili.fragment.RecommendFragment;
 import cn.luern0313.wristbilibili.fragment.SearchFragment;
@@ -41,6 +42,8 @@ import cn.luern0313.wristbilibili.service.DownloadService;
 public class MainActivity extends AppCompatActivity
 {
     Context ctx;
+    private String selfMid;
+
     public static SharedPreferences sharedPreferences;
     public static SharedPreferences.Editor editor;
     Intent serviceIntent;
@@ -61,10 +64,12 @@ public class MainActivity extends AppCompatActivity
         ctx = this;
         sharedPreferences = getSharedPreferences("default", Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
+        selfMid = sharedPreferences.getString("mid", "");
+
         dm = getResources().getDisplayMetrics();
-        fm = getFragmentManager();
+        fm = getSupportFragmentManager();
         transaction = fm.beginTransaction();
-        transaction.replace(R.id.main_frame, new DynamicFragment());
+        transaction.replace(R.id.main_frame, DynamicFragment.newInstance(true, selfMid));
         transaction.commit();
 
         titleText = findViewById(R.id.main_title_title);
@@ -101,7 +106,7 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         }
 
-        if(sharedPreferences.contains("mid") && (!sharedPreferences.getString("mid", "").equals("")))
+        if(sharedPreferences.contains("mid") && (!selfMid.equals("")))
         {
             new Thread(new Runnable()
             {
@@ -120,10 +125,11 @@ public class MainActivity extends AppCompatActivity
             }).start();
         }
 
-
         Intent intent111 = new Intent(ctx, ArticleActivity.class);
         intent111.putExtra("article_id", "4807000");
         startActivity(intent111);
+
+        startActivity(VideoActivity.getActivityIntent(ctx, "625237637", ""));
 
         serviceIntent = new Intent(this, DownloadService.class);
         startService(serviceIntent);
@@ -135,53 +141,58 @@ public class MainActivity extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == 0 && resultCode == 0 && data != null)
         {
-            fm = getFragmentManager();
+            fm = getSupportFragmentManager();
             transaction = fm.beginTransaction();
             switch (data.getIntExtra("activity", 0))
             {
                 case 1:
-                    transaction.replace(R.id.main_frame, new DynamicFragment());
-                    titleText.setText("动态");
+                    transaction.replace(R.id.main_frame, DynamicFragment.newInstance(true, selfMid));
+                    titleText.setText(getResources().getString(R.string.menu_dynamic));
                     titleText.setTextSize(14);
                     break;
                 case 2:
                     transaction.replace(R.id.main_frame, new RecommendFragment());
-                    titleText.setText("推荐");
+                    titleText.setText(getResources().getString(R.string.menu_recommend));
                     titleText.setTextSize(14);
                     break;
                 case 3:
                     transaction.replace(R.id.main_frame, new RankingFragment());
-                    titleText.setText("排行榜");
+                    titleText.setText(getResources().getString(R.string.menu_ranking));
                     titleText.setTextSize(14);
                     break;
                 case 4:
                     transaction.replace(R.id.main_frame, new AnimationTimelineFragment());
-                    titleText.setText("追番提醒");
+                    titleText.setText(getResources().getString(R.string.menu_remind));
                     titleText.setTextSize(13);
                     break;
                 case 5:
                     transaction.replace(R.id.main_frame, new DownloadFragment());
-                    titleText.setText("离线缓存");
+                    titleText.setText(getResources().getString(R.string.menu_download));
                     titleText.setTextSize(13);
                     break;
                 case 6:
                     transaction.replace(R.id.main_frame, new SearchFragment());
-                    titleText.setText("搜索");
+                    titleText.setText(getResources().getString(R.string.menu_search));
                     titleText.setTextSize(14);
                     break;
                 case 7:
-                    transaction.replace(R.id.main_frame, new FavorBoxFragment());
-                    titleText.setText("收藏");
+                    transaction.replace(R.id.main_frame, FavorBoxFragment.newInstance(selfMid));
+                    titleText.setText(getResources().getString(R.string.menu_collect));
                     titleText.setTextSize(14);
                     break;
                 case 8:
                     transaction.replace(R.id.main_frame, new WatchlaterFragment());
-                    titleText.setText("稍后再看");
+                    titleText.setText(getResources().getString(R.string.menu_watchlater));
                     titleText.setTextSize(13);
                     break;
                 case 9:
+                    transaction.replace(R.id.main_frame, new HistoryFragment());
+                    titleText.setText(getResources().getString(R.string.menu_history));
+                    titleText.setTextSize(14);
+                    break;
+                case 10:
                     transaction.replace(R.id.main_frame, new SettingFragment());
-                    titleText.setText("设置");
+                    titleText.setText(getResources().getString(R.string.menu_setting));
                     titleText.setTextSize(14);
                     break;
             }

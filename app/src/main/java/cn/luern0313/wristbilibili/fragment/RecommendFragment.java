@@ -158,7 +158,7 @@ public class RecommendFragment extends Fragment
         return rootLayout;
     }
 
-    void getRecommend(final int mode) //1上 2下
+    private void getRecommend(final int mode) //1上 2下
     {
         new Thread(new Runnable()
         {
@@ -193,7 +193,7 @@ public class RecommendFragment extends Fragment
         }).start();
     }
 
-    void onViewClick(int viewId, int position)
+    private void onViewClick(int viewId, int position)
     {
         if(viewId == R.id.rc_video)
         {

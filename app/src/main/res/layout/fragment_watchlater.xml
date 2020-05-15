@@ -8,6 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clickable="true"
+        android:focusable="true"
         android:gravity="center"
         android:orientation="vertical"
         android:paddingBottom="33dp"
@@ -33,6 +34,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clickable="true"
+        android:focusable="true"
         android:gravity="center"
         android:orientation="vertical"
         android:paddingBottom="33dp"
@@ -57,6 +59,7 @@
         android:layout_height="match_parent"
         android:background="@color/activityBG"
         android:clickable="true"
+        android:focusable="true"
         android:gravity="center"
         android:orientation="vertical"
         android:paddingBottom="33dp"
@@ -71,7 +74,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="什么都没找到. . ." />
+            android:text=" 什么都没找到..." />
 
     </LinearLayout>
 

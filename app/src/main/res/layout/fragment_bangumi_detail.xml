@@ -14,7 +14,6 @@
             android:orientation="vertical"
             android:paddingBottom="28dp">
 
-
             <TextView
                 android:id="@+id/bgm_detail_title"
                 android:layout_width="wrap_content"
@@ -22,20 +21,21 @@
                 android:layout_marginLeft="23dp"
                 android:layout_marginRight="23dp"
                 android:layout_marginTop="8dp"
-                android:textColor="@color/gray_44" />
+                android:textColor="@color/gray_44"
+                android:textStyle="bold"/>
 
             <cn.luern0313.wristbilibili.widget.AutoLineLayout
+                android:id="@+id/bgm_detail_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="21dp"
-                android:paddingRight="21dp"
+                android:paddingLeft="23dp"
+                android:paddingRight="23dp"
                 android:clickable="true"
                 android:focusable="true"
                 android:orientation="horizontal"
                 android:paddingBottom="4dp"
                 android:paddingTop="4dp"
-                android:background="?android:attr/selectableItemBackground"
-                android:onClick="clickBangumiDetail">
+                android:background="?android:attr/selectableItemBackground">
 
                 <TextView
                     android:id="@+id/bgm_detail_score"
@@ -92,15 +92,16 @@
                     android:orientation="horizontal">
 
                     <LinearLayout
+                        android:id="@+id/bgm_detail_bt_follow_lay"
                         android:layout_width="55dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="20dp"
                         android:layout_marginEnd="2dp"
                         android:background="?android:attr/selectableItemBackground"
                         android:clickable="true"
+                        android:focusable="true"
                         android:descendantFocusability="blocksDescendants"
                         android:gravity="center_horizontal"
-                        android:onClick="clickBangumiFollow"
                         android:orientation="vertical"
                         android:padding="3dp">
 
@@ -121,14 +122,15 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/bgm_detail_bt_cover_lay"
                         android:layout_width="55dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="2dp"
                         android:background="?android:attr/selectableItemBackground"
                         android:clickable="true"
+                        android:focusable="true"
                         android:descendantFocusability="blocksDescendants"
                         android:gravity="center_horizontal"
-                        android:onClick="clickBangumiCover"
                         android:orientation="vertical"
                         android:padding="3dp">
 
@@ -147,14 +149,15 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/bgm_detail_bt_download_lay"
                         android:layout_width="55dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="2dp"
                         android:background="?android:attr/selectableItemBackground"
                         android:clickable="true"
+                        android:focusable="true"
                         android:descendantFocusability="blocksDescendants"
                         android:gravity="center_horizontal"
-                        android:onClick="clickBangumiDownload"
                         android:orientation="vertical"
                         android:padding="3dp">
 
@@ -173,14 +176,15 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/bgm_detail_bt_share_lay"
                         android:layout_width="55dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="20dp"
                         android:background="?android:attr/selectableItemBackground"
                         android:clickable="true"
+                        android:focusable="true"
                         android:descendantFocusability="blocksDescendants"
                         android:gravity="center_horizontal"
-                        android:onClick="clickBangumiShare"
                         android:orientation="vertical"
                         android:padding="3dp">
 
@@ -231,9 +235,8 @@
                         android:id="@+id/bgm_detail_video_part_more"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:onClick="clickBangumiMorePart"
                         android:text="查看全部>"
-                        android:textColor="@color/colorPrimary"
+                        android:textColor="@color/gray_44"
                         android:textSize="12sp" />
                 </LinearLayout>
 
@@ -280,9 +283,8 @@
                         android:id="@+id/bgm_detail_video_other_more"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:onClick="clickBangumiMoreOther"
                         android:text="查看全部>"
-                        android:textColor="@color/colorPrimary"
+                        android:textColor="@color/gray_44"
                         android:textSize="12sp" />
                 </LinearLayout>
 

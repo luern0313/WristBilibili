@@ -40,8 +40,8 @@ public class DynamicApi
     private String mid;
     private String csrf;
     private String cookie;
-    public JSONArray dynamicJsonArray;
-    public boolean isSelf;
+    private JSONArray dynamicJsonArray;
+    private boolean isSelf;
 
     private String lastDynamicId;
 

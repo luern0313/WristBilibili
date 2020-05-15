@@ -1,6 +1,5 @@
 package cn.luern0313.wristbilibili.ui;
 
-import androidx.appcompat.app.AppCompatActivity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.OnlineVideoApi;
 
@@ -138,6 +138,7 @@ public class PlayerActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, final Intent data)
     {
+        super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == 0 && data != null)
         {
             findViewById(R.id.player_history).setVisibility(View.VISIBLE);
@@ -148,7 +149,8 @@ public class PlayerActivity extends AppCompatActivity
                 {
                     try
                     {
-                        if(!onlineVideoApi.playHistory(data.getIntExtra("time", 0), data.getBooleanExtra("isfin", false)))
+                        if(!onlineVideoApi.playHistory(data.getIntExtra("time", 0),
+                                                       data.getBooleanExtra("isfin", false)))
                         {
                             Looper.prepare();
                             Toast.makeText(getApplicationContext(), "历史记录同步失败...", Toast.LENGTH_SHORT).show();

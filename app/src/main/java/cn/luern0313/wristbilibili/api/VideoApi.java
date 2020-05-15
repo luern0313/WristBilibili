@@ -26,8 +26,8 @@ public class VideoApi
     private String access_key;
     public String aid;
     public String bvid;
-    private ArrayList<String> appHeaders = new ArrayList<>();
-    private ArrayList<String> webHeaders = new ArrayList<String>();
+    private ArrayList<String> appHeaders;
+    private ArrayList<String> webHeaders;
 
     private VideoModel videoModel;
 

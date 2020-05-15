@@ -173,7 +173,7 @@ public class MenuActivity extends AppCompatActivity
         }
         else
         {
-            Intent intent = new Intent(ctx, OtherUserActivity.class);
+            Intent intent = new Intent(ctx, UserActivity.class);
             intent.putExtra("mid", sharedPreferences.getString("mid", ""));
             startActivity(intent);
         }
@@ -243,9 +243,17 @@ public class MenuActivity extends AppCompatActivity
         overridePendingTransition(0, R.anim.anim_activity_out_up);
     }
 
-    public void buttonSetting(View view)
+    public void buttonHistory(View view)
     {
         resultIntent.putExtra("activity", 9);
+        setResult(0, resultIntent);
+        finish();
+        overridePendingTransition(0, R.anim.anim_activity_out_up);
+    }
+
+    public void buttonSetting(View view)
+    {
+        resultIntent.putExtra("activity", 10);
         setResult(0, resultIntent);
         finish();
         overridePendingTransition(0, R.anim.anim_activity_out_up);

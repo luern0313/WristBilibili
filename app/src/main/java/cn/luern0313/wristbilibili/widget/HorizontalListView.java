@@ -59,7 +59,7 @@ public class HorizontalListView extends AdapterView<ListAdapter>{
 	private OnItemClickListener mOnItemClicked;
 	private OnTouchListener mOnItemOutListener;
 	private OnItemLongClickListener mOnItemLongClickListener;
-	private OnTouchListener mOnItemMoveListener; //It is an hacked touchLister, in fact it is OnMoveListener
+	private OnTouchListener mOnItemMoveListener;
 	private boolean isMove = false;
 	private boolean mDataChanged = false;
 	private boolean getEvent = false;

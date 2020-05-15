@@ -9,6 +9,7 @@
         android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackground"
         android:clickable="true"
+        android:focusable="true"
         android:descendantFocusability="blocksDescendants"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
@@ -56,7 +57,6 @@
             android:layout_marginLeft="2dp"
             android:layout_marginRight="2dp"
             app:etv_MaxLinesOnShrink="4" />
-
 
         <TextView
             android:id="@+id/liot_textimg"

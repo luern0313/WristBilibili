@@ -1,8 +1,6 @@
 package cn.luern0313.wristbilibili.ui;
 
-import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -16,16 +14,18 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import cn.luern0313.wristbilibili.R;
-import cn.luern0313.wristbilibili.api.OthersUserApi;
-import cn.luern0313.wristbilibili.api.VideoDetailsApi;
+import cn.luern0313.wristbilibili.api.UserApi;
+import cn.luern0313.wristbilibili.api.VideoApi;
+import cn.luern0313.wristbilibili.models.ListVideoModel;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
 
 /**
@@ -64,8 +64,8 @@ public class FollowmeActivity extends AppCompatActivity
     LinearLayout uiVideoCoin;
     ImageView uiVideoCoinImg;
 
-    OthersUserApi othersUserApi;
-    VideoDetailsApi videoDetail;
+    UserApi userApi;
+    VideoApi videoDetail;
     JSONObject videoJson = null;
     Bitmap videoCover;
 
@@ -83,7 +83,7 @@ public class FollowmeActivity extends AppCompatActivity
         mid = sharedPreferences.getString("mid", "");
         access_key = sharedPreferences.getString("access_key", "");
 
-        othersUserApi = new OthersUserApi(cookies, csrf, "8014831");
+        userApi = new UserApi(cookies, csrf, access_key, "8014831");
 
         cardView = findViewById(R.id.fme_card);
         cardViewLay = findViewById(R.id.fme_card_lay);
@@ -147,9 +147,8 @@ public class FollowmeActivity extends AppCompatActivity
                 {
                     try
                     {
-                        JSONArray jsonArray = new JSONObject(othersUserApi.getOtheruserVideo()).getJSONObject("data").getJSONArray("vlist");
-                        videoJson = jsonArray.getJSONObject(0);
-                        videoDetail = new VideoDetailsApi(cookies, csrf, mid, access_key, String.valueOf(videoJson.getInt("aid")));
+                        ArrayList<ListVideoModel> v = userApi.getUserVideo(1);
+                        videoDetail = new VideoApi(cookies, csrf, mid, access_key, "", v.get(0).video_bvid);
                         handler.post(runnVideo);
 
                         byte[] picByte = NetWorkUtil.readStream(NetWorkUtil.get("http:" + videoJson.optString("pic", "")).body().byteStream());
@@ -178,7 +177,7 @@ public class FollowmeActivity extends AppCompatActivity
                     {
                         try
                         {
-                            othersUserApi.follow();
+                            userApi.follow();
                         }
                         catch (Exception e)
                         {
@@ -198,11 +197,7 @@ public class FollowmeActivity extends AppCompatActivity
             public void onClick(View v)
             {
                 if(videoDetail != null)
-                {
-                    Intent intent = new Intent(ctx, VideodetailsActivity.class);
-                    intent.putExtra("aid", videoDetail.aid);
-                    startActivity(intent);
-                }
+                    startActivity(VideoActivity.getActivityIntent(ctx, videoDetail.aid, ""));
             }
         });
 
