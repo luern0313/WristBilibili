@@ -1,6 +1,5 @@
 package cn.luern0313.wristbilibili.ui;
 
-import androidx.appcompat.app.AppCompatActivity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -21,10 +20,11 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import androidx.appcompat.app.AppCompatActivity;
 import cn.luern0313.wristbilibili.R;
-import cn.luern0313.wristbilibili.adapter.FavorVideoAdapter;
+import cn.luern0313.wristbilibili.adapter.ListVideoAdapter;
 import cn.luern0313.wristbilibili.api.FavorVideoApi;
-import cn.luern0313.wristbilibili.models.FavorVideoModel;
+import cn.luern0313.wristbilibili.models.ListVideoModel;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
 public class FavorvideoActivity extends AppCompatActivity
@@ -36,21 +36,18 @@ public class FavorvideoActivity extends AppCompatActivity
     SharedPreferences.Editor editor;
     FavorVideoApi favorVideoApi;
 
-    ArrayList<FavorVideoModel> favorvideoList;
+    ArrayList<ListVideoModel> favorvideoList;
+    String mid;
     String fid;
 
-    FavorVideoAdapter adapter;
+    ListVideoAdapter listVideoAdapter;
+    ListVideoAdapter.ListVideoAdapterListener listVideoAdapterListener;
     ListView favvListView;
     WaveSwipeRefreshLayout waveSwipeRefreshLayout;
     View loadingView;
 
     Handler handler = new Handler();
-    Runnable runnableUi;
-    Runnable runnableNoWeb;
-    Runnable runnableNoWebH;
-    Runnable runnableNodata;
-    Runnable runnableAddlist;
-    Runnable runnableNomore;
+    Runnable runnableUi, runnableNoWeb, runnableNothing, runnableMore, runnableMoreNoWeb, runnableMoreNothing;
 
     int page = 0;
     boolean isLoading = true;
@@ -65,7 +62,18 @@ public class FavorvideoActivity extends AppCompatActivity
         inflater = getLayoutInflater();
         sharedPreferences = getSharedPreferences("default", Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
+        mid = intent.getStringExtra("mid");
         fid = intent.getStringExtra("fid");
+
+        listVideoAdapterListener = new ListVideoAdapter.ListVideoAdapterListener()
+        {
+            @Override
+            public void onListVideoAdapterClick(int viewId, int position)
+            {
+                Intent intent = VideoActivity.getActivityIntent(ctx, favorvideoList.get(position).video_aid, "");
+                startActivity(intent);
+            }
+        };
 
         loadingView = inflater.inflate(R.layout.widget_loading, null);
         favvListView = findViewById(R.id.favv_listview);
@@ -100,8 +108,20 @@ public class FavorvideoActivity extends AppCompatActivity
                 favvListView.setVisibility(View.VISIBLE);
 
                 waveSwipeRefreshLayout.setRefreshing(false);
-                adapter = new FavorVideoAdapter(inflater, favorvideoList, favvListView);
-                favvListView.setAdapter(adapter);
+                listVideoAdapter = new ListVideoAdapter(inflater, favorvideoList, favvListView, listVideoAdapterListener);
+                favvListView.setAdapter(listVideoAdapter);
+            }
+        };
+
+        runnableNothing = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                findViewById(R.id.favv_noweb).setVisibility(View.GONE);
+                findViewById(R.id.favv_nonthing).setVisibility(View.VISIBLE);
+                favvListView.setVisibility(View.GONE);
+                waveSwipeRefreshLayout.setRefreshing(false);
             }
         };
 
@@ -113,10 +133,11 @@ public class FavorvideoActivity extends AppCompatActivity
                 findViewById(R.id.favv_noweb).setVisibility(View.VISIBLE);
                 findViewById(R.id.favv_nonthing).setVisibility(View.GONE);
                 favvListView.setVisibility(View.GONE);
+                waveSwipeRefreshLayout.setRefreshing(false);
             }
         };
 
-        runnableNoWebH = new Runnable()
+        runnableMoreNoWeb = new Runnable()
         {
             @Override
             public void run()
@@ -126,7 +147,7 @@ public class FavorvideoActivity extends AppCompatActivity
             }
         };
 
-        runnableNomore = new Runnable()
+        runnableMoreNothing = new Runnable()
         {
             @Override
             public void run()
@@ -135,13 +156,13 @@ public class FavorvideoActivity extends AppCompatActivity
             }
         };
 
-        runnableAddlist = new Runnable()
+        runnableMore = new Runnable()
         {
             @Override
             public void run()
             {
                 isLoading = false;
-                adapter.notifyDataSetChanged();
+                listVideoAdapter.notifyDataSetChanged();
             }
         };
 
@@ -153,20 +174,6 @@ public class FavorvideoActivity extends AppCompatActivity
                 ((TextView) loadingView.findViewById(R.id.wid_load_text)).setText(" 加载中. . .");
                 loadingView.findViewById(R.id.wid_load_button).setVisibility(View.GONE);
                 getMoreFavorVideo();
-            }
-        });
-
-        favvListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
-        {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-            {
-                if(position < favorvideoList.size())
-                {
-                    Intent intent = new Intent(ctx, VideodetailsActivity.class);
-                    intent.putExtra("aid", String.valueOf(favorvideoList.get(position).video_aid));
-                    startActivity(intent);
-                }
             }
         });
 
@@ -193,7 +200,7 @@ public class FavorvideoActivity extends AppCompatActivity
                                             if(result.equals(""))
                                             {
                                                 favorvideoList.remove(position);
-                                                handler.post(runnableAddlist);
+                                                handler.post(runnableMore);
                                                 Looper.prepare();
                                                 Toast.makeText(ctx, "取消收藏成功！", Toast.LENGTH_SHORT).show();
                                                 Looper.loop();
@@ -243,8 +250,7 @@ public class FavorvideoActivity extends AppCompatActivity
     void getFavorVideo()
     {
         isLoading = true;
-        favorVideoApi = new FavorVideoApi(sharedPreferences.getString("cookies", ""),
-                                          sharedPreferences.getString("mid", ""),
+        favorVideoApi = new FavorVideoApi(sharedPreferences.getString("cookies", ""), mid,
                                           sharedPreferences.getString("csrf", ""), fid);
         page = 1;
         new Thread(new Runnable()
@@ -254,10 +260,10 @@ public class FavorvideoActivity extends AppCompatActivity
             {
                 try
                 {
-                    favorvideoList = favorVideoApi.getFavorvideo(page);
+                    favorvideoList = favorVideoApi.getFavorVideo(page);
                     if(favorvideoList != null && favorvideoList.size() != 0)
                         handler.post(runnableUi);
-                    else handler.post(runnableNodata);
+                    else handler.post(runnableNothing);
                 }
                 catch (IOException e)
                 {
@@ -279,18 +285,18 @@ public class FavorvideoActivity extends AppCompatActivity
             {
                 try
                 {
-                    ArrayList<FavorVideoModel> arrayList = favorVideoApi.getFavorvideo(page);
+                    ArrayList<ListVideoModel> arrayList = favorVideoApi.getFavorVideo(page);
                     if(arrayList != null && arrayList.size() != 0)
                     {
                         favorvideoList.addAll(arrayList);
-                        handler.post(runnableAddlist);
+                        handler.post(runnableMore);
                     }
-                    else handler.post(runnableNomore);
+                    else handler.post(runnableMoreNothing);
                 }
                 catch (IOException e)
                 {
                     page--;
-                    handler.post(runnableNoWebH);
+                    handler.post(runnableMoreNoWeb);
                     e.printStackTrace();
                 }
             }

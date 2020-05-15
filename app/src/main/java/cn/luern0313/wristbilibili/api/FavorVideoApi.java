@@ -7,7 +7,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import cn.luern0313.wristbilibili.models.FavorVideoModel;
+import cn.luern0313.wristbilibili.models.ListVideoModel;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
 
 /**
@@ -36,22 +36,27 @@ public class FavorVideoApi
         }};
     }
 
-    public ArrayList<FavorVideoModel> getFavorvideo(int page) throws IOException
+    public ArrayList<ListVideoModel> getFavorVideo(int page) throws IOException
     {
         try
         {
-            String url = "http://api.bilibili.com/x/space/fav/arc?vmid=" + mid + "&ps=30&fid=" + fid + "&tid=0&keyword=&pn=" + page + "&order=fav_time";
-            JSONArray jsonArray = new JSONObject(NetWorkUtil.get(url, webHeaders).body().string()).getJSONObject("data").getJSONArray("archives");
-            ArrayList<FavorVideoModel> arrayList = new ArrayList<>();
-            for(int i = 0; i < jsonArray.length(); i++)
-                arrayList.add(new FavorVideoModel(jsonArray.getJSONObject(i)));
-            return arrayList;
+            String url = "http://api.bilibili.com/x/space/fav/arc";
+            String arg = "vmid=" + mid + "&ps=30&fid=" + fid + "&tid=0&keyword=&pn=" + page + "&order=fav_time";
+            JSONObject result = new JSONObject(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string());
+            ArrayList<ListVideoModel> arrayList = new ArrayList<>();
+            if(result.optInt("code") == 0)
+            {
+                JSONArray v = result.getJSONObject("data").getJSONArray("archives");
+                for(int i = 0; i < v.length(); i++)
+                    arrayList.add(new ListVideoModel(v.getJSONObject(i), 0));
+                return arrayList;
+            }
         }
         catch (JSONException e)
         {
             e.printStackTrace();
         }
-        return new ArrayList<>();
+        return null;
     }
 
     public String cancelFavVideo(String aid) throws IOException
@@ -63,13 +68,11 @@ public class FavorVideoApi
             JSONObject result = new JSONObject(NetWorkUtil.post(url, per, webHeaders).body().string());
             if(result.optInt("code") == 0)
                 return "";
-            else
-                return result.optString("message", "取消收藏失败，未知错误");
         }
         catch (JSONException e)
         {
             e.printStackTrace();
         }
-        return "取消收藏失败，未知错误";
+        return "未知错误";
     }
 }
