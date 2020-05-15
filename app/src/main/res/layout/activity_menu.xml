@@ -19,6 +19,7 @@
             android:layout_marginBottom="2dp"
             android:background="?android:attr/selectableItemBackground"
             android:clickable="true"
+            android:focusable="true"
             android:onClick="buutonUser"
             android:paddingLeft="30dp"
             android:paddingRight="30dp">
@@ -28,7 +29,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_marginBottom="2dp"
-                android:layout_marginRight="2dp"
+                android:layout_marginEnd="2dp"
                 android:layout_marginTop="2dp"
                 android:src="@drawable/img_default_avatar" />
 
@@ -37,7 +38,7 @@
                 android:layout_width="15dp"
                 android:layout_height="15dp"
                 android:layout_alignBottom="@+id/menu_useric"
-                android:layout_alignRight="@+id/menu_useric"
+                android:layout_alignEnd="@+id/menu_useric"
                 android:src="@drawable/icon_vip"
                 android:visibility="gone" />
 
@@ -45,9 +46,9 @@
                 android:id="@+id/menu_username"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="2dp"
+                android:layout_marginStart="2dp"
                 android:layout_marginTop="4dp"
-                android:layout_toRightOf="@+id/menu_useric"
+                android:layout_toEndOf="@+id/menu_useric"
                 android:text="你还没登录呢~"
                 android:textColor="@color/white" />
 
@@ -90,6 +91,7 @@
             android:layout_below="@+id/menu_userlay"
             android:background="?android:attr/selectableItemBackground"
             android:clickable="true"
+            android:focusable="true"
             android:gravity="center_vertical"
             android:onClick="buttonDynamic"
             android:orientation="horizontal"
@@ -107,7 +109,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="动态"
+                android:text="@string/menu_dynamic"
                 android:textColor="@color/white" />
 
         </LinearLayout>
@@ -119,6 +121,7 @@
             android:layout_below="@+id/menu_livelay"
             android:background="?android:attr/selectableItemBackground"
             android:clickable="true"
+            android:focusable="true"
             android:gravity="center_vertical"
             android:onClick="buttonRecommend"
             android:orientation="horizontal"
@@ -136,7 +139,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="推荐"
+                android:text="@string/menu_recommend"
                 android:textColor="@color/white" />
 
         </LinearLayout>
@@ -148,6 +151,7 @@
             android:layout_below="@+id/menu_recommendlay"
             android:background="?android:attr/selectableItemBackground"
             android:clickable="true"
+            android:focusable="true"
             android:gravity="center_vertical"
             android:onClick="buttonRanking"
             android:orientation="horizontal"
@@ -165,7 +169,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="排行榜"
+                android:text="@string/menu_ranking"
                 android:textColor="@color/white" />
 
         </LinearLayout>
@@ -177,6 +181,7 @@
             android:layout_below="@+id/menu_rankinglay"
             android:background="?android:attr/selectableItemBackground"
             android:clickable="true"
+            android:focusable="true"
             android:gravity="center_vertical"
             android:onClick="buttonRemind"
             android:orientation="horizontal"
@@ -194,7 +199,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="追番提醒"
+                android:text="@string/menu_remind"
                 android:textColor="@color/white" />
         </LinearLayout>
 
@@ -205,6 +210,7 @@
             android:layout_below="@+id/menu_remindlay"
             android:background="?android:attr/selectableItemBackground"
             android:clickable="true"
+            android:focusable="true"
             android:gravity="center_vertical"
             android:onClick="buttonDL"
             android:orientation="horizontal"
@@ -222,7 +228,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="离线缓存"
+                android:text="@string/menu_download"
                 android:textColor="@color/white" />
         </LinearLayout>
 
@@ -233,6 +239,7 @@
             android:layout_below="@+id/menu_downlay"
             android:background="?android:attr/selectableItemBackground"
             android:clickable="true"
+            android:focusable="true"
             android:gravity="center_vertical"
             android:onClick="buttonSearch"
             android:orientation="horizontal"
@@ -250,7 +257,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="搜索"
+                android:text="@string/menu_search"
                 android:textColor="@color/white" />
         </LinearLayout>
 
@@ -261,6 +268,7 @@
             android:layout_below="@+id/menu_searchlay"
             android:background="?android:attr/selectableItemBackground"
             android:clickable="true"
+            android:focusable="true"
             android:gravity="center_vertical"
             android:onClick="buttonCollect"
             android:orientation="horizontal"
@@ -278,7 +286,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="收藏"
+                android:text="@string/menu_collect"
                 android:textColor="@color/white" />
         </LinearLayout>
 
@@ -289,6 +297,7 @@
             android:layout_below="@+id/menu_collectlay"
             android:background="?android:attr/selectableItemBackground"
             android:clickable="true"
+            android:focusable="true"
             android:gravity="center_vertical"
             android:onClick="buttonWatchlater"
             android:orientation="horizontal"
@@ -301,14 +310,45 @@
                 android:layout_marginEnd="6dp"
                 android:background="@drawable/shape_menuiconbg"
                 android:padding="7dp"
-                android:paddingLeft="2dp"
+                android:paddingStart="2dp"
                 android:paddingTop="2dp"
                 android:src="@drawable/icon_menu_watchlater" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="稍后再看"
+                android:text="@string/menu_watchlater"
+                android:textColor="@color/white" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/menu_historylay"
+            android:layout_width="match_parent"
+            android:layout_height="46dp"
+            android:layout_below="@+id/menu_watchlaterlay"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:onClick="buttonHistory"
+            android:orientation="horizontal"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp">
+
+            <ImageView
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/shape_menuiconbg"
+                android:padding="7dp"
+                android:paddingStart="2dp"
+                android:paddingTop="2dp"
+                android:src="@drawable/icon_menu_watchlater" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/menu_history"
                 android:textColor="@color/white" />
         </LinearLayout>
 
@@ -316,9 +356,10 @@
             android:id="@+id/menu_setting"
             android:layout_width="match_parent"
             android:layout_height="46dp"
-            android:layout_below="@+id/menu_watchlaterlay"
+            android:layout_below="@+id/menu_historylay"
             android:background="?android:attr/selectableItemBackground"
             android:clickable="true"
+            android:focusable="true"
             android:gravity="center_vertical"
             android:onClick="buttonSetting"
             android:orientation="horizontal"
@@ -336,7 +377,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="设置"
+                android:text="@string/menu_setting"
                 android:textColor="@color/white" />
         </LinearLayout>
 

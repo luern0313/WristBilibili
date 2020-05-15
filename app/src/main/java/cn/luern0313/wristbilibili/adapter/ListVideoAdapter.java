@@ -35,12 +35,12 @@ public class ListVideoAdapter extends BaseAdapter
     private ListVideoAdapterListener listVideoAdapterListener;
     private ListView listView;
 
-    private ArrayList<ListVideoModel> favList;
+    private ArrayList<ListVideoModel> videoList;
 
-    public ListVideoAdapter(LayoutInflater inflater, ArrayList<ListVideoModel> favList, ListView listView, ListVideoAdapterListener listVideoAdapterListener)
+    public ListVideoAdapter(LayoutInflater inflater, ArrayList<ListVideoModel> videoList, ListView listView, ListVideoAdapterListener listVideoAdapterListener)
     {
         mInflater = inflater;
-        this.favList = favList;
+        this.videoList = videoList;
         this.listView = listView;
         this.listVideoAdapterListener = listVideoAdapterListener;
 
@@ -67,7 +67,7 @@ public class ListVideoAdapter extends BaseAdapter
     @Override
     public int getCount()
     {
-        return favList.size();
+        return videoList.size();
     }
 
     @Override
@@ -85,7 +85,7 @@ public class ListVideoAdapter extends BaseAdapter
     @Override
     public View getView(int position, View convertView, ViewGroup viewGroup)
     {
-        ListVideoModel video = favList.get(position);
+        ListVideoModel video = videoList.get(position);
         ViewHolder viewHolder;
         if(convertView == null)
         {
