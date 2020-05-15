@@ -8,8 +8,8 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
-import cn.luern0313.wristbilibili.models.BangumiModel;
-import cn.luern0313.wristbilibili.models.BangumiRecommendModel;
+import cn.luern0313.wristbilibili.models.bangumi.BangumiModel;
+import cn.luern0313.wristbilibili.models.ListBangumiModel;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
 import okhttp3.Response;
 
@@ -23,8 +23,8 @@ public class BangumiApi
     private String mid;
     private String csrf;
     private String access_key;
-    private ArrayList<String> appHeaders = new ArrayList<String>();
-    private ArrayList<String> webHeaders = new ArrayList<String>();
+    private ArrayList<String> appHeaders;
+    private ArrayList<String> webHeaders;
 
     private String season_id;
     private BangumiModel bangumiModel;
@@ -55,7 +55,7 @@ public class BangumiApi
             String temp_per = "access_key=" + access_key + "&appkey=" + ConfInfoApi.getConf("appkey") +
                 "&build=" + ConfInfoApi.getConf("build") + "&platform=android&season_id=" + season_id +
                 "&ts=" + (int) (System.currentTimeMillis() / 1000);
-            String sign = ConfInfoApi.calc_sign(temp_per);
+            String sign = ConfInfoApi.calc_sign(temp_per, ConfInfoApi.getConf("app_secret"));
             Response response = NetWorkUtil.get("https://api.bilibili.com/pgc/view/app/season?" + temp_per + "&sign=" + sign, appHeaders);
             JSONObject result = new JSONObject(response.body().string());
             if(result.optInt("code") == 0)
@@ -73,15 +73,15 @@ public class BangumiApi
         return null;
     }
 
-    public ArrayList<BangumiRecommendModel> getBangumiRecommend() throws IOException
+    public ArrayList<ListBangumiModel> getBangumiRecommend() throws IOException
     {
         try
         {
             String url = "https://api.bilibili.com/pgc/web/recommend/related/recommend?season_id=" + season_id;
             JSONArray result = new JSONObject(NetWorkUtil.get(url, webHeaders).body().string()).getJSONObject("result").getJSONArray("season");
-            ArrayList<BangumiRecommendModel> bangumiRecommendModelArrayList = new ArrayList<>();
+            ArrayList<ListBangumiModel> bangumiRecommendModelArrayList = new ArrayList<>();
             for(int i = 0; i< result.length(); i++)
-                bangumiRecommendModelArrayList.add(new BangumiRecommendModel(result.optJSONObject(i)));
+                bangumiRecommendModelArrayList.add(new ListBangumiModel(result.optJSONObject(i)));
             return bangumiRecommendModelArrayList;
         }
         catch (JSONException | NullPointerException e)

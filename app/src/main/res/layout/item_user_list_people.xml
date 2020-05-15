@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/oupp_lay"
+    android:id="@+id/user_list_people_lay"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="2dp"
@@ -12,61 +12,61 @@
     android:focusable="true">
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/oupp_face"
+        android:id="@+id/user_list_people_face"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:src="@drawable/img_default_head" />
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/oupp_ver_1"
+        android:id="@+id/user_list_people_official_1"
         android:layout_width="15dp"
         android:layout_height="15dp"
-        android:layout_alignBottom="@+id/oupp_face"
-        android:layout_alignRight="@+id/oupp_face"
+        android:layout_alignBottom="@+id/user_list_people_face"
+        android:layout_alignEnd="@+id/user_list_people_face"
         android:layout_marginBottom="-2dp"
-        android:layout_marginRight="-2dp"
+        android:layout_marginEnd="-2dp"
         android:src="@drawable/icon_ou_ver_1"
         android:visibility="gone" />
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/oupp_ver_2"
+        android:id="@+id/user_list_people_official_2"
         android:layout_width="15dp"
         android:layout_height="15dp"
-        android:layout_alignBottom="@+id/oupp_face"
-        android:layout_alignRight="@+id/oupp_face"
+        android:layout_alignBottom="@+id/user_list_people_face"
+        android:layout_alignEnd="@+id/user_list_people_face"
         android:layout_marginBottom="-2dp"
-        android:layout_marginRight="-2dp"
+        android:layout_marginEnd="-2dp"
         android:src="@drawable/icon_ou_ver_2"
         android:visibility="gone" />
 
     <TextView
-        android:id="@+id/oupp_name"
+        android:id="@+id/user_list_people_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="4dp"
-        android:layout_toRightOf="@+id/oupp_face"
+        android:layout_marginStart="4dp"
+        android:layout_toEndOf="@+id/user_list_people_face"
         android:textColor="@color/gray_44"
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/oupp_sign"
+        android:id="@+id/user_list_people_sign"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/oupp_name"
-        android:layout_marginLeft="4dp"
-        android:layout_toRightOf="@+id/oupp_face"
+        android:layout_below="@+id/user_list_people_name"
+        android:layout_marginStart="4dp"
+        android:layout_toEndOf="@+id/user_list_people_face"
         android:ellipsize="end"
         android:singleLine="true"
         android:textColor="@color/gray_44"
         android:textSize="11sp" />
 
     <TextView
-        android:id="@+id/oupp_time"
+        android:id="@+id/user_list_people_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/oupp_sign"
-        android:layout_marginLeft="4dp"
-        android:layout_toRightOf="@+id/oupp_face"
+        android:layout_below="@+id/user_list_people_sign"
+        android:layout_marginStart="4dp"
+        android:layout_toEndOf="@+id/user_list_people_face"
         android:ellipsize="end"
         android:singleLine="true"
         android:textSize="10sp" />

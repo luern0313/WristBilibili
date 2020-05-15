@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/item_list_bangumi_lay"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:descendantFocusability="blocksDescendants"
-    android:paddingBottom="1dp"
+    android:background="?android:attr/selectableItemBackground"
     android:paddingLeft="19dp"
     android:paddingRight="19dp"
     android:paddingTop="1dp">
 
     <ImageView
-        android:id="@+id/item_bgm_recommend_bangumi_img"
+        android:id="@+id/item_list_bangumi_img"
         android:layout_width="68dp"
         android:layout_height="44dp"
         android:layout_centerVertical="false"
@@ -21,12 +22,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="false"
-        android:layout_marginLeft="3dp"
-        android:layout_toRightOf="@+id/item_bgm_recommend_bangumi_img"
+        android:layout_marginStart="3dp"
+        android:layout_toEndOf="@+id/item_list_bangumi_img"
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/item_bgm_recommend_bangumi_title"
+            android:id="@+id/item_list_bangumi_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
@@ -35,14 +36,14 @@
             android:textSize="13sp" />
 
         <LinearLayout
-            android:id="@+id/item_bgm_recommend_bangumi_info"
+            android:id="@+id/item_list_bangumi_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/item_bgm_recommend_bangumi_title"
+            android:layout_below="@+id/item_list_bangumi_title"
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/item_bgm_recommend_bangumi_play"
+                android:id="@+id/item_list_bangumi_play"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
@@ -50,10 +51,10 @@
                 android:textSize="10sp" />
 
             <TextView
-                android:id="@+id/item_bgm_recommend_bangumi_follow"
+                android:id="@+id/item_list_bangumi_follow"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
+                android:layout_marginStart="4dp"
                 android:ellipsize="end"
                 android:lines="1"
                 android:textSize="10sp" />
@@ -61,22 +62,22 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/item_bgm_recommend_bangumi_new"
+            android:id="@+id/item_list_bangumi_new"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/item_bgm_recommend_bangumi_info"
-            android:layout_toLeftOf="@+id/item_bgm_recommend_bangumi_score"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/item_list_bangumi_info"
+            android:layout_toStartOf="@+id/item_list_bangumi_score"
             android:ellipsize="end"
             android:maxLines="1"
             android:textSize="10sp" />
 
         <TextView
-            android:id="@+id/item_bgm_recommend_bangumi_score"
+            android:id="@+id/item_list_bangumi_score"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/item_bgm_recommend_bangumi_new"
-            android:layout_alignParentRight="true"
+            android:layout_alignBottom="@+id/item_list_bangumi_new"
+            android:layout_alignParentEnd="true"
             android:paddingLeft="2dp"
             android:textColor="@color/orange"
             android:textSize="13sp"

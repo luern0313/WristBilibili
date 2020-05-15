@@ -46,7 +46,7 @@ public class RecommendApi
                     "&login_event=2&mobi_app=" + ConfInfoApi.getConf("mobi_app") + "&xml=wifi&open_event=&platform=" +
                     ConfInfoApi.getConf("platform") + "&pull=" + (isPull ? "true" : "false") + "&qn=32&style=1&ts=" +
                     (int) (System.currentTimeMillis() / 1000);
-            String sign = ConfInfoApi.calc_sign(temp_per);
+            String sign = ConfInfoApi.calc_sign(temp_per, ConfInfoApi.getConf("app_secret"));
             Response response = NetWorkUtil.get(url + "?" + temp_per + "&sign=" + sign, appHeaders);
             JSONArray resultJSONArray = new JSONObject(response.body().string()).getJSONObject("data").getJSONArray("items");
             for(int i = 0; i < resultJSONArray.length(); i++)

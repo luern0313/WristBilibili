@@ -42,7 +42,7 @@ public class RankingApi
 
             String url = "http://app.bilibili.com/x/v2/rank/region";
             String temp_per = "appkey=" + ConfInfoApi.getConf("appkey") + "&build=" + ConfInfoApi.getConf("build") + "&mobi_app=android&platform=android&pn=" + pn + "&ps=20&rid=0&ts=" + (int) (System.currentTimeMillis() / 1000);
-            String sign = ConfInfoApi.calc_sign(temp_per);
+            String sign = ConfInfoApi.calc_sign(temp_per, ConfInfoApi.getConf("app_secret"));
             Response response = NetWorkUtil.get(url + "?" + temp_per + "&sign=" + sign, appHeaders);
             JSONArray resultJSONArray = new JSONObject(response.body().string()).getJSONArray("data");
             for(int i = 0; i < resultJSONArray.length(); i++)
