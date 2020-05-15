@@ -7,6 +7,31 @@
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/img_viewpager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"/>
+
+    <LinearLayout
+        android:id="@+id/img_tab"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="2dp"
+        android:background="#88666666"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center_horizontal">
+
+        <ViewFlipper
+            android:id="@+id/img_viewflipper"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/img_imgcount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" / 99"
+            android:textColor="@color/white"/>
+    </LinearLayout>
+
 
 </RelativeLayout>
