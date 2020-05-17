@@ -2,7 +2,6 @@ package cn.luern0313.wristbilibili.fragment;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -44,8 +43,6 @@ public class BangumiDetailFragment extends Fragment implements View.OnClickListe
 
     Context ctx;
     View rootLayout;
-    private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor editor;
 
     private String seasonId;
     private BangumiModel bangumiModel;
@@ -85,8 +82,6 @@ public class BangumiDetailFragment extends Fragment implements View.OnClickListe
     {
         ctx = getActivity();
         rootLayout = inflater.inflate(R.layout.fragment_bangumi_detail, container, false);
-        sharedPreferences = ctx.getSharedPreferences("default", Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
 
         uiDetailEpisodesRecyclerView = rootLayout.findViewById(R.id.bgm_detail_video_part);
         uiDetailSectionsRecyclerView = rootLayout.findViewById(R.id.bgm_detail_video_other);

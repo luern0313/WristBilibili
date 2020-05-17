@@ -2,7 +2,6 @@ package cn.luern0313.wristbilibili.fragment.user;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +21,7 @@ import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.models.UserModel;
 import cn.luern0313.wristbilibili.ui.ImgActivity;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
+import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
 public class UserDetailFragment extends Fragment implements View.OnClickListener
 {
@@ -29,8 +29,6 @@ public class UserDetailFragment extends Fragment implements View.OnClickListener
 
     private Context ctx;
     private View rootLayout;
-    private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor editor;
 
     private UserModel userModel;
 
@@ -62,8 +60,6 @@ public class UserDetailFragment extends Fragment implements View.OnClickListener
     {
         ctx = getActivity();
         rootLayout = inflater.inflate(R.layout.fragment_user_detail, container, false);
-        sharedPreferences = ctx.getSharedPreferences("default", Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
 
         Glide.with(ctx).load(userModel.user_card_face).skipMemoryCache(true)
                 .diskCacheStrategy(DiskCacheStrategy.NONE).into((ImageView) rootLayout.findViewById(R.id.user_detail_head));
@@ -155,7 +151,7 @@ public class UserDetailFragment extends Fragment implements View.OnClickListener
             ((TextView) rootLayout.findViewById(R.id.user_detail_follow)).setText("+关注");
             rootLayout.findViewById(R.id.user_detail_follow).setBackgroundResource(R.drawable.shape_anre_followbg);
         }
-        if(userModel.user_card_mid.equals(sharedPreferences.getString("uid", "")))
+        if(userModel.user_card_mid.equals(SharedPreferencesUtil.getString(SharedPreferencesUtil.mid, "")))
             rootLayout.findViewById(R.id.user_detail_follow).setVisibility(View.GONE);
     }
 

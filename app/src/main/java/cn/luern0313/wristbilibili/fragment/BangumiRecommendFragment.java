@@ -3,7 +3,6 @@ package cn.luern0313.wristbilibili.fragment;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,8 +26,6 @@ public class BangumiRecommendFragment extends Fragment
 
     Context ctx;
     View rootLayout;
-    SharedPreferences sharedPreferences;
-    SharedPreferences.Editor editor;
 
     private ListView uiRecommendListView;
     private ListBangumiAdapter bangumiRecommendAdapter;
@@ -61,8 +58,6 @@ public class BangumiRecommendFragment extends Fragment
     {
         ctx = getActivity();
         rootLayout = inflater.inflate(R.layout.fragment_bangumi_recommend, container, false);
-        sharedPreferences = ctx.getSharedPreferences("default", Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
 
         listBangumiAdapterListener = new ListBangumiAdapter.ListBangumiAdapterListener()
         {

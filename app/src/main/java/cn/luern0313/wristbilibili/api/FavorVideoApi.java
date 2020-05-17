@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.models.ListVideoModel;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
+import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
 /**
  * Created by liupe on 2018/11/26.
@@ -17,20 +18,18 @@ import cn.luern0313.wristbilibili.util.NetWorkUtil;
 
 public class FavorVideoApi
 {
-    private String cookie;
-    private String mid;
     private String csrf;
+    private String mid;
     private String fid;
     private ArrayList<String> webHeaders;
 
-    public FavorVideoApi(final String cookie, String mid, String csrf, String fid)
+    public FavorVideoApi(String mid, String fid)
     {
-        this.cookie = cookie;
+        this.csrf = SharedPreferencesUtil.getString(SharedPreferencesUtil.csrf, "");
         this.mid = mid;
-        this.csrf = csrf;
         this.fid = fid;
         webHeaders = new ArrayList<String>(){{
-            add("Cookie"); add(cookie);
+            add("Cookie"); add(SharedPreferencesUtil.getString(SharedPreferencesUtil.cookies, ""));
             add("Referer"); add("https://space.bilibili.com/");
             add("User-Agent"); add(ConfInfoApi.USER_AGENT_WEB);
         }};

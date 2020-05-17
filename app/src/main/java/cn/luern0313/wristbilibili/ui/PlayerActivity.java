@@ -3,7 +3,6 @@ package cn.luern0313.wristbilibili.ui;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,14 +21,9 @@ public class PlayerActivity extends AppCompatActivity
 {
     Context ctx;
     Intent intent;
-    SharedPreferences sharedPreferences;
-    SharedPreferences.Editor editor;
     OnlineVideoApi onlineVideoApi;
 
-    String title;
-    String aid;
-    String cid;
-    String url;
+    String title, aid, cid, url;
     String[] url_backup;
     String danmaku;
     Handler handler = new Handler();
@@ -48,13 +42,11 @@ public class PlayerActivity extends AppCompatActivity
         setContentView(R.layout.activity_player);
         ctx = this;
         intent = getIntent();
-        sharedPreferences = getSharedPreferences("default", Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
 
         title = intent.getStringExtra("title");
         aid = intent.getStringExtra("aid");
         cid = intent.getStringExtra("cid");
-        onlineVideoApi = new OnlineVideoApi(sharedPreferences.getString("cookies", ""), sharedPreferences.getString("csrf", ""), sharedPreferences.getString("mid", ""), aid, cid);
+        onlineVideoApi = new OnlineVideoApi(aid, cid);
 
         uiLoadingimg = findViewById(R.id.player_loadingimg);
         uiLoadingtip = findViewById(R.id.player_loadingtip);
@@ -149,8 +141,9 @@ public class PlayerActivity extends AppCompatActivity
                 {
                     try
                     {
-                        if(!onlineVideoApi.playHistory(data.getIntExtra("time", 0),
-                                                       data.getBooleanExtra("isfin", false)))
+                        String result = onlineVideoApi.playHistory(data.getIntExtra("time", 0),
+                                                                   data.getBooleanExtra("isfin", false));
+                        if(!result.equals(""))
                         {
                             Looper.prepare();
                             Toast.makeText(getApplicationContext(), "历史记录同步失败...", Toast.LENGTH_SHORT).show();

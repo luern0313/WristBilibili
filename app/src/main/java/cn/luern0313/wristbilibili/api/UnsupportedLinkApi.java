@@ -16,6 +16,7 @@ import cn.luern0313.wristbilibili.ui.ArticleActivity;
 import cn.luern0313.wristbilibili.ui.BangumiActivity;
 import cn.luern0313.wristbilibili.ui.UserActivity;
 import cn.luern0313.wristbilibili.ui.VideoActivity;
+import cn.luern0313.wristbilibili.util.MyApplication;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
 
 /**
@@ -23,8 +24,6 @@ import cn.luern0313.wristbilibili.util.NetWorkUtil;
  */
 public class UnsupportedLinkApi
 {
-    private Context ctx;
-    private Uri biliUrl;
     private String url;
     private Intent intent;
 
@@ -46,26 +45,25 @@ public class UnsupportedLinkApi
         put("tag", new HashMap<String, String>(){{put("support", "false"); put("url", "https://t.bilibili.com/topic/%s");}});
     }};
 
-    public UnsupportedLinkApi(Context ctx, final Uri uri)
+    public UnsupportedLinkApi(final Uri uri)
     {
-        this.ctx = ctx;
-        this.biliUrl = uri;
-        url = biliUrl.toString();
+        Context ctx = MyApplication.getContext();
+        url = uri.toString();
         webHeaders = new ArrayList<String>(){{
             add("Referer"); add(url);
             add("User-Agent"); add(ConfInfoApi.USER_AGENT_WEB);
         }};
 
-        if("bilibili".equals(biliUrl.getScheme()))
+        if("bilibili".equals(uri.getScheme()))
         {
-            String path = biliUrl.getHost() != null ? biliUrl.getHost() : "";
+            String path = uri.getHost() != null ? uri.getHost() : "";
             if(supportedLinkMap.containsKey(path))
             {
-                String id = biliUrl.getLastPathSegment() != null ? biliUrl.getLastPathSegment() : "";
+                String id = uri.getLastPathSegment() != null ? uri.getLastPathSegment() : "";
                 if(path.equals("video") && !id.startsWith("BV"))
-                    url = String.format(supportedLinkMap.get(path).get("url"), "av" + biliUrl.getLastPathSegment());
+                    url = String.format(supportedLinkMap.get(path).get("url"), "av" + uri.getLastPathSegment());
                 else
-                    url = String.format(supportedLinkMap.get(path).get("url"), biliUrl.getLastPathSegment());
+                    url = String.format(supportedLinkMap.get(path).get("url"), uri.getLastPathSegment());
                 if(supportedLinkMap.get(path).get("support").equals("true"))
                 {
                     switch(path)

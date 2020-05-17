@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.models.SearchModel;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
+import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
 /**
  * Created by liupe on 2018/11/23.
@@ -21,17 +22,14 @@ import cn.luern0313.wristbilibili.util.NetWorkUtil;
 
 public class SearchApi
 {
-    private String cookie;
-
     private String keyword;
     private int page;
     private JSONArray searchResultNow;
-    private ArrayList<String> webHeaders = new ArrayList<String>();
-    public SearchApi(final String cookie)
+    private ArrayList<String> webHeaders;
+    public SearchApi()
     {
-        this.cookie = cookie;
         webHeaders = new ArrayList<String>(){{
-            add("Cookie"); add(cookie);
+            add("Cookie"); add(SharedPreferencesUtil.getString(SharedPreferencesUtil.cookies, ""));
             add("Referer"); add("https://search.bilibili.com/");
             add("User-Agent"); add(ConfInfoApi.USER_AGENT_WEB);
         }};

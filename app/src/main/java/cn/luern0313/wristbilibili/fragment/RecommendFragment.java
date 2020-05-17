@@ -20,7 +20,6 @@ import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.adapter.RecommendAdapter;
 import cn.luern0313.wristbilibili.api.RecommendApi;
 import cn.luern0313.wristbilibili.models.RecommendModel;
-import cn.luern0313.wristbilibili.ui.MainActivity;
 import cn.luern0313.wristbilibili.ui.VideoActivity;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
@@ -50,10 +49,7 @@ public class RecommendFragment extends Fragment
     {
         ctx = getActivity();
         rootLayout = inflater.inflate(R.layout.fragment_recommend, container, false);
-        recommendApi = new RecommendApi(MainActivity.sharedPreferences.getString("mid", ""),
-                                        MainActivity.sharedPreferences.getString("cookies", ""),
-                                        MainActivity.sharedPreferences.getString("csrf", ""),
-                                        MainActivity.sharedPreferences.getString("access_key", ""));
+        recommendApi = new RecommendApi();
 
         uiLoadingView = inflater.inflate(R.layout.widget_loading, null, false);
         uiListView = rootLayout.findViewById(R.id.rc_listview);

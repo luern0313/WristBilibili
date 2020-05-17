@@ -9,11 +9,15 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import cn.luern0313.wristbilibili.util.DataProcessUtil;
+import cn.luern0313.wristbilibili.util.NetWorkUtil;
+import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -32,26 +36,27 @@ import okhttp3.Response;
 
 public class DynamicApi
 {
-    private final String DYNAMICAPIURL_SELF = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/dynamic_new";
-    private final String DYNAMICAPIURL_OTHER = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/space_history";
-    private final String HISTORYAPIURL_SELF = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/dynamic_history";
     private final String DYNAMICTYPE = "268435455";
+    private String csrf;
     private String selfMid;
     private String mid;
-    private String csrf;
-    private String cookie;
     private JSONArray dynamicJsonArray;
     private boolean isSelf;
 
     private String lastDynamicId;
+    private ArrayList<String> webHeaders;
 
-    public DynamicApi(String cookie, String csrf, String selfMid, String mid, boolean isSelf)
+    public DynamicApi(String mid, boolean isSelf)
     {
-        this.cookie = cookie;
-        this.csrf = csrf;
-        this.selfMid = selfMid;
+        this.csrf = SharedPreferencesUtil.getString(SharedPreferencesUtil.csrf, "");
+        this.selfMid = SharedPreferencesUtil.getString(SharedPreferencesUtil.mid, "");
         this.mid = mid;
         this.isSelf = isSelf;
+        webHeaders = new ArrayList<String>(){{
+            add("Cookie"); add(SharedPreferencesUtil.getString(SharedPreferencesUtil.cookies, ""));
+            add("Referer"); add("https://www.bilibili.com/anime");
+            add("User-Agent"); add(ConfInfoApi.USER_AGENT_WEB);
+        }};
     }
 
     public void getDynamic() throws IOException
@@ -59,9 +64,17 @@ public class DynamicApi
         try
         {
             if(isSelf)
-                dynamicJsonArray = new JSONObject((String) get(DYNAMICAPIURL_SELF + "?uid=" + mid + "&type=" + DYNAMICTYPE, 1)).getJSONObject("data").getJSONArray("cards");
+            {
+                String url = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/dynamic_new";
+                String arg = "uid=" + mid + "&type=" + DYNAMICTYPE;
+                dynamicJsonArray = new JSONObject(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string()).getJSONObject("data").getJSONArray("cards");
+            }
             else
-                dynamicJsonArray = new JSONObject((String) get(DYNAMICAPIURL_OTHER + "?isitor_uid=" + selfMid + "&host_uid=" + mid + "&offset_dynamic_id=0", 1)).getJSONObject("data").getJSONArray("cards");
+            {
+                String url = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/space_history";
+                String arg = "visitor_uid=" + selfMid + "&host_uid=" + mid + "&offset_dynamic_id=0";
+                dynamicJsonArray = new JSONObject(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string()).getJSONObject("data").getJSONArray("cards");
+            }
             if(dynamicJsonArray.length() == 0) dynamicJsonArray = null;
         }
         catch (JSONException e)
@@ -76,9 +89,17 @@ public class DynamicApi
         try
         {
             if(isSelf)
-                dynamicJsonArray = new JSONObject((String) get(HISTORYAPIURL_SELF + "?uid=" + mid + "&offset_dynamic_id=" + lastDynamicId + "&type=" + DYNAMICTYPE, 1)).getJSONObject("data").getJSONArray("cards");
+            {
+                String url = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/dynamic_history";
+                String arg = "uid=" + mid + "&offset_dynamic_id=" + lastDynamicId + "&type=" + DYNAMICTYPE;
+                dynamicJsonArray = new JSONObject(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string()).getJSONObject("data").getJSONArray("cards");
+            }
             else
-                dynamicJsonArray = new JSONObject((String) get(DYNAMICAPIURL_OTHER + "?visitor_uid=" + selfMid + "&host_uid=" + mid + "&offset_dynamic_id=" + lastDynamicId, 1)).getJSONObject("data").getJSONArray("cards");
+            {
+                String url = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/space_history";
+                String arg = "visitor_uid=" + selfMid + "&host_uid=" + mid + "&offset_dynamic_id=" + lastDynamicId;
+                dynamicJsonArray = new JSONObject(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string()).getJSONObject("data").getJSONArray("cards");
+            }
         }
         catch (JSONException e)
         {
@@ -127,56 +148,55 @@ public class DynamicApi
 
     private Object getDynamicClass(JSONObject cardJson, JSONObject descJson)
     {
-        if(((int) getInfoFromJson(descJson, "type")) == 1)  //转载
+        if(descJson.optInt("type") == 1)  //转载
         {
-            if(((int) getInfoFromJson(descJson, "orig_type")) == 2 || ((int) getInfoFromJson(descJson, "orig_type")) == 4)  //文字
+            if(descJson.optInt("orig_type") == 2 || descJson.optInt("orig_type") == 4)  //文字
                 return new cardShareText(cardJson, descJson);
-            else if(((int) getInfoFromJson(descJson, "orig_type")) == 8)  //视频
+            else if(descJson.optInt("orig_type") == 8)  //视频
                 return new cardShareVideo(cardJson, descJson);
             else return new cardUnknow(cardJson, descJson);
         }
-        else if(((int) getInfoFromJson(descJson, "type")) == 2 || ((int) getInfoFromJson(descJson, "type")) == 4)  //文字
+        else if((descJson.optInt("type") == 2 || descJson.optInt("type") == 4))  //文字
             return new cardOriginalText(cardJson, descJson);
-        else if(((int) getInfoFromJson(descJson, "type")) == 8)  //视频
+        else if((descJson.optInt("type") == 8))  //视频
             return new cardOriginalVideo(cardJson, descJson);
-        else if(((int) getInfoFromJson(descJson, "type")) == 512 && ((int) getInfoFromJson(descJson, "orig_type")) == 0)//番剧，暂时不处理
+        else if(descJson.optInt( "type") == 512 && descJson.optInt("orig_type") == 0)//番剧，暂时不处理
             return null;
         else return new cardUnknow(cardJson, descJson);
     }
 
-    public String likeDynamic(String dynamicId, String action)
+    public String likeDynamic(String dynamicId, String action) throws IOException
     {
         try
         {
-            JSONObject j = new JSONObject(post("https://api.vc.bilibili.com/dynamic_like/v1/dynamic_like/thumb", "uid=" + mid + "&dynamic_id=" + dynamicId + "&up=" + action + "&csrf_token=" + csrf).body().string());
-            if(j.getInt("code") == 0)
+            String url = "https://api.vc.bilibili.com/dynamic_like/v1/dynamic_like/thumb";
+            String arg = "uid=" + mid + "&dynamic_id=" + dynamicId + "&up=" + action + "&csrf_token=" + csrf;
+            JSONObject result = new JSONObject(NetWorkUtil.post(url, arg, webHeaders).body().string());
+            if(result.getInt("code") == 0)
                 return "";
-            else
-                return j.getString("message");
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-            return "网络不好，点赞失败了。。";
         }
         catch (JSONException e)
         {
             e.printStackTrace();
-            return "未知错误，点赞失败。。";
         }
+        return "未知错误，点赞失败。。";
     }
 
-    public boolean sendReply(String oid, String type, String text) throws IOException
+    public String sendReply(String oid, String type, String text) throws IOException
     {
         try
         {
-            return new JSONObject(post("https://api.bilibili.com/x/v2/reply/add", "oid=" + oid + "&type=" + type + "&message=" + text + "&plat=1&jsonp=jsonp&csrf=" + csrf).body().string()).getInt("code") == 0;
+            String url = "https://api.bilibili.com/x/v2/reply/add";
+            String arg = "oid=" + oid + "&type=" + type + "&message=" + text + "&plat=1&jsonp=jsonp&csrf=" + csrf;
+            JSONObject result = new JSONObject(NetWorkUtil.post(url, arg, webHeaders).body().string());
+            if(result.getInt("code") == 0)
+                return "";
         }
         catch (JSONException e)
         {
             e.printStackTrace();
-            return false;
         }
+        return "未知错误，评论失败。。";
     }
 
     public class cardOriginalVideo //原创视频
@@ -586,6 +606,7 @@ public class DynamicApi
         }
     }
 
+
     public class cardUnknow //不支持的动态类型
     {
         private JSONObject unknowJson;
@@ -642,7 +663,7 @@ public class DynamicApi
         {
             try
             {
-                return getTime((int) unknowDesc.get("timestamp"));
+                return DataProcessUtil.getTime(unknowDesc.getInt("timestamp"), "MM-dd HH:mm");
             }
             catch (Exception e)
             {
@@ -650,97 +671,5 @@ public class DynamicApi
             }
             return "未知时间";
         }
-    }
-
-    private String getTime(int timeStamp)
-    {
-        try
-        {
-            Date date = new Date(timeStamp * 1000L);
-            SimpleDateFormat format = new SimpleDateFormat("MM-dd HH:mm");
-            return format.format(date);
-        }
-        catch (NullPointerException e)
-        {
-            e.printStackTrace();
-        }
-        return "";
-    }
-
-    private Object getInfoFromJson(JSONObject json, String get)
-    {
-        try
-        {
-            return json.get(get);
-        }
-        catch (JSONException e)
-        {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private JSONObject getJsonFromJson(JSONObject json, String get)
-    {
-        try
-        {
-            return json.getJSONObject(get);
-        }
-        catch (JSONException e)
-        {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private Object get(String url, int mode) throws IOException
-    {
-        OkHttpClient client = new OkHttpClient.Builder().connectTimeout(15, TimeUnit.SECONDS).readTimeout(15, TimeUnit.SECONDS).build();
-        Request.Builder requestb = new Request.Builder().url(url).header("Referer", "https://www.bilibili.com/").addHeader("Accept", "*/*").addHeader("User-Agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
-        if(!cookie.equals("")) requestb.addHeader("Cookie", cookie);
-        Request request = requestb.build();
-        Response response = client.newCall(request).execute();
-
-        if(response.isSuccessful())
-        {
-            if(mode == 1) return response.body().string();
-            else if(mode == 2)
-            {
-                byte[] buffer = readStream(response.body().byteStream());
-                return BitmapFactory.decodeByteArray(buffer, 0, buffer.length);
-            }
-        }
-        return null;
-    }
-
-    private Response post(String url, String data) throws IOException
-    {
-        Response response;
-        OkHttpClient client;
-        RequestBody body;
-        Request request;
-        client = new OkHttpClient.Builder().connectTimeout(15, TimeUnit.SECONDS).readTimeout(15, TimeUnit.SECONDS).build();
-        body = RequestBody.create(MediaType.parse("application/x-www-form-urlencoded; charset=utf-8"), data);
-        request = new Request.Builder().url(url).post(body).header("Referer", "https://www.bilibili.com/").addHeader("Accept", "*/*").addHeader("User-Agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)").addHeader("Cookie", cookie).build();
-        response = client.newCall(request).execute();
-        if(response.isSuccessful())
-        {
-            return response;
-        }
-        return null;
-    }
-
-    private byte[] readStream(InputStream inStream) throws IOException
-    {
-        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024];
-        int len = 0;
-        while ((len = inStream.read(buffer)) != -1)
-        {
-            outStream.write(buffer, 0, len);
-        }
-        outStream.close();
-        inStream.close();
-        return outStream.toByteArray();
     }
 }

@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 
 import cn.luern0313.wristbilibili.models.RankingModel;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
+import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 import okhttp3.Response;
 
 /**
@@ -18,18 +19,16 @@ import okhttp3.Response;
 
 public class RankingApi
 {
-    private String cookie;
     private String mid;
     private String csrf;
-    private ArrayList<String> appHeaders = new ArrayList<String>();
+    private ArrayList<String> appHeaders;
 
-    public RankingApi(String mid, final String cookie, String csrf)
+    public RankingApi()
     {
-        this.mid = mid;
-        this.cookie = cookie;
-        this.csrf = csrf;
+        this.csrf = SharedPreferencesUtil.getString(SharedPreferencesUtil.csrf, "");
+        this.mid = SharedPreferencesUtil.getString(SharedPreferencesUtil.mid, "");
         appHeaders = new ArrayList<String>(){{
-            add("Cookie"); add(cookie);
+            add("Cookie"); add(SharedPreferencesUtil.getString(SharedPreferencesUtil.cookies, ""));
             add("User-Agent"); add(ConfInfoApi.USER_AGENT_OWN);
         }};
     }
@@ -39,7 +38,6 @@ public class RankingApi
         ArrayList<RankingModel> rankingVideoArrayList = new ArrayList<>();
         try
         {
-
             String url = "http://app.bilibili.com/x/v2/rank/region";
             String temp_per = "appkey=" + ConfInfoApi.getConf("appkey") + "&build=" + ConfInfoApi.getConf("build") + "&mobi_app=android&platform=android&pn=" + pn + "&ps=20&rid=0&ts=" + (int) (System.currentTimeMillis() / 1000);
             String sign = ConfInfoApi.calc_sign(temp_per, ConfInfoApi.getConf("app_secret"));

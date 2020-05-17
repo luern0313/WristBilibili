@@ -2,7 +2,6 @@ package cn.luern0313.wristbilibili.ui;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -29,6 +28,7 @@ import cn.luern0313.wristbilibili.api.ArticleApi;
 import cn.luern0313.wristbilibili.fragment.ArticleDetailFragment;
 import cn.luern0313.wristbilibili.fragment.ReplyFragment;
 import cn.luern0313.wristbilibili.models.article.ArticleModel;
+import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
 
 public class ArticleActivity extends AppCompatActivity implements ArticleDetailFragment.ArticleDetailFragmentListener
@@ -36,8 +36,6 @@ public class ArticleActivity extends AppCompatActivity implements ArticleDetailF
     Context ctx;
     Intent intent;
     LayoutInflater inflater;
-    SharedPreferences sharedPreferences;
-    SharedPreferences.Editor editor;
     String article_id;
 
     ArticleApi articleApi;
@@ -70,8 +68,6 @@ public class ArticleActivity extends AppCompatActivity implements ArticleDetailF
         setContentView(R.layout.activity_article);
         ctx = this;
         intent = getIntent();
-        sharedPreferences = getSharedPreferences("default", Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
         article_id = intent.getStringExtra("article_id");
 
         inflater = getLayoutInflater();
@@ -84,12 +80,8 @@ public class ArticleActivity extends AppCompatActivity implements ArticleDetailF
         uiLoading = findViewById(R.id.art_loading);
         uiNoWeb = findViewById(R.id.art_noweb);
 
-        isLogin = !sharedPreferences.getString("cookies", "").equals("");
-        articleApi = new ArticleApi(sharedPreferences.getString("cookies", ""),
-                                    sharedPreferences.getString("mid", ""),
-                                    sharedPreferences.getString("csrf", ""),
-                                    sharedPreferences.getString("access_key", ""),
-                                    article_id);
+        isLogin = SharedPreferencesUtil.contains(SharedPreferencesUtil.cookies);
+        articleApi = new ArticleApi(article_id);
 
         uiLoadingImg.setImageResource(R.drawable.anim_loading);
         loadingImgAnim = (AnimationDrawable) uiLoadingImg.getDrawable();

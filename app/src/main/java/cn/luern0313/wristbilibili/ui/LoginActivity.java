@@ -1,9 +1,7 @@
 package cn.luern0313.wristbilibili.ui;
 
-import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,17 +21,17 @@ import java.net.ConnectException;
 import java.net.UnknownHostException;
 import java.util.List;
 
+import androidx.appcompat.app.AppCompatActivity;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.UserLoginApi;
 import cn.luern0313.wristbilibili.fragment.AnimationTimelineFragment;
 import cn.luern0313.wristbilibili.fragment.DynamicFragment;
+import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 import okhttp3.Response;
 
 public class LoginActivity extends AppCompatActivity
 {
     Context ctx;
-    SharedPreferences sharedPreferences;
-    SharedPreferences.Editor editor;
 
     TextView uiChangeMode;
     ImageView loginQR;
@@ -68,8 +66,6 @@ public class LoginActivity extends AppCompatActivity
         setContentView(R.layout.activity_login);
 
         ctx = this;
-        sharedPreferences = getSharedPreferences("default", Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
 
         uiChangeMode = findViewById(R.id.login_change_mode);
         loginQR = findViewById(R.id.login_qr);
@@ -216,11 +212,10 @@ public class LoginActivity extends AppCompatActivity
                                 cookies.append(cookiesList.get(i).split("; ")[0]).append("; ");
                             cookies = new StringBuilder(cookies.substring(0, cookies.length() - 2));
 
-                            editor.putString("access_key", userLoginApi.getAccessKey(cookies.toString()));
-                            editor.putString("cookies", cookies.toString());
-                            editor.putString("mid", getInfoFromCookie("DedeUserID", cookies.toString()));
-                            editor.putString("csrf", getInfoFromCookie("bili_jct", cookies.toString()));
-                            editor.commit();
+                            SharedPreferencesUtil.putString(SharedPreferencesUtil.accessKey, userLoginApi.getAccessKey(cookies.toString()));
+                            SharedPreferencesUtil.putString(SharedPreferencesUtil.cookies, cookies.toString());
+                            SharedPreferencesUtil.putString(SharedPreferencesUtil.mid, getInfoFromCookie("DedeUserID", cookies.toString()));
+                            SharedPreferencesUtil.putString(SharedPreferencesUtil.csrf, getInfoFromCookie("bili_jct", cookies.toString()));
                             stopFlag = true;
 
                             DynamicFragment.isLogin = true;

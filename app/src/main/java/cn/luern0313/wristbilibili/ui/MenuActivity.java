@@ -2,7 +2,6 @@ package cn.luern0313.wristbilibili.ui;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -22,12 +21,11 @@ import java.io.IOException;
 import androidx.appcompat.app.AppCompatActivity;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.UserInfoApi;
+import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
 public class MenuActivity extends AppCompatActivity
 {
     Context ctx;
-    SharedPreferences sharedPreferences;
-    SharedPreferences.Editor editor;
 
     TextView uiUserName;
     TextView uiUserCoin;
@@ -47,8 +45,6 @@ public class MenuActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
         ctx = this;
-        sharedPreferences = getSharedPreferences("default", Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
 
         uiUserName = findViewById(R.id.menu_username);
         uiUserCoin = findViewById(R.id.menu_usercoin);
@@ -56,10 +52,10 @@ public class MenuActivity extends AppCompatActivity
         uiUserHead = findViewById(R.id.menu_useric);
         uiUserVip = findViewById(R.id.menu_uservip);
 
-        uiUserName.setText(sharedPreferences.getString("userName", "你还没登录呢~"));
-        uiUserCoin.setText("硬币 : " + sharedPreferences.getString("userCoin", "0"));
-        uiUserLV.setText("LV" + sharedPreferences.getInt("userLV", 0));
-        uiUserVip.setVisibility(sharedPreferences.getBoolean("userVip", false) ? View.VISIBLE : View.GONE);
+        uiUserName.setText(SharedPreferencesUtil.getString(SharedPreferencesUtil.userName, "你还没登录呢~"));
+        uiUserCoin.setText("硬币 : " + SharedPreferencesUtil.getString(SharedPreferencesUtil.userCoin, "0"));
+        uiUserLV.setText("LV" + SharedPreferencesUtil.getInt(SharedPreferencesUtil.userLV, 0));
+        uiUserVip.setVisibility(SharedPreferencesUtil.getBoolean(SharedPreferencesUtil.userVip, false) ? View.VISIBLE : View.GONE);
         try
         {
             uiUserHead.setImageBitmap(BitmapFactory.decodeStream(new FileInputStream(new File(getFilesDir(), "head.png"))));
@@ -78,9 +74,9 @@ public class MenuActivity extends AppCompatActivity
 
     public void setUserInfo()
     {
-        if(sharedPreferences.contains("cookies")) //是否登录（←错错错错错错错错！！cookie有时限！！！！）
+        if(SharedPreferencesUtil.contains(SharedPreferencesUtil.cookies)) //是否登录（←错错错错错错错错！！cookie有时限！！！！）
         {
-            final UserInfoApi userInfoApi = new UserInfoApi(sharedPreferences.getString("cookies", ""));
+            final UserInfoApi userInfoApi = new UserInfoApi();
             runnableUi = new Runnable()
             {
                 @Override
@@ -92,11 +88,10 @@ public class MenuActivity extends AppCompatActivity
                     uiUserHead.setImageBitmap(head);
                     uiUserVip.setVisibility(userInfoApi.isVip() ? View.VISIBLE : View.GONE);
 
-                    editor.putString("userName", userInfoApi.getUserName());
-                    editor.putString("userCoin", userInfoApi.getUserCoin());
-                    editor.putInt("userLV", userInfoApi.getUserLV());
-                    editor.putBoolean("userVip", userInfoApi.isVip());
-                    editor.commit();
+                    SharedPreferencesUtil.putString(SharedPreferencesUtil.userName, userInfoApi.getUserName());
+                    SharedPreferencesUtil.putString(SharedPreferencesUtil.userCoin, userInfoApi.getUserCoin());
+                    SharedPreferencesUtil.putInt(SharedPreferencesUtil.userLV, userInfoApi.getUserLV());
+                    SharedPreferencesUtil.putBoolean(SharedPreferencesUtil.userVip, userInfoApi.isVip());
                 }
             };
             new Thread(new Runnable()
@@ -165,7 +160,7 @@ public class MenuActivity extends AppCompatActivity
 
     public void buutonUser(View view)  //个人信息/登录
     {
-        if(!sharedPreferences.contains("cookies"))//是否登录的验证
+        if(!SharedPreferencesUtil.contains(SharedPreferencesUtil.cookies))//是否登录的验证
         {
             Intent intent = new Intent(ctx, LoginActivity.class);
             startActivityForResult(intent, 0);
@@ -174,7 +169,7 @@ public class MenuActivity extends AppCompatActivity
         else
         {
             Intent intent = new Intent(ctx, UserActivity.class);
-            intent.putExtra("mid", sharedPreferences.getString("mid", ""));
+            intent.putExtra("mid", SharedPreferencesUtil.getString(SharedPreferencesUtil.mid, ""));
             startActivity(intent);
         }
     }

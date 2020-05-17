@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.models.WatchLaterModel;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
+import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
 /**
  * 被 luern0313 创建于 2019/8/31.
@@ -18,19 +19,17 @@ import cn.luern0313.wristbilibili.util.NetWorkUtil;
 
 public class WatchLaterApi
 {
-    private String cookie;
     private String csrf;
     private String mid;
 
     private ArrayList<String> webHeaders;
 
-    public WatchLaterApi(final String cookie, String csrf, String mid)
+    public WatchLaterApi()
     {
-        this.cookie = cookie;
-        this.csrf = csrf;
-        this.mid = mid;
+        this.csrf = SharedPreferencesUtil.getString(SharedPreferencesUtil.csrf, "");
+        this.mid = SharedPreferencesUtil.getString(SharedPreferencesUtil.mid, "");
         webHeaders = new ArrayList<String>(){{
-            add("Cookie"); add(cookie);
+            add("Cookie"); add(SharedPreferencesUtil.getString(SharedPreferencesUtil.cookies, ""));
             add("Referer"); add("https://www.bilibili.com/");
             add("User-Agent"); add(ConfInfoApi.USER_AGENT_WEB);
         }};

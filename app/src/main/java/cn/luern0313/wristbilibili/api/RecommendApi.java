@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.models.RecommendModel;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
+import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 import okhttp3.Response;
 
 /**
@@ -17,20 +18,18 @@ import okhttp3.Response;
 
 public class RecommendApi
 {
-    private String cookie;
     private String mid;
     private String csrf;
     private String access_key;
-    private ArrayList<String> appHeaders = new ArrayList<String>();
+    private ArrayList<String> appHeaders;
 
-    public RecommendApi(String mid, String cookies, String csrf, String access_key)
+    public RecommendApi()
     {
-        this.mid = mid;
-        this.cookie = cookies;
-        this.csrf = csrf;
-        this.access_key = access_key;
+        this.csrf = SharedPreferencesUtil.getString(SharedPreferencesUtil.csrf, "");
+        this.mid = SharedPreferencesUtil.getString(SharedPreferencesUtil.mid, "");
+        this.access_key = SharedPreferencesUtil.getString(SharedPreferencesUtil.accessKey, "");
         appHeaders = new ArrayList<String>(){{
-            add("Cookie"); add(cookie);
+            add("Cookie"); add(SharedPreferencesUtil.getString(SharedPreferencesUtil.cookies, ""));
             add("User-Agent"); add(ConfInfoApi.USER_AGENT_OWN);
         }};
     }

@@ -4,7 +4,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -38,14 +37,13 @@ import cn.luern0313.wristbilibili.fragment.VideoRecommendFragment;
 import cn.luern0313.wristbilibili.models.FavorBoxModel;
 import cn.luern0313.wristbilibili.models.VideoModel;
 import cn.luern0313.wristbilibili.service.DownloadService;
+import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
 public class VideoActivity extends AppCompatActivity implements VideoDetailFragment.VideoDetailFragmentListener
 {
     Context ctx;
     Intent intent;
     LayoutInflater inflater;
-    SharedPreferences sharedPreferences;
-    SharedPreferences.Editor editor;
 
     VideoApi videoApi;
     VideoModel videoModel;
@@ -93,8 +91,6 @@ public class VideoActivity extends AppCompatActivity implements VideoDetailFragm
 
         ctx = this;
         intent = getIntent();
-        sharedPreferences = getSharedPreferences("default", Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
 
         Intent serviceIntent = new Intent(ctx, DownloadService.class);
         bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE);
@@ -110,19 +106,15 @@ public class VideoActivity extends AppCompatActivity implements VideoDetailFragm
         uiLoading = findViewById(R.id.vd_loading);
         uiNoWeb = findViewById(R.id.vd_noweb);
 
-        isLogin = !sharedPreferences.getString("cookies", "").equals("");
-        videoApi = new VideoApi(sharedPreferences.getString("cookies", ""),
-                                sharedPreferences.getString("csrf", ""),
-                                sharedPreferences.getString("mid", ""),
-                                sharedPreferences.getString("access_key", ""),
-                                intent.getStringExtra(ARG_AID), intent.getStringExtra(ARG_BVID));
+        isLogin = !SharedPreferencesUtil.getString(SharedPreferencesUtil.cookies, "").equals("");
+        videoApi = new VideoApi(intent.getStringExtra(ARG_AID), intent.getStringExtra(ARG_BVID));
 
         uiLoadingImg.setImageResource(R.drawable.anim_loading);
         loadingImgAnim = (AnimationDrawable) uiLoadingImg.getDrawable();
         loadingImgAnim.start();
         uiLoading.setVisibility(View.VISIBLE);
 
-        if(sharedPreferences.getBoolean("tip_vd", true)) findViewById(R.id.vd_tip).setVisibility(View.VISIBLE);
+        if(SharedPreferencesUtil.getBoolean(SharedPreferencesUtil.tipVd, true)) findViewById(R.id.vd_tip).setVisibility(View.VISIBLE);
 
         runnableNoWeb = new Runnable()
         {
@@ -258,8 +250,7 @@ public class VideoActivity extends AppCompatActivity implements VideoDetailFragm
     public void clickVdTip(View view)
     {
         findViewById(R.id.vd_tip).setVisibility(View.GONE);
-        editor.putBoolean("tip_vd", false);
-        editor.commit();
+        SharedPreferencesUtil.putBoolean(SharedPreferencesUtil.tipVd, false);
     }
 
     @Override
@@ -523,9 +514,7 @@ public class VideoActivity extends AppCompatActivity implements VideoDetailFragm
                 {
                     try
                     {
-                        FavorBoxApi favorBoxApi = new FavorBoxApi(
-                                sharedPreferences.getString("cookies", ""),
-                                sharedPreferences.getString("mid", ""));
+                        FavorBoxApi favorBoxApi = new FavorBoxApi(SharedPreferencesUtil.getString(SharedPreferencesUtil.mid, ""));
                         ArrayList<FavorBoxModel> favorBoxArrayList = favorBoxApi.getFavorbox();
                         String[] favorBoxNames = new String[favorBoxArrayList.size()];
                         for (int i = 0; i < favorBoxArrayList.size(); i++)
@@ -711,10 +700,7 @@ public class VideoActivity extends AppCompatActivity implements VideoDetailFragm
                     {
                         try
                         {
-                            onlineVideoApi = new OnlineVideoApi(sharedPreferences.getString("cookies", ""),
-                                                                sharedPreferences.getString("csrf", ""),
-                                                                sharedPreferences.getString("mid", ""), videoModel.video_aid,
-                                                                data.getStringExtra("option_id"));
+                            onlineVideoApi = new OnlineVideoApi(videoModel.video_aid, data.getStringExtra("option_id"));
                             onlineVideoApi.connectionVideoUrl();
                             connection.downloadVideo(data.getStringExtra("option_name") + " - " + videoModel.video_title,
                                                      data.getStringExtra("option_id"));

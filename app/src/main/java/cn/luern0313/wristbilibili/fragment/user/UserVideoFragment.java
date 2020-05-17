@@ -3,7 +3,6 @@ package cn.luern0313.wristbilibili.fragment.user;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -28,10 +27,8 @@ public class UserVideoFragment extends Fragment
 {
     private static final String ARG_USER_VIDEO_MID = "argUserVideoMid";
 
-    Context ctx;
-    private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor editor;
-    private String cookie, csrf, access_key, mid;
+    private Context ctx;
+    private String mid;
     private int page = 1;
     private UserApi userApi;
     private ArrayList<ListVideoModel> listVideoModelArrayList = new ArrayList<>();
@@ -76,12 +73,7 @@ public class UserVideoFragment extends Fragment
     {
         ctx = getActivity();
         rootLayout = inflater.inflate(R.layout.fragment_user_video, container, false);
-        sharedPreferences = ctx.getSharedPreferences("default", Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
-        cookie = sharedPreferences.getString("cookies", "");
-        csrf = sharedPreferences.getString("csrf", "");
-        access_key = sharedPreferences.getString("access_key", "");
-        userApi = new UserApi(cookie, csrf, access_key, mid);
+        userApi = new UserApi(mid);
 
         listVideoAdapterListener = new ListVideoAdapter.ListVideoAdapterListener()
         {

@@ -28,7 +28,6 @@ import cn.luern0313.wristbilibili.adapter.SearchAdapter;
 import cn.luern0313.wristbilibili.api.SearchApi;
 import cn.luern0313.wristbilibili.models.SearchModel;
 import cn.luern0313.wristbilibili.ui.BangumiActivity;
-import cn.luern0313.wristbilibili.ui.MainActivity;
 import cn.luern0313.wristbilibili.ui.UserActivity;
 import cn.luern0313.wristbilibili.ui.VideoActivity;
 import cn.luern0313.wristbilibili.util.SearchHtmlTagHandlerUtil;
@@ -71,7 +70,7 @@ public class SearchFragment extends Fragment
     {
         ctx = getActivity();
         rootLayout = inflater.inflate(R.layout.fragment_search, container, false);
-        searchApi = new SearchApi(MainActivity.sharedPreferences.getString("cookies", ""));
+        searchApi = new SearchApi();
         htmlTagHandlerUtil = new SearchHtmlTagHandlerUtil(ctx);
         searchAdapterListener = new SearchAdapter.SearchAdapterListener()
         {

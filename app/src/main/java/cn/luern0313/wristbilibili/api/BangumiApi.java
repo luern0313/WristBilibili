@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import cn.luern0313.wristbilibili.models.bangumi.BangumiModel;
 import cn.luern0313.wristbilibili.models.ListBangumiModel;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
+import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 import okhttp3.Response;
 
 /**
@@ -19,7 +20,6 @@ import okhttp3.Response;
 
 public class BangumiApi
 {
-    private String cookie;
     private String mid;
     private String csrf;
     private String access_key;
@@ -29,20 +29,19 @@ public class BangumiApi
     private String season_id;
     private BangumiModel bangumiModel;
 
-    public BangumiApi(String cookies, String mid, String csrf, String access_key, String season_id)
+    public BangumiApi(String season_id)
     {
-        this.mid = mid;
-        this.cookie = cookies;
-        this.csrf = csrf;
-        this.access_key = access_key;
+        this.mid = SharedPreferencesUtil.getString(SharedPreferencesUtil.mid, "");
+        this.csrf = SharedPreferencesUtil.getString(SharedPreferencesUtil.csrf , "");
+        this.access_key = SharedPreferencesUtil.getString(SharedPreferencesUtil.accessKey, "");
 
         this.season_id = season_id;
         appHeaders = new ArrayList<String>(){{
-            add("Cookie"); add(cookie);
+            add("Cookie"); add(SharedPreferencesUtil.getString(SharedPreferencesUtil.cookies, ""));
             add("User-Agent"); add(ConfInfoApi.USER_AGENT_OWN);
         }};
         webHeaders = new ArrayList<String>(){{
-            add("Cookie"); add(cookie);
+            add("Cookie"); add(SharedPreferencesUtil.getString(SharedPreferencesUtil.cookies, ""));
             add("Referer"); add("https://www.bilibili.com/anime");
             add("User-Agent"); add(ConfInfoApi.USER_AGENT_WEB);
         }};

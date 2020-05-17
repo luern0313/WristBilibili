@@ -14,36 +14,28 @@ import java.util.ArrayList;
 import cn.luern0313.wristbilibili.models.article.ArticleModel;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
+import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
 /**
  * 被 luern0313 创建于 2020/2/20.
  */
 public class ArticleApi
 {
-    private String cookie;
     private String mid;
     private String csrf;
-    private String access_key;
-    private ArrayList<String> appHeaders;
     private ArrayList<String> webHeaders;
 
     private String article_id;
     private ArticleModel articleModel;
 
-    public ArticleApi(String cookies, String mid, String csrf, String access_key, String article_id)
+    public ArticleApi(String article_id)
     {
-        this.mid = mid;
-        this.cookie = cookies;
-        this.csrf = csrf;
-        this.access_key = access_key;
-
+        this.mid = SharedPreferencesUtil.getString(SharedPreferencesUtil.mid, "");
+        this.csrf = SharedPreferencesUtil.getString(SharedPreferencesUtil.csrf, "");
         this.article_id = article_id;
-        appHeaders = new ArrayList<String>(){{
-            add("Cookie"); add(cookie);
-            add("User-Agent"); add(ConfInfoApi.USER_AGENT_OWN);
-        }};
+
         webHeaders = new ArrayList<String>(){{
-            add("Cookie"); add(cookie);
+            add("Cookie"); add(SharedPreferencesUtil.getString(SharedPreferencesUtil.cookies, ""));
             add("Referer"); add("https://www.bilibili.com/");
             add("User-Agent"); add(ConfInfoApi.USER_AGENT_WEB);
         }};

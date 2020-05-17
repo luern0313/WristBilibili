@@ -4,7 +4,6 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -44,8 +43,6 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
 
     Context ctx;
     View rootLayout;
-    private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor editor;
     private VideoDetailFragmentListener videoDetailFragmentListener;
 
     private VideoModel videoModel;
@@ -86,8 +83,6 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
     {
         ctx = getActivity();
         rootLayout = inflater.inflate(R.layout.fragment_video_detail, container, false);
-        sharedPreferences = ctx.getSharedPreferences("default", Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
 
         runnableLoadingStart = new Runnable()
         {

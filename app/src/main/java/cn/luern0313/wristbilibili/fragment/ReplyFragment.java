@@ -2,7 +2,6 @@ package cn.luern0313.wristbilibili.fragment;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,8 +23,8 @@ import cn.luern0313.wristbilibili.api.ReplyApi;
 import cn.luern0313.wristbilibili.models.ReplyModel;
 import cn.luern0313.wristbilibili.ui.BangumiActivity;
 import cn.luern0313.wristbilibili.ui.CheckreplyActivity;
-import cn.luern0313.wristbilibili.ui.UserActivity;
 import cn.luern0313.wristbilibili.ui.ReplyActivity;
+import cn.luern0313.wristbilibili.ui.UserActivity;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
 /**
@@ -42,8 +41,6 @@ public class ReplyFragment extends Fragment
 
     Context ctx;
     View rootLayout;
-    SharedPreferences sharedPreferences;
-    SharedPreferences.Editor editor;
     Intent resultIntent;
 
     private String oid;
@@ -108,13 +105,10 @@ public class ReplyFragment extends Fragment
     {
         ctx = getActivity();
         rootLayout = inflater.inflate(R.layout.fragment_reply, container, false);
-        sharedPreferences = ctx.getSharedPreferences("default", Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
         resultIntent = new Intent();
         resultIntent.putExtra("position", position);
         getActivity().setResult(-1, resultIntent);
-        replyApi = new ReplyApi(sharedPreferences.getString("cookies", ""),
-                                sharedPreferences.getString("csrf", ""), oid, type);
+        replyApi = new ReplyApi(oid, type);
 
         replyAdapterListener = new ReplyAdapter.ReplyAdapterListener()
         {

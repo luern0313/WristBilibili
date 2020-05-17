@@ -1,9 +1,7 @@
 package cn.luern0313.wristbilibili.service;
 
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.IBinder;
 
@@ -41,8 +39,6 @@ import static cn.luern0313.wristbilibili.util.FileUtil.fileReader;
 
 public class DownloadService extends Service
 {
-    SharedPreferences sharedPreferences;
-    SharedPreferences.Editor editor;
     DownloadApi downloadApi;
     public ArrayList<DownloadModel> downloadingItems;
     public ArrayList<DownloadModel> downloadedItems;
@@ -63,9 +59,6 @@ public class DownloadService extends Service
     {
         getApplicationContext();
         super.onCreate();
-
-        sharedPreferences = getSharedPreferences("default", Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
 
         downloadApi = new DownloadApi(getApplication());
         downloadApi.initDownloadItems();

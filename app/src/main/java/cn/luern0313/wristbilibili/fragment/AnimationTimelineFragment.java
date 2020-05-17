@@ -20,6 +20,7 @@ import cn.luern0313.wristbilibili.api.AnimationTimelineApi;
 import cn.luern0313.wristbilibili.models.AnimationTimelineModel;
 import cn.luern0313.wristbilibili.ui.BangumiActivity;
 import cn.luern0313.wristbilibili.ui.MainActivity;
+import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
 /**
@@ -106,7 +107,7 @@ public class AnimationTimelineFragment extends Fragment
             }
         };
 
-        isLogin = MainActivity.sharedPreferences.contains("cookies");
+        isLogin = MainActivity.sharedPreferences.contains(SharedPreferencesUtil.cookies);
         if(isLogin)
         {
             waveSwipeRefreshLayout.setRefreshing(true);
@@ -121,7 +122,7 @@ public class AnimationTimelineFragment extends Fragment
         return rootLayout;
     }
 
-    void getAnimTimeline()
+    private void getAnimTimeline()
     {
         new Thread(new Runnable()
         {
@@ -130,7 +131,7 @@ public class AnimationTimelineFragment extends Fragment
             {
                 try
                 {
-                    animationTimelineApi = new AnimationTimelineApi(MainActivity.sharedPreferences.getString("cookies", ""));
+                    animationTimelineApi = new AnimationTimelineApi();
                     animationTimelineList = animationTimelineApi.getAnimTimelineList();
                     handler.post(runnableUi);
                 }
@@ -143,7 +144,7 @@ public class AnimationTimelineFragment extends Fragment
         }).start();
     }
 
-    void onViewClick(int id, int position)
+    private void onViewClick(int id, int position)
     {
         Intent intent = new Intent(ctx, BangumiActivity.class);
         intent.putExtra("season_id", animationTimelineList.get(position).season_id);

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.models.AnimationTimelineModel;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
+import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
 /**
  * Created by liupe on 2018/11/10.
@@ -17,14 +18,12 @@ import cn.luern0313.wristbilibili.util.NetWorkUtil;
 
 public class AnimationTimelineApi
 {
-    private String cookie;
     private JSONArray timelineJson;
-    private ArrayList<String> webHeaders = new ArrayList<String>();
-    public AnimationTimelineApi(final String cookie)
+    private ArrayList<String> webHeaders;
+    public AnimationTimelineApi()
     {
-        this.cookie = cookie;
         webHeaders = new ArrayList<String>(){{
-            add("Cookie"); add(cookie);
+            add("Cookie"); add(SharedPreferencesUtil.getString(SharedPreferencesUtil.cookies, ""));
             add("Referer"); add("https://www.bilibili.com/anime");
             add("User-Agent"); add(ConfInfoApi.USER_AGENT_WEB);
         }};

@@ -1,9 +1,7 @@
 package cn.luern0313.wristbilibili.ui;
 
-import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
@@ -16,14 +14,13 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
 import cn.luern0313.wristbilibili.R;
+import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
 public class TailActivity extends AppCompatActivity
 {
     Context ctx;
-    SharedPreferences sharedPreferences;
-    SharedPreferences.Editor editor;
-
     Switch uiSwitch;
     EditText uiEditText;
     ImageView uiVoice;
@@ -34,14 +31,12 @@ public class TailActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tail);
         ctx = this;
-        sharedPreferences = getSharedPreferences("default", Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
 
         uiSwitch = findViewById(R.id.tail_switch);
         uiEditText = findViewById(R.id.tail_preview);
         uiVoice = findViewById(R.id.tail_voice);
-        ((Switch) findViewById(R.id.tail_switch)).setChecked(sharedPreferences.getBoolean("tail", true));
-        ((TextView) findViewById(R.id.tail_preview)).setText(getTail(sharedPreferences, editor, false));
+        ((Switch) findViewById(R.id.tail_switch)).setChecked(SharedPreferencesUtil.getBoolean(SharedPreferencesUtil.tail, true));
+        ((TextView) findViewById(R.id.tail_preview)).setText(getTail(false));
 
         uiVoice.setOnClickListener(new View.OnClickListener()
         {
@@ -69,22 +64,20 @@ public class TailActivity extends AppCompatActivity
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count)
             {
-                editor.putString("tailCustom", uiEditText.getText().toString());
-                editor.apply();
+                SharedPreferencesUtil.putString(SharedPreferencesUtil.tailCustom, uiEditText.getText().toString());
             }
 
             @Override
             public void afterTextChanged(Editable s) {}
         });
 
-        uiSwitch.setChecked(sharedPreferences.getBoolean("tail", true));
+        uiSwitch.setChecked(SharedPreferencesUtil.getBoolean(SharedPreferencesUtil.tail, true));
         uiSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
         {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
             {
-                editor.putBoolean("tail", isChecked);
-                editor.commit();
+                SharedPreferencesUtil.putBoolean(SharedPreferencesUtil.tail, isChecked);
             }
         });
     }
@@ -108,16 +101,15 @@ public class TailActivity extends AppCompatActivity
         }
     }
 
-    public static String getTail(SharedPreferences sharedPreferences, SharedPreferences.Editor editor, boolean isChange)
+    public static String getTail(boolean isChange)
     {
-        if(!sharedPreferences.contains("tailCustom"))
+        if(!SharedPreferencesUtil.contains(SharedPreferencesUtil.tailCustom))
         {
-            editor.putString("tailCustom", "————该评论来自" + sharedPreferences.getString("tailModel", "") + "{{device}}端{{appname}}" + (sharedPreferences.getBoolean("tailAuthor", true) ? "，{{appauthor}} {{videoid}}" : ""));
-            editor.remove("tailModel");
-            editor.remove("tailAuthor");
-            editor.commit();
+            SharedPreferencesUtil.putString(SharedPreferencesUtil.tailCustom, "————该评论来自" + SharedPreferencesUtil.getString(SharedPreferencesUtil.tailModel, "") + "{{device}}端{{appname}}" + (SharedPreferencesUtil.getBoolean(SharedPreferencesUtil.tailAuthor, true) ? "，{{appauthor}} {{videoid}}" : ""));
+            SharedPreferencesUtil.removeValue(SharedPreferencesUtil.tailModel);
+            SharedPreferencesUtil.removeValue("tailAuthor");
         }
-        String tail = sharedPreferences.getString("tailCustom", "");
+        String tail = SharedPreferencesUtil.getString(SharedPreferencesUtil.tailCustom, "");
         if(isChange)
         {
             tail = tail.replace("{{device}}", Build.MODEL);

@@ -2,7 +2,6 @@ package cn.luern0313.wristbilibili.ui;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -33,6 +32,7 @@ import cn.luern0313.wristbilibili.fragment.SearchFragment;
 import cn.luern0313.wristbilibili.fragment.SettingFragment;
 import cn.luern0313.wristbilibili.fragment.WatchlaterFragment;
 import cn.luern0313.wristbilibili.service.DownloadService;
+import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
 /**
  * Created by liupe on 2018/10/25.
@@ -44,8 +44,6 @@ public class MainActivity extends AppCompatActivity
     Context ctx;
     private String selfMid;
 
-    public static SharedPreferences sharedPreferences;
-    public static SharedPreferences.Editor editor;
     Intent serviceIntent;
     private FragmentManager fm;
     private FragmentTransaction transaction;
@@ -62,9 +60,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         ctx = this;
-        sharedPreferences = getSharedPreferences("default", Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
-        selfMid = sharedPreferences.getString("mid", "");
+        selfMid = SharedPreferencesUtil.getString(SharedPreferencesUtil.mid, "");
 
         dm = getResources().getDisplayMetrics();
         fm = getSupportFragmentManager();
@@ -82,18 +78,17 @@ public class MainActivity extends AppCompatActivity
         {
             PackageManager pm = ctx.getPackageManager();
             PackageInfo pi = pm.getPackageInfo(ctx.getPackageName(), 0);
-            if(sharedPreferences.getInt("ver", 0) < pi.versionCode)
+            if(SharedPreferencesUtil.getInt(SharedPreferencesUtil.ver, 0) < pi.versionCode)
             {
-                if(sharedPreferences.getInt("ver", 0) < 13 && sharedPreferences.contains("cookies"))
+                if(SharedPreferencesUtil.getInt(SharedPreferencesUtil.ver, 0) < 13 && SharedPreferencesUtil.contains(SharedPreferencesUtil.cookies))
                 {
                     Toast.makeText(ctx, "抱歉，因为登录功能更新，您需要重新登录，否则某些功能将不可用。", Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(ctx, LogsoffActivity.class);
                     startActivity(intent);
                 }
-                editor.putInt("ver", pi.versionCode);
-                editor.apply();
+                SharedPreferencesUtil.putInt(SharedPreferencesUtil.ver, pi.versionCode);
 
-                if(sharedPreferences.contains("cookies"))
+                if(SharedPreferencesUtil.contains(SharedPreferencesUtil.cookies))
                     startActivity(new Intent(ctx, FollowmeActivity.class));
                 Intent intent = new Intent(ctx, TextActivity.class);
                 intent.putExtra("title", "更新日志");
@@ -106,7 +101,7 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         }
 
-        if(sharedPreferences.contains("mid") && (!selfMid.equals("")))
+        if(SharedPreferencesUtil.contains(SharedPreferencesUtil.mid) && (!selfMid.equals("")))
         {
             new Thread(new Runnable()
             {
@@ -115,7 +110,7 @@ public class MainActivity extends AppCompatActivity
                 {
                     try
                     {
-                        StatisticsApi.Statistics(sharedPreferences.getString("mid", "no login"));
+                        StatisticsApi.Statistics(SharedPreferencesUtil.getString(SharedPreferencesUtil.mid, "no login"));
                     }
                     catch (IOException e)
                     {

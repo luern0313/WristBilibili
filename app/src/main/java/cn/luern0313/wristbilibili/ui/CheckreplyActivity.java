@@ -2,7 +2,6 @@ package cn.luern0313.wristbilibili.ui;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 
@@ -18,8 +17,6 @@ public class CheckreplyActivity extends AppCompatActivity
     Context ctx;
     LayoutInflater inflater;
     Intent intent;
-    SharedPreferences sharedPreferences;
-    SharedPreferences.Editor editor;
     ReplyModel root;
     int position;
 
@@ -33,8 +30,6 @@ public class CheckreplyActivity extends AppCompatActivity
         ctx = this;
         inflater = getLayoutInflater();
         intent = getIntent();
-        sharedPreferences = getSharedPreferences("default", Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
         root = intent.hasExtra("root") ? (ReplyModel) intent.getSerializableExtra("root") : null;
         position = intent.getIntExtra("position", -1);
 

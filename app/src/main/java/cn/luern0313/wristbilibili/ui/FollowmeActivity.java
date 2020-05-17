@@ -1,7 +1,6 @@
 package cn.luern0313.wristbilibili.ui;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -27,6 +26,7 @@ import cn.luern0313.wristbilibili.api.UserApi;
 import cn.luern0313.wristbilibili.api.VideoApi;
 import cn.luern0313.wristbilibili.models.ListVideoModel;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
+import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
 /**
  * Created by liupe on 2018/11/11.
@@ -36,13 +36,6 @@ import cn.luern0313.wristbilibili.util.NetWorkUtil;
 public class FollowmeActivity extends AppCompatActivity
 {
     Context ctx;
-    SharedPreferences sharedPreferences;
-    SharedPreferences.Editor editor;
-
-    String cookies;
-    String csrf;
-    String mid;
-    String access_key;
 
     Handler handler = new Handler();
     Runnable runnVideo;
@@ -75,15 +68,7 @@ public class FollowmeActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_followme);
         ctx = this;
-
-        sharedPreferences = getSharedPreferences("default", Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
-        cookies = sharedPreferences.getString("cookies", "");
-        csrf = sharedPreferences.getString("csrf", "");
-        mid = sharedPreferences.getString("mid", "");
-        access_key = sharedPreferences.getString("access_key", "");
-
-        userApi = new UserApi(cookies, csrf, access_key, "8014831");
+        userApi = new UserApi("8014831");
 
         cardView = findViewById(R.id.fme_card);
         cardViewLay = findViewById(R.id.fme_card_lay);
@@ -136,7 +121,7 @@ public class FollowmeActivity extends AppCompatActivity
             }
         };
 
-        if(!sharedPreferences.contains("cookies"))
+        if(!SharedPreferencesUtil.contains(SharedPreferencesUtil.cookies))
             findViewById(R.id.fme_nologin).setVisibility(View.VISIBLE);
         else
         {
@@ -148,7 +133,7 @@ public class FollowmeActivity extends AppCompatActivity
                     try
                     {
                         ArrayList<ListVideoModel> v = userApi.getUserVideo(1);
-                        videoDetail = new VideoApi(cookies, csrf, mid, access_key, "", v.get(0).video_bvid);
+                        videoDetail = new VideoApi("", v.get(0).video_bvid);
                         handler.post(runnVideo);
 
                         byte[] picByte = NetWorkUtil.readStream(NetWorkUtil.get("http:" + videoJson.optString("pic", "")).body().byteStream());

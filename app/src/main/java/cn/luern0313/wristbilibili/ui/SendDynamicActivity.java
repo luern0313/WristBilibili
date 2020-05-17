@@ -1,9 +1,7 @@
 package cn.luern0313.wristbilibili.ui;
 
-import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,17 +15,17 @@ import android.widget.Toast;
 
 import java.io.IOException;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.util.ImageDownloaderUtil;
+import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
 public class SendDynamicActivity extends AppCompatActivity
 {
     Context ctx;
     Intent inIntent;
     Intent reusltIntent = new Intent();
-    SharedPreferences sharedPreferences;
-    SharedPreferences.Editor editor;
 
     EditText uiEdittext;
     TextView uiShareUp;
@@ -51,8 +49,6 @@ public class SendDynamicActivity extends AppCompatActivity
         setContentView(R.layout.activity_senddynamic);
         ctx = this;
         inIntent = getIntent();
-        sharedPreferences = getSharedPreferences("default", Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
         setResult(-1, reusltIntent);
 
         uiEdittext = findViewById(R.id.senddy_edittext);
@@ -99,7 +95,7 @@ public class SendDynamicActivity extends AppCompatActivity
             else uiShareImg.setVisibility(View.GONE);
         }
 
-        if(!sharedPreferences.getBoolean("tail", true))
+        if(!SharedPreferencesUtil.getBoolean(SharedPreferencesUtil.tail, true))
             findViewById(R.id.senddy_tail).setVisibility(View.GONE);
 
         runnableUi = new Runnable()
@@ -140,8 +136,8 @@ public class SendDynamicActivity extends AppCompatActivity
             s = "转发动态";
         else if(!s.equals(""))
         {
-            if(sharedPreferences.getBoolean("tail", true))
-                s += "\n\n" + TailActivity.getTail(sharedPreferences, editor, true);
+            if(SharedPreferencesUtil.getBoolean(SharedPreferencesUtil.tail, true))
+                s += "\n\n" + TailActivity.getTail(true);
             reusltIntent.putExtra("text", s);
             setResult(0, reusltIntent);
             finish();

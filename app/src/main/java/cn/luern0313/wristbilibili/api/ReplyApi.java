@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.models.ReplyModel;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
+import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
 /**
  * 被 luern0313 创建于 2019/2/20.
@@ -18,7 +19,6 @@ import cn.luern0313.wristbilibili.util.NetWorkUtil;
 
 public class ReplyApi
 {
-    private String cookie;
     private String csrf;
     private String oid;
     private String type;
@@ -28,14 +28,13 @@ public class ReplyApi
     public boolean replyIsShowFloor;
     private ArrayList<String> webHeaders;
 
-    public ReplyApi(final String cookie, String csrf, String oid, String type)
+    public ReplyApi(String oid, String type)
     {
-        this.cookie = cookie;
-        this.csrf = csrf;
+        this.csrf = SharedPreferencesUtil.getString(SharedPreferencesUtil.csrf, "");
         this.oid = oid;
         this.type = type;
         webHeaders = new ArrayList<String>(){{
-            add("Cookie"); add(cookie);
+            add("Cookie"); add(SharedPreferencesUtil.getString(SharedPreferencesUtil.cookies, ""));
             add("Referer"); add("https://www.bilibili.com/");
             add("User-Agent"); add(ConfInfoApi.USER_AGENT_WEB);
         }};

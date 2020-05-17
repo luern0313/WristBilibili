@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.models.VideoModel;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
+import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
 /**
  * Created by liupe on 2018/11/13.
@@ -20,7 +21,6 @@ import cn.luern0313.wristbilibili.util.NetWorkUtil;
 
 public class VideoApi
 {
-    private String cookie;
     private String csrf;
     private String mid;
     private String access_key;
@@ -31,20 +31,19 @@ public class VideoApi
 
     private VideoModel videoModel;
 
-    public VideoApi(final String cookie, String csrf, String mid, String access_key, String aid, String bvid)
+    public VideoApi(String aid, String bvid)
     {
-        this.cookie = cookie;
-        this.csrf = csrf;
-        this.mid = mid;
-        this.access_key = access_key;
+        this.csrf = SharedPreferencesUtil.getString(SharedPreferencesUtil.csrf, "");
+        this.mid = SharedPreferencesUtil.getString(SharedPreferencesUtil.mid, "");
+        this.access_key = SharedPreferencesUtil.getString(SharedPreferencesUtil.accessKey, "");
         this.aid = aid;
         this.bvid = bvid;
         appHeaders = new ArrayList<String>(){{
-            add("Cookie"); add(cookie);
+            add("Cookie"); add(SharedPreferencesUtil.getString(SharedPreferencesUtil.cookies, ""));
             add("User-Agent"); add(ConfInfoApi.USER_AGENT_OWN);
         }};
         webHeaders = new ArrayList<String>(){{
-            add("Cookie"); add(cookie);
+            add("Cookie"); add(SharedPreferencesUtil.getString(SharedPreferencesUtil.cookies, ""));
             add("Referer"); add("https://www.bilibili.com/anime");
             add("User-Agent"); add(ConfInfoApi.USER_AGENT_WEB);
         }};

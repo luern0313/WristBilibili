@@ -2,7 +2,6 @@ package cn.luern0313.wristbilibili.fragment;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -37,8 +36,6 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
 
     Context ctx;
     View rootLayout;
-    private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor editor;
     private ArticleModel articleModel;
     private ArticleAdapter articleAdapter;
     private ArticleDetailFragmentListener articleDetailFragmentListener;
@@ -74,8 +71,6 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
     {
         ctx = getActivity();
         rootLayout = inflater.inflate(R.layout.fragment_article_detail, container, false);
-        sharedPreferences = ctx.getSharedPreferences("default", Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
 
         WindowManager manager = getActivity().getWindowManager();
         DisplayMetrics outMetrics = new DisplayMetrics();

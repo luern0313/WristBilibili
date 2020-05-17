@@ -3,7 +3,10 @@ package cn.luern0313.wristbilibili.util;
 import android.content.Context;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Random;
 
 /**
@@ -112,5 +115,20 @@ public class DataProcessUtil
 
         if(hour.equals("00")) return min + ":" + sec;
         else return hour + ":" + min + ":" + sec;
+    }
+
+    public static String getTime(int timeStamp, String pattern)
+    {
+        try
+        {
+            Date date = new Date(timeStamp * 1000L);
+            SimpleDateFormat format = new SimpleDateFormat(pattern, Locale.getDefault());
+            return format.format(date);
+        }
+        catch (RuntimeException e)
+        {
+            e.printStackTrace();
+        }
+        return "";
     }
 }

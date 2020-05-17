@@ -1,24 +1,22 @@
 package cn.luern0313.wristbilibili.ui;
 
-import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
 import cn.luern0313.wristbilibili.R;
+import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
 public class ReplyActivity extends AppCompatActivity
 {
     Context ctx;
     Intent inIntent;
     Intent reusltIntent = new Intent();
-    SharedPreferences sharedPreferences;
-    SharedPreferences.Editor editor;
 
     EditText uiEditText;
     @Override
@@ -28,11 +26,9 @@ public class ReplyActivity extends AppCompatActivity
         setContentView(R.layout.activity_reply);
         ctx = this;
         inIntent = getIntent();
-        sharedPreferences = getSharedPreferences("default", Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
         setResult(-1, reusltIntent);
 
-        if(!sharedPreferences.getBoolean("tail", true))
+        if(!SharedPreferencesUtil.getBoolean(SharedPreferencesUtil.tail, true))
             findViewById(R.id.rp_tail).setVisibility(View.GONE);
 
         uiEditText = findViewById(R.id.rp_edittext);
@@ -57,8 +53,8 @@ public class ReplyActivity extends AppCompatActivity
         if(!uiEditText.getText().toString().equals(""))
         {
             String s = uiEditText.getText().toString();
-            if(sharedPreferences.getBoolean("tail", true))
-                s += "\n\n" + TailActivity.getTail(sharedPreferences, editor, true);
+            if(SharedPreferencesUtil.getBoolean(SharedPreferencesUtil.tail, true))
+                s += "\n\n" + TailActivity.getTail(true);
             reusltIntent.putExtra("text", s);
             setResult(0, reusltIntent);
             finish();

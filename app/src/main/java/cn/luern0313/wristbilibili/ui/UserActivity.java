@@ -2,7 +2,6 @@ package cn.luern0313.wristbilibili.ui;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -47,8 +46,6 @@ public class UserActivity extends AppCompatActivity implements UserDetailFragmen
     Context ctx;
     Intent intent;
     LayoutInflater inflater;
-    SharedPreferences sharedPreferences;
-    SharedPreferences.Editor editor;
     FragmentPagerAdapter pagerAdapter;
     UserModel userModel;
     UserApi userApi;
@@ -69,13 +66,8 @@ public class UserActivity extends AppCompatActivity implements UserDetailFragmen
         ctx = this;
         intent = getIntent();
         inflater = getLayoutInflater();
-        sharedPreferences = getSharedPreferences("default", Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
 
-        userApi = new UserApi(sharedPreferences.getString("cookies", ""),
-                              sharedPreferences.getString("csrf", ""),
-                              sharedPreferences.getString("access_key", ""),
-                              intent.getStringExtra("mid"));
+        userApi = new UserApi(intent.getStringExtra("mid"));
         uiTitle = findViewById(R.id.user_title_title);
         uiViewpager = findViewById(R.id.user_viewpager);
         uiLoading = findViewById(R.id.ou_loading_img);

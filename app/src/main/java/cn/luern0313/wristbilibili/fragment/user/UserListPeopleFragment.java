@@ -2,7 +2,6 @@ package cn.luern0313.wristbilibili.fragment.user;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -27,10 +26,8 @@ public class UserListPeopleFragment extends Fragment
     private static final String ARG_LIST_PEOPLE_MID = "argListPeopleMid";
     private static final String ARG_LIST_PEOPLE_MODE = "argListPeopleMode";
 
-    Context ctx;
-    View rootLayout;
-    private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor editor;
+    private Context ctx;
+    private View rootLayout;
     private String mid;
     private int mode;
     private UserApi userApi;
@@ -76,13 +73,8 @@ public class UserListPeopleFragment extends Fragment
     {
         ctx = getActivity();
         rootLayout = inflater.inflate(R.layout.fragment_user_list_people, container, false);
-        sharedPreferences = ctx.getSharedPreferences("default", Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
 
-        String cookie = sharedPreferences.getString("cookies", "");
-        String csrf = sharedPreferences.getString("csrf", "");
-        String access_key = sharedPreferences.getString("access_key", "");
-        userApi = new UserApi(cookie, csrf, access_key, mid);
+        userApi = new UserApi(mid);
         userListPeopleAdapterListener = new UserListPeopleAdapter.UserListPeopleAdapterListener()
         {
             @Override

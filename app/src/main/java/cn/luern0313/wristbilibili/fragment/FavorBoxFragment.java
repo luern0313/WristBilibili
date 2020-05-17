@@ -2,7 +2,6 @@ package cn.luern0313.wristbilibili.fragment;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -34,9 +33,6 @@ public class FavorBoxFragment extends Fragment
     private static final String ARG_FAVOR_BOX_MID = "argFavorBoxMid";
 
     Context ctx;
-    private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor editor;
-    private String cookie;
     private String mid;
     private FavorBoxApi favorBoxApi;
     private ArrayList<FavorBoxModel> favourboxArrayList;
@@ -77,9 +73,6 @@ public class FavorBoxFragment extends Fragment
     {
         ctx = getActivity();
         rootLayout = inflater.inflate(R.layout.fragment_favor, container, false);
-        sharedPreferences = ctx.getSharedPreferences("default", Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
-        cookie = sharedPreferences.getString("cookies", "");
 
         favListView = rootLayout.findViewById(R.id.fav_listview);
         waveSwipeRefreshLayout = rootLayout.findViewById(R.id.fav_swipe);
@@ -185,7 +178,7 @@ public class FavorBoxFragment extends Fragment
             {
                 try
                 {
-                    favorBoxApi = new FavorBoxApi(cookie, mid);
+                    favorBoxApi = new FavorBoxApi(mid);
                     favourboxArrayList = favorBoxApi.getFavorbox();
                     if(favourboxArrayList != null && favourboxArrayList.size() != 0)
                         handler.post(runnableUi);

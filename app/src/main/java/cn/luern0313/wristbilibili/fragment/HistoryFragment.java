@@ -2,7 +2,6 @@ package cn.luern0313.wristbilibili.fragment;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -21,16 +20,14 @@ import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.adapter.ListVideoAdapter;
 import cn.luern0313.wristbilibili.api.HistoryApi;
 import cn.luern0313.wristbilibili.models.ListVideoModel;
-import cn.luern0313.wristbilibili.ui.MainActivity;
 import cn.luern0313.wristbilibili.ui.VideoActivity;
+import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
 public class HistoryFragment extends Fragment
 {
     Context ctx;
     View rootLayout;
-    private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor editor;
     private WaveSwipeRefreshLayout waveSwipeRefreshLayout;
     private HistoryApi historyApi;
 
@@ -60,8 +57,6 @@ public class HistoryFragment extends Fragment
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         ctx = getActivity();
-        sharedPreferences = ctx.getSharedPreferences("default", Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
 
         rootLayout = inflater.inflate(R.layout.fragment_history, container, false);
         uiListView = rootLayout.findViewById(R.id.history_listview);
@@ -196,7 +191,7 @@ public class HistoryFragment extends Fragment
             }
         });
 
-        isLogin = sharedPreferences.contains("cookies");
+        isLogin = SharedPreferencesUtil.contains(SharedPreferencesUtil.cookies);
         if(isLogin)
         {
             waveSwipeRefreshLayout.setRefreshing(true);
@@ -222,9 +217,7 @@ public class HistoryFragment extends Fragment
                 {
                     pn = 1;
                     isLoading = true;
-                    historyApi = new HistoryApi(MainActivity.sharedPreferences.getString("cookies", ""),
-                                                MainActivity.sharedPreferences.getString("csrf", ""),
-                                                MainActivity.sharedPreferences.getString("mid", ""));
+                    historyApi = new HistoryApi();
                     ArrayList<ListVideoModel> v = historyApi.getHistory(pn);
                     if(v != null && v.size() != 0)
                     {

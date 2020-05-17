@@ -1,21 +1,14 @@
 package cn.luern0313.wristbilibili.api;
 
-import android.graphics.BitmapFactory;
-import android.util.Log;
-
+import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URLEncoder;
-import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
 
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
+import cn.luern0313.wristbilibili.util.NetWorkUtil;
+import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
 /**
  * Created by liupe on 2018/11/29.
@@ -24,20 +17,20 @@ import okhttp3.Response;
 
 public class SendDynamicApi
 {
-    private String cookie;
     private String mid;
     private String csrf;
-
-    private final String SHAREVIDEO = "https://api.vc.bilibili.com/dynamic_repost/v1/dynamic_repost/share";
-    private final String SHAREURL = "https://api.vc.bilibili.com/dynamic_repost/v1/dynamic_repost/repost";
-    private final String ORGURL = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/create";
+    private ArrayList<String> webHeaders;
     private int lastRandom;
 
-    public SendDynamicApi(String cookie, String mid, String csrf)
+    public SendDynamicApi()
     {
-        this.cookie = cookie;
-        this.mid = mid;
-        this.csrf = csrf;
+        this.mid = SharedPreferencesUtil.getString(SharedPreferencesUtil.mid, "");
+        this.csrf = SharedPreferencesUtil.getString(SharedPreferencesUtil.csrf, "");
+        webHeaders = new ArrayList<String>(){{
+            add("Cookie"); add(SharedPreferencesUtil.getString(SharedPreferencesUtil.cookies, ""));
+            add("Referer"); add("https://search.bilibili.com/");
+            add("User-Agent"); add(ConfInfoApi.USER_AGENT_WEB);
+        }};
     }
 
     public String getNextShareText()
@@ -61,94 +54,43 @@ public class SendDynamicApi
 
     public void shareVideo(String text) throws IOException
     {
-        post(SHAREVIDEO, "csrf_token=" + csrf + "&platform=pc&uid=8014831&type=8&share_uid=" + mid + "&content=" + URLEncoder.encode(text, "UTF-8") + "&repost_code=20000&rid=37132444");
+        String url = "https://api.vc.bilibili.com/dynamic_repost/v1/dynamic_repost/share";
+        String arg = "csrf_token=" + csrf + "&platform=pc&uid=8014831&type=8&share_uid=" + mid + "&content=" + URLEncoder.encode(text, "UTF-8") + "&repost_code=20000&rid=37132444";
+        NetWorkUtil.post(url, arg, webHeaders);
     }
 
     public String sendDynamic(String text) throws IOException
     {
         try
         {
-            JSONObject result = new JSONObject(post(ORGURL, "dynamic_id=0&type=4&rid=0&content=" + URLEncoder.encode(text, "UTF-8") + "&extension={\"emoji_type\":1}&at_uids=&ctrl=[]&csrf_token=" + csrf).body().string());
-            int code = result.getInt("code");
-            if(code == 0)
+            String url = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/create";
+            String arg = "dynamic_id=0&type=4&rid=0&content=" + URLEncoder.encode(text, "UTF-8") + "&extension={\"emoji_type\":1}&at_uids=&ctrl=[]&csrf_token=" + csrf;
+            JSONObject result = new JSONObject(NetWorkUtil.post(url, arg, webHeaders).body().string());
+            if(result.getInt("code") == 0)
                 return "";
-            else
-                return result.getString("message");
         }
-        catch (Exception e)
+        catch (JSONException |  RuntimeException e)
         {
             e.printStackTrace();
-            return "未知错误";
         }
+        return "未知错误";
     }
 
     public String sendDynamicWithDynamic(String dyid, String text) throws IOException
     {
         try
         {
-            JSONObject result = new JSONObject(post(SHAREURL, "uid=" + mid + "&dynamic_id=" + dyid + "&content=" + URLEncoder.encode(text, "UTF-8") + "&extension={\"emoji_type\":1}&at_uids=&ctrl=[]&csrf_token=" + csrf).body().string());
-            int code = result.getInt("code");
-            if(code == 0)
+            String url = "https://api.vc.bilibili.com/dynamic_repost/v1/dynamic_repost/repost";
+            String arg = "uid=" + mid + "&dynamic_id=" + dyid + "&content=" + URLEncoder.encode(text, "UTF-8") + "&extension={\"emoji_type\":1}&at_uids=&ctrl=[]&csrf_token=" + csrf;
+            JSONObject result = new JSONObject(NetWorkUtil.post(url, arg, webHeaders).body().string());
+            if(result.getInt("code") == 0)
                 return "";
-            else
-                return result.getString("message");
         }
-        catch (Exception e)
+        catch (JSONException | RuntimeException e)
         {
             e.printStackTrace();
-            return "未知错误";
         }
-    }
-
-    private Object get(String url, int mode) throws IOException
-    {
-        OkHttpClient client = new OkHttpClient.Builder().connectTimeout(15, TimeUnit.SECONDS).readTimeout(15, TimeUnit.SECONDS).build();
-        Request.Builder requestb = new Request.Builder().url(url).header("Referer", "https://www.bilibili.com/").addHeader("Accept", "*/*").addHeader("User-Agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
-        if(!cookie.equals("")) requestb.addHeader("Cookie", cookie);
-        Request request = requestb.build();
-        Response response = client.newCall(request).execute();
-
-        if(response.isSuccessful())
-        {
-            if(mode == 1) return response.body().string();
-            else if(mode == 2)
-            {
-                byte[] buffer = readStream(response.body().byteStream());
-                return BitmapFactory.decodeByteArray(buffer, 0, buffer.length);
-            }
-        }
-        return null;
-    }
-
-    private Response post(String url, String data) throws IOException
-    {
-        Response response;
-        OkHttpClient client;
-        RequestBody body;
-        Request request;
-        client = new OkHttpClient.Builder().connectTimeout(15, TimeUnit.SECONDS).readTimeout(15, TimeUnit.SECONDS).build();
-        body = RequestBody.create(MediaType.parse("application/x-www-form-urlencoded; charset=utf-8"), data);
-        request = new Request.Builder().url(url).post(body).header("Referer", "https://t.bilibili.com/").addHeader("Accept", "application/json, text/plain, */*").addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Safari/537.36").addHeader("Sec-Fetch-Mode", "cors").addHeader("Cookie", cookie).build();
-        response = client.newCall(request).execute();
-        if(response.isSuccessful())
-        {
-            return response;
-        }
-        return null;
-    }
-
-    private byte[] readStream(InputStream inStream) throws IOException
-    {
-        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024];
-        int len = 0;
-        while ((len = inStream.read(buffer)) != -1)
-        {
-            outStream.write(buffer, 0, len);
-        }
-        outStream.close();
-        inStream.close();
-        return outStream.toByteArray();
+        return "未知错误";
     }
 
     private final String[] SHARETEXT = new String[]{

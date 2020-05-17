@@ -4,7 +4,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -34,17 +33,16 @@ import cn.luern0313.wristbilibili.api.OnlineVideoApi;
 import cn.luern0313.wristbilibili.fragment.BangumiDetailFragment;
 import cn.luern0313.wristbilibili.fragment.BangumiRecommendFragment;
 import cn.luern0313.wristbilibili.fragment.ReplyFragment;
-import cn.luern0313.wristbilibili.models.bangumi.BangumiModel;
 import cn.luern0313.wristbilibili.models.ListBangumiModel;
+import cn.luern0313.wristbilibili.models.bangumi.BangumiModel;
 import cn.luern0313.wristbilibili.service.DownloadService;
+import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
 public class BangumiActivity extends AppCompatActivity implements BangumiDetailFragment.BangumiDetailFragmentListener
 {
     Context ctx;
     Intent intent;
     LayoutInflater inflater;
-    SharedPreferences sharedPreferences;
-    SharedPreferences.Editor editor;
 
     String seasonId;
     BangumiApi bangumiApi;
@@ -82,8 +80,6 @@ public class BangumiActivity extends AppCompatActivity implements BangumiDetailF
         setContentView(R.layout.activity_bangumi);
         ctx = this;
         intent = getIntent();
-        sharedPreferences = getSharedPreferences("default", Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
         seasonId = intent.getStringExtra("season_id");
 
         Intent serviceIntent = new Intent(ctx, DownloadService.class);
@@ -98,12 +94,8 @@ public class BangumiActivity extends AppCompatActivity implements BangumiDetailF
         uiLoading = findViewById(R.id.bgm_loading);
         uiNoWeb = findViewById(R.id.bgm_noweb);
 
-        isLogin = !sharedPreferences.getString("cookies", "").equals("");
-        bangumiApi = new BangumiApi(sharedPreferences.getString("cookies", ""),
-                                    sharedPreferences.getString("mid", ""),
-                                    sharedPreferences.getString("csrf", ""),
-                                    sharedPreferences.getString("access_key", ""),
-                                    seasonId);
+        isLogin = SharedPreferencesUtil.contains(SharedPreferencesUtil.cookies);
+        bangumiApi = new BangumiApi(seasonId);
 
         uiLoadingImg.setImageResource(R.drawable.anim_loading);
         loadingImgAnim = (AnimationDrawable) uiLoadingImg.getDrawable();
@@ -230,10 +222,7 @@ public class BangumiActivity extends AppCompatActivity implements BangumiDetailF
                                 .size() ? bangumiModel.bangumi_episodes
                                 .get(position).bangumi_episode_cid : bangumiModel.bangumi_sections
                                 .get(position - bangumiModel.bangumi_episodes.size()).bangumi_episode_cid);
-                        onlineVideoApi = new OnlineVideoApi(
-                                sharedPreferences.getString("cookies", ""),
-                                sharedPreferences.getString("csrf", ""),
-                                sharedPreferences.getString("mid", ""), aid, cid);
+                        onlineVideoApi = new OnlineVideoApi(aid, cid);
                         onlineVideoApi.connectionVideoUrl();
                         connection.downloadVideo(data.getStringExtra("option_name") + " - " + bangumiModel.bangumi_title, aid, cid);
                     }

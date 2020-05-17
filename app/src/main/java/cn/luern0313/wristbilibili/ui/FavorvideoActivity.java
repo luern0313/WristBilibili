@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -32,8 +31,6 @@ public class FavorvideoActivity extends AppCompatActivity
     Context ctx;
     Intent intent;
     LayoutInflater inflater;
-    SharedPreferences sharedPreferences;
-    SharedPreferences.Editor editor;
     FavorVideoApi favorVideoApi;
 
     ArrayList<ListVideoModel> favorvideoList;
@@ -60,8 +57,6 @@ public class FavorvideoActivity extends AppCompatActivity
         ctx = this;
         intent = getIntent();
         inflater = getLayoutInflater();
-        sharedPreferences = getSharedPreferences("default", Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
         mid = intent.getStringExtra("mid");
         fid = intent.getStringExtra("fid");
 
@@ -250,8 +245,7 @@ public class FavorvideoActivity extends AppCompatActivity
     void getFavorVideo()
     {
         isLoading = true;
-        favorVideoApi = new FavorVideoApi(sharedPreferences.getString("cookies", ""), mid,
-                                          sharedPreferences.getString("csrf", ""), fid);
+        favorVideoApi = new FavorVideoApi(mid, fid);
         page = 1;
         new Thread(new Runnable()
         {

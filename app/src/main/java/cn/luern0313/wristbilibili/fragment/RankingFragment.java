@@ -75,9 +75,7 @@ public class RankingFragment extends Fragment
     {
         ctx = getActivity();
         rootLayout = inflater.inflate(R.layout.fragment_ranking, container, false);
-        rankingApi = new RankingApi(MainActivity.sharedPreferences.getString("mid", ""),
-                                    MainActivity.sharedPreferences.getString("cookies", ""),
-                                    MainActivity.sharedPreferences.getString("csrf", ""));
+        rankingApi = new RankingApi();
 
         uiPickUpView = inflater.inflate(R.layout.widget_ranking_pickup, null, false);
         uiLoadingView = inflater.inflate(R.layout.widget_loading, null, false);
@@ -184,11 +182,7 @@ public class RankingFragment extends Fragment
                     if(dates.get(i) <= today_int)
                     {
                         pickupday = String.valueOf(dates.get(i));
-                        videoDetailsApi = new VideoApi(MainActivity.sharedPreferences.getString("cookies", ""),
-                                                       MainActivity.sharedPreferences.getString("csrf", ""),
-                                                       MainActivity.sharedPreferences.getString("mid", ""),
-                                                       MainActivity.sharedPreferences.getString("access_key", ""),
-                                                       pickUpHashMap.get(dates.get(i)), "");
+                        videoDetailsApi = new VideoApi(pickUpHashMap.get(dates.get(i)), "");
                         new Thread(new Runnable()
                         {
                             @Override

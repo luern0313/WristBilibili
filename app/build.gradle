@@ -10,6 +10,7 @@ android {
         versionName "2.6"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
+        javaCompileOptions { annotationProcessorOptions { includeCompileClasspath = true } }
     }
     //compileOptions {
     //    sourceCompatibility JavaVersion.VERSION_1_8
@@ -57,4 +58,5 @@ dependencies {
     implementation 'org.sufficientlysecure:html-textview:3.9'
     implementation 'org.greenrobot:eventbus:3.1.1'
     implementation 'com.king.view:circleprogressview:1.1.1'
+    implementation 'org.projectlombok:lombok:1.16.18'
 }

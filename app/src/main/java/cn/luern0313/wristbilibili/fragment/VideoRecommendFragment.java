@@ -1,7 +1,6 @@
 package cn.luern0313.wristbilibili.fragment;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,8 +20,6 @@ public class VideoRecommendFragment extends Fragment
 
     Context ctx;
     View rootLayout;
-    private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor editor;
     private VideoModel videoModel;
 
     private ListView uiListView;
@@ -53,8 +50,6 @@ public class VideoRecommendFragment extends Fragment
     {
         ctx = getActivity();
         rootLayout = inflater.inflate(R.layout.fragment_video_recommend, container, false);
-        sharedPreferences = ctx.getSharedPreferences("default", Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
 
         uiListView = rootLayout.findViewById(R.id.vd_recommend_listview);
         uiListView.setEmptyView(rootLayout.findViewById(R.id.vd_recommend_nothing));

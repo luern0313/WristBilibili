@@ -2,7 +2,6 @@ package cn.luern0313.wristbilibili.fragment;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,13 +21,14 @@ import java.util.ArrayList;
 import androidx.fragment.app.Fragment;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.adapter.DynamicAdapter;
-import cn.luern0313.wristbilibili.api.SendDynamicApi;
 import cn.luern0313.wristbilibili.api.DynamicApi;
+import cn.luern0313.wristbilibili.api.SendDynamicApi;
 import cn.luern0313.wristbilibili.ui.CheckreplyActivity;
 import cn.luern0313.wristbilibili.ui.ImgActivity;
 import cn.luern0313.wristbilibili.ui.SendDynamicActivity;
 import cn.luern0313.wristbilibili.ui.UserActivity;
 import cn.luern0313.wristbilibili.ui.VideoActivity;
+import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
 /**
@@ -39,12 +39,8 @@ public class DynamicFragment extends Fragment
 {
     private static final String ARG_DYNAMIC_IS_SHOW_SEND_BUTTON = "argDynamicIsShowSendButton";
     private static final String ARG_DYNAMIC_MID = "argDynamicMid";
+
     Context ctx;
-    private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor editor;
-    private String cookie;
-    private String selfMid;
-    private String csrf;
     private boolean isShowSendButton;
     private String mid;
 
@@ -62,11 +58,7 @@ public class DynamicFragment extends Fragment
     private DynamicAdapter.DynamicAdapterListener adapterListener;
 
     Handler handler = new Handler();
-    private Runnable runnableUi;
-    private Runnable runnableNoWeb;
-    private Runnable runnableNoWebH;
-    private Runnable runnableAddlist;
-    private Runnable runnableNodata;
+    private Runnable runnableUi, runnableNoWeb, runnableMore, runnableNoData, runnableMoreNoWeb;
 
     private boolean isLoading = true;
     public static boolean isLogin = false;
@@ -98,12 +90,6 @@ public class DynamicFragment extends Fragment
     {
         ctx = getActivity();
         rootLayout = inflater.inflate(R.layout.fragment_dynamic, container, false);
-        sharedPreferences = ctx.getSharedPreferences("default", Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
-
-        cookie = sharedPreferences.getString("cookies", "");
-        selfMid = sharedPreferences.getString("mid", "");
-        csrf = sharedPreferences.getString("csrf", "");
 
         dyListView = rootLayout.findViewById(R.id.dy_listview);
         loadingView = inflater.inflate(R.layout.widget_loading, null);
@@ -115,9 +101,9 @@ public class DynamicFragment extends Fragment
         dyListView.addFooterView(loadingView);
         dyListView.setHeaderDividersEnabled(false);
 
-        isLogin = sharedPreferences.contains("cookies");
+        isLogin = SharedPreferencesUtil.contains("cookies");
 
-        sendDynamicApi = new SendDynamicApi(cookie, selfMid, csrf);
+        sendDynamicApi = new SendDynamicApi();
 
         runnableUi = new Runnable()
         {
@@ -148,7 +134,7 @@ public class DynamicFragment extends Fragment
             }
         };
 
-        runnableNoWebH = new Runnable()
+        runnableMoreNoWeb = new Runnable()
         {
             @Override
             public void run()
@@ -159,7 +145,7 @@ public class DynamicFragment extends Fragment
             }
         };
 
-        runnableNodata = new Runnable()
+        runnableNoData = new Runnable()
         {
             @Override
             public void run()
@@ -172,7 +158,7 @@ public class DynamicFragment extends Fragment
             }
         };
 
-        runnableAddlist = new Runnable()
+        runnableMore = new Runnable()
         {
             @Override
             public void run()
@@ -194,12 +180,9 @@ public class DynamicFragment extends Fragment
                     @Override
                     public void run()
                     {
-                        isLogin = sharedPreferences.contains("cookies");
+                        isLogin = SharedPreferencesUtil.contains(SharedPreferencesUtil.cookies);
                         if(isLogin)
                         {
-                            cookie = sharedPreferences.getString("cookies", "");
-                            selfMid = sharedPreferences.getString("mid", "");
-                            csrf = sharedPreferences.getString("csrf", "");
                             dyListView.setVisibility(View.GONE);
                             getDynamic();
                         }
@@ -332,7 +315,7 @@ public class DynamicFragment extends Fragment
             {
                 try
                 {
-                    userDynamicApi = new DynamicApi(cookie, csrf, selfMid, mid, isShowSendButton);
+                    userDynamicApi = new DynamicApi(mid, isShowSendButton);
                     userDynamicApi.getDynamic();
                     dynamicList = userDynamicApi.getDynamicList();
                     if(dynamicList != null && dynamicList.size() != 0)
@@ -342,12 +325,12 @@ public class DynamicFragment extends Fragment
                     }
                     else
                     {
-                        handler.post(runnableNodata);
+                        handler.post(runnableNoData);
                     }
                 }
                 catch (NullPointerException e)
                 {
-                    handler.post(runnableNodata);
+                    handler.post(runnableNoData);
                     e.printStackTrace();
                 }
                 catch (IOException e)
@@ -371,11 +354,11 @@ public class DynamicFragment extends Fragment
                     userDynamicApi.getHistoryDynamic();
                     dynamicList.addAll(userDynamicApi.getDynamicList());
                     isLoading = false;
-                    handler.post(runnableAddlist);
+                    handler.post(runnableMore);
                 }
                 catch (IOException e)
                 {
-                    handler.post(runnableNoWebH);
+                    handler.post(runnableMoreNoWeb);
                     e.printStackTrace();
                 }
             }
@@ -404,17 +387,27 @@ public class DynamicFragment extends Fragment
                     @Override
                     public void run()
                     {
-                        String s = userDynamicApi.likeDynamic(dy.getDynamicId(), dy.isLike ? "2" : "1");
-                        if(s.equals(""))
+                        try
                         {
-                            dy.isLike = !dy.isLike;
-                            dy.likeDynamic(dy.isLike ? 1 : -1);
-                            handler.post(runnableAddlist);
+                            String result = userDynamicApi.likeDynamic(dy.getDynamicId(), dy.isLike ? "2" : "1");
+                            if(result.equals(""))
+                            {
+                                dy.isLike = !dy.isLike;
+                                dy.likeDynamic(dy.isLike ? 1 : -1);
+                                handler.post(runnableMore);
+                            }
+                            else
+                            {
+                                Looper.prepare();
+                                Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
+                                Looper.loop();
+                            }
                         }
-                        else
+                        catch (IOException e)
                         {
+                            e.printStackTrace();
                             Looper.prepare();
-                            Toast.makeText(ctx, (dy.isLike ? "取消" : "点赞") + "失败：\n" + s, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ctx, "点赞失败！请检查网络...", Toast.LENGTH_SHORT).show();
                             Looper.loop();
                         }
                     }
@@ -460,17 +453,27 @@ public class DynamicFragment extends Fragment
                     @Override
                     public void run()
                     {
-                        String s = userDynamicApi.likeDynamic(dy.getDynamicId(2), dy.isLike ? "2" : "1");
-                        if(s.equals(""))
+                        try
                         {
-                            dy.isLike = !dy.isLike;
-                            dy.likeDynamic(dy.isLike ? 1 : -1);
-                            handler.post(runnableAddlist);
+                            String result = userDynamicApi.likeDynamic(dy.getDynamicId(2), dy.isLike ? "2" : "1");
+                            if(result.equals(""))
+                            {
+                                dy.isLike = !dy.isLike;
+                                dy.likeDynamic(dy.isLike ? 1 : -1);
+                                handler.post(runnableMore);
+                            }
+                            else
+                            {
+                                Looper.prepare();
+                                Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
+                                Looper.loop();
+                            }
                         }
-                        else
+                        catch (IOException e)
                         {
+                            e.printStackTrace();
                             Looper.prepare();
-                            Toast.makeText(ctx, (dy.isLike ? "取消" : "点赞") + "失败：\n" + s, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ctx, "点赞失败！请检查网络...", Toast.LENGTH_SHORT).show();
                             Looper.loop();
                         }
                     }
@@ -532,17 +535,27 @@ public class DynamicFragment extends Fragment
                     @Override
                     public void run()
                     {
-                        String s = userDynamicApi.likeDynamic(dy.getDynamicId(), dy.isLike ? "2" : "1");
-                        if(s.equals(""))
+                        try
                         {
-                            dy.isLike = !dy.isLike;
-                            dy.likeDynamic(dy.isLike ? 1 : -1);
-                            handler.post(runnableAddlist);
+                            String result = userDynamicApi.likeDynamic(dy.getDynamicId(), dy.isLike ? "2" : "1");
+                            if(result.equals(""))
+                            {
+                                dy.isLike = !dy.isLike;
+                                dy.likeDynamic(dy.isLike ? 1 : -1);
+                                handler.post(runnableMore);
+                            }
+                            else
+                            {
+                                Looper.prepare();
+                                Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
+                                Looper.loop();
+                            }
                         }
-                        else
+                        catch (IOException e)
                         {
+                            e.printStackTrace();
                             Looper.prepare();
-                            Toast.makeText(ctx, (dy.isLike ? "取消" : "点赞") + "失败：\n" + s, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ctx, "点赞失败！请检查网络...", Toast.LENGTH_SHORT).show();
                             Looper.loop();
                         }
                     }
@@ -596,17 +609,27 @@ public class DynamicFragment extends Fragment
                     @Override
                     public void run()
                     {
-                        String s = userDynamicApi.likeDynamic(dy.getDynamicId(), dy.isLike ? "2" : "1");
-                        if(s.equals(""))
+                        try
                         {
-                            dy.isLike = !dy.isLike;
-                            dy.likeDynamic(dy.isLike ? 1 : -1);
-                            handler.post(runnableAddlist);
+                            String result = userDynamicApi.likeDynamic(dy.getDynamicId(), dy.isLike ? "2" : "1");
+                            if(result.equals(""))
+                            {
+                                dy.isLike = !dy.isLike;
+                                dy.likeDynamic(dy.isLike ? 1 : -1);
+                                handler.post(runnableMore);
+                            }
+                            else
+                            {
+                                Looper.prepare();
+                                Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
+                                Looper.loop();
+                            }
                         }
-                        else
+                        catch (IOException e)
                         {
+                            e.printStackTrace();
                             Looper.prepare();
-                            Toast.makeText(ctx, (dy.isLike ? "取消" : "点赞") + "失败：\n" + s, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ctx, "点赞失败！请检查网络...", Toast.LENGTH_SHORT).show();
                             Looper.loop();
                         }
                     }

@@ -12,6 +12,7 @@ import cn.luern0313.wristbilibili.models.ListVideoModel;
 import cn.luern0313.wristbilibili.models.UserListPeopleModel;
 import cn.luern0313.wristbilibili.models.UserModel;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
+import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
 /**
  * Created by liupe on 2018/11/13.
@@ -28,14 +29,14 @@ public class UserApi
 
     private UserModel userModel;
 
-    public UserApi(final String cookie, String csrf, String access_key, String mid)
+    public UserApi(String mid)
     {
-        this.csrf = csrf;
-        this.access_key = access_key;
+        this.csrf = SharedPreferencesUtil.getString(SharedPreferencesUtil.csrf, "");
+        this.access_key = SharedPreferencesUtil.getString(SharedPreferencesUtil.accessKey, "");
         this.mid = mid;
 
         webHeaders = new ArrayList<String>(){{
-            add("Cookie"); add(cookie);
+            add("Cookie"); add(SharedPreferencesUtil.getString(SharedPreferencesUtil.cookies, ""));
             add("Referer"); add("https://www.bilibili.com/");
             add("User-Agent"); add(ConfInfoApi.USER_AGENT_WEB);
         }};
@@ -46,10 +47,9 @@ public class UserApi
         try
         {
             String url = "http://app.bilibili.com/x/v2/space";
-            String temp_per = "access_key=" + access_key + "&appkey=" + ConfInfoApi.getConf("appkey") +
-                    "&build=" + ConfInfoApi.getConf("build") + "&mobi_app=" + ConfInfoApi.getConf("mobi_app") +
-                    "&platform=" + ConfInfoApi.getConf("platform") + "&ps=20&ts=" + (int) (System.currentTimeMillis() / 1000) +
-                    "&vmid=" + mid;
+            String temp_per = "access_key=" + access_key + "&appkey=" + ConfInfoApi.getConf("appkey") + "&build=" +
+                    ConfInfoApi.getConf("build") + "&mobi_app=" + ConfInfoApi.getConf("mobi_app") + "&platform=" +
+                    ConfInfoApi.getConf("platform") + "&ps=20&ts=" + (int) (System.currentTimeMillis() / 1000) + "&vmid=" + mid;
             String sign = ConfInfoApi.calc_sign(temp_per, ConfInfoApi.getConf("app_secret"));
             JSONObject result = new JSONObject(NetWorkUtil.get(url + "?" + temp_per + "&sign=" + sign, webHeaders).body().string());
             if(result.optInt("code") == 0)

@@ -9,24 +9,18 @@ import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.models.ListVideoModel;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
+import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
 /**
  * 被 luern0313 创建于 2020/4/30.
  */
 public class HistoryApi
 {
-    private String cookie;
-    private String csrf;
-    private String mid;
-
     private ArrayList<String> webHeaders;
-    public HistoryApi(final String cookie, String csrf, String mid)
+    public HistoryApi()
     {
-        this.cookie = cookie;
-        this.csrf = csrf;
-        this.mid = mid;
         webHeaders = new ArrayList<String>(){{
-            add("Cookie"); add(cookie);
+            add("Cookie"); add(SharedPreferencesUtil.getString(SharedPreferencesUtil.cookies, ""));
             add("Referer"); add("https://www.bilibili.com/");
             add("User-Agent"); add(ConfInfoApi.USER_AGENT_WEB);
         }};

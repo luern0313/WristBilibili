@@ -145,9 +145,7 @@ public class WatchlaterFragment extends Fragment
             {
                 try
                 {
-                    watchLaterApi = new WatchLaterApi(MainActivity.sharedPreferences.getString("cookies", ""),
-                        MainActivity.sharedPreferences.getString("csrf", ""),
-                        MainActivity.sharedPreferences.getString("mid", ""));
+                    watchLaterApi = new WatchLaterApi();
                     watchLaterVideoArrayList = watchLaterApi.getWatchLater();
                     if(watchLaterVideoArrayList != null && watchLaterVideoArrayList.size() != 0)
                     {

@@ -45,7 +45,7 @@ public class UnsupportedLinkActivity extends AppCompatActivity
         else
             url = Uri.parse(intent.getStringExtra("url"));
 
-        unsupportedLinkApi = new UnsupportedLinkApi(ctx, url);
+        unsupportedLinkApi = new UnsupportedLinkApi(url);
 
         if(unsupportedLinkApi.getIntent() != null)
         {

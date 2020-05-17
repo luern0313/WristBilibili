@@ -1,23 +1,19 @@
 package cn.luern0313.wristbilibili.ui;
 
-import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
 
 import java.io.File;
 
+import androidx.appcompat.app.AppCompatActivity;
 import cn.luern0313.wristbilibili.R;
+import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
 public class LogsoffActivity extends AppCompatActivity
 {
     Context ctx;
-    SharedPreferences sharedPreferences;
-    SharedPreferences.Editor editor;
-
     LinearLayout nologinLayout;
 
     @Override
@@ -27,27 +23,23 @@ public class LogsoffActivity extends AppCompatActivity
         setContentView(R.layout.activity_logsoff);
 
         ctx = this;
-        sharedPreferences = getSharedPreferences("default", Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
-
         nologinLayout = findViewById(R.id.logs_nologin);
 
-        boolean isLogin = MainActivity.sharedPreferences.contains("cookies");
+        boolean isLogin = SharedPreferencesUtil.contains(SharedPreferencesUtil.cookies);
         if(!isLogin) nologinLayout.setVisibility(View.VISIBLE);
     }
 
     public void clickLogsoff(View view)
     {
         new File(getFilesDir(), "head.png").delete();
-        editor.remove("cookies");
-        editor.remove("mid");
-        editor.remove("csrf");
+        SharedPreferencesUtil.removeValue(SharedPreferencesUtil.cookies);
+        SharedPreferencesUtil.removeValue(SharedPreferencesUtil.mid);
+        SharedPreferencesUtil.removeValue(SharedPreferencesUtil.csrf);
 
-        editor.remove("userName");
-        editor.remove("userCoin");
-        editor.remove("userLV");
-        editor.remove("userVip");
-        editor.commit();
+        SharedPreferencesUtil.removeValue(SharedPreferencesUtil.userName);
+        SharedPreferencesUtil.removeValue(SharedPreferencesUtil.userCoin);
+        SharedPreferencesUtil.removeValue(SharedPreferencesUtil.userLV);
+        SharedPreferencesUtil.removeValue(SharedPreferencesUtil.userVip);
 
         android.os.Process.killProcess(android.os.Process.myPid());
     }

@@ -1,8 +1,6 @@
 package cn.luern0313.wristbilibili.ui;
 
-import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -14,14 +12,14 @@ import android.widget.Toast;
 
 import java.io.IOException;
 
+import androidx.appcompat.app.AppCompatActivity;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.SendDynamicApi;
+import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
 public class SueActivity extends AppCompatActivity
 {
     Context ctx;
-    SharedPreferences sharedPreferences;
-    SharedPreferences.Editor editor;
     SendDynamicApi sendDynamicApi;
 
     TextView uiText;
@@ -36,16 +34,14 @@ public class SueActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sue);
         ctx = this;
-        sharedPreferences = getSharedPreferences("default", Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
 
         uiText = findViewById(R.id.dt_text);
         uiLoading = findViewById(R.id.dt_loading);
         uiNologin = findViewById(R.id.dt_nologin);
-        sendDynamicApi = new SendDynamicApi(sharedPreferences.getString("cookies", ""), sharedPreferences.getString("mid", ""), sharedPreferences.getString("csrf", ""));
+        sendDynamicApi = new SendDynamicApi();
         uiText.setText(Html.fromHtml("<font color=\"#3F51B5\">#腕上哔哩# #用手表上b站# </font>" + sendDynamicApi.getNextShareText()));
 
-        if(!sharedPreferences.contains("cookies"))
+        if(!SharedPreferencesUtil.contains(SharedPreferencesUtil.cookies))
             uiNologin.setVisibility(View.VISIBLE);
 
         runnableUi = new Runnable()
