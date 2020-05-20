@@ -23,11 +23,8 @@ import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.adapter.DynamicAdapter;
 import cn.luern0313.wristbilibili.api.DynamicApi;
 import cn.luern0313.wristbilibili.api.SendDynamicApi;
-import cn.luern0313.wristbilibili.ui.CheckreplyActivity;
-import cn.luern0313.wristbilibili.ui.ImgActivity;
+import cn.luern0313.wristbilibili.models.DynamicModel;
 import cn.luern0313.wristbilibili.ui.SendDynamicActivity;
-import cn.luern0313.wristbilibili.ui.UserActivity;
-import cn.luern0313.wristbilibili.ui.VideoActivity;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
@@ -46,7 +43,7 @@ public class DynamicFragment extends Fragment
 
     private DynamicApi userDynamicApi;
     private SendDynamicApi sendDynamicApi;
-    private ArrayList<Object> dynamicList;
+    private ArrayList<DynamicModel> dynamicList;
 
     View rootLayout;
     private ListView dyListView;
@@ -235,9 +232,9 @@ public class DynamicFragment extends Fragment
         adapterListener = new DynamicAdapter.DynamicAdapterListener()
         {
             @Override
-            public void onClick(int viewId, int position, int mode)
+            public void onClick(int viewId, int position)
             {
-                onViewClick(viewId, position, mode);
+                onViewClick(viewId, position);
             }
         };
 
@@ -365,7 +362,12 @@ public class DynamicFragment extends Fragment
         }).start();
     }
 
-    private void onViewClick(int id, int position, int mode)
+    private void onViewClick(int id, int position)
+    {
+
+    }
+
+    /*private void onViewClick(int id, int position, int mode)
     {
         if(mode == 4)
         {
@@ -636,5 +638,5 @@ public class DynamicFragment extends Fragment
                 }).start();
             }
         }
-    }
+    }*/
 }

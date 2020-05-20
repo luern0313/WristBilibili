@@ -19,7 +19,6 @@ import cn.luern0313.wristbilibili.adapter.AnimationTimelineAdapter;
 import cn.luern0313.wristbilibili.api.AnimationTimelineApi;
 import cn.luern0313.wristbilibili.models.AnimationTimelineModel;
 import cn.luern0313.wristbilibili.ui.BangumiActivity;
-import cn.luern0313.wristbilibili.ui.MainActivity;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
@@ -107,7 +106,7 @@ public class AnimationTimelineFragment extends Fragment
             }
         };
 
-        isLogin = MainActivity.sharedPreferences.contains(SharedPreferencesUtil.cookies);
+        isLogin = SharedPreferencesUtil.contains(SharedPreferencesUtil.cookies);
         if(isLogin)
         {
             waveSwipeRefreshLayout.setRefreshing(true);

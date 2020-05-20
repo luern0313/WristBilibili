@@ -5,8 +5,8 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.util.LruCache;
+import android.view.View;
 import android.widget.ImageView;
-import android.widget.ListView;
 
 import java.io.IOException;
 
@@ -17,16 +17,16 @@ import java.io.IOException;
 public class ImageTaskUtil extends AsyncTask<String, Void, BitmapDrawable>
 {
     private String imageUrl;
-    private ListView listView;
+    private View view;
     private Resources listViewResources;
     private LruCache<String, BitmapDrawable> mImageCache;
 
 
-    public ImageTaskUtil(ListView listView, LruCache<String, BitmapDrawable> mImageCache)
+    public ImageTaskUtil(View view, LruCache<String, BitmapDrawable> mImageCache)
     {
         super();
-        this.listView = listView;
-        this.listViewResources = listView.getResources();
+        this.view = view;
+        this.listViewResources = view.getResources();
         this.mImageCache = mImageCache;
     }
 
@@ -57,7 +57,7 @@ public class ImageTaskUtil extends AsyncTask<String, Void, BitmapDrawable>
     protected void onPostExecute(BitmapDrawable result)
     {
         // 通过Tag找到我们需要的ImageView，如果该ImageView所在的item已被移出页面，就会直接返回null
-        ImageView iv = listView.findViewWithTag(imageUrl);
+        ImageView iv = view.findViewWithTag(imageUrl);
         if(iv != null && result != null)
         {
             iv.setImageDrawable(result);

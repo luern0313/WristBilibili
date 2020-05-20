@@ -155,23 +155,6 @@ public class ArticleApi
         return "未知错误";
     }
 
-    public String sendReply(String text) throws IOException
-    {
-        try
-        {
-            String url = "https://api.bilibili.com/x/v2/reply/add";
-            String per = "oid=" + articleModel.article_id + "&type=12&message=" + text + "&plat=1&jsonp=jsonp&csrf=" + csrf;
-            JSONObject result = new JSONObject(NetWorkUtil.post(url, per, webHeaders).body().string());
-            if(result.optInt("code") == 0)
-                return "";
-        }
-        catch (JSONException e)
-        {
-            e.printStackTrace();
-        }
-        return "发送评论失败";
-    }
-
     public String followUp() throws IOException
     {
         try

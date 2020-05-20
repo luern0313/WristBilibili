@@ -59,4 +59,5 @@ dependencies {
     implementation 'org.greenrobot:eventbus:3.1.1'
     implementation 'com.king.view:circleprogressview:1.1.1'
     implementation 'org.projectlombok:lombok:1.16.18'
+    implementation 'javax.annotation:javax.annotation-api:1.2'
 }

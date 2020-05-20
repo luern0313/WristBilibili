@@ -2,8 +2,6 @@ package cn.luern0313.wristbilibili;
 
 import org.junit.Test;
 
-import java.util.ArrayList;
-
 /**
  * Example local unit test, which will execute on the development machine (host).
  *
@@ -14,22 +12,23 @@ public class ExampleUnitTest
     @Test
     public void test() throws InterruptedException
     {
-        ArrayList<Student> studentArrayList = new ArrayList<Student>()
-        {{
-            add(new Student("1.txt"));
-        }};
-        System.out.println(studentArrayList.get(0).stuNo);
-        studentArrayList.get(0).stuNo = "2";
-        System.out.println(studentArrayList.get(0).stuNo);
+        Person p = new Student();
+        p.a();
     }
 
-    public class Student
+    public class Person
     {
-        String stuNo;
-
-        Student(String stuNo)
+        void a()
         {
-            this.stuNo = stuNo;
+            System.out.println("1");
+        }
+    }
+
+    public class Student extends Person
+    {
+        void a()
+        {
+            System.out.println("1");
         }
     }
 

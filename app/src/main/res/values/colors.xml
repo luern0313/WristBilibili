@@ -10,8 +10,10 @@
     <color name="gray_da">#DADADA</color>
     <color name="gray_d8">#D8D8D8</color>
     <color name="gray_bb">#BBBBBB</color>
+    <color name="gray_aa">#AAAAAA</color>
     <color name="gray_77">#777777</color>
     <color name="gray_44">#444444</color>
+    <color name="gray_22">#222222</color>
     <color name="black">#000000</color>
     <color name="alpha">#00000000</color>
     <color name="alpha_activity">#00fafafa</color>

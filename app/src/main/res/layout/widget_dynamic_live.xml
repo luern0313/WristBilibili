@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/dynamic_live_author"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:clickable="true"
+        android:focusable="true"
+        android:layout_marginStart="18dp"
+        android:layout_marginEnd="18dp"
+        android:layout_marginBottom="2dp">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/dynamic_live_author_img"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/img_default_head"/>
+
+        <TextView
+            android:id="@+id/dynamic_live_author_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textSize="13sp" />
+
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/dynamic_live_img_lay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/dynamic_live_author"
+        android:layout_marginStart="18dp"
+        android:layout_marginEnd="18dp">
+
+        <ImageView
+            android:id="@+id/dynamic_live_img"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/img_default_vid"
+            app:layout_constraintDimensionRatio="68:40"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/dynamic_live_stat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/dynamic_live_img_lay"
+        android:layout_alignEnd="@id/dynamic_live_img_lay"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="6dp"
+        android:background="@drawable/shape_bg_article_card_live_notlive"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:paddingStart="3dp"
+        android:paddingTop="2dp"
+        android:paddingEnd="3dp"
+        android:paddingBottom="2dp"
+        android:text="未开播"
+        android:textColor="@color/white"
+        android:textSize="11sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@id/dynamic_live_img_lay"
+        android:layout_alignEnd="@id/dynamic_live_img_lay"
+        android:layout_alignBottom="@id/dynamic_live_img_lay"
+        android:background="@drawable/shape_bg_article_card_video_info"
+        android:orientation="horizontal"
+        android:paddingStart="4dp"
+        android:paddingTop="6dp"
+        android:paddingEnd="4dp"
+        android:paddingBottom="2dp">
+
+        <TextView
+            android:id="@+id/dynamic_live_area"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/white"
+            android:textSize="11sp" />
+
+
+        <TextView
+            android:id="@+id/dynamic_live_online"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:ellipsize="end"
+            android:gravity="end"
+            android:maxLines="1"
+            android:text="--"
+            android:textColor="@color/white"
+            android:textSize="11sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/dynamic_live_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/dynamic_live_img_lay"
+        android:layout_marginStart="18dp"
+        android:layout_marginEnd="18dp"
+        android:textSize="13sp"
+        android:textColor="@color/gray_22"/>
+
+</RelativeLayout>

@@ -17,9 +17,9 @@ import java.util.concurrent.TimeUnit;
 
 import javax.crypto.Cipher;
 
-import cn.luern0313.wristbilibili.ui.MainActivity;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
 import cn.luern0313.wristbilibili.util.QRCodeUtil;
+import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -98,9 +98,8 @@ public class UserLoginApi
             if(cookie.equals(""))
                 return "未知错误，请使用扫码登录";
 
-            MainActivity.editor.putString("access_key", access_token);
-            MainActivity.editor.putString("cookies", cookie);
-            MainActivity.editor.commit();
+            SharedPreferencesUtil.putString(SharedPreferencesUtil.accessKey, access_token);
+            SharedPreferencesUtil.putString(SharedPreferencesUtil.cookies, cookie);
             return "";
         }
         catch (IOException e)
@@ -149,12 +148,11 @@ public class UserLoginApi
                 String cookie = cookieList.get(i).split("; ")[0];
                 String[] cookie_list = cookie.split("=");
                 if(cookie_list[0].equals("DedeUserID"))
-                    MainActivity.editor.putString("mid", cookie_list[1]);
+                    SharedPreferencesUtil.putString(SharedPreferencesUtil.mid, cookie_list[1]);
                 else if(cookie_list[0].equals("bili_jct"))
-                    MainActivity.editor.putString("csrf", cookie_list[1]);
+                    SharedPreferencesUtil.putString(SharedPreferencesUtil.csrf, cookie_list[1]);
                 cookies.append(i == 0 ? "" : "; ").append(cookie);
             }
-            MainActivity.editor.commit();
             return cookies.toString();
         }
         catch (IOException e)

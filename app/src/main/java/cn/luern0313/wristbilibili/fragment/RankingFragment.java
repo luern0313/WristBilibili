@@ -31,12 +31,12 @@ import cn.luern0313.wristbilibili.api.RankingApi;
 import cn.luern0313.wristbilibili.api.VideoApi;
 import cn.luern0313.wristbilibili.models.RankingModel;
 import cn.luern0313.wristbilibili.models.VideoModel;
-import cn.luern0313.wristbilibili.ui.MainActivity;
 import cn.luern0313.wristbilibili.ui.TextActivity;
 import cn.luern0313.wristbilibili.ui.UserActivity;
 import cn.luern0313.wristbilibili.ui.VideoActivity;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
 import cn.luern0313.wristbilibili.util.ImageDownloaderUtil;
+import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
 /**
@@ -221,7 +221,7 @@ public class RankingFragment extends Fragment
                 ((TextView) uiPickUpView.findViewById(R.id.rk_pu_video_play)).setText(videoModel.video_play);
                 ((TextView) uiPickUpView.findViewById(R.id.rk_pu_video_danmaku)).setText(videoModel.video_danmaku);
 
-                if(MainActivity.sharedPreferences.getBoolean("firstPickUp", true))
+                if(SharedPreferencesUtil.getBoolean(SharedPreferencesUtil.firstPickUp, true))
                     uiPickUpView.findViewById(R.id.rk_pu_date_click).setVisibility(View.VISIBLE);
 
                 Drawable playNumDrawable = ctx.getResources().getDrawable(R.drawable.icon_video_play_num);
@@ -237,8 +237,7 @@ public class RankingFragment extends Fragment
                     public void onClick(View v)
                     {
                         uiPickUpView.findViewById(R.id.rk_pu_date_click).setVisibility(View.GONE);
-                        MainActivity.editor.putBoolean("firstPickUp", false);
-                        MainActivity.editor.apply();
+                        SharedPreferencesUtil.putBoolean(SharedPreferencesUtil.firstPickUp, false);
                         Intent intent = new Intent(ctx, TextActivity.class);
                         intent.putExtra("title", "说明");
                         intent.putExtra("text", ("Pick Up视频说明\n" + "每天由用户推荐并投票选出一个精选视频，在排行榜的上方Pick Up栏推广展示一天\n" + "目的是让一些制作精良但播放不高的视频获得更多的曝光\n" + "（相关规则和投票系统正在制作中，目前推荐视频为手动设置，你可以在qq或b站私聊开发者推荐你喜欢的视频）\n" + "（相关要求：连续五天不能推荐同一名up主的视频，上榜视频非引战或有争议视频，播放量少的视频优先等）").replaceAll("\n", "<br/><br/>"));

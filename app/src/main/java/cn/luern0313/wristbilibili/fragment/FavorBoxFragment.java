@@ -19,7 +19,7 @@ import cn.luern0313.wristbilibili.adapter.FavorBoxAdapter;
 import cn.luern0313.wristbilibili.api.FavorBoxApi;
 import cn.luern0313.wristbilibili.models.FavorBoxModel;
 import cn.luern0313.wristbilibili.ui.FavorvideoActivity;
-import cn.luern0313.wristbilibili.ui.MainActivity;
+import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
 /**
@@ -154,7 +154,7 @@ public class FavorBoxFragment extends Fragment
             }
         };
 
-        isLogin = MainActivity.sharedPreferences.contains("cookies");
+        isLogin = SharedPreferencesUtil.contains(SharedPreferencesUtil.cookies);
         if(isLogin)
         {
             waveSwipeRefreshLayout.setRefreshing(true);

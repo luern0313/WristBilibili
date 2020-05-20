@@ -18,8 +18,8 @@ import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.adapter.WatchlaterAdapter;
 import cn.luern0313.wristbilibili.api.WatchLaterApi;
 import cn.luern0313.wristbilibili.models.WatchLaterModel;
-import cn.luern0313.wristbilibili.ui.MainActivity;
 import cn.luern0313.wristbilibili.ui.VideoActivity;
+import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
 /**
@@ -121,7 +121,7 @@ public class WatchlaterFragment extends Fragment
             }
         });
 
-        isLogin = MainActivity.sharedPreferences.contains("cookies");
+        isLogin = SharedPreferencesUtil.contains(SharedPreferencesUtil.cookies);
         if(isLogin)
         {
             waveSwipeRefreshLayout.setRefreshing(true);
