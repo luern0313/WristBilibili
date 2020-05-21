@@ -8,8 +8,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="18dp"
         android:layout_marginEnd="18dp"
-        android:layout_marginTop="5dp"
-        android:background="@color/gray_ee"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="2dp"
         android:padding="10dp">
 
         <ImageView

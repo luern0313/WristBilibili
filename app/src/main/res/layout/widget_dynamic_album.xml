@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:descendantFocusability="afterDescendants">
 
     <TextView
         android:id="@+id/dynamic_album_author"
@@ -12,24 +14,26 @@
         android:clickable="true"
         android:focusable="true"
         android:textColor="@color/colorPrimary"
-        android:textSize="13sp"/>
+        android:textSize="13sp" />
 
-    <TextView
+    <cn.luern0313.wristbilibili.widget.FolderTextView
         android:id="@+id/dynamic_album_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/dynamic_album_author"
         android:layout_marginLeft="18dp"
         android:layout_marginRight="18dp"
         android:layout_marginBottom="2dp"
-        android:layout_below="@id/dynamic_album_author"/>
+        android:textSize="13sp"
+        app:fold_line="6"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/dynamic_album_img_lay"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/dynamic_album_text"
+        android:clipToPadding="false"
         android:paddingStart="18dp"
-        android:paddingEnd="18dp"
-        android:clipToPadding="false"/>
+        android:paddingEnd="18dp" />
 
 </RelativeLayout>

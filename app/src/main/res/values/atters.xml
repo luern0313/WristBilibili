@@ -1,7 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="AutoLineLayout">
-        <attr name="horizontalSpacing" format="dimension"/>
-        <attr name="verticalSpacing" format="dimension"/>
+    <declare-styleable name="FoldTextView111">
+        <attr name="showMaxLine" format="integer" />
+        <attr name="tipGravity" format="integer" />
+        <attr name="tipColor" format="reference|color" />
+        <attr name="tipClickable" format="boolean" />
+        <attr name="foldText" format="string" />
+        <attr name="expandText" format="string" />
+        <attr name="showTipAfterExpand" format="boolean" />
+        <attr name="isSetParentClick" format="boolean" />
     </declare-styleable>
+
+    <declare-styleable name="FolderTextView">
+        <attr name="fold_line" format="integer" />
+        <attr name="noFold" format="boolean" />
+        <attr name="fold_text" format="string" />
+        <attr name="unfold_text" format="string" />
+        <attr name="fold_text_color" format="color" />
+        <attr name="unfold_text_color" format="color" />
+    </declare-styleable>
+
 </resources>

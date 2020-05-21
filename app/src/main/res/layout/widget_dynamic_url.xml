@@ -11,13 +11,13 @@
         android:layout_marginStart="18dp"
         android:layout_marginEnd="18dp"
         android:clickable="true"
-        android:focusable="true"
         android:ellipsize="end"
+        android:focusable="true"
         android:maxLines="1"
-        android:textSize="13sp"
-        android:textColor="@color/colorPrimary"/>
+        android:textColor="@color/colorPrimary"
+        android:textSize="13sp" />
 
-    <TextView
+    <cn.luern0313.wristbilibili.widget.FolderTextView
         android:id="@+id/dynamic_url_dynamic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -25,7 +25,8 @@
         android:layout_marginStart="18dp"
         android:layout_marginEnd="18dp"
         android:layout_marginBottom="2dp"
-        android:textSize="13sp" />
+        android:textSize="13sp"
+        app:fold_line="6"/>
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -34,12 +35,12 @@
         android:layout_marginStart="18dp"
         android:layout_marginEnd="18dp"
         android:layout_marginBottom="2dp"
-        android:foreground="?android:attr/selectableItemBackground"
         android:clickable="true"
+        android:descendantFocusability="blocksDescendants"
         android:focusable="true"
-        app:cardElevation="0dp"
+        android:foreground="?android:attr/selectableItemBackground"
         app:cardCornerRadius="4dp"
-        android:descendantFocusability="blocksDescendants">
+        app:cardElevation="0dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -57,28 +58,28 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_toEndOf="@id/dynamic_url_img"
+                android:layout_centerVertical="true"
                 android:layout_marginStart="3dp"
                 android:layout_marginEnd="2dp"
-                android:layout_centerVertical="true"
+                android:layout_toEndOf="@id/dynamic_url_img"
                 android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/dynamic_url_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:maxLines="1"
                     android:ellipsize="end"
+                    android:maxLines="1"
                     android:textColor="@android:color/black"
-                    android:textSize="12sp"/>
+                    android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/dynamic_url_desc"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
-                    android:maxLines="1"
                     android:ellipsize="end"
+                    android:maxLines="1"
                     android:textSize="11sp" />
             </LinearLayout>
         </RelativeLayout>

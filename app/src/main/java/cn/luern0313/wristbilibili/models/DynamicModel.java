@@ -68,6 +68,7 @@ public class DynamicModel
     public class DynamicShareModel extends DynamicModel //1
     {
         private String shareText;
+        private boolean shareTextExpand;
 
         private int shareOriginType;
         private DynamicModel shareOriginCard;
@@ -115,6 +116,9 @@ public class DynamicModel
                     case 4300:
                         shareOriginCard = new DynamicFavorModel(card_origin, desc_origin, true);
                         break;
+                    default:
+                        shareOriginCard = new DynamicUnknownModel(card_origin, desc_origin, true);
+                        break;
                 }
             }
             catch (JSONException e)
@@ -131,6 +135,7 @@ public class DynamicModel
         private String albumAuthorName;
         private String albumAuthorUid;
         private String albumText;
+        private boolean albumTextExpand;
         private ArrayList<String> albumImg;
 
         public DynamicAlbumModel(JSONObject card, JSONObject desc, boolean isShared)
@@ -156,6 +161,7 @@ public class DynamicModel
         private String textAuthorName;
         private String textAuthorUid;
         private String textText;
+        private boolean textTextExpand;
 
         public DynamicTextModel(JSONObject card, JSONObject desc, boolean isShared)
         {
@@ -178,6 +184,7 @@ public class DynamicModel
         private String videoAid;
         private String videoBvid;
         private String videoDynamic;
+        private boolean videoDynamicExpand;
         private String videoTitle;
         private String videoImg;
         private String videoDesc;
@@ -212,6 +219,7 @@ public class DynamicModel
         private String articleAuthorImg;
         private String articleAuthorUid;
         private String articleDynamic;
+        private boolean articleDynamicExpand;
         private String articleTitle;
         private String articleImg;
         private String articleDesc;
@@ -268,6 +276,7 @@ public class DynamicModel
         private String urlAuthorName;
         private String urlAuthorUid;
         private String urlDynamic;
+        private boolean urlDynamicExpand;
         private String urlTitle;
         private String urlDesc;
         private String urlImg;
@@ -340,6 +349,9 @@ public class DynamicModel
             favorAuthorImg = card_upper.optString("face");
         }
     }
+
+    //4302付费课程
+    //懒得做了 看到这句话的好心人可以做一波2333
 
     public class DynamicUnknownModel extends DynamicModel
     {

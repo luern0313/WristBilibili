@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
+    <cn.luern0313.wristbilibili.widget.FolderTextView
         android:id="@+id/dynamic_share_dynamic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -11,7 +12,7 @@
         android:layout_marginEnd="19dp"
         android:layout_marginBottom="2dp"
         android:textSize="13sp"
-        android:visibility="visible" />
+        app:fold_line="6"/>
 
     <LinearLayout
         android:id="@+id/dynamic_share_share"
@@ -20,10 +21,10 @@
         android:layout_below="@id/dynamic_share_dynamic"
         android:background="@drawable/layer_bg_dynamic_share"
         android:clickable="true"
-        android:focusable="true"
         android:descendantFocusability="blocksDescendants"
+        android:focusable="true"
+        android:orientation="vertical"
         android:paddingTop="4dp"
-        android:paddingBottom="4dp"
-        android:orientation="vertical"/>
+        android:paddingBottom="4dp" />
 
 </RelativeLayout>

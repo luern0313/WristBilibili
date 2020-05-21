@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.Html;
-import android.util.Log;
 import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +28,8 @@ import cn.luern0313.wristbilibili.util.DataProcessUtil;
 import cn.luern0313.wristbilibili.util.DynamicAlbumDecoration;
 import cn.luern0313.wristbilibili.util.ImageTaskUtil;
 import cn.luern0313.wristbilibili.util.MyApplication;
+import cn.luern0313.wristbilibili.widget.ClickableMovementMethod;
+import cn.luern0313.wristbilibili.widget.FolderTextView;
 import de.hdodenhof.circleimageview.CircleImageView;
 import lombok.ToString;
 
@@ -135,11 +136,7 @@ public class DynamicAdapter extends BaseAdapter
             viewHolder = getViewHolder(dynamicModel, convertView, R.id.item_dynamic_dynamic);
         }
         else
-        {
             viewHolder = (ViewHolder) convertView.getTag();
-            Log.w("bilibili", "复用：" + viewHolder.type + "→" + dynamicModel.getCardType());
-            Log.w("bilibili", "复用type：" + getType(viewHolder.type) + "→" + getType(dynamicModel.getCardType()));
-        }
 
         handlerView(viewHolder, dynamicModel, position, false);
 
@@ -253,16 +250,20 @@ public class DynamicAdapter extends BaseAdapter
     {
         if(dm.getCardType() == 1)
         {
-            ViewHolder.ViewHolderShare viewHolder = (ViewHolder.ViewHolderShare) vh;
-            DynamicModel.DynamicShareModel dynamicModel = (DynamicModel.DynamicShareModel) dm;
+            final ViewHolder.ViewHolderShare viewHolder = (ViewHolder.ViewHolderShare) vh;
+            final DynamicModel.DynamicShareModel dynamicModel = (DynamicModel.DynamicShareModel) dm;
 
             viewHolder.share_dynamic.setText(dynamicModel.getShareText());
+            viewHolder.share_dynamic.setMovementMethod(ClickableMovementMethod.getInstance());
+            viewHolder.share_dynamic.setFocusable(false);
+            viewHolder.share_dynamic.setClickable(false);
+            viewHolder.share_dynamic.setLongClickable(false);
             ViewHolder shareViewHolder = getViewHolder(dynamicModel.getShareOriginCard(), vh.dynamic_lay, R.id.dynamic_share_share);
             handlerView(shareViewHolder, dynamicModel.getShareOriginCard(), position, true);
         }
         else if(dm.getCardType() == 2)
         {
-            ViewHolder.ViewHolderAlbum viewHolder = (ViewHolder.ViewHolderAlbum) vh;
+            final ViewHolder.ViewHolderAlbum viewHolder = (ViewHolder.ViewHolderAlbum) vh;
             final DynamicModel.DynamicAlbumModel dynamicModel = (DynamicModel.DynamicAlbumModel) dm;
 
             if(dynamicModel.isCardIsShared())
@@ -274,6 +275,10 @@ public class DynamicAdapter extends BaseAdapter
                 viewHolder.album_author.setVisibility(View.GONE);
 
             viewHolder.album_text.setText(dynamicModel.getAlbumText());
+            viewHolder.album_text.setMovementMethod(ClickableMovementMethod.getInstance());
+            viewHolder.album_text.setFocusable(false);
+            viewHolder.album_text.setClickable(false);
+            viewHolder.album_text.setLongClickable(false);
 
             DynamicAlbumImgAdapter.DynamicAlbumImgAdapterListener dynamicAlbumImgAdapterListener = new DynamicAlbumImgAdapter.DynamicAlbumImgAdapterListener()
             {
@@ -290,13 +295,14 @@ public class DynamicAdapter extends BaseAdapter
             LinearLayoutManager layoutManager = new LinearLayoutManager(ctx);
             layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
             viewHolder.album_img.setLayoutManager(layoutManager);
-            viewHolder.album_img.addItemDecoration(DynamicAlbumDecoration.createHorizontal(ctx, Color.argb(0, 0, 0, 0), DataProcessUtil.dip2px(ctx, 2)));
+            if(viewHolder.album_img.getItemDecorationCount() == 0)
+                viewHolder.album_img.addItemDecoration(DynamicAlbumDecoration.createHorizontal(ctx, Color.argb(0, 0, 0, 0), DataProcessUtil.dip2px(ctx, 2)));
             viewHolder.album_img.setAdapter(new DynamicAlbumImgAdapter(dynamicModel.getAlbumImg(), viewHolder.album_img, dynamicAlbumImgAdapterListener));
         }
         else if(dm.getCardType() == 4)
         {
             ViewHolder.ViewHolderText viewHolder = (ViewHolder.ViewHolderText) vh;
-            DynamicModel.DynamicTextModel dynamicModel = (DynamicModel.DynamicTextModel) dm;
+            final DynamicModel.DynamicTextModel dynamicModel = (DynamicModel.DynamicTextModel) dm;
 
             if(dynamicModel.isCardIsShared())
             {
@@ -307,16 +313,21 @@ public class DynamicAdapter extends BaseAdapter
                 viewHolder.text_author.setVisibility(View.GONE);
 
             viewHolder.text_text.setText(dynamicModel.getTextText());
+            viewHolder.text_text.setMovementMethod(ClickableMovementMethod.getInstance());
+            viewHolder.text_text.setFocusable(false);
+            viewHolder.text_text.setClickable(false);
+            viewHolder.text_text.setLongClickable(false);
         }
         else if(dm.getCardType() == 8)
         {
             ViewHolder.ViewHolderVideo viewHolder = (ViewHolder.ViewHolderVideo) vh;
-            DynamicModel.DynamicVideoModel dynamicModel = (DynamicModel.DynamicVideoModel) dm;
+            final DynamicModel.DynamicVideoModel dynamicModel = (DynamicModel.DynamicVideoModel) dm;
 
             if(dynamicModel.isCardIsShared())
             {
                 viewHolder.video_author_name.setText(Html.fromHtml(String.format(ctx.getResources().
                         getString(R.string.dynamic_video_author), dynamicModel.getVideoAuthorName())));
+                viewHolder.video_author_img.setImageResource(R.drawable.img_default_head);
                 viewHolder.video_author_img.setTag(dynamicModel.getVideoAuthorImg());
                 BitmapDrawable a = setImageFormWeb(dynamicModel.getVideoAuthorImg());
                 if(a != null) viewHolder.video_author_img.setImageDrawable(a);
@@ -328,6 +339,10 @@ public class DynamicAdapter extends BaseAdapter
             if(!dynamicModel.getVideoDynamic().equals(""))
             {
                 viewHolder.video_dynamic.setText(dynamicModel.getVideoDynamic());
+                viewHolder.video_dynamic.setMovementMethod(ClickableMovementMethod.getInstance());
+                viewHolder.video_dynamic.setFocusable(false);
+                viewHolder.video_dynamic.setClickable(false);
+                viewHolder.video_dynamic.setLongClickable(false);
                 viewHolder.video_dynamic.setVisibility(View.VISIBLE);
             }
             else
@@ -336,6 +351,7 @@ public class DynamicAdapter extends BaseAdapter
             viewHolder.video_desc.setText(String.format(ctx.getResources().getString(R.string.dynamic_video_desc), dynamicModel.getVideoDuration(),
                                                         dynamicModel.getVideoPlay(), dynamicModel.getVideoDanmaku()));
             viewHolder.video_title.setText(dynamicModel.getVideoTitle());
+            viewHolder.video_img.setImageResource(R.drawable.img_default_vid);
 
             viewHolder.video_img.setTag(dynamicModel.getVideoImg());
             BitmapDrawable a = setImageFormWeb(dynamicModel.getVideoImg());
@@ -344,12 +360,13 @@ public class DynamicAdapter extends BaseAdapter
         else if(dm.getCardType() == 64)
         {
             ViewHolder.ViewHolderArticle viewHolder = (ViewHolder.ViewHolderArticle) vh;
-            DynamicModel.DynamicArticleModel dynamicModel = (DynamicModel.DynamicArticleModel) dm;
+            final DynamicModel.DynamicArticleModel dynamicModel = (DynamicModel.DynamicArticleModel) dm;
 
             if(dynamicModel.isCardIsShared())
             {
                 viewHolder.article_author_name.setText(Html.fromHtml(String.format(ctx.getResources().
                         getString(R.string.dynamic_article_author), dynamicModel.getArticleAuthorName())));
+                viewHolder.article_author_img.setImageResource(R.drawable.img_default_head);
                 viewHolder.article_author_img.setTag(dynamicModel.getArticleAuthorImg());
                 BitmapDrawable a = setImageFormWeb(dynamicModel.getArticleAuthorImg());
                 if(a != null) viewHolder.article_author_img.setImageDrawable(a);
@@ -361,6 +378,10 @@ public class DynamicAdapter extends BaseAdapter
             if(!dynamicModel.getArticleDynamic().equals(""))
             {
                 viewHolder.article_dynamic.setText(dynamicModel.getArticleDynamic());
+                viewHolder.article_dynamic.setMovementMethod(ClickableMovementMethod.getInstance());
+                viewHolder.article_dynamic.setFocusable(false);
+                viewHolder.article_dynamic.setClickable(false);
+                viewHolder.article_dynamic.setLongClickable(false);
                 viewHolder.article_dynamic.setVisibility(View.VISIBLE);
             }
             else
@@ -369,6 +390,7 @@ public class DynamicAdapter extends BaseAdapter
             viewHolder.article_title.setText(dynamicModel.getArticleTitle());
             viewHolder.article_desc.setText(dynamicModel.getArticleDesc());
             viewHolder.article_view.setText(String.format(ctx.getResources().getString(R.string.dynamic_article_view), dynamicModel.getArticleView()));
+            viewHolder.article_img.setImageResource(R.drawable.img_default_vid);
 
             viewHolder.article_img.setTag(dynamicModel.getArticleImg());
             BitmapDrawable a = setImageFormWeb(dynamicModel.getArticleImg());
@@ -389,6 +411,7 @@ public class DynamicAdapter extends BaseAdapter
 
             viewHolder.bangumi_title.setText(dynamicModel.getBangumiTitle());
             viewHolder.bangumi_desc.setText(String.format(ctx.getResources().getString(R.string.dynamic_bangumi_desc), dynamicModel.getBangumiView(), dynamicModel.getBangumiDanmaku()));
+            viewHolder.bangumi_img.setImageResource(R.drawable.img_default_vid);
 
             viewHolder.bangumi_img.setTag(dynamicModel.getBangumiImg());
             BitmapDrawable a = setImageFormWeb(dynamicModel.getBangumiImg());
@@ -397,7 +420,7 @@ public class DynamicAdapter extends BaseAdapter
         else if(dm.getCardType() == 2048)
         {
             ViewHolder.ViewHolderUrl viewHolder = (ViewHolder.ViewHolderUrl) vh;
-            DynamicModel.DynamicUrlModel dynamicModel = (DynamicModel.DynamicUrlModel) dm;
+            final DynamicModel.DynamicUrlModel dynamicModel = (DynamicModel.DynamicUrlModel) dm;
 
             if(dynamicModel.isCardIsShared())
             {
@@ -410,6 +433,10 @@ public class DynamicAdapter extends BaseAdapter
             if(!dynamicModel.getUrlDynamic().equals(""))
             {
                 viewHolder.url_dynamic.setText(dynamicModel.getUrlUrl());
+                viewHolder.url_dynamic.setMovementMethod(ClickableMovementMethod.getInstance());
+                viewHolder.url_dynamic.setFocusable(false);
+                viewHolder.url_dynamic.setClickable(false);
+                viewHolder.url_dynamic.setLongClickable(false);
                 viewHolder.url_dynamic.setVisibility(View.VISIBLE);
             }
             else
@@ -417,6 +444,7 @@ public class DynamicAdapter extends BaseAdapter
 
             viewHolder.url_title.setText(dynamicModel.getUrlTitle());
             viewHolder.url_desc.setText(dynamicModel.getUrlDesc());
+            viewHolder.url_img.setImageResource(R.drawable.img_default_animation);
 
             viewHolder.url_img.setTag(dynamicModel.getUrlImg());
             BitmapDrawable a = setImageFormWeb(dynamicModel.getUrlImg());
@@ -431,6 +459,7 @@ public class DynamicAdapter extends BaseAdapter
             {
                 viewHolder.live_author_name.setText(Html.fromHtml(String.format(ctx.getResources().
                         getString(R.string.dynamic_live_author), dynamicModel.getLiveAuthorName())));
+                viewHolder.live_author_img.setImageResource(R.drawable.img_default_head);
                 viewHolder.live_author_img.setTag(dynamicModel.getLiveAuthorImg());
                 BitmapDrawable a = setImageFormWeb(dynamicModel.getLiveAuthorImg());
                 if(a != null) viewHolder.live_author_img.setImageDrawable(a);
@@ -459,6 +488,7 @@ public class DynamicAdapter extends BaseAdapter
                 viewHolder.live_status.setBackgroundResource(R.drawable.shape_bg_article_card_live_notlive);
                 viewHolder.live_online.setText("--");
             }
+            viewHolder.live_img.setImageResource(R.drawable.img_default_vid);
 
             viewHolder.live_img.setTag(dynamicModel.getLiveImg());
             BitmapDrawable a = setImageFormWeb(dynamicModel.getLiveImg());
@@ -473,6 +503,7 @@ public class DynamicAdapter extends BaseAdapter
             {
                 viewHolder.favor_author_name.setText(Html.fromHtml(String.format(ctx.getResources().
                         getString(R.string.dynamic_favor_author), dynamicModel.getFavorAuthorName())));
+                viewHolder.favor_author_img.setImageResource(R.drawable.img_default_head);
                 viewHolder.favor_author_img.setTag(dynamicModel.getFavorAuthorImg());
                 BitmapDrawable a = setImageFormWeb(dynamicModel.getFavorAuthorImg());
                 if(a != null) viewHolder.favor_author_img.setImageDrawable(a);
@@ -483,6 +514,7 @@ public class DynamicAdapter extends BaseAdapter
 
             viewHolder.favor_title.setText(dynamicModel.getFavorTitle());
             viewHolder.favor_desc.setText(String.format(ctx.getResources().getString(R.string.dynamic_favor_desc), dynamicModel.getFavorCount()));
+            viewHolder.favor_img.setImageResource(R.drawable.img_default_vid);
 
             viewHolder.favor_img.setTag(dynamicModel.getFavorImg());
             BitmapDrawable a = setImageFormWeb(dynamicModel.getFavorImg());
@@ -602,7 +634,7 @@ public class DynamicAdapter extends BaseAdapter
 
         class ViewHolderShare extends ViewHolder
         {
-            TextView share_dynamic;
+            FolderTextView share_dynamic;
             LinearLayout share_share;
             ViewHolderShare(View view, int type)
             {
@@ -615,7 +647,7 @@ public class DynamicAdapter extends BaseAdapter
         class ViewHolderText extends ViewHolder
         {
             TextView text_author;
-            TextView text_text;
+            FolderTextView text_text;
             ViewHolderText(View view, int type)
             {
                 super(view, type);
@@ -627,7 +659,7 @@ public class DynamicAdapter extends BaseAdapter
         class ViewHolderAlbum extends ViewHolder
         {
             TextView album_author;
-            TextView album_text;
+            FolderTextView album_text;
             RecyclerView album_img;
             ViewHolderAlbum(View view, int type)
             {
@@ -643,7 +675,7 @@ public class DynamicAdapter extends BaseAdapter
             LinearLayout video_author_lay;
             CircleImageView video_author_img;
             TextView video_author_name;
-            TextView video_dynamic;
+            FolderTextView video_dynamic;
             ImageView video_img;
             TextView video_desc;
             TextView video_title;
@@ -665,7 +697,7 @@ public class DynamicAdapter extends BaseAdapter
             LinearLayout article_author_lay;
             CircleImageView article_author_img;
             TextView article_author_name;
-            TextView article_dynamic;
+            FolderTextView article_dynamic;
             TextView article_title;
             ImageView article_img;
             TextView article_desc;
@@ -703,7 +735,7 @@ public class DynamicAdapter extends BaseAdapter
         class ViewHolderUrl extends ViewHolder
         {
             TextView url_author;
-            TextView url_dynamic;
+            FolderTextView url_dynamic;
             ImageView url_img;
             TextView url_title;
             TextView url_desc;

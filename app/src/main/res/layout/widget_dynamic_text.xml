@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -12,15 +13,16 @@
         android:clickable="true"
         android:focusable="true"
         android:textColor="@color/colorPrimary"
-        android:textSize="13sp"/>
+        android:textSize="13sp" />
 
-    <TextView
+    <cn.luern0313.wristbilibili.widget.FolderTextView
         android:id="@+id/dynamic_text_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/dynamic_text_author"
         android:layout_marginLeft="18dp"
         android:layout_marginRight="18dp"
         android:layout_marginBottom="2dp"
-        android:layout_below="@id/dynamic_text_author"/>
+        app:fold_line="6"/>
 
 </RelativeLayout>

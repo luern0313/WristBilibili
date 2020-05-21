@@ -20,6 +20,8 @@
 
     <color name="pink_light">#fdd4e0</color>
     <color name="orange">#FB9E60</color>
+    <color name="yellow">#E78B1E</color>
+    <color name="yellow_gray">#fff1d4</color>
     <color name="shareText">#126845</color>
 
     <color name="activityBG">#fffafafa</color>

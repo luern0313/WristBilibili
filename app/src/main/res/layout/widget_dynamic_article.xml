@@ -31,7 +31,7 @@
 
     </LinearLayout>
 
-    <TextView
+    <cn.luern0313.wristbilibili.widget.FolderTextView
         android:id="@+id/dynamic_article_dynamic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -40,14 +40,14 @@
         android:layout_marginEnd="19dp"
         android:layout_marginBottom="2dp"
         android:textSize="13sp"
-        android:visibility="visible" />
+        app:fold_line="6" />
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/dynamic_article_dynamic"
         android:layout_marginStart="18dp"
         android:layout_marginEnd="18dp"
-        android:layout_below="@id/dynamic_article_dynamic"
         app:cardElevation="0dp">
 
         <LinearLayout
@@ -55,8 +55,8 @@
             android:layout_height="wrap_content"
             android:background="@drawable/shape_bg_dynamic_article_card"
             android:divider="@drawable/shape_divider_4"
-            android:showDividers="middle|beginning|end"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:showDividers="middle|beginning|end">
 
             <TextView
                 android:id="@+id/dynamic_article_title"
