@@ -26,6 +26,7 @@ public class VideoModel implements Serializable
     public String video_time;
     public String video_play;
     public String video_danmaku;
+    public String video_warning;
     public ArrayList<VideoPartModel> video_part_array_list = new ArrayList<>();
 
     public int video_detail_copyright;
@@ -68,6 +69,8 @@ public class VideoModel implements Serializable
         JSONObject video_stat = video.has("stat") ? video.optJSONObject("stat") : new JSONObject();
         video_play = DataProcessUtil.getView(video_stat.optInt("view"));
         video_danmaku = DataProcessUtil.getView(video_stat.optInt("danmaku"));
+
+        video_warning = video.optString("argue_msg");
 
         JSONArray video_parts = video.has("pages") ? video.optJSONArray("pages") : new JSONArray();
         for(int i = 0; i < video_parts.length(); i++)

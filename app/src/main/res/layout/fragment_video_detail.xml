@@ -70,6 +70,36 @@
 
             </cn.luern0313.wristbilibili.widget.AutoLineLayout>
 
+            <LinearLayout
+                android:id="@+id/vd_video_warning"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="14dp"
+                android:layout_marginRight="14dp"
+                android:background="@color/yellow_gray"
+                android:gravity="center"
+                android:paddingStart="2dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="2dp"
+                android:paddingBottom="4dp"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:layout_marginStart="4dp"
+                    android:src="@drawable/icon_warning" />
+
+                <TextView
+                    android:id="@+id/vd_video_warning_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="3dp"
+                    android:textColor="@color/yellow"
+                    android:textSize="11sp" />
+
+            </LinearLayout>
+
             <cn.carbs.android.expandabletextview.library.ExpandableTextView
                 android:id="@+id/vd_video_details"
                 android:layout_width="match_parent"
@@ -508,15 +538,15 @@
                 android:id="@+id/vd_season"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:descendantFocusability="blocksDescendants"
+                android:focusable="true"
                 android:gravity="center_vertical"
                 android:paddingStart="22dp"
                 android:paddingTop="4dp"
                 android:paddingEnd="22dp"
                 android:paddingBottom="4dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:descendantFocusability="blocksDescendants"
-                android:background="?android:attr/selectableItemBackground"
                 android:visibility="gone">
 
                 <ImageView
@@ -539,10 +569,10 @@
                     android:id="@+id/vd_season_detail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:layout_toEndOf="@id/vd_season_img"
                     android:layout_below="@id/vd_season_title"
                     android:layout_alignParentBottom="true"
+                    android:layout_marginStart="4dp"
+                    android:layout_toEndOf="@id/vd_season_img"
                     android:ellipsize="end"
                     android:maxLines="2"
                     android:textSize="12sp" />
@@ -554,12 +584,12 @@
                 android:id="@+id/vd_card_lay"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginTop="4dp"
                 android:layout_marginBottom="10dp"
                 android:background="?android:attr/selectableItemBackground"
                 android:clickable="true"
                 android:descendantFocusability="blocksDescendants"
                 android:focusable="true"
-                android:layout_marginTop="4dp"
                 android:paddingTop="4dp"
                 android:paddingBottom="4dp">
 

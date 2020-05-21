@@ -142,6 +142,12 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
             rootLayout.findViewById(R.id.vd_video_bvid).setVisibility(View.GONE);
         else
             ((TextView) rootLayout.findViewById(R.id.vd_video_bvid)).setText(videoModel.video_bvid);
+        if(!videoModel.video_warning.equals(""))
+        {
+            ((TextView) rootLayout.findViewById(R.id.vd_video_warning_text)).setText(videoModel.video_warning);
+            rootLayout.findViewById(R.id.vd_video_warning).setVisibility(View.VISIBLE);
+        }
+
         ((TextView) rootLayout.findViewById(R.id.vd_video_details)).setText(videoModel.video_desc);
         ((TextView) rootLayout.findViewById(R.id.vd_card_name)).setText(videoModel.video_up_name);
         ((TextView) rootLayout.findViewById(R.id.vd_card_sen)).setText("粉丝：" + DataProcessUtil.getView(videoModel.video_up_fan_num));
