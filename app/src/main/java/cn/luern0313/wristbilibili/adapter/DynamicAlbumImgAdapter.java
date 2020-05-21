@@ -25,30 +25,12 @@ public class DynamicAlbumImgAdapter extends RecyclerView.Adapter<DynamicAlbumImg
     private LruCache<String, BitmapDrawable> mImageCache;
     private DynamicAlbumImgAdapterListener dynamicAlbumImgAdapterListener;
 
-    public DynamicAlbumImgAdapter(ArrayList<String> urlArrayList, RecyclerView recyclerView, DynamicAlbumImgAdapterListener dynamicAlbumImgAdapterListener)
+    public DynamicAlbumImgAdapter(ArrayList<String> urlArrayList, RecyclerView recyclerView, LruCache mImageCache, DynamicAlbumImgAdapterListener dynamicAlbumImgAdapterListener)
     {
         this.recyclerView = recyclerView;
         this.urlArrayList = urlArrayList;
         this.dynamicAlbumImgAdapterListener = dynamicAlbumImgAdapterListener;
-
-        int maxCache = (int) Runtime.getRuntime().maxMemory();
-        int cacheSize = maxCache / 6;
-        mImageCache = new LruCache<String, BitmapDrawable>(cacheSize)
-        {
-            @Override
-            protected int sizeOf(String key, BitmapDrawable value)
-            {
-                try
-                {
-                    return value.getBitmap().getByteCount();
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
-                return 0;
-            }
-        };
+        this.mImageCache = mImageCache;
     }
 
     class ViewHolder extends RecyclerView.ViewHolder

@@ -57,7 +57,7 @@ public class DynamicAdapter extends BaseAdapter
         this.dynamicAdapterListener = dynamicAdapterListener;
 
         int maxCache = (int) Runtime.getRuntime().maxMemory();
-        int cacheSize = maxCache / 6;
+        int cacheSize = maxCache / 5;
         mImageCache = new LruCache<String, BitmapDrawable>(cacheSize)
         {
             @Override
@@ -297,7 +297,7 @@ public class DynamicAdapter extends BaseAdapter
             viewHolder.album_img.setLayoutManager(layoutManager);
             if(viewHolder.album_img.getItemDecorationCount() == 0)
                 viewHolder.album_img.addItemDecoration(DynamicAlbumDecoration.createHorizontal(ctx, Color.argb(0, 0, 0, 0), DataProcessUtil.dip2px(ctx, 2)));
-            viewHolder.album_img.setAdapter(new DynamicAlbumImgAdapter(dynamicModel.getAlbumImg(), viewHolder.album_img, dynamicAlbumImgAdapterListener));
+            viewHolder.album_img.setAdapter(new DynamicAlbumImgAdapter(dynamicModel.getAlbumImg(), viewHolder.album_img, mImageCache, dynamicAlbumImgAdapterListener));
         }
         else if(dm.getCardType() == 4)
         {
