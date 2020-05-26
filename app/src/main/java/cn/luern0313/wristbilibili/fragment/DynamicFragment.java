@@ -6,9 +6,11 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.ListView;
@@ -22,9 +24,13 @@ import androidx.fragment.app.Fragment;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.adapter.DynamicAdapter;
 import cn.luern0313.wristbilibili.api.DynamicApi;
+import cn.luern0313.wristbilibili.api.ReplyApi;
 import cn.luern0313.wristbilibili.api.SendDynamicApi;
 import cn.luern0313.wristbilibili.models.DynamicModel;
 import cn.luern0313.wristbilibili.ui.SendDynamicActivity;
+import cn.luern0313.wristbilibili.ui.UnsupportedLinkActivity;
+import cn.luern0313.wristbilibili.ui.UserActivity;
+import cn.luern0313.wristbilibili.util.DataProcessUtil;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
@@ -37,28 +43,33 @@ public class DynamicFragment extends Fragment
     private static final String ARG_DYNAMIC_IS_SHOW_SEND_BUTTON = "argDynamicIsShowSendButton";
     private static final String ARG_DYNAMIC_MID = "argDynamicMid";
 
-    Context ctx;
+    private Context ctx;
     private boolean isShowSendButton;
     private String mid;
 
-    private DynamicApi userDynamicApi;
+    private DynamicApi dynamicApi;
     private SendDynamicApi sendDynamicApi;
     private ArrayList<DynamicModel> dynamicList;
 
-    View rootLayout;
+    private View rootLayout;
     private ListView dyListView;
     private WaveSwipeRefreshLayout waveSwipeRefreshLayout;
     private View sendDynamicView;
     private Button sendDynamicButton;
     private View loadingView;
-    DynamicAdapter adapter;
+    private DynamicAdapter dynamicAdapter;
     private DynamicAdapter.DynamicAdapterListener adapterListener;
 
-    Handler handler = new Handler();
+    private Handler handler = new Handler();
     private Runnable runnableUi, runnableNoWeb, runnableMore, runnableNoData, runnableMoreNoWeb;
 
     private boolean isLoading = true;
     public static boolean isLogin = false;
+    private int dynamicWidth;
+
+    final private int RESULT_DYNAMIC_SEND_DYNAMIC = 101;
+    final private int RESULT_DYNAMIC_SHARE = 102;
+    final private int RESULT_DYNAMIC_REPLY = 103;
 
     public DynamicFragment() {}
 
@@ -93,6 +104,11 @@ public class DynamicFragment extends Fragment
         sendDynamicView = inflater.inflate(R.layout.widget_dy_senddynamic, null);
         sendDynamicButton = sendDynamicView.findViewById(R.id.wid_dy_senddynamic);
 
+        WindowManager manager = getActivity().getWindowManager();
+        DisplayMetrics outMetrics = new DisplayMetrics();
+        manager.getDefaultDisplay().getMetrics(outMetrics);
+        dynamicWidth = outMetrics.widthPixels - DataProcessUtil.dip2px(ctx, 18) * 2;
+
         if(isShowSendButton)
             dyListView.addHeaderView(sendDynamicView);
         dyListView.addFooterView(loadingView);
@@ -113,8 +129,8 @@ public class DynamicFragment extends Fragment
                 dyListView.setVisibility(View.VISIBLE);
 
                 waveSwipeRefreshLayout.setRefreshing(false);
-                adapter = new DynamicAdapter(inflater, dynamicList, dyListView, adapterListener);
-                dyListView.setAdapter(adapter);
+                dynamicAdapter = new DynamicAdapter(inflater, dynamicList, dyListView, dynamicWidth, adapterListener);
+                dyListView.setAdapter(dynamicAdapter);
             }
         };
 
@@ -160,7 +176,7 @@ public class DynamicFragment extends Fragment
             @Override
             public void run()
             {
-                adapter.notifyDataSetChanged();
+                dynamicAdapter.notifyDataSetChanged();
             }
         };
 
@@ -225,16 +241,16 @@ public class DynamicFragment extends Fragment
             {
                 Intent intent = new Intent(ctx, SendDynamicActivity.class);
                 intent.putExtra("is_share", false);
-                startActivityForResult(intent, 0);
+                startActivityForResult(intent, RESULT_DYNAMIC_SEND_DYNAMIC);
             }
         });
 
         adapterListener = new DynamicAdapter.DynamicAdapterListener()
         {
             @Override
-            public void onClick(int viewId, int position)
+            public void onClick(int viewId, int position, boolean isShared)
             {
-                onViewClick(viewId, position);
+                onViewClick(viewId, position, isShared);
             }
         };
 
@@ -254,55 +270,6 @@ public class DynamicFragment extends Fragment
         return rootLayout;
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, final Intent data)
-    {
-        super.onActivityResult(requestCode, resultCode, data);
-        //dyid都是传过去再传回来
-        //我王境泽传数据就是乱死！也不建多余的变量！（没有真香）
-        if(requestCode == 0 && resultCode == 0 && data != null)
-        {
-            new Thread(new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    try
-                    {
-                        if(!data.getStringExtra("text").equals(""))
-                        {
-                            String result;
-                            if(!data.getBooleanExtra("is_share", false))
-                                result = sendDynamicApi.sendDynamic(data.getStringExtra("text"));
-                            else
-                                result = sendDynamicApi.sendDynamicWithDynamic(data.getStringExtra("share_dyid"), data.getStringExtra("text"));
-                            if(result.equals(""))
-                            {
-                                Looper.prepare();
-                                Toast.makeText(ctx, "发送成功！", Toast.LENGTH_SHORT).show();
-                                Looper.loop();
-                                getDynamic();
-                            }
-                            else
-                            {
-                                Looper.prepare();
-                                Toast.makeText(ctx, "发送失败，" + result, Toast.LENGTH_SHORT).show();
-                                Looper.loop();
-                            }
-                        }
-                    }
-                    catch (IOException e)
-                    {
-                        e.printStackTrace();
-                        Looper.prepare();
-                        Toast.makeText(ctx, "发送失败，请检查网络？", Toast.LENGTH_SHORT).show();
-                        Looper.loop();
-                    }
-                }
-            }).start();
-        }
-    }
-
     private void getDynamic()
     {
         new Thread(new Runnable()
@@ -312,9 +279,9 @@ public class DynamicFragment extends Fragment
             {
                 try
                 {
-                    userDynamicApi = new DynamicApi(mid, isShowSendButton);
-                    userDynamicApi.getDynamic();
-                    dynamicList = userDynamicApi.getDynamicList();
+                    dynamicApi = new DynamicApi(mid, isShowSendButton);
+                    dynamicApi.getDynamic();
+                    dynamicList = dynamicApi.getDynamicList();
                     if(dynamicList != null && dynamicList.size() != 0)
                     {
                         isLoading = false;
@@ -348,8 +315,8 @@ public class DynamicFragment extends Fragment
             {
                 try
                 {
-                    userDynamicApi.getHistoryDynamic();
-                    dynamicList.addAll(userDynamicApi.getDynamicList());
+                    dynamicApi.getHistoryDynamic();
+                    dynamicList.addAll(dynamicApi.getDynamicList());
                     isLoading = false;
                     handler.post(runnableMore);
                 }
@@ -362,281 +329,316 @@ public class DynamicFragment extends Fragment
         }).start();
     }
 
-    private void onViewClick(int id, int position)
+    private void onViewClick(int id, int position, boolean isShared)
     {
-
+        final DynamicModel dynamicModel = dynamicList.get(position);
+        if(id == R.id.item_dynamic_author_lay)
+        {
+            Intent intent = new Intent(ctx, UserActivity.class);
+            intent.putExtra("mid", dynamicModel.getCardAuthorUid());
+            startActivity(intent);
+        }
+        else if(id == R.id.item_dynamic_share_lay)
+        {
+            Intent intent = new Intent(ctx, SendDynamicActivity.class);
+            intent.putExtra("is_share", true);
+            intent.putExtra("share_up", dynamicModel.getCardAuthorName());
+            intent.putExtra("share_id", dynamicModel.getCardId());
+            getShareIntent(intent, dynamicModel);
+            startActivityForResult(intent, RESULT_DYNAMIC_SHARE);
+        }
+        else if(id == R.id.item_dynamic_reply_lay)
+        {
+            Intent intent = new Intent(ctx, SendDynamicActivity.class);
+            intent.putExtra("reply_oid", dynamicModel.getCardId());
+            intent.putExtra("reply_type", ReplyApi.typeMap.get(dynamicModel.getCardType()));
+            startActivityForResult(intent, RESULT_DYNAMIC_REPLY);
+        }
+        else if(id == R.id.item_dynamic_like_lay)
+        {
+            new Thread(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    try
+                    {
+                        String result = dynamicApi.likeDynamic(dynamicModel.getCardId(), dynamicModel.isCardUserLike() ? "2" : "1");
+                        if(result.equals(""))
+                        {
+                            dynamicModel.setCardIsShared(!dynamicModel.isCardUserLike());
+                            handler.post(runnableMore);
+                        }
+                        else
+                        {
+                            Looper.prepare();
+                            Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
+                            Looper.loop();
+                        }
+                    }
+                    catch (IOException e)
+                    {
+                        e.printStackTrace();
+                        Looper.prepare();
+                        Toast.makeText(ctx, "操作失败，请检查网络...", Toast.LENGTH_SHORT).show();
+                        Looper.loop();
+                    }
+                }
+            }).start();
+        }
+        else if(id == R.id.item_dynamic_lay)
+        {
+            Intent intent = new Intent(ctx, UnsupportedLinkActivity.class);
+            intent.putExtra("url", dynamicModel.getCardUrl());
+            startActivity(intent);
+        }
+        else if(id == R.id.dynamic_share_share)
+        {
+            Intent intent = new Intent(ctx, UnsupportedLinkActivity.class);
+            intent.putExtra("url", ((DynamicModel.DynamicShareModel) dynamicModel).getShareOriginCard().getCardUrl());
+            startActivity(intent);
+        }
+        else if(id == R.id.dynamic_album_author)
+        {
+            Intent intent = new Intent(ctx, UserActivity.class);
+            intent.putExtra("mid", ((DynamicModel.DynamicAlbumModel) ((DynamicModel.DynamicShareModel) dynamicModel).getShareOriginCard()).getAlbumAuthorUid());
+            startActivity(intent);
+        }
+        else if(id == R.id.dynamic_text_author)
+        {
+            Intent intent = new Intent(ctx, UserActivity.class);
+            intent.putExtra("mid", ((DynamicModel.DynamicTextModel) ((DynamicModel.DynamicShareModel) dynamicModel).getShareOriginCard()).getTextAuthorUid());
+            startActivity(intent);
+        }
+        else if(id == R.id.dynamic_video_author)
+        {
+            Intent intent = new Intent(ctx, UserActivity.class);
+            intent.putExtra("mid", ((DynamicModel.DynamicVideoModel) ((DynamicModel.DynamicShareModel) dynamicModel).getShareOriginCard()).getVideoAuthorUid());
+            startActivity(intent);
+        }
+        else if(id == R.id.dynamic_article_author)
+        {
+            Intent intent = new Intent(ctx, UserActivity.class);
+            intent.putExtra("mid", ((DynamicModel.DynamicArticleModel) ((DynamicModel.DynamicShareModel) dynamicModel).getShareOriginCard()).getArticleAuthorUid());
+            startActivity(intent);
+        }
+        else if(id == R.id.dynamic_url_author)
+        {
+            Intent intent = new Intent(ctx, UserActivity.class);
+            intent.putExtra("mid", ((DynamicModel.DynamicUrlModel) ((DynamicModel.DynamicShareModel) dynamicModel).getShareOriginCard()).getUrlAuthorUid());
+            startActivity(intent);
+        }
+        else if(id == R.id.dynamic_url_url)
+        {
+            if(!isShared)
+            {
+                Intent intent = new Intent(ctx, UnsupportedLinkActivity.class);
+                intent.putExtra("url", ((DynamicModel.DynamicUrlModel) dynamicModel).getUrlUrl());
+                startActivity(intent);
+            }
+            else
+            {
+                Intent intent = new Intent(ctx, UnsupportedLinkActivity.class);
+                intent.putExtra("url", ((DynamicModel.DynamicUrlModel) ((DynamicModel.DynamicShareModel) dynamicModel).getShareOriginCard()).getUrlUrl());
+                startActivity(intent);
+            }
+        }
+        else if(id == R.id.dynamic_live_author)
+        {
+            Intent intent = new Intent(ctx, UserActivity.class);
+            intent.putExtra("mid", ((DynamicModel.DynamicLiveModel) ((DynamicModel.DynamicShareModel) dynamicModel).getShareOriginCard()).getLiveAuthorUid());
+            startActivity(intent);
+        }
+        else if(id == R.id.dynamic_favor_author)
+        {
+            Intent intent = new Intent(ctx, UserActivity.class);
+            intent.putExtra("mid", ((DynamicModel.DynamicFavorModel) ((DynamicModel.DynamicShareModel) dynamicModel).getShareOriginCard()).getFavorAuthorUid());
+            startActivity(intent);
+        }
     }
 
-    /*private void onViewClick(int id, int position, int mode)
+
+    @Override
+    public void onActivityResult(final int requestCode, int resultCode, final Intent data)
     {
-        if(mode == 4)
+        super.onActivityResult(requestCode, resultCode, data);
+        //dyid都是传过去再传回来
+        //我王境泽传数据就是乱死！也不建多余的变量！（没有真香）
+        if(resultCode != 0) return;
+        if(requestCode == RESULT_DYNAMIC_SEND_DYNAMIC)
         {
-            final DynamicApi.cardOriginalVideo dy = (DynamicApi.cardOriginalVideo) dynamicList.get(position);
-            if(id == R.id.liov_lay)
+            new Thread(new Runnable()
             {
-                startActivity(VideoActivity.getActivityIntent(ctx, dy.getVideoAid(), ""));
-            }
-            else if(id == R.id.liov_head)
-            {
-                Intent intent = new Intent(ctx, UserActivity.class);
-                intent.putExtra("mid", dy.getOwnerUid());
-                startActivity(intent);
-            }
-            else if(id == R.id.liov_likebu)
-            {
-                new Thread(new Runnable()
+                @Override
+                public void run()
                 {
-                    @Override
-                    public void run()
+                    try
                     {
-                        try
+                        String result = sendDynamicApi.sendDynamic(data.getStringExtra("text"));
+                        if(result.equals(""))
                         {
-                            String result = userDynamicApi.likeDynamic(dy.getDynamicId(), dy.isLike ? "2" : "1");
-                            if(result.equals(""))
-                            {
-                                dy.isLike = !dy.isLike;
-                                dy.likeDynamic(dy.isLike ? 1 : -1);
-                                handler.post(runnableMore);
-                            }
-                            else
-                            {
-                                Looper.prepare();
-                                Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
-                                Looper.loop();
-                            }
-                        }
-                        catch (IOException e)
-                        {
-                            e.printStackTrace();
                             Looper.prepare();
-                            Toast.makeText(ctx, "点赞失败！请检查网络...", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ctx, "发送成功！", Toast.LENGTH_SHORT).show();
+                            Looper.loop();
+                            getDynamic();
+                        }
+                        else
+                        {
+                            Looper.prepare();
+                            Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
                             Looper.loop();
                         }
                     }
-                }).start();
-            }
-        }
-        else if(mode == 3)
-        {
-            final DynamicApi.cardOriginalText dy = (DynamicApi.cardOriginalText) dynamicList.get(position);
-            if(id == R.id.liot_textimg)
-            {
-                Intent intent = new Intent(ctx, ImgActivity.class);
-                intent.putExtra("imgUrl", dy.getImgsSrc());
-                startActivity(intent);
-            }
-            else if(id == R.id.liot_head)
-            {
-                Intent intent = new Intent(ctx, UserActivity.class);
-                intent.putExtra("mid", dy.getUserUid());
-                startActivity(intent);
-            }
-            else if(id == R.id.liot_sharei)
-            {
-                Intent intent = new Intent(ctx, SendDynamicActivity.class);
-                intent.putExtra("is_share", true);
-                intent.putExtra("share_up", dy.getUserName());
-                intent.putExtra("share_img", Integer.valueOf(dy.getTextImgCount()) == 0 ? "" : dy.getImgsSrc()[0]);
-                intent.putExtra("share_title", dy.getDynamicText());
-                intent.putExtra("share_dyid", dy.getDynamicId(2));
-                startActivityForResult(intent, 0);
-            }
-            else if(id == R.id.liot_replybu)
-            {
-                Intent intent = new Intent(ctx, CheckreplyActivity.class);
-                intent.putExtra("oid", dy.getDynamicId(1));
-                intent.putExtra("type", dy.getReplyType());
-                startActivity(intent);
-            }
-            else if(id == R.id.liot_likebu)
-            {
-                new Thread(new Runnable()
-                {
-                    @Override
-                    public void run()
+                    catch (IOException e)
                     {
-                        try
+                        e.printStackTrace();
+                        Looper.prepare();
+                        Toast.makeText(ctx, "发送失败，请检查网络...", Toast.LENGTH_SHORT).show();
+                        Looper.loop();
+                    }
+                }
+            }).start();
+        }
+        else if(requestCode == RESULT_DYNAMIC_SHARE)
+        {
+            new Thread(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    try
+                    {
+                        String result = sendDynamicApi.sendDynamicWithDynamic(data.getStringExtra("share_id"), data.getStringExtra("text"));
+                        if(result.equals(""))
                         {
-                            String result = userDynamicApi.likeDynamic(dy.getDynamicId(2), dy.isLike ? "2" : "1");
-                            if(result.equals(""))
-                            {
-                                dy.isLike = !dy.isLike;
-                                dy.likeDynamic(dy.isLike ? 1 : -1);
-                                handler.post(runnableMore);
-                            }
-                            else
-                            {
-                                Looper.prepare();
-                                Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
-                                Looper.loop();
-                            }
-                        }
-                        catch (IOException e)
-                        {
-                            e.printStackTrace();
                             Looper.prepare();
-                            Toast.makeText(ctx, "点赞失败！请检查网络...", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ctx, "转发成功！", Toast.LENGTH_SHORT).show();
+                            Looper.loop();
+                        }
+                        else
+                        {
+                            Looper.prepare();
+                            Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
                             Looper.loop();
                         }
                     }
-                }).start();
-            }
-        }
-        else if(mode == 2)
-        {
-            final DynamicApi.cardUnknow dy = (DynamicApi.cardUnknow) dynamicList.get(position);
-            if(id == R.id.liuk_head)
-            {
-                Intent intent = new Intent(ctx, UserActivity.class);
-                intent.putExtra("mid", dy.getOwnerUid());
-                startActivity(intent);
-            }
-        }
-        else if(mode == 1)
-        {
-            final DynamicApi.cardShareVideo dy = (DynamicApi.cardShareVideo) dynamicList.get(position);
-            final DynamicApi.cardOriginalVideo sdy = dy.getOriginalVideo();
-            if(id == R.id.lisv_share_lay)
-            {
-                startActivity(VideoActivity.getActivityIntent(ctx, sdy.getVideoAid(), ""));
-            }
-            else if(id == R.id.lisv_head)
-            {
-                Intent intent = new Intent(ctx, UserActivity.class);
-                intent.putExtra("mid", dy.getUserUid());
-                startActivity(intent);
-            }
-            else if(id == R.id.lisv_share_user)
-            {
-                Intent intent = new Intent(ctx, UserActivity.class);
-                intent.putExtra("mid", sdy.getOwnerUid());
-                startActivity(intent);
-            }
-            else if(id == R.id.lisv_sharei)
-            {
-                Intent intent = new Intent(ctx, SendDynamicActivity.class);
-                intent.putExtra("is_share", true);
-                intent.putExtra("share_text", "//@" + dy.getUserName() + ":" + dy.getDynamicText());
-                intent.putExtra("share_up", sdy.getOwnerName());
-                intent.putExtra("share_img", sdy.getVideoImg());
-                intent.putExtra("share_title", sdy.getVideoTitle());
-                intent.putExtra("share_dyid", dy.getDynamicId());
-                startActivityForResult(intent, 0);
-            }
-            else if(id == R.id.lisv_replybu)
-            {
-                Intent intent = new Intent(ctx, CheckreplyActivity.class);
-                intent.putExtra("oid", dy.getDynamicId());
-                intent.putExtra("type", dy.getReplyType());
-                startActivity(intent);
-            }
-            else if(id == R.id.lisv_likebu)
-            {
-                new Thread(new Runnable()
-                {
-                    @Override
-                    public void run()
+                    catch (IOException e)
                     {
-                        try
+                        e.printStackTrace();
+                        Looper.prepare();
+                        Toast.makeText(ctx, "转发失败，请检查网络...", Toast.LENGTH_SHORT).show();
+                        Looper.loop();
+                    }
+                }
+            }).start();
+        }
+        else if(requestCode == RESULT_DYNAMIC_REPLY)
+        {
+            new Thread(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    try
+                    {
+                        String result = dynamicApi.sendReply(data.getStringExtra("reply_oid"),
+                                                             data.getStringExtra("reply_type"),
+                                                             data.getStringExtra("text"));
+                        if(result.equals(""))
                         {
-                            String result = userDynamicApi.likeDynamic(dy.getDynamicId(), dy.isLike ? "2" : "1");
-                            if(result.equals(""))
-                            {
-                                dy.isLike = !dy.isLike;
-                                dy.likeDynamic(dy.isLike ? 1 : -1);
-                                handler.post(runnableMore);
-                            }
-                            else
-                            {
-                                Looper.prepare();
-                                Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
-                                Looper.loop();
-                            }
-                        }
-                        catch (IOException e)
-                        {
-                            e.printStackTrace();
                             Looper.prepare();
-                            Toast.makeText(ctx, "点赞失败！请检查网络...", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ctx, "发送成功！", Toast.LENGTH_SHORT).show();
+                            Looper.loop();
+                        }
+                        else
+                        {
+                            Looper.prepare();
+                            Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
                             Looper.loop();
                         }
                     }
-                }).start();
-            }
-        }
-        else if(mode == 0)
-        {
-            final DynamicApi.cardShareText dy = (DynamicApi.cardShareText) dynamicList.get(position);
-            final DynamicApi.cardOriginalText sdy = dy.getOriginalText();
-            if(id == R.id.list_share_textimg)
-            {
-                Intent intent = new Intent(ctx, ImgActivity.class);
-                intent.putExtra("imgUrl", sdy.getImgsSrc());
-                startActivity(intent);
-            }
-            else if(id == R.id.list_head)
-            {
-                Intent intent = new Intent(ctx, UserActivity.class);
-                intent.putExtra("mid", dy.getUserUid());
-                startActivity(intent);
-            }
-            else if(id == R.id.list_share_user)
-            {
-                Intent intent = new Intent(ctx, UserActivity.class);
-                intent.putExtra("mid", sdy.getUserUid());
-                startActivity(intent);
-            }
-            else if(id == R.id.list_sharei)
-            {
-                Intent intent = new Intent(ctx, SendDynamicActivity.class);
-                intent.putExtra("is_share", true);
-                intent.putExtra("share_text", "//@" + dy.getUserName() + ":" + dy.getDynamicText());
-                intent.putExtra("share_up", sdy.getUserName());
-                intent.putExtra("share_img", Integer.valueOf(sdy.getTextImgCount()) == 0 ? "" : sdy.getImgsSrc()[0]);
-                intent.putExtra("share_title", sdy.getDynamicText());
-                intent.putExtra("share_dyid", dy.getDynamicId());
-                startActivityForResult(intent, 0);
-            }
-            else if(id == R.id.list_replybu)
-            {
-                Intent intent = new Intent(ctx, CheckreplyActivity.class);
-                intent.putExtra("oid", dy.getDynamicId());
-                intent.putExtra("type", dy.getReplyType());
-                startActivity(intent);
-            }
-            else if(id == R.id.list_likebu)
-            {
-                new Thread(new Runnable()
-                {
-                    @Override
-                    public void run()
+                    catch (IOException e)
                     {
-                        try
-                        {
-                            String result = userDynamicApi.likeDynamic(dy.getDynamicId(), dy.isLike ? "2" : "1");
-                            if(result.equals(""))
-                            {
-                                dy.isLike = !dy.isLike;
-                                dy.likeDynamic(dy.isLike ? 1 : -1);
-                                handler.post(runnableMore);
-                            }
-                            else
-                            {
-                                Looper.prepare();
-                                Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
-                                Looper.loop();
-                            }
-                        }
-                        catch (IOException e)
-                        {
-                            e.printStackTrace();
-                            Looper.prepare();
-                            Toast.makeText(ctx, "点赞失败！请检查网络...", Toast.LENGTH_SHORT).show();
-                            Looper.loop();
-                        }
+                        e.printStackTrace();
+                        Looper.prepare();
+                        Toast.makeText(ctx, "发送失败，请检查网络...", Toast.LENGTH_SHORT).show();
+                        Looper.loop();
                     }
-                }).start();
+                }
+            }).start();
+        }
+    }
+
+    private void getShareIntent(Intent intent, DynamicModel dynamicModel)
+    {
+        switch (dynamicModel.getCardType())
+        {
+            case 1:
+            {
+                DynamicModel.DynamicShareModel dm = (DynamicModel.DynamicShareModel) dynamicModel;
+                intent.putExtra("share_text", "//@" + dm.getCardAuthorName() + ":" + dm.getShareText());
+                getShareIntent(intent, dm.getShareOriginCard());
+                break;
+            }
+            case 2:
+            {
+                DynamicModel.DynamicAlbumModel dm = (DynamicModel.DynamicAlbumModel) dynamicModel;
+                if(dm.getAlbumImg().size() > 0)
+                    intent.putExtra("share_img", dm.getAlbumImg().get(0));
+                intent.putExtra("share_title", dm.getAlbumText());
+                break;
+            }
+            case 4:
+            {
+                DynamicModel.DynamicTextModel dm = (DynamicModel.DynamicTextModel) dynamicModel;
+                intent.putExtra("share_title", dm.getTextText());
+                break;
+            }
+            case 8:
+            {
+                DynamicModel.DynamicVideoModel dm = (DynamicModel.DynamicVideoModel) dynamicModel;
+                intent.putExtra("share_img", dm.getVideoImg());
+                intent.putExtra("share_title", dm.getVideoTitle());
+                break;
+            }
+            case 64:
+            {
+                DynamicModel.DynamicArticleModel dm = (DynamicModel.DynamicArticleModel) dynamicModel;
+                intent.putExtra("share_img", dm.getArticleImg());
+                intent.putExtra("share_title", dm.getArticleTitle());
+                break;
+            }
+            case 512:
+            case 4098:
+            case 4099:
+            case 4101:
+            {
+                DynamicModel.DynamicBangumiModel dm = (DynamicModel.DynamicBangumiModel) dynamicModel;
+                intent.putExtra("share_img", dm.getBangumiImg());
+                intent.putExtra("share_title", dm.getBangumiTitle());
+                break;
+            }
+            case 2048:
+            {
+                DynamicModel.DynamicUrlModel dm = (DynamicModel.DynamicUrlModel) dynamicModel;
+                intent.putExtra("share_img", dm.getUrlImg());
+                intent.putExtra("share_title", dm.getUrlDynamic());
+                break;
+            }
+            case 4200:
+            {
+                DynamicModel.DynamicLiveModel dm = (DynamicModel.DynamicLiveModel) dynamicModel;
+                intent.putExtra("share_img", dm.getLiveImg());
+                intent.putExtra("share_title", dm.getLiveTitle());
+                break;
+            }
+            case 4300:
+            {
+                DynamicModel.DynamicFavorModel dm = (DynamicModel.DynamicFavorModel) dynamicModel;
+                intent.putExtra("share_img", dm.getFavorImg());
+                intent.putExtra("share_title", dm.getFavorTitle());
+                break;
             }
         }
-    }*/
+    }
 }

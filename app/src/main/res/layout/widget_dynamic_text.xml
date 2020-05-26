@@ -15,7 +15,7 @@
         android:textColor="@color/colorPrimary"
         android:textSize="13sp" />
 
-    <cn.luern0313.wristbilibili.widget.FolderTextView
+    <cn.luern0313.wristbilibili.widget.ExpandableTextView
         android:id="@+id/dynamic_text_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -23,6 +23,6 @@
         android:layout_marginLeft="18dp"
         android:layout_marginRight="18dp"
         android:layout_marginBottom="2dp"
-        app:fold_line="6"/>
+        app:etv_MaxLinesOnShrink="6"/>
 
 </RelativeLayout>

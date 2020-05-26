@@ -16,7 +16,7 @@
         android:textColor="@color/colorPrimary"
         android:textSize="13sp" />
 
-    <cn.luern0313.wristbilibili.widget.FolderTextView
+    <cn.luern0313.wristbilibili.widget.ExpandableTextView
         android:id="@+id/dynamic_album_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -25,7 +25,7 @@
         android:layout_marginRight="18dp"
         android:layout_marginBottom="2dp"
         android:textSize="13sp"
-        app:fold_line="6"/>
+        app:etv_MaxLinesOnShrink="6"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/dynamic_album_img_lay"

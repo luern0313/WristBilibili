@@ -3,7 +3,6 @@
     <item>
         <shape android:shape="rectangle">
             <solid android:color="@color/gray_ee" />
-            <corners android:radius="7dp" />
         </shape>
     </item>
     <item android:drawable="?attr/selectableItemBackground" />

@@ -1,6 +1,10 @@
 package cn.luern0313.wristbilibili.util;
 
 import android.content.Context;
+import android.text.Html;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.URLSpan;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -8,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Random;
+
+import cn.luern0313.wristbilibili.widget.LinkSpan;
 
 /**
  * 被 luern0313 创建于 2020/2/3.
@@ -39,7 +45,7 @@ public class DataProcessUtil
     public static String joinList(String[] list, String split)
     {
         StringBuilder stringBuilder = new StringBuilder();
-        for(int i = 0; i < list.length; i++)
+        for (int i = 0; i < list.length; i++)
             stringBuilder.append(i == 0 ? "" : split).append(list[i]);
         return stringBuilder.toString();
     }
@@ -47,7 +53,7 @@ public class DataProcessUtil
     public static String joinArrayList(ArrayList<String> list, String split)
     {
         StringBuilder stringBuilder = new StringBuilder();
-        for(int i = 0; i < list.size(); i++)
+        for (int i = 0; i < list.size(); i++)
             stringBuilder.append(i == 0 ? "" : split).append(list.get(i));
         return stringBuilder.toString();
     }
@@ -58,33 +64,30 @@ public class DataProcessUtil
         return (int) (dpValue * scale + 0.5f);
     }
 
-    public static int sp2px(Context context, float spValue) {
+    public static int sp2px(Context context, float spValue)
+    {
         final float fontScale = context.getResources().getDisplayMetrics().scaledDensity;
         return (int) (spValue * fontScale + 0.5f);
     }
 
     public static int getPositionInArrayList(ArrayList arrayList, String string)
     {
-        for(int i = 0; i < arrayList.size(); i++)
-            if(arrayList.get(i).equals(string))
-                return i;
+        for (int i = 0; i < arrayList.size(); i++)
+            if(arrayList.get(i).equals(string)) return i;
         return -1;
     }
 
     public static <T extends Serializable> int getPositionInList(T[] list, T element)
     {
-        for(int i = 0; i < list.length; i++)
-            if(list[i].equals(element))
-                return i;
+        for (int i = 0; i < list.length; i++)
+            if(list[i].equals(element)) return i;
         return -1;
     }
 
     public static String handleUrl(String url)
     {
-        if(url.indexOf("//") == 0)
-            url = "http:" + url;
-        if(url.endsWith(".webp"))
-            url = url.substring(0, url.lastIndexOf("@"));
+        if(url.indexOf("//") == 0) url = "http:" + url;
+        if(url.endsWith(".webp")) url = url.substring(0, url.lastIndexOf("@"));
         return url;
     }
 
@@ -98,7 +101,7 @@ public class DataProcessUtil
             s /= 1024;
             u++;
         }
-        return String.valueOf(s / 10.0) + unit[u];
+        return s / 10.0 + unit[u];
     }
 
     public static String getSurplusTime(long surplusByte, int speed)
@@ -130,5 +133,29 @@ public class DataProcessUtil
             e.printStackTrace();
         }
         return "";
+    }
+
+    public static CharSequence getClickableHtml(String html, Html.ImageGetter imageGetter)
+    {
+        Spanned spannedHtml = Html.fromHtml(html, imageGetter, null);
+        SpannableStringBuilder clickableHtmlBuilder = new SpannableStringBuilder(spannedHtml);
+        URLSpan[] urls = clickableHtmlBuilder.getSpans(0, spannedHtml.length(), URLSpan.class);
+        for (final URLSpan span : urls)
+        {
+            setLinkClickable(clickableHtmlBuilder, span);
+        }
+        return clickableHtmlBuilder;
+    }
+
+    private static void setLinkClickable(final SpannableStringBuilder clickableHtmlBuilder, final URLSpan urlSpan)
+    {
+        final int start = clickableHtmlBuilder.getSpanStart(urlSpan);
+        int end = clickableHtmlBuilder.getSpanEnd(urlSpan);
+        int flags = clickableHtmlBuilder.getSpanFlags(urlSpan);
+
+        LinkSpan linkSpan = new LinkSpan(urlSpan.getURL());
+        clickableHtmlBuilder.removeSpan(urlSpan);
+
+        clickableHtmlBuilder.setSpan(linkSpan, start, end, flags);
     }
 }

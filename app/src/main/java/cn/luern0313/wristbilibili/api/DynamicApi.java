@@ -104,7 +104,7 @@ public class DynamicApi
         for (int i = 0; i < dynamicJsonArray.length(); i++)
         {
             JSONObject dy = dynamicJsonArray.optJSONObject(i);
-            DynamicModel dynamic = getDynamicClass(dy.optString("card"), dy.optJSONObject("desc"));
+            DynamicModel dynamic = getDynamicClass(dy.optString("card"), dy.optJSONObject("desc"), dy.optJSONObject("display"), dy.optString("extend_json", "{}"));
             dynamicList.add(dynamic);
             if(i == dynamicJsonArray.length() - 1)
                 lastDynamicId = dy.optJSONObject("desc").optString("dynamic_id_str");
@@ -112,36 +112,37 @@ public class DynamicApi
         return dynamicList;
     }
 
-    private DynamicModel getDynamicClass(String cardStr, JSONObject desc)
+    private DynamicModel getDynamicClass(String cardStr, JSONObject desc, JSONObject display, String extendStr)
     {
         try
         {
             JSONObject card = new JSONObject(cardStr);
+            JSONObject extend = new JSONObject(extendStr);
             switch(desc.optInt("type"))
             {
                 case 1:
-                    return dynamicModel.new DynamicShareModel(card, desc, false);
+                    return dynamicModel.new DynamicShareModel(card, desc, display, extend, false);
                 case 2:
-                    return dynamicModel.new DynamicAlbumModel(card, desc, false);
+                    return dynamicModel.new DynamicAlbumModel(card, desc, display, extend, false);
                 case 4:
-                    return dynamicModel.new DynamicTextModel(card, desc, false);
+                    return dynamicModel.new DynamicTextModel(card, desc, display, extend, false);
                 case 8:
-                    return dynamicModel.new DynamicVideoModel(card, desc, false);
+                    return dynamicModel.new DynamicVideoModel(card, desc, display, extend, false);
                 case 64:
-                    return dynamicModel.new DynamicArticleModel(card, desc, false);
+                    return dynamicModel.new DynamicArticleModel(card, desc, display, extend, false);
                 case 512:
                 case 4098:
                 case 4099:
                 case 4101:
-                    return dynamicModel.new DynamicBangumiModel(card, desc, false);
+                    return dynamicModel.new DynamicBangumiModel(card, desc, display, extend, false);
                 case 2048:
-                    return dynamicModel.new DynamicUrlModel(card, desc, false);
+                    return dynamicModel.new DynamicUrlModel(card, desc, display, extend, false);
                 case 4200:
-                    return dynamicModel.new DynamicLiveModel(card, desc, false);
+                    return dynamicModel.new DynamicLiveModel(card, desc, display, extend, false);
                 case 4300:
-                    return dynamicModel.new DynamicFavorModel(card, desc, false);
+                    return dynamicModel.new DynamicFavorModel(card, desc, display, extend, false);
             }
-            return dynamicModel.new DynamicUnknownModel(card, desc, false);
+            return dynamicModel.new DynamicUnknownModel(card, desc, display, extend, false);
         }
         catch (JSONException e)
         {
@@ -150,7 +151,7 @@ public class DynamicApi
         return null;
     }
 
-    public String likeDynamic(String dynamicId, String action) throws IOException
+    public String likeDynamic(String dynamicId, String action) throws IOException //1点赞 2取消
     {
         try
         {

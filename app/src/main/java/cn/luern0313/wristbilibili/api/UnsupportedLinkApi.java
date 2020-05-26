@@ -14,6 +14,7 @@ import java.util.HashMap;
 import cn.luern0313.wristbilibili.models.UnsupportedLinkModel;
 import cn.luern0313.wristbilibili.ui.ArticleActivity;
 import cn.luern0313.wristbilibili.ui.BangumiActivity;
+import cn.luern0313.wristbilibili.ui.FavorvideoActivity;
 import cn.luern0313.wristbilibili.ui.UserActivity;
 import cn.luern0313.wristbilibili.ui.VideoActivity;
 import cn.luern0313.wristbilibili.util.MyApplication;
@@ -43,6 +44,8 @@ public class UnsupportedLinkApi
         put("space", new HashMap<String, String>(){{put("support", "true"); put("url", "https://space.bilibili.com/%s");}});
         put("pegasus", new HashMap<String, String>(){{put("support", "false"); put("url", "https://t.bilibili.com/topic/%s");}});
         put("tag", new HashMap<String, String>(){{put("support", "false"); put("url", "https://t.bilibili.com/topic/%s");}});
+        put("collect", new HashMap<String, String>(){{put("support", "true"); put("url", "https://www.bilibili.com/medialist/detail/ml%s");}});
+        put("following", new HashMap<String, String>(){{put("support", "true"); put("url", "https://t.bilibili.com/%s");}});
     }};
 
     public UnsupportedLinkApi(final Uri uri)
@@ -94,6 +97,17 @@ public class UnsupportedLinkApi
                             intent.putExtra("mid", id);
                             break;
                         }
+                        case "collect":
+                        {
+                            intent = new Intent(ctx, FavorvideoActivity.class);
+                            intent.putExtra("mid", uri.getQueryParameter("uid"));
+                            intent.putExtra("fid", id);
+                            break;
+                        }
+                        case "following":
+                        {
+                            break;
+                        }
                     }
                 }
             }
@@ -115,7 +129,7 @@ public class UnsupportedLinkApi
         try
         {
             String html = NetWorkUtil.get(url, webHeaders).body().string();
-            Document document = Jsoup.parseBodyFragment(html);
+            Document document = Jsoup.parse(html);
             unsupportedLinkModel = new UnsupportedLinkModel(document);
             return unsupportedLinkModel;
         }

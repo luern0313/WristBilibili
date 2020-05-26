@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <cn.luern0313.wristbilibili.widget.FolderTextView
+    <cn.luern0313.wristbilibili.widget.ExpandableTextView
         android:id="@+id/dynamic_share_dynamic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -12,7 +12,7 @@
         android:layout_marginEnd="19dp"
         android:layout_marginBottom="2dp"
         android:textSize="13sp"
-        app:fold_line="6"/>
+        app:etv_MaxLinesOnShrink="6"/>
 
     <LinearLayout
         android:id="@+id/dynamic_share_share"
