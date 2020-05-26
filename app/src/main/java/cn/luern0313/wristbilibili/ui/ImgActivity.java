@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.LruCache;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -44,6 +45,8 @@ public class ImgActivity extends AppCompatActivity
     TextView uiImgCount;
 
     LruCache<String, BitmapDrawable> mImageCache;
+    Handler handler = new Handler();
+    Runnable runnableTimer;
 
     boolean isShowTab = true;
 
@@ -113,6 +116,7 @@ public class ImgActivity extends AppCompatActivity
             @Override
             public void onPageSelected(int position)
             {
+                showTab(false);
                 while(uiViewFlipper.getDisplayedChild() != position)
                 {
                     if(uiViewFlipper.getDisplayedChild() < position)
@@ -131,20 +135,33 @@ public class ImgActivity extends AppCompatActivity
             }
         });
 
+        runnableTimer = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                showTab(true);
+            }
+        };
+
+        handler.postDelayed(runnableTimer, 5000);
+
         uiViewPager.setAdapter(pagerAdapter);
         uiViewPager.setCurrentItem(imgPosition, true);
     }
 
-    private void showTab()
+    private void showTab(boolean show)
     {
-        if(isShowTab)
+        handler.removeCallbacks(runnableTimer);
+        handler.postDelayed(runnableTimer, 5000);
+        if(show && isShowTab)
         {
             ObjectAnimator anim = ObjectAnimator.ofFloat(findViewById(R.id.img_tab), "translationY", 0, -DataProcessUtil.dip2px(ctx, 30));
             anim.setDuration(250);
             anim.start();
             isShowTab = false;
         }
-        else
+        else if(!show && !isShowTab)
         {
             ObjectAnimator anim = ObjectAnimator.ofFloat(findViewById(R.id.img_tab), "translationY", -DataProcessUtil.dip2px(ctx, 30), 0);
             anim.setDuration(250);
@@ -193,7 +210,7 @@ public class ImgActivity extends AppCompatActivity
                 @Override
                 public void onClick(View v)
                 {
-                    showTab();
+                    showTab(isShowTab);
                 }
             });
             BitmapDrawable b = setImageFormWeb((String) v.getTag());
