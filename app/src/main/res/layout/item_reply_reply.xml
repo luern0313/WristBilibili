@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
     android:clickable="true"
-    android:focusable="true"
     android:descendantFocusability="blocksDescendants"
+    android:focusable="true"
     android:paddingLeft="20dp"
     android:paddingTop="2dp"
     android:paddingRight="20dp"
@@ -28,8 +29,8 @@
         android:id="@+id/item_reply_name_lay"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@+id/item_reply_head"
-        android:layout_marginTop="2dp">
+        android:layout_marginTop="2dp"
+        android:layout_toEndOf="@+id/item_reply_head">
 
         <TextView
             android:id="@+id/item_reply_name"
@@ -45,15 +46,15 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="4dp"
-            android:paddingStart="3dp"
-            android:paddingEnd="3dp"
+            android:background="@drawable/shape_bg_reply_up"
             android:ellipsize="end"
             android:maxLines="1"
-            android:background="@drawable/shape_bg_reply_up"
+            android:paddingStart="3dp"
+            android:paddingEnd="3dp"
             android:text="UP"
             android:textColor="@color/white"
             android:textSize="10dp"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
     </LinearLayout>
 
@@ -91,87 +92,105 @@
             android:textStyle="bold" />
     </LinearLayout>
 
-    <cn.carbs.android.expandabletextview.library.ExpandableTextView
+    <cn.luern0313.wristbilibili.widget.ExpandableTextView
         android:id="@+id/item_reply_text"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/item_reply_head"
         android:layout_marginLeft="2dp"
-        android:layout_marginRight="2dp" />
+        android:layout_marginRight="2dp"
+        app:etv_MaxLinesOnShrink="6"/>
+
+    <LinearLayout
+        android:id="@+id/item_reply_warning"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/item_reply_text"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
+        android:background="@color/yellow_gray"
+        android:gravity="center"
+        android:padding="4dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:src="@drawable/icon_warning" />
+
+        <TextView
+            android:id="@+id/item_reply_warning_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="3dp"
+            android:textColor="@color/yellow"
+            android:textSize="11sp" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/item_reply_reply_show"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_below="@+id/item_reply_warning"
         android:layout_marginLeft="2dp"
+        android:layout_marginTop="4dp"
         android:layout_marginRight="2dp"
-        android:layout_below="@+id/item_reply_text"
-        android:padding="4dp"
-        android:background="@color/gray_ee"
-        android:orientation="vertical">
+        android:background="@drawable/layer_bg_reply_show"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="vertical"
+        android:padding="4dp">
 
         <TextView
             android:id="@+id/item_reply_reply_show_1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?android:attr/selectableItemBackground"
-            android:maxLines="2"
             android:ellipsize="end"
+            android:maxLines="2"
             android:textSize="12sp" />
 
         <TextView
             android:id="@+id/item_reply_reply_show_2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?android:attr/selectableItemBackground"
-            android:maxLines="2"
             android:ellipsize="end"
+            android:maxLines="2"
             android:textSize="12sp" />
 
         <TextView
             android:id="@+id/item_reply_reply_show_3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?android:attr/selectableItemBackground"
-            android:maxLines="2"
             android:ellipsize="end"
+            android:maxLines="2"
             android:textSize="12sp" />
 
         <TextView
             android:id="@+id/item_reply_reply_show_show"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?android:attr/selectableItemBackground"
-            android:textSize="12sp"
-            android:visibility="gone"/>
+            android:textSize="12sp" />
 
     </LinearLayout>
+
 
     <TextView
         android:id="@+id/item_reply_up_like"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/item_reply_reply_show"
-        android:drawablePadding="2dp"
-        android:layout_marginTop="4dp"
         android:layout_marginLeft="2dp"
+        android:layout_marginTop="4dp"
         android:layout_marginRight="2dp"
-        android:paddingStart="4dp"
+        android:background="@drawable/layer_bg_reply_up_like"
+        android:drawablePadding="2dp"
+        android:paddingStart="5dp"
         android:paddingTop="1px"
         android:paddingBottom="1px"
-        android:background="@drawable/layer_bg_reply_up_like"
         android:text="UP主觉得很赞"
-        android:textSize="11sp"
-        android:textColor="@color/gray_44"/>
+        android:textColor="@color/gray_44"
+        android:textSize="11sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -180,8 +199,8 @@
         android:layout_marginLeft="4dp"
         android:layout_marginTop="4dp"
         android:layout_marginRight="4dp"
-        android:orientation="horizontal"
-        android:baselineAligned="false">
+        android:baselineAligned="false"
+        android:orientation="horizontal">
 
         <LinearLayout
             android:id="@+id/item_reply_like"

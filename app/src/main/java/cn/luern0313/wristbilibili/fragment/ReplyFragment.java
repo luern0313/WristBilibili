@@ -6,9 +6,11 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -25,6 +27,7 @@ import cn.luern0313.wristbilibili.ui.BangumiActivity;
 import cn.luern0313.wristbilibili.ui.CheckreplyActivity;
 import cn.luern0313.wristbilibili.ui.ReplyActivity;
 import cn.luern0313.wristbilibili.ui.UserActivity;
+import cn.luern0313.wristbilibili.util.DataProcessUtil;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
 /**
@@ -39,9 +42,9 @@ public class ReplyFragment extends Fragment
     private final int RESULT_SEND = 101;
     private final int RESULT_VIEW = 102;
 
-    Context ctx;
-    View rootLayout;
-    Intent resultIntent;
+    private Context ctx;
+    private View rootLayout;
+    private Intent resultIntent;
 
     private String oid;
     private String type;
@@ -62,6 +65,7 @@ public class ReplyFragment extends Fragment
 
     private int replyPage = 1;
     private boolean isReplyLoading = true;
+    private int replyWidth;
 
     public static Fragment newInstance(String oid, String type, ReplyModel root, int position)
     {
@@ -109,6 +113,11 @@ public class ReplyFragment extends Fragment
         resultIntent.putExtra("position", position);
         getActivity().setResult(-1, resultIntent);
         replyApi = new ReplyApi(oid, type);
+
+        WindowManager manager = getActivity().getWindowManager();
+        DisplayMetrics outMetrics = new DisplayMetrics();
+        manager.getDefaultDisplay().getMetrics(outMetrics);
+        replyWidth = outMetrics.widthPixels - DataProcessUtil.dip2px(ctx, 22) * 2;
 
         replyAdapterListener = new ReplyAdapter.ReplyAdapterListener()
         {
@@ -194,7 +203,7 @@ public class ReplyFragment extends Fragment
                     rootLayout.findViewById(R.id.reply_noweb).setVisibility(View.GONE);
                     rootLayout.findViewById(R.id.reply_loading).setVisibility(View.GONE);
                     rootLayout.findViewById(R.id.reply_listview).setVisibility(View.VISIBLE);
-                    replyAdapter = new ReplyAdapter(inflater, uiReplyListView, replyApi.replyArrayList, replyApi.replyIsShowFloor, root != null, replyApi.replyCount, replyAdapterListener);
+                    replyAdapter = new ReplyAdapter(inflater, uiReplyListView, replyApi.replyArrayList, replyApi.replyIsShowFloor, root != null, replyApi.replyCount, replyWidth, replyAdapterListener);
                     uiReplyListView.setAdapter(replyAdapter);
                 }
                 catch (Exception e)
@@ -380,7 +389,7 @@ public class ReplyFragment extends Fragment
                     }
                 }).start();
             }
-            else if(viewId == R.id.item_reply_reply || viewId == R.id.item_reply_reply_show_1 || viewId == R.id.item_reply_reply_show_2 || viewId == R.id.item_reply_reply_show_3)
+            else if(viewId == R.id.item_reply_reply_show || viewId == R.id.item_reply_reply)
             {
                 Intent intent = new Intent(ctx, CheckreplyActivity.class);
                 intent.putExtra("oid", oid);

@@ -6,6 +6,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import cn.luern0313.wristbilibili.models.ReplyModel;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
@@ -27,6 +28,20 @@ public class ReplyApi
     public int replyCount;
     public boolean replyIsShowFloor;
     private ArrayList<String> webHeaders;
+
+    public static HashMap<Integer, String> typeMap = new HashMap<Integer, String>()
+    {{
+        put(1, "17");
+        put(2, "11");
+        put(4, "17");
+        put(8, "1");
+        put(64, "12");
+        put(512, "1");
+        put(4098, "1");
+        put(4099, "1");
+        put(4101, "1");
+        put(2048, "17");
+    }};
 
     public ReplyApi(String oid, String type)
     {

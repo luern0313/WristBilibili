@@ -21,7 +21,6 @@ import java.util.regex.Pattern;
 
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
-import cn.luern0313.wristbilibili.util.ReplyHtmlTagHandlerUtil;
 
 /**
  * 被 luern0313 创建于 2020/1/15.
@@ -32,6 +31,7 @@ public class ReplyModel implements Serializable
     public int reply_mode;
     public String reply_id;
     public String reply_text;
+    public boolean reply_text_expend;
     public String reply_time;
     public String reply_floor;
     public int reply_like_num;
@@ -68,8 +68,8 @@ public class ReplyModel implements Serializable
             JSONObject r = replies.optJSONObject(i);
             JSONObject rc = r.has("content") ? r.optJSONObject("content") : new JSONObject();
             JSONObject rm = r.has("member") ? r.optJSONObject("member") : new JSONObject();
-            reply_reply_show.add(handlerText("<" + ReplyHtmlTagHandlerUtil.TAG_A + " href=\"bilibili://space/" + rm.optString("mid") + "\">" +
-                                         rm.optString("uname") + "</" + ReplyHtmlTagHandlerUtil.TAG_A + ">：" + rc.optString("message"), rc));
+            reply_reply_show.add(handlerText("<a href=\"bilibili://space/" + rm.optString("mid") + "\">" +
+                                         rm.optString("uname") + "</a>：" + rc.optString("message"), rc));
         }
 
         reply_floor = replyJson.has("floor") ? ("#" + replyJson.optInt("floor")) : "";
@@ -112,8 +112,8 @@ public class ReplyModel implements Serializable
             if(bvMatcher.find())
             {
                 MatchResult bvMatcherResult = bvMatcher.toMatchResult();
-                String tag = "<" + ReplyHtmlTagHandlerUtil.TAG_A + " href=\"bilibili://video/BV" + bvMatcherResult.group(0).substring(2) +
-                        "\">BV" + bvMatcherResult.group().substring(2) + "</" + ReplyHtmlTagHandlerUtil.TAG_A + ">";
+                String tag = "<a href=\"bilibili://video/BV" + bvMatcherResult.group(0).substring(2) +
+                        "\">BV" + bvMatcherResult.group().substring(2) + "</a>";
                 textNode.before(textNode.getWholeText().substring(0, bvMatcherResult.start(0)));
                 textNode.before(tag);
                 textNode.text(textNode.getWholeText().substring(bvMatcherResult.end(0)));
@@ -130,8 +130,8 @@ public class ReplyModel implements Serializable
             if(avMatcher.find())
             {
                 MatchResult avMatcherResult = avMatcher.toMatchResult();
-                String tag = "<" + ReplyHtmlTagHandlerUtil.TAG_A + " href=\"bilibili://video/" + avMatcherResult.group(0).substring(2) +
-                        "\">av" + avMatcherResult.group(0).substring(2) + "</" + ReplyHtmlTagHandlerUtil.TAG_A + ">";
+                String tag = "<a href=\"bilibili://video/" + avMatcherResult.group(0).substring(2) +
+                        "\">av" + avMatcherResult.group(0).substring(2) + "</a>";
                 textNode.before(textNode.getWholeText().substring(0, avMatcherResult.start(0)));
                 textNode.before(tag);
                 textNode.text(textNode.getWholeText().substring(avMatcherResult.end(0)));
@@ -148,8 +148,8 @@ public class ReplyModel implements Serializable
             if(cvMatcher.find())
             {
                 MatchResult cvMatcherResult = cvMatcher.toMatchResult();
-                String tag = "<a" + ReplyHtmlTagHandlerUtil.TAG_A + " href=\"bilibili://article/" + cvMatcherResult.group(0).substring(2) +
-                        "\">cv" + cvMatcherResult.group(0).substring(2) + "</" + ReplyHtmlTagHandlerUtil.TAG_A + ">";
+                String tag = "<a href=\"bilibili://article/" + cvMatcherResult.group(0).substring(2) +
+                        "\">cv" + cvMatcherResult.group(0).substring(2) + "</a>";
                 textNode.before(textNode.getWholeText().substring(0, cvMatcherResult.start(0)));
                 textNode.before(tag);
                 textNode.text(textNode.getWholeText().substring(cvMatcherResult.end(0)));
@@ -188,7 +188,7 @@ public class ReplyModel implements Serializable
                 String name = members.optJSONObject(i).optString("uname");
                 String key = "@" + name;
                 String uid = members.optJSONObject(i).optString("mid");
-                String tag = "<" + ReplyHtmlTagHandlerUtil.TAG_A + " href=\"bilibili://space/" + uid + "\">@" + name + "</" + ReplyHtmlTagHandlerUtil.TAG_A + ">";
+                String tag = "<a href=\"bilibili://space/" + uid + "\">@" + name + "</a>";
                 for (int j = 0; j < textNodes.size(); j++)
                 {
                     TextNode textNode = textNodes.get(j);
@@ -210,15 +210,16 @@ public class ReplyModel implements Serializable
         while(topicsKeys.hasNext())
         {
             String key = topicsKeys.next();
-            String tag = "<" + ReplyHtmlTagHandlerUtil.TAG_A + " href=\"" + topics.optString(key) + "\">#" + key + "#</" + ReplyHtmlTagHandlerUtil.TAG_A + ">";
+            String tagName = "#" + key + "#";
+            String tag = "<a href=\"" + topics.optString(key) + "\">" + tagName + "</a>";
             for(int i = 0; i < textNodes.size(); i++)
             {
                 TextNode textNode = textNodes.get(i);
-                if(textNode.getWholeText().contains(key))
+                if(textNode.getWholeText().contains(tagName))
                 {
-                    textNode.before(textNode.getWholeText().substring(0, textNode.getWholeText().indexOf(key) - 1));
+                    textNode.before(textNode.getWholeText().substring(0, textNode.getWholeText().indexOf(tagName)));
                     textNode.before(tag);
-                    textNode.text(textNode.getWholeText().substring(textNode.getWholeText().indexOf(key) + key.length() + 1));
+                    textNode.text(textNode.getWholeText().substring(textNode.getWholeText().indexOf(tagName) + tagName.length()));
                     textNodes = document.textNodes();
                     i--;
                 }
@@ -234,7 +235,7 @@ public class ReplyModel implements Serializable
             {
                 String name = jump.optJSONObject(key).optString("title");
                 String season_id = new JSONObject(jump.optJSONObject(key).optString("click_report")).optString("season_id");
-                String tag = "<" + ReplyHtmlTagHandlerUtil.TAG_A + " href=\"bilibili://bangumi/season/" + season_id + "\">" + name + "</" + ReplyHtmlTagHandlerUtil.TAG_A + ">";
+                String tag = "<a href=\"bilibili://bangumi/season/" + season_id + "\">" + name + "</a>";
                 for(int i = 0; i < textNodes.size(); i++)
                 {
                     TextNode textNode = textNodes.get(i);
@@ -254,7 +255,7 @@ public class ReplyModel implements Serializable
             }
         }
 
-        Pattern urlPattern = Pattern.compile("((?:https?://)?[^/\\s\\u4e00-\\u9fa5#!@?,%&*\\-+_=]+?\\.(?:com|cn|top|org|gov|edu|net)(?:/[^\\u4e00-\\u9fa5\\s。]+)*)");
+        Pattern urlPattern = Pattern.compile("((?:https?://)?[a-zA-Z0-9.]+?\\.(?:com|cn|top|org|gov|edu|net)(?:/[a-zA-Z0-9]*)*)");
         for(int i = 0; i < textNodes.size(); i++)
         {
             TextNode textNode = textNodes.get(i);
@@ -262,7 +263,7 @@ public class ReplyModel implements Serializable
             if(urlMatcher.find())
             {
                 MatchResult urlMatcherResult = urlMatcher.toMatchResult();
-                String tag = "<" + ReplyHtmlTagHandlerUtil.TAG_A + " href=\"" + urlMatcherResult.group(0) + "\">" + urlMatcherResult.group() + "</" + ReplyHtmlTagHandlerUtil.TAG_A + ">";
+                String tag = "<a href=\"" + urlMatcherResult.group(0) + "\">" + urlMatcherResult.group() + "</a>";
                 textNode.before(textNode.getWholeText().substring(0, urlMatcherResult.start(0)));
                 textNode.before(tag);
                 textNode.text(textNode.getWholeText().substring(urlMatcherResult.end(0)));

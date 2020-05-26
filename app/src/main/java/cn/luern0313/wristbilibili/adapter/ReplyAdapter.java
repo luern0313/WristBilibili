@@ -7,7 +7,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.text.Html;
-import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,7 +26,7 @@ import cn.luern0313.wristbilibili.models.ReplyModel;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
 import cn.luern0313.wristbilibili.util.ImageDownloaderUtil;
 import cn.luern0313.wristbilibili.util.ReplyHtmlImageHandlerUtil;
-import cn.luern0313.wristbilibili.util.ReplyHtmlTagHandlerUtil;
+import cn.luern0313.wristbilibili.widget.ExpandableTextView;
 
 /**
  * 被 luern0313 创建于 2020/1/31.
@@ -41,12 +41,13 @@ public class ReplyAdapter extends BaseAdapter
 
     private ArrayList<ReplyModel> replyList;
     private ListView listView;
+    private int replyWidth;
 
     private boolean isShowFloor;
     private boolean isHasRoot;
     private int replyCount;
 
-    public ReplyAdapter(LayoutInflater inflater, ListView listView, ArrayList<ReplyModel> replyList, boolean isShowFloor, boolean isHasRoot, int replyCount, ReplyAdapterListener replyAdapterListener)
+    public ReplyAdapter(LayoutInflater inflater, ListView listView, ArrayList<ReplyModel> replyList, boolean isShowFloor, boolean isHasRoot, int replyCount, int replyWidth, ReplyAdapterListener replyAdapterListener)
     {
         mInflater = inflater;
         this.replyList = replyList;
@@ -54,6 +55,7 @@ public class ReplyAdapter extends BaseAdapter
         this.isShowFloor = isShowFloor;
         this.isHasRoot = isHasRoot;
         this.replyCount = replyCount;
+        this.replyWidth = replyWidth;
         this.replyAdapterListener = replyAdapterListener;
 
         int maxCache = (int) Runtime.getRuntime().maxMemory();
@@ -189,21 +191,31 @@ public class ReplyAdapter extends BaseAdapter
                 viewHolder.reply_floor.setText(replyModel.reply_floor);
             viewHolder.reply_level.setText("LV" + replyModel.reply_owner_lv);
 
-            viewHolder.reply_text.setMovementMethod(LinkMovementMethod.getInstance());
-            viewHolder.reply_text.setText(Html.fromHtml(replyModel.reply_text, new ReplyHtmlImageHandlerUtil(
-                    listView.getContext(), mImageCache, viewHolder.reply_text, replyModel.reply_emote_size), new ReplyHtmlTagHandlerUtil(listView.getContext())));
-
-            /*viewHolder.reply_text.setOnClickATagListener(new OnClickATagListener()
+            viewHolder.reply_text.setExpandListener(new ExpandableTextView.OnExpandListener()
             {
                 @Override
-                public void onClick(View widget, @Nullable String href)
+                public void onExpand(ExpandableTextView view)
                 {
-                    Uri uri = Uri.parse(href);
-                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                    intent.setClassName("cn.luern0313.wristbilibili","cn.luern0313.wristbilibili.ui.UnsupportedLinkActivity");
-                    listView.getContext().startActivity(intent);
+                    replyModel.reply_text_expend = true;
                 }
-            });*/
+
+                @Override
+                public void onShrink(ExpandableTextView view)
+                {
+                    replyModel.reply_text_expend = false;
+                }
+            });
+            Log.w("bilibili", replyModel.reply_text);
+            CharSequence text = DataProcessUtil.getClickableHtml(replyModel.reply_text, new ReplyHtmlImageHandlerUtil(
+                    listView.getContext(), mImageCache, viewHolder.reply_text, replyModel.reply_emote_size));
+            viewHolder.reply_text.setOrigText(text);
+            viewHolder.reply_text.updateForRecyclerView(text, replyWidth, replyModel.reply_text_expend ?
+                    ExpandableTextView.STATE_EXPAND : ExpandableTextView.STATE_SHRINK);
+
+            viewHolder.reply_text.setMovementMethod(viewHolder.reply_text.new LinkTouchMovementMethod());
+            viewHolder.reply_text.setFocusable(false);
+            viewHolder.reply_text.setClickable(false);
+            viewHolder.reply_text.setLongClickable(false);
 
             if(replyModel.reply_reply_show.size() > 0 && !isHasRoot)
             {
@@ -211,37 +223,42 @@ public class ReplyAdapter extends BaseAdapter
                 viewHolder.reply_reply_show_1.setVisibility(View.GONE);
                 viewHolder.reply_reply_show_2.setVisibility(View.GONE);
                 viewHolder.reply_reply_show_3.setVisibility(View.GONE);
-                viewHolder.reply_reply_show_1.setMovementMethod(LinkMovementMethod.getInstance());
-                viewHolder.reply_reply_show_2.setMovementMethod(LinkMovementMethod.getInstance());
-                viewHolder.reply_reply_show_3.setMovementMethod(LinkMovementMethod.getInstance());
-                viewHolder.reply_reply_show_1.setOnClickListener(onViewClick(position));
-                viewHolder.reply_reply_show_2.setOnClickListener(onViewClick(position));
-                viewHolder.reply_reply_show_3.setOnClickListener(onViewClick(position));
+                viewHolder.reply_reply_show.setOnClickListener(onViewClick(position));
                 switch(replyModel.reply_reply_show.size())
                 {
                     case 3:
                         viewHolder.reply_reply_show_3.setVisibility(View.VISIBLE);
                         viewHolder.reply_reply_show_3.setText(
-                                Html.fromHtml(replyModel.reply_reply_show.get(2),
-                                              new ReplyHtmlImageHandlerUtil(listView.getContext(), mImageCache, viewHolder.reply_reply_show_3, replyModel.reply_emote_size),
-                                              new ReplyHtmlTagHandlerUtil(listView.getContext())));
+                                DataProcessUtil.getClickableHtml(replyModel.reply_reply_show.get(2),
+                                              new ReplyHtmlImageHandlerUtil(listView.getContext(), mImageCache, viewHolder.reply_reply_show_3, replyModel.reply_emote_size)));
                     case 2:
                         viewHolder.reply_reply_show_2.setVisibility(View.VISIBLE);
                         viewHolder.reply_reply_show_2.setText(
-                                Html.fromHtml(replyModel.reply_reply_show.get(1),
-                                              new ReplyHtmlImageHandlerUtil(listView.getContext(), mImageCache, viewHolder.reply_reply_show_2, replyModel.reply_emote_size),
-                                              new ReplyHtmlTagHandlerUtil(listView.getContext())));
+                                DataProcessUtil.getClickableHtml(replyModel.reply_reply_show.get(1),
+                                              new ReplyHtmlImageHandlerUtil(listView.getContext(), mImageCache, viewHolder.reply_reply_show_2, replyModel.reply_emote_size)));
                     case 1:
                         viewHolder.reply_reply_show_1.setVisibility(View.VISIBLE);
                         viewHolder.reply_reply_show_1.setText(
-                                Html.fromHtml(replyModel.reply_reply_show.get(0),
-                                              new ReplyHtmlImageHandlerUtil(listView.getContext(), mImageCache, viewHolder.reply_reply_show_1, replyModel.reply_emote_size),
-                                              new ReplyHtmlTagHandlerUtil(listView.getContext())));
+                                DataProcessUtil.getClickableHtml(replyModel.reply_reply_show.get(0),
+                                              new ReplyHtmlImageHandlerUtil(listView.getContext(), mImageCache, viewHolder.reply_reply_show_1, replyModel.reply_emote_size)));
                 }
                 if(!replyModel.reply_is_up_reply)
                     viewHolder.reply_reply_show_show.setText(Html.fromHtml("<font color=\"#3f51b5\">共" + replyModel.reply_reply_num + "条回复 ></font>"));
                 else
                     viewHolder.reply_reply_show_show.setText(Html.fromHtml("UP主等人<font color=\"#3f51b5\">共" + replyModel.reply_reply_num + "条回复 ></font>"));
+
+                viewHolder.reply_reply_show_1.setMovementMethod(viewHolder.reply_text.new LinkTouchMovementMethod());
+                viewHolder.reply_reply_show_2.setMovementMethod(viewHolder.reply_text.new LinkTouchMovementMethod());
+                viewHolder.reply_reply_show_3.setMovementMethod(viewHolder.reply_text.new LinkTouchMovementMethod());
+                viewHolder.reply_reply_show_1.setFocusable(false);
+                viewHolder.reply_reply_show_1.setClickable(false);
+                viewHolder.reply_reply_show_1.setLongClickable(false);
+                viewHolder.reply_reply_show_2.setFocusable(false);
+                viewHolder.reply_reply_show_2.setClickable(false);
+                viewHolder.reply_reply_show_2.setLongClickable(false);
+                viewHolder.reply_reply_show_3.setFocusable(false);
+                viewHolder.reply_reply_show_3.setClickable(false);
+                viewHolder.reply_reply_show_3.setLongClickable(false);
             }
             else
                 viewHolder.reply_reply_show.setVisibility(View.GONE);
@@ -323,7 +340,7 @@ public class ReplyAdapter extends BaseAdapter
         TextView reply_time;
         TextView reply_floor;
         TextView reply_level;
-        TextView reply_text;
+        ExpandableTextView reply_text;
         LinearLayout reply_reply_show;
         TextView reply_reply_show_1;
         TextView reply_reply_show_2;
