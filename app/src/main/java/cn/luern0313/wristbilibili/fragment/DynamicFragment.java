@@ -107,7 +107,7 @@ public class DynamicFragment extends Fragment
         WindowManager manager = getActivity().getWindowManager();
         DisplayMetrics outMetrics = new DisplayMetrics();
         manager.getDefaultDisplay().getMetrics(outMetrics);
-        dynamicWidth = outMetrics.widthPixels - DataProcessUtil.dip2px(ctx, 18) * 2;
+        dynamicWidth = outMetrics.widthPixels - DataProcessUtil.dip2px(18) * 2;
 
         if(isShowSendButton)
             dyListView.addHeaderView(sendDynamicView);

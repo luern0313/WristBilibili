@@ -30,9 +30,9 @@ public class ReplyHtmlImageHandlerUtil implements Html.ImageGetter
     private LruCache<String, BitmapDrawable> lruCache;
     private HashMap<String, Integer> emoteSize;
 
-    public ReplyHtmlImageHandlerUtil(Context ctx, LruCache<String, BitmapDrawable> lruCache, TextView text, HashMap<String, Integer> emoteSize)
+    public ReplyHtmlImageHandlerUtil(LruCache<String, BitmapDrawable> lruCache, TextView text, HashMap<String, Integer> emoteSize)
     {
-        this.ctx = ctx;
+        this.ctx = MyApplication.getContext();
         this.container = text;
         this.lruCache = lruCache;
         this.emoteSize = emoteSize;
@@ -47,7 +47,7 @@ public class ReplyHtmlImageHandlerUtil implements Html.ImageGetter
         {
             Drawable drawable;
             drawable = ctx.getResources().getDrawable(Integer.parseInt(source));
-            drawable.setBounds(0, 0, (int)(DataProcessUtil.sp2px(ctx, 14) * 1.6), DataProcessUtil.sp2px(ctx, 14));
+            drawable.setBounds(0, 0, (int)(DataProcessUtil.sp2px(14) * 1.6), DataProcessUtil.sp2px(14));
             return drawable;
         }
         else
@@ -62,7 +62,7 @@ public class ReplyHtmlImageHandlerUtil implements Html.ImageGetter
                 final String finalSource = source;
 
                 drawable.addLevel(0, 0, container.getResources().getDrawable(R.drawable.img_default_article_img));
-                drawable.setBounds(0, 0, emoteSize.get(source) * DataProcessUtil.sp2px(ctx, 18), emoteSize.get(source) * DataProcessUtil.sp2px(ctx, 18));
+                drawable.setBounds(0, 0, emoteSize.get(source) * DataProcessUtil.sp2px(18), emoteSize.get(source) * DataProcessUtil.sp2px(18));
 
                 Glide.with(ctx).asBitmap().load(source).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).placeholder(R.drawable.img_default_article_img).into(
                         new SimpleTarget<Bitmap>()

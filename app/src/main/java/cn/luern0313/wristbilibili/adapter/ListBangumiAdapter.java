@@ -110,8 +110,8 @@ public class ListBangumiAdapter extends BaseAdapter
 
         Drawable playNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_play_num);
         Drawable likeNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_like_num);
-        playNumDrawable.setBounds(0, 0, DataProcessUtil.dip2px(listView.getContext(), 10), DataProcessUtil.dip2px(listView.getContext(), 10));
-        likeNumDrawable.setBounds(0, 0, DataProcessUtil.dip2px(listView.getContext(), 10), DataProcessUtil.dip2px(listView.getContext(), 10));
+        playNumDrawable.setBounds(0, 0, DataProcessUtil.dip2px(10), DataProcessUtil.dip2px(10));
+        likeNumDrawable.setBounds(0, 0, DataProcessUtil.dip2px(10), DataProcessUtil.dip2px(10));
         viewHolder.play.setCompoundDrawables(playNumDrawable,null, null,null);
         viewHolder.follow.setCompoundDrawables(likeNumDrawable,null, null,null);
 

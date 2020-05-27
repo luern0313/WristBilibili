@@ -113,8 +113,8 @@ public class RankingAdapter extends BaseAdapter
 
         Drawable playNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_play_num);
         Drawable danmakuNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_danmu_num);
-        playNumDrawable.setBounds(0, 0, DataProcessUtil.dip2px(listView.getContext(), 10), DataProcessUtil.dip2px(listView.getContext(), 10));
-        danmakuNumDrawable.setBounds(0, 0,DataProcessUtil.dip2px(listView.getContext(), 10), DataProcessUtil.dip2px(listView.getContext(), 10));
+        playNumDrawable.setBounds(0, 0, DataProcessUtil.dip2px(10), DataProcessUtil.dip2px(10));
+        danmakuNumDrawable.setBounds(0, 0,DataProcessUtil.dip2px(10), DataProcessUtil.dip2px(10));
         viewHolder.video_play.setCompoundDrawables(playNumDrawable,null, null,null);
         viewHolder.video_danmaku.setCompoundDrawables(danmakuNumDrawable,null, null,null);
 

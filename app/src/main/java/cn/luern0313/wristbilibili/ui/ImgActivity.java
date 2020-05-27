@@ -156,14 +156,14 @@ public class ImgActivity extends AppCompatActivity
         handler.postDelayed(runnableTimer, 5000);
         if(show && isShowTab)
         {
-            ObjectAnimator anim = ObjectAnimator.ofFloat(findViewById(R.id.img_tab), "translationY", 0, -DataProcessUtil.dip2px(ctx, 30));
+            ObjectAnimator anim = ObjectAnimator.ofFloat(findViewById(R.id.img_tab), "translationY", 0, -DataProcessUtil.dip2px(30));
             anim.setDuration(250);
             anim.start();
             isShowTab = false;
         }
         else if(!show && !isShowTab)
         {
-            ObjectAnimator anim = ObjectAnimator.ofFloat(findViewById(R.id.img_tab), "translationY", -DataProcessUtil.dip2px(ctx, 30), 0);
+            ObjectAnimator anim = ObjectAnimator.ofFloat(findViewById(R.id.img_tab), "translationY", -DataProcessUtil.dip2px(30), 0);
             anim.setDuration(250);
             anim.start();
             isShowTab = true;

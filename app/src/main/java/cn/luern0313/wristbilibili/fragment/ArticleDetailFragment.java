@@ -75,7 +75,7 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
         WindowManager manager = getActivity().getWindowManager();
         DisplayMetrics outMetrics = new DisplayMetrics();
         manager.getDefaultDisplay().getMetrics(outMetrics);
-        int img_width = outMetrics.widthPixels - DataProcessUtil.dip2px(ctx, 28) * 2;
+        int img_width = outMetrics.widthPixels - DataProcessUtil.dip2px(28) * 2;
 
         articleListener = new ArticleAdapter.ArticleAdapterListener()
         {

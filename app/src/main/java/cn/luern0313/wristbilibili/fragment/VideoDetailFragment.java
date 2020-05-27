@@ -41,8 +41,8 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
 {
     private static final String ARG_VIDEO_MODEL = "videoModelArg";
 
-    Context ctx;
-    View rootLayout;
+    private Context ctx;
+    private View rootLayout;
     private VideoDetailFragmentListener videoDetailFragmentListener;
 
     private VideoModel videoModel;
@@ -125,8 +125,8 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
 
         Drawable playDrawable = getResources().getDrawable(R.drawable.icon_video_play_num);
         Drawable danmakuDrawable = getResources().getDrawable(R.drawable.icon_video_danmu_num);
-        playDrawable.setBounds(0,0, DataProcessUtil.dip2px(ctx, 11), DataProcessUtil.dip2px(ctx, 11));
-        danmakuDrawable.setBounds(0,0, DataProcessUtil.dip2px(ctx, 11), DataProcessUtil.dip2px(ctx, 11));
+        playDrawable.setBounds(0,0, DataProcessUtil.dip2px(11), DataProcessUtil.dip2px(11));
+        danmakuDrawable.setBounds(0,0, DataProcessUtil.dip2px(11), DataProcessUtil.dip2px(11));
         ((TextView) rootLayout.findViewById(R.id.vd_video_play)).setCompoundDrawables(playDrawable,null, null,null);
         ((TextView) rootLayout.findViewById(R.id.vd_video_danamku)).setCompoundDrawables(danmakuDrawable,null, null,null);
 

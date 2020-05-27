@@ -97,8 +97,8 @@ public class BangumiDetailFragment extends Fragment implements View.OnClickListe
 
         Drawable playNumDrawable = getResources().getDrawable(R.drawable.icon_video_play_num);
         Drawable danmakuNumDrawable = getResources().getDrawable(R.drawable.icon_video_like_num);
-        playNumDrawable.setBounds(0, 0, DataProcessUtil.dip2px(ctx, 12), DataProcessUtil.dip2px(ctx, 12));
-        danmakuNumDrawable.setBounds(0, 0, DataProcessUtil.dip2px(ctx, 12), DataProcessUtil.dip2px(ctx, 12));
+        playNumDrawable.setBounds(0, 0, DataProcessUtil.dip2px(12), DataProcessUtil.dip2px(12));
+        danmakuNumDrawable.setBounds(0, 0, DataProcessUtil.dip2px(12), DataProcessUtil.dip2px(12));
         ((TextView) rootLayout.findViewById(R.id.bgm_detail_play)).setCompoundDrawables(playNumDrawable, null, null, null);
         ((TextView) rootLayout.findViewById(R.id.bgm_detail_like)).setCompoundDrawables(danmakuNumDrawable, null, null, null);
 

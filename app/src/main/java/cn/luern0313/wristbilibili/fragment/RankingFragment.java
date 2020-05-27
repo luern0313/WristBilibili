@@ -226,8 +226,8 @@ public class RankingFragment extends Fragment
 
                 Drawable playNumDrawable = ctx.getResources().getDrawable(R.drawable.icon_video_play_num);
                 Drawable danmakuNumDrawable = ctx.getResources().getDrawable(R.drawable.icon_video_danmu_num);
-                playNumDrawable.setBounds(0, 0, DataProcessUtil.dip2px(ctx, 10), DataProcessUtil.dip2px(ctx, 10));
-                danmakuNumDrawable.setBounds(0, 0, DataProcessUtil.dip2px(ctx, 10), DataProcessUtil.dip2px(ctx, 10));
+                playNumDrawable.setBounds(0, 0, DataProcessUtil.dip2px(10), DataProcessUtil.dip2px(10));
+                danmakuNumDrawable.setBounds(0, 0, DataProcessUtil.dip2px(10), DataProcessUtil.dip2px(10));
                 ((TextView) uiPickUpView.findViewById(R.id.rk_pu_video_play)).setCompoundDrawables(playNumDrawable,null, null,null);
                 ((TextView) uiPickUpView.findViewById(R.id.rk_pu_video_danmaku)).setCompoundDrawables(danmakuNumDrawable,null, null,null);
 

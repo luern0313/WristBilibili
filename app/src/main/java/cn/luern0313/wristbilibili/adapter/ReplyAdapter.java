@@ -149,7 +149,7 @@ public class ReplyAdapter extends BaseAdapter
                     convertView = mInflater.inflate(R.layout.widget_reply_changemode, null);
                     ((TextView) convertView.findViewById(R.id.item_reply_sort_sign)).setText("热门评论");
                     Drawable changeNewDrawable = convertView.getResources().getDrawable(R.drawable.icon_reply_sort);
-                    changeNewDrawable.setBounds(0, 0, DataProcessUtil.dip2px(listView.getContext(), 12), DataProcessUtil.dip2px(listView.getContext(), 12));
+                    changeNewDrawable.setBounds(0, 0, DataProcessUtil.dip2px(12), DataProcessUtil.dip2px(12));
                     ((TextView) convertView.findViewById(R.id.item_reply_sort_change)).setCompoundDrawables(changeNewDrawable,null, null,null);
                     if(isHasRoot)
                         convertView.findViewById(R.id.item_reply_sort_change).setVisibility(View.GONE);
@@ -161,7 +161,7 @@ public class ReplyAdapter extends BaseAdapter
                     convertView = mInflater.inflate(R.layout.widget_reply_changemode, null);
                     ((TextView) convertView.findViewById(R.id.item_reply_sort_sign)).setText("最新评论");
                     Drawable changeHotDrawable = convertView.getResources().getDrawable(R.drawable.icon_reply_sort);
-                    changeHotDrawable.setBounds(0, 0,DataProcessUtil.dip2px(listView.getContext(), 12), DataProcessUtil.dip2px(listView.getContext(), 12));
+                    changeHotDrawable.setBounds(0, 0,DataProcessUtil.dip2px(12), DataProcessUtil.dip2px(12));
                     ((TextView) convertView.findViewById(R.id.item_reply_sort_change))
                             .setCompoundDrawables(changeHotDrawable,null, null,null);
                     if(isHasRoot)
@@ -205,9 +205,8 @@ public class ReplyAdapter extends BaseAdapter
                     replyModel.reply_text_expend = false;
                 }
             });
-            Log.w("bilibili", replyModel.reply_text);
             CharSequence text = DataProcessUtil.getClickableHtml(replyModel.reply_text, new ReplyHtmlImageHandlerUtil(
-                    listView.getContext(), mImageCache, viewHolder.reply_text, replyModel.reply_emote_size));
+                    mImageCache, viewHolder.reply_text, replyModel.reply_emote_size));
             viewHolder.reply_text.setOrigText(text);
             viewHolder.reply_text.updateForRecyclerView(text, replyWidth, replyModel.reply_text_expend ?
                     ExpandableTextView.STATE_EXPAND : ExpandableTextView.STATE_SHRINK);
@@ -230,17 +229,17 @@ public class ReplyAdapter extends BaseAdapter
                         viewHolder.reply_reply_show_3.setVisibility(View.VISIBLE);
                         viewHolder.reply_reply_show_3.setText(
                                 DataProcessUtil.getClickableHtml(replyModel.reply_reply_show.get(2),
-                                              new ReplyHtmlImageHandlerUtil(listView.getContext(), mImageCache, viewHolder.reply_reply_show_3, replyModel.reply_emote_size)));
+                                              new ReplyHtmlImageHandlerUtil(mImageCache, viewHolder.reply_reply_show_3, replyModel.reply_emote_size)));
                     case 2:
                         viewHolder.reply_reply_show_2.setVisibility(View.VISIBLE);
                         viewHolder.reply_reply_show_2.setText(
                                 DataProcessUtil.getClickableHtml(replyModel.reply_reply_show.get(1),
-                                              new ReplyHtmlImageHandlerUtil(listView.getContext(), mImageCache, viewHolder.reply_reply_show_2, replyModel.reply_emote_size)));
+                                              new ReplyHtmlImageHandlerUtil(mImageCache, viewHolder.reply_reply_show_2, replyModel.reply_emote_size)));
                     case 1:
                         viewHolder.reply_reply_show_1.setVisibility(View.VISIBLE);
                         viewHolder.reply_reply_show_1.setText(
                                 DataProcessUtil.getClickableHtml(replyModel.reply_reply_show.get(0),
-                                              new ReplyHtmlImageHandlerUtil(listView.getContext(), mImageCache, viewHolder.reply_reply_show_1, replyModel.reply_emote_size)));
+                                              new ReplyHtmlImageHandlerUtil(mImageCache, viewHolder.reply_reply_show_1, replyModel.reply_emote_size)));
                 }
                 if(!replyModel.reply_is_up_reply)
                     viewHolder.reply_reply_show_show.setText(Html.fromHtml("<font color=\"#3f51b5\">共" + replyModel.reply_reply_num + "条回复 ></font>"));
