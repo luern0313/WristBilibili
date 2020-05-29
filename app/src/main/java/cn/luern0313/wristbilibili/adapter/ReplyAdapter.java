@@ -7,7 +7,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.text.Html;
-import android.util.Log;
 import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -136,13 +135,12 @@ public class ReplyAdapter extends BaseAdapter
                     viewHolder.reply_reply_show_show = convertView.findViewById(R.id.item_reply_reply_show_show);
                     viewHolder.reply_is_up_like = convertView.findViewById(R.id.item_reply_up_like);
 
+                    viewHolder.reply_report = convertView.findViewById(R.id.item_reply_report);
+                    viewHolder.reply_reply = convertView.findViewById(R.id.item_reply_reply);
+                    viewHolder.reply_dislike = convertView.findViewById(R.id.item_reply_dislike);
                     viewHolder.reply_like = convertView.findViewById(R.id.item_reply_like);
                     viewHolder.reply_like_img = convertView.findViewById(R.id.item_reply_like_i);
                     viewHolder.reply_like_num = convertView.findViewById(R.id.item_reply_like_n);
-                    viewHolder.reply_dislike = convertView.findViewById(R.id.item_reply_dislike);
-                    viewHolder.reply_dislike_img = convertView.findViewById(R.id.item_reply_dislike_i);
-                    viewHolder.reply_reply = convertView.findViewById(R.id.item_reply_reply);
-                    viewHolder.reply_reply_num = convertView.findViewById(R.id.item_reply_reply_n);
                     break;
 
                 case 1:
@@ -263,14 +261,12 @@ public class ReplyAdapter extends BaseAdapter
                 viewHolder.reply_reply_show.setVisibility(View.GONE);
 
             viewHolder.reply_is_up_like.setVisibility(replyModel.reply_is_up_like ? View.VISIBLE : View.GONE);
-
             viewHolder.reply_like_num.setText(DataProcessUtil.getView(replyModel.reply_like_num));
-            viewHolder.reply_reply_num.setText(replyModel.reply_reply_num);
 
             if(replyModel.reply_user_like) viewHolder.reply_like_img.setImageResource(R.drawable.icon_liked);
             else viewHolder.reply_like_img.setImageResource(R.drawable.icon_like);
-            if(replyModel.reply_user_dislike) viewHolder.reply_dislike_img.setImageResource(R.drawable.icon_disliked);
-            else viewHolder.reply_dislike_img.setImageResource(R.drawable.icon_dislike);
+            if(replyModel.reply_user_dislike) viewHolder.reply_dislike.setImageResource(R.drawable.icon_disliked);
+            else viewHolder.reply_dislike.setImageResource(R.drawable.icon_dislike);
             if(replyModel.reply_owner_vip == 2)
             {
                 viewHolder.reply_name.setTextColor(listView.getResources().getColor(R.color.mainColor));
@@ -287,6 +283,7 @@ public class ReplyAdapter extends BaseAdapter
             if(h != null) viewHolder.reply_img.setImageDrawable(h);
 
             viewHolder.reply_img.setOnClickListener(onViewClick(position));
+            viewHolder.reply_report.setOnClickListener(onViewClick(position));
             viewHolder.reply_like.setOnClickListener(onViewClick(position));
             viewHolder.reply_dislike.setOnClickListener(onViewClick(position));
             viewHolder.reply_reply.setOnClickListener(onViewClick(position));
@@ -347,13 +344,12 @@ public class ReplyAdapter extends BaseAdapter
         TextView reply_reply_show_show;
         TextView reply_is_up_like;
 
+        ImageView reply_report;
+        ImageView reply_reply;
+        ImageView reply_dislike;
         LinearLayout reply_like;
         ImageView reply_like_img;
         TextView reply_like_num;
-        LinearLayout reply_dislike;
-        ImageView reply_dislike_img;
-        LinearLayout reply_reply;
-        TextView reply_reply_num;
     }
 
     private BitmapDrawable setImageFormWeb(String url)

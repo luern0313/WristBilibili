@@ -26,6 +26,7 @@ import cn.luern0313.wristbilibili.models.ReplyModel;
 import cn.luern0313.wristbilibili.ui.BangumiActivity;
 import cn.luern0313.wristbilibili.ui.CheckreplyActivity;
 import cn.luern0313.wristbilibili.ui.ReplyActivity;
+import cn.luern0313.wristbilibili.ui.SelectPartActivity;
 import cn.luern0313.wristbilibili.ui.UserActivity;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
@@ -41,6 +42,7 @@ public class ReplyFragment extends Fragment
     private static final String ARG_POSITION = "positionArg";
     private final int RESULT_SEND = 101;
     private final int RESULT_VIEW = 102;
+    private final int RESULT_REPORT = 103;
 
     private Context ctx;
     private View rootLayout;
@@ -117,7 +119,7 @@ public class ReplyFragment extends Fragment
         WindowManager manager = getActivity().getWindowManager();
         DisplayMetrics outMetrics = new DisplayMetrics();
         manager.getDefaultDisplay().getMetrics(outMetrics);
-        replyWidth = outMetrics.widthPixels - DataProcessUtil.dip2px(ctx, 22) * 2;
+        replyWidth = outMetrics.widthPixels - DataProcessUtil.dip2px(22) * 2;
 
         replyAdapterListener = new ReplyAdapter.ReplyAdapterListener()
         {
@@ -229,7 +231,7 @@ public class ReplyFragment extends Fragment
             @Override
             public void run()
             {
-                rootLayout.findViewById(R.id.reply_nothing).setVisibility(View.VISIBLE);
+                rootLayout.findViewById(R.id.reply_nothing).setVisibility(View.GONE);
                 rootLayout.findViewById(R.id.reply_noweb).setVisibility(View.GONE);
                 rootLayout.findViewById(R.id.reply_loading).setVisibility(View.GONE);
             }
@@ -299,10 +301,7 @@ public class ReplyFragment extends Fragment
                 {
                     ReplyModel r = (root != null ? (replyApi.replyArrayList.size() > 0 ? replyApi.replyArrayList.get(0) : root) : null);
                     int l = replyApi.getReply(1, sort, 0, r);
-                    if(l != 0)
-                        handler.post(runnableUi);
-                    else
-                        handler.post(runnableNothing);
+                    handler.post(runnableUi);
                 }
                 catch (IOException | NullPointerException e)
                 {
@@ -350,6 +349,16 @@ public class ReplyFragment extends Fragment
                 Intent intent = new Intent(ctx, UserActivity.class);
                 intent.putExtra("mid", replyModel.reply_owner_mid);
                 startActivity(intent);
+            }
+            else if(viewId == R.id.item_reply_report)
+            {
+                Intent intent = new Intent(ctx, SelectPartActivity.class);
+                intent.putExtra("title", "举报");
+                intent.putExtra("tip", "请选择举报理由");
+                intent.putExtra("options_name", ReplyApi.reportReason);
+                intent.putExtra("options_id", ReplyApi.reportReasonId);
+                intent.putExtra("reply_id", replyApi.replyArrayList.get(position).reply_id);
+                startActivityForResult(intent, RESULT_REPORT);
             }
             else if(viewId == R.id.item_reply_like)
             {
@@ -456,6 +465,39 @@ public class ReplyFragment extends Fragment
                 replyApi.replyArrayList.set(p, r);
             }
             replyAdapter.notifyDataSetChanged();
+        }
+        else if(requestCode == RESULT_REPORT)
+        {
+            new Thread(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    try
+                    {
+                        String result = replyApi.reportReply(data.getStringExtra("reply_id"), data.getStringExtra("option_id"));
+                        if(result.equals(""))
+                        {
+                            Looper.prepare();
+                            Toast.makeText(ctx, "举报成功！", Toast.LENGTH_SHORT).show();
+                            Looper.loop();
+                        }
+                        else
+                        {
+                            Looper.prepare();
+                            Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
+                            Looper.loop();
+                        }
+                    }
+                    catch (IOException e)
+                    {
+                        e.printStackTrace();
+                        Looper.prepare();
+                        Toast.makeText(ctx, "举报失败，请检查网络...", Toast.LENGTH_SHORT).show();
+                        Looper.loop();
+                    }
+                }
+            }).start();
         }
     }
 }
