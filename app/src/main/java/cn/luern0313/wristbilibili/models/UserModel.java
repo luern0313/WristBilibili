@@ -53,7 +53,8 @@ public class UserModel implements Serializable
         user_card_vip = card_vip.optInt("vipType");
 
         JSONArray tab = user.has("tab2") ? user.optJSONArray("tab2") : new JSONArray();
-        String[] user_support_tab = new String[]{"home", "dynamic", "contribute", "bangumi", "favorite", "follow", "fans"};
+        String[] user_support_tab = new String[]{"dynamic", "contribute", "bangumi", "favorite", "follow", "fans"};
+        user_tab.add(new ArrayList<String>(){{add("home"); add("主页");}});
         for (int i = 0; i < tab.length(); i++)
         {
             JSONObject t = tab.optJSONObject(i);
@@ -63,7 +64,7 @@ public class UserModel implements Serializable
             {
                 user_tab.add(new ArrayList<String>() {{add(p);add(ti);}});
                 if(p.equals("bangumi"))
-                    user_tab.add(new ArrayList<String>() {{add("movie");add("追剧");}});
+                    user_tab.add(new ArrayList<String>(){{add("movie");add("追剧");}});
             }
         }
         user_tab.add(new ArrayList<String>(){{add("follow"); add("关注");}});

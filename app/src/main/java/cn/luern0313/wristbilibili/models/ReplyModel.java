@@ -255,7 +255,7 @@ public class ReplyModel implements Serializable
             }
         }
 
-        Pattern urlPattern = Pattern.compile("((?:https?://)?[a-zA-Z0-9.]+?\\.(?:com|cn|top|org|gov|edu|net)(?:/[a-zA-Z0-9]*)*)");
+        Pattern urlPattern = Pattern.compile("((?:https?://)?[a-zA-Z0-9.]+?\\.(?:com|cn|top|org|gov|edu|net)(?:/[a-zA-Z0-9\\-_.~!*'();:@&=+$,/?#\\[\\]]*)*)");
         for(int i = 0; i < textNodes.size(); i++)
         {
             TextNode textNode = textNodes.get(i);

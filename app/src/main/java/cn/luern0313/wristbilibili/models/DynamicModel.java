@@ -7,6 +7,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.TextNode;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,11 +24,12 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class DynamicModel
+public class DynamicModel implements Serializable
 {
     private int cardType;
     private boolean cardIsShared;
     private String cardId;
+    private String cardReplyId;
     private String cardUrl;
     private String cardTime;
 
@@ -44,8 +46,6 @@ public class DynamicModel
 
     private boolean cardUserLike;
 
-    private JSONObject cardDisplay;
-    private JSONObject cardExtend;
     private HashMap<String, Integer> cardEmoteSize = new HashMap<String, Integer>();
 
     public DynamicModel(){}
@@ -55,6 +55,7 @@ public class DynamicModel
         cardType = desc.optInt("type");
         this.cardIsShared = isShared;
         cardId = desc.optString("dynamic_id_str");
+        cardReplyId = cardId;
         cardUrl = "bilibili://following/detail/" + cardId;
         cardTime = DataProcessUtil.getTime(desc.optInt("timestamp"), "MM-dd HH:mm");
 
@@ -75,15 +76,13 @@ public class DynamicModel
         cardLikeNum = desc.optInt("like");
 
         cardUserLike = desc.optInt("is_liked") == 1;
-
-        cardDisplay = display;
-        cardExtend = extend;
     }
 
     @Getter
     @Setter
-    public class DynamicShareModel extends DynamicModel //1
+    public class DynamicShareModel extends DynamicModel implements Serializable //1
     {
+        private String shareTextOrg;
         private String shareText;
         private boolean shareTextExpand;
 
@@ -96,7 +95,8 @@ public class DynamicModel
             try
             {
                 JSONObject card_item = card.has("item") ? card.optJSONObject("item") : new JSONObject();
-                shareText = super.handlerText(card_item.optString("content"), display, extend);
+                shareTextOrg = card_item.optString("content");
+                shareText = super.handlerText(shareTextOrg, display, extend);
 
                 JSONObject card_origin = new JSONObject(card.optString("origin"));
                 JSONObject desc_origin = desc.optJSONObject("origin");
@@ -149,10 +149,12 @@ public class DynamicModel
 
     @Getter
     @Setter
-    public class DynamicAlbumModel extends DynamicModel //2
+    public class DynamicAlbumModel extends DynamicModel implements Serializable //2
     {
+        private String albumId;
         private String albumAuthorName;
         private String albumAuthorUid;
+        private String albumTextOrg;
         private String albumText;
         private boolean albumTextExpand;
         private ArrayList<String> albumImg;
@@ -165,23 +167,26 @@ public class DynamicModel
             albumAuthorUid = String.valueOf(card_user.optInt("uid"));
 
             JSONObject card_item = card.has("item") ? card.optJSONObject("item") : new JSONObject();
-            albumText = super.handlerText(card_item.optString("description"), display, extend);
+            albumTextOrg = card_item.optString("description");
+            albumText = super.handlerText(albumTextOrg, display, extend);
 
             JSONArray card_img = card_item.optJSONArray("pictures");
             albumImg = new ArrayList<>();
             for(int i = 0; i < card_img.length(); i++)
                 albumImg.add(card_img.optJSONObject(i).optString("img_src"));
 
+            super.cardReplyId = String.valueOf(card_item.optInt("id"));
             super.cardReplyNum = DataProcessUtil.getView(card_item.optInt("reply"));
         }
     }
 
     @Getter
     @Setter
-    public class DynamicTextModel extends DynamicModel //4
+    public class DynamicTextModel extends DynamicModel implements Serializable //4
     {
         private String textAuthorName;
         private String textAuthorUid;
+        private String textTextOrg;
         private String textText;
         private boolean textTextExpand;
 
@@ -192,19 +197,21 @@ public class DynamicModel
             textAuthorName = card_user.optString("uname");
             textAuthorUid = String.valueOf(card_user.optInt("uid"));
             JSONObject card_item = card.has("item") ? card.optJSONObject("item") : new JSONObject();
-            textText = super.handlerText(card_item.optString("content"), display, extend);
+            textTextOrg = card_item.optString("content");
+            textText = super.handlerText(textTextOrg, display, extend);
         }
     }
 
     @Getter
     @Setter
-    public class DynamicVideoModel extends DynamicModel //8
+    public class DynamicVideoModel extends DynamicModel implements Serializable //8
     {
         private String videoAuthorName;
         private String videoAuthorImg;
         private String videoAuthorUid;
         private String videoAid;
         private String videoBvid;
+        private String videoDynamicOrg;
         private String videoDynamic;
         private boolean videoDynamicExpand;
         private String videoTitle;
@@ -223,7 +230,10 @@ public class DynamicModel
             videoAid = String.valueOf(card.optInt("aid"));
             videoBvid = card.optString("bvid");
             if(!card.optString("dynamic").equals(""))
-                videoDynamic = super.handlerText(card.optString("dynamic"), display, extend);
+            {
+                videoDynamicOrg = card.optString("dynamic");
+                videoDynamic = super.handlerText(videoDynamicOrg, display, extend);
+            }
             videoTitle = card.optString("title");
             videoImg = card.optString("pic");
             videoDesc = card.optString("desc");
@@ -232,6 +242,7 @@ public class DynamicModel
             videoPlay = DataProcessUtil.getView(card_stat.optInt("view"));
             videoDanmaku = DataProcessUtil.getView(card_stat.optInt("danmaku"));
 
+            super.cardReplyId = videoAid;
             super.cardUrl = "bilibili://video/" + videoAid;
             super.cardReplyNum = DataProcessUtil.getView(card_stat.optInt("reply"));
         }
@@ -239,12 +250,13 @@ public class DynamicModel
 
     @Getter
     @Setter
-    public class DynamicArticleModel extends DynamicModel //64
+    public class DynamicArticleModel extends DynamicModel implements Serializable //64
     {
         private String articleId;
         private String articleAuthorName;
         private String articleAuthorImg;
         private String articleAuthorUid;
+        private String articleDynamicOrg;
         private String articleDynamic;
         private boolean articleDynamicExpand;
         private String articleTitle;
@@ -260,7 +272,10 @@ public class DynamicModel
             articleAuthorImg = card_author.optString("face");
             articleAuthorUid = String.valueOf(card_author.optInt("mid"));
             if(!card.optString("dynamic").equals(""))
-                articleDynamic = super.handlerText(card.optString("dynamic"), display, extend);
+            {
+                articleDynamicOrg = card.optString("dynamic");
+                articleDynamic = super.handlerText(articleDynamicOrg, display, extend);
+            }
             articleTitle = card.optString("title");
             articleDesc = card.optString("summary");
             JSONArray card_img = card.has("image_urls") ? card.optJSONArray("image_urls") : new JSONArray();
@@ -268,6 +283,7 @@ public class DynamicModel
             JSONObject card_stat = card.has("stats") ? card.optJSONObject("stats") : new JSONObject();
             articleView = DataProcessUtil.getView(card_stat.optInt("view"));
 
+            super.cardReplyId = articleId;
             super.cardUrl = "bilibili://article/" + articleId;
             super.cardReplyNum = DataProcessUtil.getView(card_stat.optInt("reply"));
         }
@@ -275,7 +291,7 @@ public class DynamicModel
 
     @Getter
     @Setter
-    public class DynamicBangumiModel extends DynamicModel //512番剧 4096??? 4097??? 4098电影 4099综艺、电视剧 4100??? 4101纪录片
+    public class DynamicBangumiModel extends DynamicModel implements Serializable //512番剧 4096??? 4097??? 4098电影 4099综艺、电视剧 4100??? 4101纪录片
     {
         private String bangumiSeasonId;
         private String bangumiAuthorName;
@@ -311,10 +327,11 @@ public class DynamicModel
 
     @Getter
     @Setter
-    public class DynamicUrlModel extends DynamicModel //2048
+    public class DynamicUrlModel extends DynamicModel implements Serializable //2048
     {
         private String urlAuthorName;
         private String urlAuthorUid;
+        private String urlDynamicOrg;
         private String urlDynamic;
         private boolean urlDynamicExpand;
         private String urlTitle;
@@ -329,7 +346,10 @@ public class DynamicModel
             urlAuthorUid = card_user.optString("uid");
             JSONObject card_vest = card.has("vest") ? card.optJSONObject("vest") : new JSONObject();
             if(!card_vest.optString("content").equals(""))
-                urlDynamic = super.handlerText(card_vest.optString("content"), display, extend);
+            {
+                urlDynamicOrg = card_vest.optString("content");
+                urlDynamic = super.handlerText(urlDynamicOrg, display, extend);
+            }
             JSONObject card_sketch = card.has("sketch") ? card.optJSONObject("sketch") : new JSONObject();
             urlTitle = card_sketch.optString("title");
             urlDesc = card_sketch.optString("desc_text");
@@ -340,7 +360,7 @@ public class DynamicModel
 
     @Getter
     @Setter
-    public class DynamicLiveModel extends DynamicModel //4200
+    public class DynamicLiveModel extends DynamicModel implements Serializable //4200
     {
         private String liveId;
         private String liveTitle;
@@ -371,7 +391,7 @@ public class DynamicModel
 
     @Getter
     @Setter
-    public class DynamicFavorModel extends DynamicModel //4300
+    public class DynamicFavorModel extends DynamicModel implements Serializable //4300
     {
         private String favorTitle;
         private String favorId;
@@ -397,14 +417,15 @@ public class DynamicModel
         }
     }
 
-    //256音频 4302付费课程
+    //256音频 4302付费课程 4308开播提醒？
     //懒得做了 看到这句话的好心人可以做一波2333
     /*
     {"badge":{"bg_color":"#FB7199","bg_dark_color":"#bb5b76","text":"付费课程","text_color":"#ffffff","text_dark_color":"#e5e5e5"},"cover":"https:\/\/i0.hdslb.com\/bfs\/archive\/400020088403c23af6fa854701d4d7bf3934b680.jpg","ep_count":19,"id":117,"subtitle":"绘画萌新入门必修，靠谱导师带你冲冲冲！这套课程一共设置了绘画基础、进阶演练和高阶应用三大版块，是适用于板绘领域所有绘画学习的基础课程，请大家放心大胆食用哦~","title":"十分绘画：绘画萌新入门创造营","up_id":348630592,"up_info":{"avatar":"https:\/\/i1.hdslb.com\/bfs\/face\/6ccb743564fc186b631fd60ea389390e9c291d0f.jpg","name":"十分绘画"},"update_count":0,"update_info":"更新中，更新至第4期 | 共19期","url":"https:\/\/m.bilibili.com\/cheese\/play\/ss117"}
     { "id": 1596550, "upId": 4408538, "title": "怪异电台Vol.14 看完《异度侵入》，除了好看我们还想说……", "upper": "我是怪异君", "cover": "https:\/\/i0.hdslb.com\/bfs\/music\/4b4fa92396a28e6f3e068c07b78e0c78af3c410c.jpg", "author": "我是怪异君", "ctime": 1590054493000, "replyCnt": 53, "playCnt": 3561, "intro": "哈 哈 哈 哈！\n今天还想听电台？\nYes！\n被误删的十四期回来了，\n原汁原味，一模一样，\n我还能再听亿遍！", "schema": "bilibili:\/\/music\/detail\/1596550?name=%E6%80%AA%E5%BC%82%E7%94%B5%E5%8F%B0Vol.14+%E7%9C%8B%E5%AE%8C%E3%80%8A%E5%BC%82%E5%BA%A6%E4%BE%B5%E5%85%A5%E3%80%8B%EF%BC%8C%E9%99%A4%E4%BA%86%E5%A5%BD%E7%9C%8B%E6%88%91%E4%BB%AC%E8%BF%98%E6%83%B3%E8%AF%B4%E2%80%A6%E2%80%A6&uperName=&cover_url=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Fmusic%2F4b4fa92396a28e6f3e068c07b78e0c78af3c410c.jpg&upperId=&author=%E6%88%91%E6%98%AF%E6%80%AA%E5%BC%82%E5%90%9B", "typeInfo": "有声节目 · 其他", "upperAvatar": "https:\/\/i0.hdslb.com\/bfs\/face\/4b3bdd3188d7b8b9200e16c70cba01c25b818a26.jpg" }
+    {"live_play_info":{"area_id":236,"area_name":"主机游戏","cover":"https:\/\/i0.hdslb.com\/bfs\/live\/room_cover\/ab35dec973e4b088ccbc94e137b5ccdfd41b8a59.jpg","link":"https:\/\/live.bilibili.com\/1029","live_id":77037003027252229,"live_screen_type":0,"live_start_time":1590654697,"live_status":1,"online":6080,"parent_area_id":6,"parent_area_name":"单机","play_type":2,"room_id":1029,"room_type":0,"title":"测试","uid":43536},"live_record_info":null,"style":1,"type":1}
     */
 
-    public class DynamicUnknownModel extends DynamicModel
+    public class DynamicUnknownModel extends DynamicModel implements Serializable
     {
         public DynamicUnknownModel(JSONObject card, JSONObject desc, JSONObject display, JSONObject extend, boolean isShared)
         {
@@ -536,7 +557,7 @@ public class DynamicModel
             }
         }
 
-        Pattern urlPattern = Pattern.compile("((?:https?://)?[a-zA-Z0-9.]+?\\.(?:com|cn|top|org|gov|edu|net)(?:/[a-zA-Z0-9]*)*)");
+        Pattern urlPattern = Pattern.compile("((?:https?://)?[a-zA-Z0-9.]+?\\.(?:com|cn|top|org|gov|edu|net)(?:/[a-zA-Z0-9\\-_.~!*'();:@&=+$,/?#\\[\\]]*)*)");
         for(int i = 0; i < textNodes.size(); i++)
         {
             TextNode textNode = textNodes.get(i);
