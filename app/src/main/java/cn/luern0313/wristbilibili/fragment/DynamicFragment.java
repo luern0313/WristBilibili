@@ -17,6 +17,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -61,7 +63,7 @@ public class DynamicFragment extends Fragment
     private DynamicAdapter.DynamicAdapterListener adapterListener;
 
     private Handler handler = new Handler();
-    private Runnable runnableUi, runnableNoWeb, runnableMore, runnableNoData, runnableMoreNoWeb;
+    private Runnable runnableUi, runnableNoWeb, runnableMore, runnableNoData, runnableMoreNoWeb, runnableMoreNoData;
 
     private boolean isLoading = true;
     public static boolean isLogin = false;
@@ -171,6 +173,37 @@ public class DynamicFragment extends Fragment
             }
         };
 
+        runnableMoreNoWeb = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                isLoading = false;
+                ((TextView) loadingView.findViewById(R.id.wid_load_button)).setText("好像没有网络...\n检查下网络？");
+                loadingView.findViewById(R.id.wid_load_button).setVisibility(View.VISIBLE);
+            }
+        };
+
+        runnableMoreNoData = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                ((TextView) loadingView.findViewById(R.id.wid_load_text)).setText("  没有更多了...");
+            }
+        };
+
+        loadingView.findViewById(R.id.wid_load_button).setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                ((TextView) loadingView.findViewById(R.id.wid_load_button)).setText("  加载中...");
+                loadingView.findViewById(R.id.wid_load_button).setVisibility(View.GONE);
+                getMoreDynamic();
+            }
+        });
+
         runnableMore = new Runnable()
         {
             @Override
@@ -228,7 +261,6 @@ public class DynamicFragment extends Fragment
             {
                 if(visibleItemCount + firstVisibleItem == totalItemCount && !isLoading && isLogin)
                 {
-                    isLoading = true;
                     getMoreDynamic();
                 }
             }
@@ -272,6 +304,7 @@ public class DynamicFragment extends Fragment
 
     private void getDynamic()
     {
+        isLoading = true;
         new Thread(new Runnable()
         {
             @Override
@@ -308,6 +341,7 @@ public class DynamicFragment extends Fragment
 
     private void getMoreDynamic()
     {
+        isLoading = true;
         new Thread(new Runnable()
         {
             @Override
@@ -325,20 +359,25 @@ public class DynamicFragment extends Fragment
                     handler.post(runnableMoreNoWeb);
                     e.printStackTrace();
                 }
+                catch (JSONException e)
+                {
+                    handler.post(runnableMoreNoData);
+                    e.printStackTrace();
+                }
             }
         }).start();
     }
 
-    private void onViewClick(int id, int position, boolean isShared)
+    private void onViewClick(int viewId, int position, boolean isShared)
     {
         final DynamicModel dynamicModel = dynamicList.get(position);
-        if(id == R.id.item_dynamic_author_lay)
+        if(viewId == R.id.item_dynamic_author_lay)
         {
             Intent intent = new Intent(ctx, UserActivity.class);
             intent.putExtra("mid", dynamicModel.getCardAuthorUid());
             startActivity(intent);
         }
-        else if(id == R.id.item_dynamic_share_lay)
+        else if(viewId == R.id.item_dynamic_share_lay)
         {
             Intent intent = new Intent(ctx, SendDynamicActivity.class);
             intent.putExtra("is_share", true);
@@ -347,14 +386,14 @@ public class DynamicFragment extends Fragment
             getShareIntent(intent, dynamicModel);
             startActivityForResult(intent, RESULT_DYNAMIC_SHARE);
         }
-        else if(id == R.id.item_dynamic_reply_lay)
+        else if(viewId == R.id.item_dynamic_reply_lay)
         {
             Intent intent = new Intent(ctx, SendDynamicActivity.class);
             intent.putExtra("reply_oid", dynamicModel.getCardId());
             intent.putExtra("reply_type", ReplyApi.typeMap.get(dynamicModel.getCardType()));
             startActivityForResult(intent, RESULT_DYNAMIC_REPLY);
         }
-        else if(id == R.id.item_dynamic_like_lay)
+        else if(viewId == R.id.item_dynamic_like_lay)
         {
             new Thread(new Runnable()
             {
@@ -366,7 +405,8 @@ public class DynamicFragment extends Fragment
                         String result = dynamicApi.likeDynamic(dynamicModel.getCardId(), dynamicModel.isCardUserLike() ? "2" : "1");
                         if(result.equals(""))
                         {
-                            dynamicModel.setCardIsShared(!dynamicModel.isCardUserLike());
+                            dynamicModel.setCardUserLike(!dynamicModel.isCardUserLike());
+                            dynamicModel.setCardLikeNum(dynamicModel.getCardLikeNum() + 1);
                             handler.post(runnableMore);
                         }
                         else
@@ -386,49 +426,49 @@ public class DynamicFragment extends Fragment
                 }
             }).start();
         }
-        else if(id == R.id.item_dynamic_lay)
+        else if(viewId == R.id.item_dynamic_lay)
         {
             Intent intent = new Intent(ctx, UnsupportedLinkActivity.class);
             intent.putExtra("url", dynamicModel.getCardUrl());
             startActivity(intent);
         }
-        else if(id == R.id.dynamic_share_share)
+        else if(viewId == R.id.dynamic_share_share)
         {
             Intent intent = new Intent(ctx, UnsupportedLinkActivity.class);
             intent.putExtra("url", ((DynamicModel.DynamicShareModel) dynamicModel).getShareOriginCard().getCardUrl());
             startActivity(intent);
         }
-        else if(id == R.id.dynamic_album_author)
+        else if(viewId == R.id.dynamic_album_author)
         {
             Intent intent = new Intent(ctx, UserActivity.class);
             intent.putExtra("mid", ((DynamicModel.DynamicAlbumModel) ((DynamicModel.DynamicShareModel) dynamicModel).getShareOriginCard()).getAlbumAuthorUid());
             startActivity(intent);
         }
-        else if(id == R.id.dynamic_text_author)
+        else if(viewId == R.id.dynamic_text_author)
         {
             Intent intent = new Intent(ctx, UserActivity.class);
             intent.putExtra("mid", ((DynamicModel.DynamicTextModel) ((DynamicModel.DynamicShareModel) dynamicModel).getShareOriginCard()).getTextAuthorUid());
             startActivity(intent);
         }
-        else if(id == R.id.dynamic_video_author)
+        else if(viewId == R.id.dynamic_video_author)
         {
             Intent intent = new Intent(ctx, UserActivity.class);
             intent.putExtra("mid", ((DynamicModel.DynamicVideoModel) ((DynamicModel.DynamicShareModel) dynamicModel).getShareOriginCard()).getVideoAuthorUid());
             startActivity(intent);
         }
-        else if(id == R.id.dynamic_article_author)
+        else if(viewId == R.id.dynamic_article_author)
         {
             Intent intent = new Intent(ctx, UserActivity.class);
             intent.putExtra("mid", ((DynamicModel.DynamicArticleModel) ((DynamicModel.DynamicShareModel) dynamicModel).getShareOriginCard()).getArticleAuthorUid());
             startActivity(intent);
         }
-        else if(id == R.id.dynamic_url_author)
+        else if(viewId == R.id.dynamic_url_author)
         {
             Intent intent = new Intent(ctx, UserActivity.class);
             intent.putExtra("mid", ((DynamicModel.DynamicUrlModel) ((DynamicModel.DynamicShareModel) dynamicModel).getShareOriginCard()).getUrlAuthorUid());
             startActivity(intent);
         }
-        else if(id == R.id.dynamic_url_url)
+        else if(viewId == R.id.dynamic_url_url)
         {
             if(!isShared)
             {
@@ -443,20 +483,19 @@ public class DynamicFragment extends Fragment
                 startActivity(intent);
             }
         }
-        else if(id == R.id.dynamic_live_author)
+        else if(viewId == R.id.dynamic_live_author)
         {
             Intent intent = new Intent(ctx, UserActivity.class);
             intent.putExtra("mid", ((DynamicModel.DynamicLiveModel) ((DynamicModel.DynamicShareModel) dynamicModel).getShareOriginCard()).getLiveAuthorUid());
             startActivity(intent);
         }
-        else if(id == R.id.dynamic_favor_author)
+        else if(viewId == R.id.dynamic_favor_author)
         {
             Intent intent = new Intent(ctx, UserActivity.class);
             intent.putExtra("mid", ((DynamicModel.DynamicFavorModel) ((DynamicModel.DynamicShareModel) dynamicModel).getShareOriginCard()).getFavorAuthorUid());
             startActivity(intent);
         }
     }
-
 
     @Override
     public void onActivityResult(final int requestCode, int resultCode, final Intent data)
@@ -576,7 +615,7 @@ public class DynamicFragment extends Fragment
             case 1:
             {
                 DynamicModel.DynamicShareModel dm = (DynamicModel.DynamicShareModel) dynamicModel;
-                intent.putExtra("share_text", "//@" + dm.getCardAuthorName() + ":" + dm.getShareText());
+                intent.putExtra("share_text", "//@" + dm.getCardAuthorName() + ":" + dm.getShareTextOrg());
                 getShareIntent(intent, dm.getShareOriginCard());
                 break;
             }
@@ -585,13 +624,13 @@ public class DynamicFragment extends Fragment
                 DynamicModel.DynamicAlbumModel dm = (DynamicModel.DynamicAlbumModel) dynamicModel;
                 if(dm.getAlbumImg().size() > 0)
                     intent.putExtra("share_img", dm.getAlbumImg().get(0));
-                intent.putExtra("share_title", dm.getAlbumText());
+                intent.putExtra("share_title", dm.getAlbumTextOrg());
                 break;
             }
             case 4:
             {
                 DynamicModel.DynamicTextModel dm = (DynamicModel.DynamicTextModel) dynamicModel;
-                intent.putExtra("share_title", dm.getTextText());
+                intent.putExtra("share_title", dm.getTextTextOrg());
                 break;
             }
             case 8:
@@ -622,7 +661,7 @@ public class DynamicFragment extends Fragment
             {
                 DynamicModel.DynamicUrlModel dm = (DynamicModel.DynamicUrlModel) dynamicModel;
                 intent.putExtra("share_img", dm.getUrlImg());
-                intent.putExtra("share_title", dm.getUrlDynamic());
+                intent.putExtra("share_title", dm.getUrlDynamicOrg());
                 break;
             }
             case 4200:

@@ -54,7 +54,7 @@ public class UserActivity extends AppCompatActivity implements UserDetailFragmen
     Runnable runnableUi, runnableNoWeb, runnableNothing;
 
     ViewFlipper uiTitle;
-    ViewPager uiViewpager;
+    ViewPager uiViewPager;
     ImageView uiLoading;
 
     @Override
@@ -69,7 +69,7 @@ public class UserActivity extends AppCompatActivity implements UserDetailFragmen
 
         userApi = new UserApi(intent.getStringExtra("mid"));
         uiTitle = findViewById(R.id.user_title_title);
-        uiViewpager = findViewById(R.id.user_viewpager);
+        uiViewPager = findViewById(R.id.user_viewpager);
         uiLoading = findViewById(R.id.ou_loading_img);
 
         runnableUi = new Runnable()
@@ -77,14 +77,14 @@ public class UserActivity extends AppCompatActivity implements UserDetailFragmen
             @Override
             public void run()
             {
-                uiViewpager.setOffscreenPageLimit(userModel.user_tab.size() - 1);
+                uiViewPager.setOffscreenPageLimit(userModel.user_tab.size() - 1);
                 findViewById(R.id.user_loading).setVisibility(View.GONE);
                 findViewById(R.id.user_nothing).setVisibility(View.GONE);
                 findViewById(R.id.user_noweb).setVisibility(View.GONE);
 
                 for (int i = 1; i < userModel.user_tab.size(); i++)
                     ((ViewFlipper) findViewById(R.id.user_title_title)).addView(getTitleTextView(userModel.user_tab.get(i).get(1)));
-                uiViewpager.setAdapter(pagerAdapter);
+                uiViewPager.setAdapter(pagerAdapter);
             }
         };
 
@@ -130,7 +130,7 @@ public class UserActivity extends AppCompatActivity implements UserDetailFragmen
 
         pagerAdapter = new UserFragmentPagerAdapter(getSupportFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
 
-        uiViewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener()
+        uiViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener()
         {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels)
@@ -256,31 +256,31 @@ public class UserActivity extends AppCompatActivity implements UserDetailFragmen
         {
             int position = getPositionFormTab("contribute");
             if(position != -1)
-                uiViewpager.setCurrentItem(position, true);
+                uiViewPager.setCurrentItem(position, true);
         }
         else if(viewId == R.id.user_detail_bangumi)
         {
             int position = getPositionFormTab("bangumi");
             if(position != -1)
-                uiViewpager.setCurrentItem(position, true);
+                uiViewPager.setCurrentItem(position, true);
         }
         else if(viewId == R.id.user_detail_favor)
         {
             int position = getPositionFormTab("favorite");
             if(position != -1)
-                uiViewpager.setCurrentItem(position, true);
+                uiViewPager.setCurrentItem(position, true);
         }
         else if(viewId == R.id.user_detail_howfollow)
         {
             int position = getPositionFormTab("follow");
             if(position != -1)
-                uiViewpager.setCurrentItem(position, true);
+                uiViewPager.setCurrentItem(position, true);
         }
         else if(viewId == R.id.user_detail_howfans)
         {
             int position = getPositionFormTab("fans");
             if(position != -1)
-                uiViewpager.setCurrentItem(position, true);
+                uiViewPager.setCurrentItem(position, true);
         }
     }
 
@@ -331,5 +331,5 @@ public class UserActivity extends AppCompatActivity implements UserDetailFragmen
             }
             return null;
         }
-    };
+    }
 }

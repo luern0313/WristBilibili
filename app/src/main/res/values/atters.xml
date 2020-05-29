@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="FoldTextView111">
-        <attr name="showMaxLine" format="integer" />
-        <attr name="tipGravity" format="integer" />
-        <attr name="tipColor" format="reference|color" />
-        <attr name="tipClickable" format="boolean" />
-        <attr name="foldText" format="string" />
-        <attr name="expandText" format="string" />
-        <attr name="showTipAfterExpand" format="boolean" />
-        <attr name="isSetParentClick" format="boolean" />
-    </declare-styleable>
-
-    <declare-styleable name="FolderTextView">
-        <attr name="fold_line" format="integer" />
-        <attr name="noFold" format="boolean" />
-        <attr name="fold_text" format="string" />
-        <attr name="unfold_text" format="string" />
-        <attr name="fold_text_color" format="color" />
-        <attr name="unfold_text_color" format="color" />
+    <declare-styleable name="ExpandableTextView">
+        <attr name="etv_MaxLinesOnShrink" format="reference|integer" />
+        <attr name="etv_EllipsisHint" format="reference|string" />
+        <attr name="etv_ToExpandHint" format="reference|string" />
+        <attr name="etv_ToShrinkHint" format="reference|string" />
+        <attr name="etv_GapToExpandHint" format="reference|string" />
+        <attr name="etv_GapToShrinkHint" format="reference|string" />
+        <attr name="etv_EnableToggle" format="reference|boolean" />
+        <attr name="etv_ToExpandHintShow" format="reference|boolean" />
+        <attr name="etv_ToShrinkHintShow" format="reference|boolean" />
+        <attr name="etv_ToExpandHintColor" format="reference|color" />
+        <attr name="etv_ToShrinkHintColor" format="reference|color" />
+        <attr name="etv_ToExpandHintColorBgPressed" format="reference|color" />
+        <attr name="etv_ToShrinkHintColorBgPressed" format="reference|color" />
+        <attr name="etv_InitState" format="enum">
+            <enum name="shrink" value="0" />
+            <enum name="expand" value="1" />
+        </attr>
     </declare-styleable>
 
 </resources>

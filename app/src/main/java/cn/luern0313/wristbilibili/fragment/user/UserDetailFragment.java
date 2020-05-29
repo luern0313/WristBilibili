@@ -135,7 +135,7 @@ public class UserDetailFragment extends Fragment implements View.OnClickListener
             ((TextView) rootLayout.findViewById(R.id.user_detail_official)).setText(userModel.user_card_official_verify);
         }
 
-        if(userModel.user_card_sign != null)
+        if(userModel.user_card_sign != null && !userModel.user_card_sign.equals(""))
         {
             rootLayout.findViewById(R.id.user_detail_sign).setVisibility(View.VISIBLE);
             ((TextView) rootLayout.findViewById(R.id.user_detail_sign)).setText(userModel.user_card_sign);

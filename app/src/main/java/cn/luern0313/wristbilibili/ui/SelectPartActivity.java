@@ -1,6 +1,5 @@
 package cn.luern0313.wristbilibili.ui;
 
-import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +10,7 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
 import cn.luern0313.wristbilibili.R;
 
 public class SelectPartActivity extends AppCompatActivity
@@ -18,7 +18,6 @@ public class SelectPartActivity extends AppCompatActivity
     Context ctx;
     Intent inIntent;
     LayoutInflater inflater;
-    Intent reusltIntent = new Intent();
 
     String title;
     String tip;
@@ -37,7 +36,7 @@ public class SelectPartActivity extends AppCompatActivity
         inIntent = getIntent();
         inflater = getLayoutInflater();
 
-        setResult(-1, reusltIntent);
+        setResult(-1, inIntent);
 
         title = inIntent.hasExtra("title") ? inIntent.getStringExtra("title") : "请选择";
         tip = inIntent.hasExtra("tip") ? inIntent.getStringExtra("tip") : "";
@@ -111,10 +110,10 @@ public class SelectPartActivity extends AppCompatActivity
                 @Override
                 public void onClick(View v)
                 {
-                    if(optionsId.length != 0) reusltIntent.putExtra("option_id", optionsId[position]);
-                    reusltIntent.putExtra("option_position", position);
-                    reusltIntent.putExtra("option_name", options[position]);
-                    setResult(0, reusltIntent);
+                    if(optionsId.length != 0) inIntent.putExtra("option_id", optionsId[position]);
+                    inIntent.putExtra("option_position", position);
+                    inIntent.putExtra("option_name", options[position]);
+                    setResult(0, inIntent);
                     finish();
                 }
             });

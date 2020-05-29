@@ -25,7 +25,6 @@ public class SendDynamicActivity extends AppCompatActivity
 {
     Context ctx;
     Intent inIntent;
-    Intent reusltIntent = new Intent();
 
     EditText uiEdittext;
     TextView uiShareUp;
@@ -49,7 +48,7 @@ public class SendDynamicActivity extends AppCompatActivity
         setContentView(R.layout.activity_senddynamic);
         ctx = this;
         inIntent = getIntent();
-        setResult(-1, reusltIntent);
+        setResult(-1, inIntent);
 
         uiEdittext = findViewById(R.id.senddy_edittext);
 
@@ -134,12 +133,13 @@ public class SendDynamicActivity extends AppCompatActivity
         String s = uiEdittext.getText().toString();
         if(s.equals("") && inIntent.getBooleanExtra("is_share", false))
             s = "转发动态";
-        else if(!s.equals(""))
+
+        if(!s.equals(""))
         {
             if(SharedPreferencesUtil.getBoolean(SharedPreferencesUtil.tail, true))
                 s += "\n\n" + TailActivity.getTail(true);
-            reusltIntent.putExtra("text", s);
-            setResult(0, reusltIntent);
+            inIntent.putExtra("text", s);
+            setResult(0, inIntent);
             finish();
         }
         else Toast.makeText(ctx, "动态内容为空", Toast.LENGTH_SHORT).show();
