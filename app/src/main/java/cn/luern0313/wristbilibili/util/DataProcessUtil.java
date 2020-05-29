@@ -4,6 +4,7 @@ import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.URLSpan;
+import android.util.Log;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -65,7 +66,8 @@ public class DataProcessUtil
 
     public static int sp2px(float spValue)
     {
-        final float fontScale = MyApplication.getContext().getResources().getDisplayMetrics().scaledDensity;
+        final float fontScale = MyApplication.getContext().getResources()
+                .getDisplayMetrics().scaledDensity;
         return (int) (spValue * fontScale + 0.5f);
     }
 
@@ -156,5 +158,11 @@ public class DataProcessUtil
         clickableHtmlBuilder.removeSpan(urlSpan);
 
         clickableHtmlBuilder.setSpan(linkSpan, start, end, flags);
+    }
+
+    public static void printLog(String log)
+    {
+        for (int i = 0; i < log.length(); i += 3000)
+            Log.w("bilibili", log.substring(i, Math.min(i + 3000, log.length())));
     }
 }
