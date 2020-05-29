@@ -13,10 +13,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONObject;
-
 import java.io.IOException;
-import java.util.ArrayList;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -58,8 +55,8 @@ public class FollowmeActivity extends AppCompatActivity
     ImageView uiVideoCoinImg;
 
     UserApi userApi;
+    ListVideoModel listVideoModel;
     VideoApi videoDetail;
-    JSONObject videoJson = null;
     Bitmap videoCover;
 
     @Override
@@ -93,8 +90,8 @@ public class FollowmeActivity extends AppCompatActivity
             {
                 try
                 {
-                    uiVideoTitle.setText(videoJson.optString("title", ""));
-                    if(videoJson.optString("title").startsWith("【互动"))
+                    uiVideoTitle.setText(listVideoModel.video_title);
+                    if(listVideoModel.video_title.startsWith("【互动"))
                         uiVideoStarLin.setVisibility(View.VISIBLE);
                     uiVideoLC.setVisibility(View.VISIBLE);
                 }
@@ -132,11 +129,11 @@ public class FollowmeActivity extends AppCompatActivity
                 {
                     try
                     {
-                        ArrayList<ListVideoModel> v = userApi.getUserVideo(1);
-                        videoDetail = new VideoApi("", v.get(0).video_bvid);
+                        listVideoModel = userApi.getUserVideo(1).get(0);
+                        videoDetail = new VideoApi("", listVideoModel.video_bvid);
                         handler.post(runnVideo);
 
-                        byte[] picByte = NetWorkUtil.readStream(NetWorkUtil.get("http:" + videoJson.optString("pic", "")).body().byteStream());
+                        byte[] picByte = NetWorkUtil.readStream(NetWorkUtil.get(listVideoModel.video_cover).body().byteStream());
                         videoCover = BitmapFactory.decodeByteArray(picByte, 0, picByte.length);
                         handler.post(runnImg);
                     }

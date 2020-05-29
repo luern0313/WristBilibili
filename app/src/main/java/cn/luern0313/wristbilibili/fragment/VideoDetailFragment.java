@@ -225,12 +225,11 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
                     uiVideoCoinProgress.setVisibility(View.VISIBLE);
                     uiVideoFavProgress.setVisibility(View.VISIBLE);
                     uiVideoCoinProgress.setOnChangeListener(onChangeListener);
-                    uiVideoCoinProgress.showAnimation(0, 100, 4000);
-                    uiVideoFavProgress.showAnimation(0, 100, 4000);
-                    return true;
+                    uiVideoCoinProgress.showAnimation(0, 100, 3000);
+                    uiVideoFavProgress.showAnimation(0, 100, 3000);
                 }
                 else Toast.makeText(ctx, "已完成三连", Toast.LENGTH_SHORT).show();
-                return false;
+                return true;
             }
         });
 
@@ -334,10 +333,10 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
     {
         animatorEndSet = new AnimatorSet();
         ArrayList<ObjectAnimator> objectAnimatorArrayList = new ArrayList<>();
-        objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoCoin, "scaleX", 1.0f, 1.4f, 1.0f));
-        objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoCoin, "scaleY", 1.0f, 1.4f, 1.0f));
-        objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoFav, "scaleX", 1.0f, 1.4f, 1.0f));
-        objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoFav, "scaleY", 1.0f, 1.4f, 1.0f));
+        objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoCoin, "scaleX", 1.0f, 1.42f, 1.0f));
+        objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoCoin, "scaleY", 1.0f, 1.42f, 1.0f));
+        objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoFav, "scaleX", 1.0f, 1.42f, 1.0f));
+        objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoFav, "scaleY", 1.0f, 1.42f, 1.0f));
         animatorEndSet.play(objectAnimatorArrayList.get(0)).with(objectAnimatorArrayList.get(1)).with(objectAnimatorArrayList.get(2))
                 .with(objectAnimatorArrayList.get(3));
         animatorEndSet.setDuration(500);

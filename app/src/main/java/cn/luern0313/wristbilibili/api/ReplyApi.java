@@ -78,7 +78,7 @@ public class ReplyApi
                 replyCount = replyCountJson.has("acount") ? replyCountJson.optInt("acount") : replyCountJson.optInt("count");
                 JSONObject upper = replyJson.has("upper") ? replyJson.optJSONObject("upper") : new JSONObject();
 
-                JSONArray replyJsonArray = replyCountJson.has("replies") ? replyJson.optJSONArray("replies") : new JSONArray();
+                JSONArray replyJsonArray = replyJson.optJSONArray("replies") != null ? replyJson.optJSONArray("replies") : new JSONArray();
                 if(page == 1)
                 {
                     replyArrayList.clear();
