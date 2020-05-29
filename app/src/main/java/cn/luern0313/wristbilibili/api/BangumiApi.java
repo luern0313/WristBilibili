@@ -8,8 +8,8 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
-import cn.luern0313.wristbilibili.models.bangumi.BangumiModel;
 import cn.luern0313.wristbilibili.models.ListBangumiModel;
+import cn.luern0313.wristbilibili.models.bangumi.BangumiModel;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 import okhttp3.Response;
@@ -62,8 +62,6 @@ public class BangumiApi
                 bangumiModel = new BangumiModel(result.getJSONObject("result"));
                 return bangumiModel;
             }
-            else
-                return null;
         }
         catch (JSONException | NullPointerException e)
         {

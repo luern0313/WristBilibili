@@ -120,6 +120,12 @@ public class MainActivity extends AppCompatActivity
             }).start();
         }
 
+        //startActivity(VideoActivity.getActivityIntent(ctx, "78732000", ""));
+
+        Intent intent = new Intent(ctx, ArticleActivity.class);
+        intent.putExtra("article_id", "4807000");
+        startActivity(intent);
+
         serviceIntent = new Intent(this, DownloadService.class);
         startService(serviceIntent);
     }

@@ -74,27 +74,18 @@ public class DynamicApi
         }
     }
 
-    public void getHistoryDynamic() throws IOException
+    public void getHistoryDynamic() throws IOException, JSONException
     {
-        try
+        if(isSelf)
         {
-            if(isSelf)
-            {
-                String url = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/dynamic_history";
-                String arg = "uid=" + mid + "&offset_dynamic_id=" + lastDynamicId + "&type=" + DYNAMICTYPE;
-                dynamicJsonArray = new JSONObject(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string()).getJSONObject("data").getJSONArray("cards");
-            }
-            else
-            {
-                String url = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/space_history";
-                String arg = "visitor_uid=" + selfMid + "&host_uid=" + mid + "&offset_dynamic_id=" + lastDynamicId;
-                dynamicJsonArray = new JSONObject(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string()).getJSONObject("data").getJSONArray("cards");
-            }
+            String url = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/dynamic_history";
+            String arg = "uid=" + mid + "&offset_dynamic_id=" + lastDynamicId + "&type=" + DYNAMICTYPE;
+            dynamicJsonArray = new JSONObject(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string()).getJSONObject("data").getJSONArray("cards");
         }
-        catch (JSONException e)
-        {
-            e.printStackTrace();
-            dynamicJsonArray = new JSONArray();
+        else {
+            String url = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/space_history";
+            String arg = "visitor_uid=" + selfMid + "&host_uid=" + mid + "&offset_dynamic_id=" + lastDynamicId;
+            dynamicJsonArray = new JSONObject(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string()).getJSONObject("data").getJSONArray("cards");
         }
     }
 
@@ -110,6 +101,27 @@ public class DynamicApi
                 lastDynamicId = dy.optJSONObject("desc").optString("dynamic_id_str");
         }
         return dynamicList;
+    }
+
+    public DynamicModel getDynamicDetail(String dynamicId) throws IOException
+    {
+        try
+        {
+            String url = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/get_dynamic_detail";
+            String arg = "dynamic_id=" + dynamicId;
+            JSONObject result = new JSONObject(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string());
+            if(result.optInt("code") == 0)
+            {
+                JSONObject card = result.optJSONObject("data").optJSONObject("card");
+                return getDynamicClass(card.optString("card", "{}"), card.optJSONObject("desc"),
+                                       card.optJSONObject("display"), card.optString("extend_json", "{}"));
+            }
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private DynamicModel getDynamicClass(String cardStr, JSONObject desc, JSONObject display, String extendStr)

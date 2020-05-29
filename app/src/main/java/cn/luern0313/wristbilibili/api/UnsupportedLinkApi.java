@@ -14,6 +14,7 @@ import java.util.HashMap;
 import cn.luern0313.wristbilibili.models.UnsupportedLinkModel;
 import cn.luern0313.wristbilibili.ui.ArticleActivity;
 import cn.luern0313.wristbilibili.ui.BangumiActivity;
+import cn.luern0313.wristbilibili.ui.DynamicDetailActivity;
 import cn.luern0313.wristbilibili.ui.FavorvideoActivity;
 import cn.luern0313.wristbilibili.ui.UserActivity;
 import cn.luern0313.wristbilibili.ui.VideoActivity;
@@ -106,6 +107,8 @@ public class UnsupportedLinkApi
                         }
                         case "following":
                         {
+                            intent = new Intent(ctx, DynamicDetailActivity.class);
+                            intent.putExtra("dynamic_id", id);
                             break;
                         }
                     }

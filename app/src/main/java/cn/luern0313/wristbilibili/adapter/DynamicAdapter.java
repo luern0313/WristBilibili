@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -46,15 +45,15 @@ public class DynamicAdapter extends BaseAdapter
     private DynamicAdapterListener dynamicAdapterListener;
 
     private ArrayList<DynamicModel> dynamicModelArrayList;
-    private ListView listView;
+    private View view;
     private int dynamicWidth;
 
-    public DynamicAdapter(LayoutInflater inflater, ArrayList<DynamicModel> dynamicModelArrayList, ListView listView, int dynamicWidth, DynamicAdapterListener dynamicAdapterListener)
+    public DynamicAdapter(LayoutInflater inflater, ArrayList<DynamicModel> dynamicModelArrayList, View view, int dynamicWidth, DynamicAdapterListener dynamicAdapterListener)
     {
         ctx = MyApplication.getContext();
         mInflater = inflater;
         this.dynamicModelArrayList = dynamicModelArrayList;
-        this.listView = listView;
+        this.view = view;
         this.dynamicWidth = dynamicWidth;
         this.dynamicAdapterListener = dynamicAdapterListener;
 
@@ -140,12 +139,12 @@ public class DynamicAdapter extends BaseAdapter
         else
             viewHolder = (ViewHolder) convertView.getTag();
 
-        handlerView(viewHolder, dynamicModel, position, false);
+        handlerView(viewHolder, dynamicModel, position, false, false);
 
         return convertView;
     }
 
-    private ViewHolder getViewHolder(DynamicModel dynamicModel, View convertView, int viewId)
+    public ViewHolder getViewHolder(DynamicModel dynamicModel, View convertView, int viewId)
     {
         ViewHolder viewHolder;
         ViewHolder vh = new ViewHolder();
@@ -248,13 +247,15 @@ public class DynamicAdapter extends BaseAdapter
         return viewHolder;
     }
 
-    private void handlerView(ViewHolder vh, DynamicModel dm, int position, boolean isShared)
+    public void handlerView(ViewHolder vh, DynamicModel dm, int position, boolean isShared, boolean isExpand)
     {
         if(dm.getCardType() == 1)
         {
             final ViewHolder.ViewHolderShare viewHolder = (ViewHolder.ViewHolderShare) vh;
             final DynamicModel.DynamicShareModel dynamicModel = (DynamicModel.DynamicShareModel) dm;
 
+            if(isExpand)
+                viewHolder.share_dynamic.setMaxLinesOnShrink(Integer.MAX_VALUE);
             viewHolder.share_dynamic.setExpandListener(new ExpandableTextView.OnExpandListener()
             {
                 @Override
@@ -270,7 +271,7 @@ public class DynamicAdapter extends BaseAdapter
                 }
             });
             CharSequence text = DataProcessUtil.getClickableHtml(dynamicModel.getShareText(), new ReplyHtmlImageHandlerUtil(
-                    listView.getContext(), mImageCache, viewHolder.share_dynamic, dynamicModel.getCardEmoteSize()));
+                    mImageCache, viewHolder.share_dynamic, dynamicModel.getCardEmoteSize()));
             viewHolder.share_dynamic.setOrigText(text);
             viewHolder.share_dynamic.updateForRecyclerView(text, dynamicWidth, dynamicModel.isShareTextExpand() ?
                     ExpandableTextView.STATE_EXPAND : ExpandableTextView.STATE_SHRINK);
@@ -280,7 +281,7 @@ public class DynamicAdapter extends BaseAdapter
             viewHolder.share_dynamic.setClickable(false);
             viewHolder.share_dynamic.setLongClickable(false);
             ViewHolder shareViewHolder = getViewHolder(dynamicModel.getShareOriginCard(), vh.dynamic_lay, R.id.dynamic_share_share);
-            handlerView(shareViewHolder, dynamicModel.getShareOriginCard(), position, true);
+            handlerView(shareViewHolder, dynamicModel.getShareOriginCard(), position, true, isExpand);
 
             viewHolder.share_share.setOnClickListener(onViewClick(position, isShared));
         }
@@ -297,6 +298,8 @@ public class DynamicAdapter extends BaseAdapter
             else
                 viewHolder.album_author.setVisibility(View.GONE);
 
+            if(isExpand)
+                viewHolder.album_text.setMaxLinesOnShrink(Integer.MAX_VALUE);
             viewHolder.album_text.setExpandListener(new ExpandableTextView.OnExpandListener()
             {
                 @Override
@@ -312,7 +315,7 @@ public class DynamicAdapter extends BaseAdapter
                 }
             });
             CharSequence text = DataProcessUtil.getClickableHtml(dynamicModel.getAlbumText(), new ReplyHtmlImageHandlerUtil(
-                    listView.getContext(), mImageCache, viewHolder.album_text, dynamicModel.getCardEmoteSize()));
+                    mImageCache, viewHolder.album_text, dynamicModel.getCardEmoteSize()));
             viewHolder.album_text.setOrigText(text);
             viewHolder.album_text.updateForRecyclerView(text, dynamicWidth, dynamicModel.isAlbumTextExpand() ?
                     ExpandableTextView.STATE_EXPAND : ExpandableTextView.STATE_SHRINK);
@@ -338,7 +341,7 @@ public class DynamicAdapter extends BaseAdapter
             layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
             viewHolder.album_img.setLayoutManager(layoutManager);
             if(viewHolder.album_img.getItemDecorationCount() == 0)
-                viewHolder.album_img.addItemDecoration(DynamicAlbumDecoration.createHorizontal(ctx, Color.argb(0, 0, 0, 0), DataProcessUtil.dip2px(ctx, 2)));
+                viewHolder.album_img.addItemDecoration(DynamicAlbumDecoration.createHorizontal(ctx, Color.argb(0, 0, 0, 0), DataProcessUtil.dip2px(2)));
             viewHolder.album_img.setAdapter(new DynamicAlbumImgAdapter(dynamicModel.getAlbumImg(), viewHolder.album_img, mImageCache, dynamicAlbumImgAdapterListener));
 
             viewHolder.album_author.setOnClickListener(onViewClick(position, isShared));
@@ -356,6 +359,8 @@ public class DynamicAdapter extends BaseAdapter
             else
                 viewHolder.text_author.setVisibility(View.GONE);
 
+            if(isExpand)
+                viewHolder.text_text.setMaxLinesOnShrink(Integer.MAX_VALUE);
             viewHolder.text_text.setExpandListener(new ExpandableTextView.OnExpandListener()
             {
                 @Override
@@ -371,7 +376,7 @@ public class DynamicAdapter extends BaseAdapter
                 }
             });
             CharSequence text = DataProcessUtil.getClickableHtml(dynamicModel.getTextText(), new ReplyHtmlImageHandlerUtil(
-                    listView.getContext(), mImageCache, viewHolder.text_text, dynamicModel.getCardEmoteSize()));
+                    mImageCache, viewHolder.text_text, dynamicModel.getCardEmoteSize()));
             viewHolder.text_text.setOrigText(text);
             viewHolder.text_text.updateForRecyclerView(text, dynamicWidth, dynamicModel.isTextTextExpand() ?
                     ExpandableTextView.STATE_EXPAND : ExpandableTextView.STATE_SHRINK);
@@ -403,6 +408,8 @@ public class DynamicAdapter extends BaseAdapter
 
             if(dynamicModel.getVideoDynamic() != null && !dynamicModel.getVideoDynamic().equals(""))
             {
+                if(isExpand)
+                    viewHolder.video_dynamic.setMaxLinesOnShrink(Integer.MAX_VALUE);
                 viewHolder.video_dynamic.setExpandListener(new ExpandableTextView.OnExpandListener()
                 {
                     @Override
@@ -418,7 +425,7 @@ public class DynamicAdapter extends BaseAdapter
                     }
                 });
                 CharSequence text = DataProcessUtil.getClickableHtml(dynamicModel.getVideoDynamic(), new ReplyHtmlImageHandlerUtil(
-                        listView.getContext(), mImageCache, viewHolder.video_dynamic, dynamicModel.getCardEmoteSize()));
+                        mImageCache, viewHolder.video_dynamic, dynamicModel.getCardEmoteSize()));
                 viewHolder.video_dynamic.setOrigText(text);
                 viewHolder.video_dynamic.updateForRecyclerView(text, dynamicWidth, dynamicModel.isVideoDynamicExpand() ?
                         ExpandableTextView.STATE_EXPAND : ExpandableTextView.STATE_SHRINK);
@@ -463,6 +470,8 @@ public class DynamicAdapter extends BaseAdapter
 
             if(dynamicModel.getArticleDynamic() != null && !dynamicModel.getArticleDynamic().equals(""))
             {
+                if(isExpand)
+                    viewHolder.article_dynamic.setMaxLinesOnShrink(Integer.MAX_VALUE);
                 viewHolder.article_dynamic.setExpandListener(new ExpandableTextView.OnExpandListener()
                 {
                     @Override
@@ -478,7 +487,7 @@ public class DynamicAdapter extends BaseAdapter
                     }
                 });
                 CharSequence text = DataProcessUtil.getClickableHtml(dynamicModel.getArticleDynamic(), new ReplyHtmlImageHandlerUtil(
-                        listView.getContext(), mImageCache, viewHolder.article_dynamic, dynamicModel.getCardEmoteSize()));
+                        mImageCache, viewHolder.article_dynamic, dynamicModel.getCardEmoteSize()));
                 viewHolder.article_dynamic.setOrigText(text);
                 viewHolder.article_dynamic.updateForRecyclerView(text, dynamicWidth, dynamicModel.isArticleDynamicExpand() ?
                         ExpandableTextView.STATE_EXPAND : ExpandableTextView.STATE_SHRINK);
@@ -539,6 +548,8 @@ public class DynamicAdapter extends BaseAdapter
 
             if(dynamicModel.getUrlDynamic() != null && !dynamicModel.getUrlDynamic().equals(""))
             {
+                if(isExpand)
+                    viewHolder.url_dynamic.setMaxLinesOnShrink(Integer.MAX_VALUE);
                 viewHolder.url_dynamic.setExpandListener(new ExpandableTextView.OnExpandListener()
                 {
                     @Override
@@ -554,7 +565,7 @@ public class DynamicAdapter extends BaseAdapter
                     }
                 });
                 CharSequence text = DataProcessUtil.getClickableHtml(dynamicModel.getUrlDynamic(), new ReplyHtmlImageHandlerUtil(
-                        listView.getContext(), mImageCache, viewHolder.url_dynamic, dynamicModel.getCardEmoteSize()));
+                        mImageCache, viewHolder.url_dynamic, dynamicModel.getCardEmoteSize()));
                 viewHolder.url_dynamic.setOrigText(text);
                 viewHolder.url_dynamic.updateForRecyclerView(text, dynamicWidth, dynamicModel.isUrlDynamicExpand() ?
                         ExpandableTextView.STATE_EXPAND : ExpandableTextView.STATE_SHRINK);
@@ -602,7 +613,7 @@ public class DynamicAdapter extends BaseAdapter
             viewHolder.live_online.setText(dynamicModel.getLiveOnline());
 
             Drawable viewerNumDrawable = ctx.getResources().getDrawable(R.drawable.icon_video_viewer_num_white);
-            viewerNumDrawable.setBounds(0,0, DataProcessUtil.dip2px(listView.getContext(), 12), DataProcessUtil.dip2px(listView.getContext(), 12));
+            viewerNumDrawable.setBounds(0,0, DataProcessUtil.dip2px(12), DataProcessUtil.dip2px(2));
             viewHolder.live_online.setCompoundDrawables(viewerNumDrawable,null, null,null);
 
             if(dynamicModel.isLiveStatus())
@@ -709,7 +720,7 @@ public class DynamicAdapter extends BaseAdapter
         }
         else
         {
-            ImageTaskUtil it = new ImageTaskUtil(listView, mImageCache);
+            ImageTaskUtil it = new ImageTaskUtil(view, mImageCache);
             it.execute(url);
             return null;
         }
@@ -727,7 +738,7 @@ public class DynamicAdapter extends BaseAdapter
         };
     }
 
-    class ViewHolder
+    public class ViewHolder
     {
         int type;
         RelativeLayout dynamic_lay;

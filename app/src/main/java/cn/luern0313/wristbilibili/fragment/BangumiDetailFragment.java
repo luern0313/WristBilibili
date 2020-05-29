@@ -41,8 +41,8 @@ public class BangumiDetailFragment extends Fragment implements View.OnClickListe
     private final int RESULT_DETAIL_EPISODE = 101;
     private final int RESULT_DETAIL_OTHER = 102;
 
-    Context ctx;
-    View rootLayout;
+    private Context ctx;
+    private View rootLayout;
 
     private String seasonId;
     private BangumiModel bangumiModel;
