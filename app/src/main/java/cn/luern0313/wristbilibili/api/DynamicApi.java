@@ -95,7 +95,8 @@ public class DynamicApi
         for (int i = 0; i < dynamicJsonArray.length(); i++)
         {
             JSONObject dy = dynamicJsonArray.optJSONObject(i);
-            DynamicModel dynamic = getDynamicClass(dy.optString("card"), dy.optJSONObject("desc"), dy.optJSONObject("display"), dy.optString("extend_json", "{}"));
+            JSONObject display = dy.has("display") ? dy.optJSONObject("display") : new JSONObject();
+            DynamicModel dynamic = getDynamicClass(dy.optString("card", "{}"), dy.optJSONObject("desc"), display, dy.optString("extend_json", "{}"));
             dynamicList.add(dynamic);
             if(i == dynamicJsonArray.length() - 1)
                 lastDynamicId = dy.optJSONObject("desc").optString("dynamic_id_str");
@@ -113,8 +114,9 @@ public class DynamicApi
             if(result.optInt("code") == 0)
             {
                 JSONObject card = result.optJSONObject("data").optJSONObject("card");
+                JSONObject display = card.has("display") ? card.optJSONObject("display") : new JSONObject();
                 return getDynamicClass(card.optString("card", "{}"), card.optJSONObject("desc"),
-                                       card.optJSONObject("display"), card.optString("extend_json", "{}"));
+                                       display, card.optString("extend_json", "{}"));
             }
         }
         catch (JSONException e)

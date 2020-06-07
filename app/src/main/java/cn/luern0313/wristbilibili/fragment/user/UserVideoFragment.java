@@ -83,6 +83,12 @@ public class UserVideoFragment extends Fragment
                 Intent intent = VideoActivity.getActivityIntent(ctx, "", listVideoModelArrayList.get(position).video_bvid);
                 startActivity(intent);
             }
+
+            @Override
+            public void onListVideoAdapterLongClick(int viewId, int position)
+            {
+
+            }
         };
 
         layoutLoading = inflater.inflate(R.layout.widget_loading, null, false);

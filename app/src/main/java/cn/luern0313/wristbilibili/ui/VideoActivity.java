@@ -605,7 +605,13 @@ public class VideoActivity extends AppCompatActivity implements VideoDetailFragm
         intent.putExtra("title", videoPartModel.video_part_name);
         intent.putExtra("aid", videoModel.video_aid);
         intent.putExtra("cid", videoPartModel.video_part_cid);
+        if(videoPartModel.video_part_cid.equals(videoModel.video_user_progress_cid))
+            intent.putExtra("time", videoModel.video_user_progress_time);
         startActivity(intent);
+        videoModel.video_user_progress_cid = videoPartModel.video_part_cid;
+        videoModel.video_user_progress_position = position;
+        videoModel.video_user_progress_time = 0;
+        EventBus.getDefault().post(videoModel);
     }
 
     @Override

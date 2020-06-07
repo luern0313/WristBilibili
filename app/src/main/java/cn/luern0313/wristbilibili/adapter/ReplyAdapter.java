@@ -239,10 +239,16 @@ public class ReplyAdapter extends BaseAdapter
                                 DataProcessUtil.getClickableHtml(replyModel.reply_reply_show.get(0),
                                               new ReplyHtmlImageHandlerUtil(mImageCache, viewHolder.reply_reply_show_1, replyModel.reply_emote_size)));
                 }
-                if(!replyModel.reply_is_up_reply)
-                    viewHolder.reply_reply_show_show.setText(Html.fromHtml("<font color=\"#3f51b5\">共" + replyModel.reply_reply_num + "条回复 ></font>"));
+                if(replyModel.reply_reply_num > Math.min(replyModel.reply_reply_show.size(), 3))
+                {
+                    if(!replyModel.reply_is_up_reply) viewHolder.reply_reply_show_show.setText(
+                            Html.fromHtml("<font color=\"#3f51b5\">共" + DataProcessUtil.getView(replyModel.reply_reply_num) + "条回复 ></font>"));
+                    else viewHolder.reply_reply_show_show.setText(Html.fromHtml(
+                            "UP主等人<font color=\"#3f51b5\">共" + DataProcessUtil.getView(replyModel.reply_reply_num) + "条回复 ></font>"));
+                    viewHolder.reply_reply_show_show.setVisibility(View.VISIBLE);
+                }
                 else
-                    viewHolder.reply_reply_show_show.setText(Html.fromHtml("UP主等人<font color=\"#3f51b5\">共" + replyModel.reply_reply_num + "条回复 ></font>"));
+                    viewHolder.reply_reply_show_show.setVisibility(View.GONE);
 
                 viewHolder.reply_reply_show_1.setMovementMethod(viewHolder.reply_text.new LinkTouchMovementMethod());
                 viewHolder.reply_reply_show_2.setMovementMethod(viewHolder.reply_text.new LinkTouchMovementMethod());

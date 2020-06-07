@@ -77,7 +77,7 @@
             android:layout_marginRight="22dp"
             android:layout_marginTop="6dp"
             android:gravity="center_horizontal"
-            android:text="三群群号：1026083781"
+            android:text="三群群号：1026083781（群满）"
             android:textSize="12sp" />
 
         <ImageView
@@ -85,5 +85,21 @@
             android:layout_height="128dp"
             android:layout_marginBottom="16dp"
             android:src="@drawable/img_qq3" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="22dp"
+            android:layout_marginRight="22dp"
+            android:layout_marginTop="6dp"
+            android:gravity="center_horizontal"
+            android:text="四群群号：819202278"
+            android:textSize="12sp" />
+
+        <ImageView
+            android:layout_width="128dp"
+            android:layout_height="128dp"
+            android:layout_marginBottom="16dp"
+            android:src="@drawable/img_qq4" />
     </LinearLayout>
 </ScrollView>

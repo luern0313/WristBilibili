@@ -174,7 +174,7 @@ public class RankingFragment extends Fragment
             public void run()
             {
                 SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
-                int today_int = Integer.valueOf(format.format(new Date(System.currentTimeMillis())));
+                int today_int = Integer.parseInt(format.format(new Date(System.currentTimeMillis())));
                 ArrayList<Integer> dates = new ArrayList<>(pickUpHashMap.keySet());
                 Collections.sort(dates);
                 for(int i = dates.size() - 1; i >= 0; i--)
@@ -213,83 +213,89 @@ public class RankingFragment extends Fragment
             @Override
             public void run()
             {
-                if(uiListView.getHeaderViewsCount() == 0) uiListView.addHeaderView(uiPickUpView);
-                uiPickUpView.findViewById(R.id.rk_pu_lay).setVisibility(View.VISIBLE);
-                ((TextView) uiPickUpView.findViewById(R.id.rk_pu_video_title)).setText(videoModel.video_title);
-                ((TextView) uiPickUpView.findViewById(R.id.rk_pu_video_up_name)).setText(videoModel.video_up_name);
-                ((TextView) uiPickUpView.findViewById(R.id.rk_pu_date_date)).setText(pickupday.substring(4, 6) + "月" + pickupday.substring(6, 8) + "日");
-                ((TextView) uiPickUpView.findViewById(R.id.rk_pu_video_play)).setText(videoModel.video_play);
-                ((TextView) uiPickUpView.findViewById(R.id.rk_pu_video_danmaku)).setText(videoModel.video_danmaku);
-
-                if(SharedPreferencesUtil.getBoolean(SharedPreferencesUtil.firstPickUp, true))
-                    uiPickUpView.findViewById(R.id.rk_pu_date_click).setVisibility(View.VISIBLE);
-
-                Drawable playNumDrawable = ctx.getResources().getDrawable(R.drawable.icon_video_play_num);
-                Drawable danmakuNumDrawable = ctx.getResources().getDrawable(R.drawable.icon_video_danmu_num);
-                playNumDrawable.setBounds(0, 0, DataProcessUtil.dip2px(10), DataProcessUtil.dip2px(10));
-                danmakuNumDrawable.setBounds(0, 0, DataProcessUtil.dip2px(10), DataProcessUtil.dip2px(10));
-                ((TextView) uiPickUpView.findViewById(R.id.rk_pu_video_play)).setCompoundDrawables(playNumDrawable,null, null,null);
-                ((TextView) uiPickUpView.findViewById(R.id.rk_pu_video_danmaku)).setCompoundDrawables(danmakuNumDrawable,null, null,null);
-
-                uiPickUpView.findViewById(R.id.rk_pu_date).setOnClickListener(new View.OnClickListener()
+                try
                 {
-                    @Override
-                    public void onClick(View v)
-                    {
-                        uiPickUpView.findViewById(R.id.rk_pu_date_click).setVisibility(View.GONE);
-                        SharedPreferencesUtil.putBoolean(SharedPreferencesUtil.firstPickUp, false);
-                        Intent intent = new Intent(ctx, TextActivity.class);
-                        intent.putExtra("title", "说明");
-                        intent.putExtra("text", ("Pick Up视频说明\n" + "每天由用户推荐并投票选出一个精选视频，在排行榜的上方Pick Up栏推广展示一天\n" + "目的是让一些制作精良但播放不高的视频获得更多的曝光\n" + "（相关规则和投票系统正在制作中，目前推荐视频为手动设置，你可以在qq或b站私聊开发者推荐你喜欢的视频）\n" + "（相关要求：连续五天不能推荐同一名up主的视频，上榜视频非引战或有争议视频，播放量少的视频优先等）").replaceAll("\n", "<br/><br/>"));
-                        startActivity(intent);
-                    }
-                });
+                    if(uiListView.getHeaderViewsCount() == 0) uiListView.addHeaderView(uiPickUpView);
+                    uiPickUpView.findViewById(R.id.rk_pu_lay).setVisibility(View.VISIBLE);
+                    ((TextView) uiPickUpView.findViewById(R.id.rk_pu_video_title)).setText(videoModel.video_title);
+                    ((TextView) uiPickUpView.findViewById(R.id.rk_pu_video_up_name)).setText(videoModel.video_up_name);
+                    ((TextView) uiPickUpView.findViewById(R.id.rk_pu_date_date)).setText(pickupday.substring(4, 6) + "月" + pickupday.substring(6, 8) + "日");
+                    ((TextView) uiPickUpView.findViewById(R.id.rk_pu_video_play)).setText(videoModel.video_play);
+                    ((TextView) uiPickUpView.findViewById(R.id.rk_pu_video_danmaku)).setText(videoModel.video_danmaku);
+                    if(SharedPreferencesUtil.getBoolean(SharedPreferencesUtil.firstPickUp, true))
+                        uiPickUpView.findViewById(R.id.rk_pu_date_click).setVisibility(View.VISIBLE);
 
-                uiPickUpView.findViewById(R.id.rk_pu_video_up).setOnClickListener(new View.OnClickListener()
-                {
-                    @Override
-                    public void onClick(View v)
-                    {
-                        Intent intent = new Intent(ctx, UserActivity.class);
-                        intent.putExtra("mid", videoModel.video_up_mid);
-                        startActivity(intent);
-                    }
-                });
+                    Drawable playNumDrawable = ctx.getResources().getDrawable(R.drawable.icon_video_play_num);
+                    Drawable danmakuNumDrawable = ctx.getResources().getDrawable(R.drawable.icon_video_danmu_num);
+                    playNumDrawable.setBounds(0, 0, DataProcessUtil.dip2px(10), DataProcessUtil.dip2px(10));
+                    danmakuNumDrawable.setBounds(0, 0, DataProcessUtil.dip2px(10), DataProcessUtil.dip2px(10));
+                    ((TextView) uiPickUpView.findViewById(R.id.rk_pu_video_play)).setCompoundDrawables(playNumDrawable,null, null,null);
+                    ((TextView) uiPickUpView.findViewById(R.id.rk_pu_video_danmaku)).setCompoundDrawables(danmakuNumDrawable,null, null,null);
 
-                uiPickUpView.findViewById(R.id.rk_pu_lay).setOnClickListener(new View.OnClickListener()
-                {
-                    @Override
-                    public void onClick(View v)
+                    uiPickUpView.findViewById(R.id.rk_pu_date).setOnClickListener(new View.OnClickListener()
                     {
-                        new Thread(new Runnable()
+                        @Override
+                        public void onClick(View v)
                         {
-                            @Override
-                            public void run()
+                            uiPickUpView.findViewById(R.id.rk_pu_date_click).setVisibility(View.GONE);
+                            SharedPreferencesUtil.putBoolean(SharedPreferencesUtil.firstPickUp, false);
+                            Intent intent = new Intent(ctx, TextActivity.class);
+                            intent.putExtra("title", "说明");
+                            intent.putExtra("text", ("Pick Up视频说明\n" + "每天由用户推荐并投票选出一个精选视频，在排行榜的上方Pick Up栏推广展示一天\n" + "目的是让一些制作精良但播放不高的视频获得更多的曝光\n" + "（相关规则和投票系统正在制作中，目前推荐视频为手动设置，你可以在qq或b站私聊开发者推荐你喜欢的视频）\n" + "（相关要求：连续五天不能推荐同一名up主的视频，上榜视频非引战或有争议视频，播放量少的视频优先等）").replaceAll("\n", "<br/><br/>"));
+                            startActivity(intent);
+                        }
+                    });
+
+                    uiPickUpView.findViewById(R.id.rk_pu_video_up).setOnClickListener(new View.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(View v)
+                        {
+                            Intent intent = new Intent(ctx, UserActivity.class);
+                            intent.putExtra("mid", videoModel.video_up_mid);
+                            startActivity(intent);
+                        }
+                    });
+
+                    uiPickUpView.findViewById(R.id.rk_pu_lay).setOnClickListener(new View.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(View v)
+                        {
+                            new Thread(new Runnable()
                             {
-                                rankingApi.clickPickUpVideo();
-                            }
-                        }).start();
-                        startActivity(VideoActivity.getActivityIntent(ctx, videoModel.video_aid, ""));
-                    }
-                });
+                                @Override
+                                public void run()
+                                {
+                                    rankingApi.clickPickUpVideo();
+                                }
+                            }).start();
+                            startActivity(VideoActivity.getActivityIntent(ctx, videoModel.video_aid, ""));
+                        }
+                    });
 
-                new Thread(new Runnable()
-                {
-                    @Override
-                    public void run()
+                    new Thread(new Runnable()
                     {
-                        try
+                        @Override
+                        public void run()
                         {
-                            bitmapPickUpUpFace = ImageDownloaderUtil.downloadImage(videoModel.video_up_face);
-                            bitmapPickUpVideoCover = ImageDownloaderUtil.downloadImage(videoModel.video_cover);
-                            handler.post(runnablePickImg);
+                            try
+                            {
+                                bitmapPickUpUpFace = ImageDownloaderUtil.downloadImage(videoModel.video_up_face);
+                                bitmapPickUpVideoCover = ImageDownloaderUtil.downloadImage(videoModel.video_cover);
+                                handler.post(runnablePickImg);
+                            }
+                            catch (IOException e)
+                            {
+                                e.printStackTrace();
+                            }
                         }
-                        catch (IOException e)
-                        {
-                            e.printStackTrace();
-                        }
-                    }
-                }).start();
+                    }).start();
+                }
+                catch (RuntimeException e)
+                {
+                    e.printStackTrace();
+                }
             }
         };
 

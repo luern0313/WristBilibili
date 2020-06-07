@@ -32,19 +32,19 @@ public class FavorBoxFragment extends Fragment
 {
     private static final String ARG_FAVOR_BOX_MID = "argFavorBoxMid";
 
-    Context ctx;
+    private Context ctx;
     private String mid;
     private FavorBoxApi favorBoxApi;
     private ArrayList<FavorBoxModel> favourboxArrayList;
     private FavorBoxAdapter.FavorBoxAdapterListener favorBoxAdapterListener;
 
-    View rootLayout;
+    private View rootLayout;
     private ListView favListView;
     private WaveSwipeRefreshLayout waveSwipeRefreshLayout;
 
     public static boolean isLogin;
 
-    Handler handler = new Handler();
+    private Handler handler = new Handler();
     private Runnable runnableUi, runnableNoWeb, runnableNodata;
 
     public FavorBoxFragment() {}

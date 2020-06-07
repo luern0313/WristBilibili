@@ -64,7 +64,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:layout_marginEnd="4dp"
-                android:padding="3dp"
+                android:padding="1dp"
                 android:textColor="@color/gray_22"
                 android:textSize="13sp" />
 

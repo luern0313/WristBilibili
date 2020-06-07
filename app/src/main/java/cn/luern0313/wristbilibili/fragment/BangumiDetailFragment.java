@@ -122,8 +122,7 @@ public class BangumiDetailFragment extends Fragment implements View.OnClickListe
             });
             uiDetailEpisodesRecyclerView.setAdapter(episodesRecyclerViewAdapter);
             if(bangumiModel.bangumi_user_progress_mode == 1)
-                ((LinearLayoutManager) uiDetailEpisodesRecyclerView.getLayoutManager()).
-                        scrollToPositionWithOffset(bangumiModel.bangumi_user_progress_position, 0);
+                layoutManager.scrollToPositionWithOffset(bangumiModel.bangumi_user_progress_position, 0);
         }
 
         if(bangumiModel.bangumi_sections.size() != 0)
@@ -144,8 +143,7 @@ public class BangumiDetailFragment extends Fragment implements View.OnClickListe
             });
             uiDetailSectionsRecyclerView.setAdapter(sectionsRecyclerViewAdapter);
             if(bangumiModel.bangumi_user_progress_mode == 2)
-                ((LinearLayoutManager) uiDetailSectionsRecyclerView.getLayoutManager()).
-                        scrollToPositionWithOffset(bangumiModel.bangumi_user_progress_position, 0);
+                layoutManager.scrollToPositionWithOffset(bangumiModel.bangumi_user_progress_position, 0);
         }
 
         if(bangumiModel.bangumi_seasons.size() > 1)

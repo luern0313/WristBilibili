@@ -13,6 +13,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
+
 import androidx.appcompat.app.AppCompatActivity;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.OnlineVideoApi;
@@ -24,11 +26,11 @@ public class PlayerActivity extends AppCompatActivity
     OnlineVideoApi onlineVideoApi;
 
     String title, aid, cid, url;
+    int time;
     String[] url_backup;
     String danmaku;
     Handler handler = new Handler();
-    Runnable runnLoading;
-    Runnable runnLoadErr;
+    Runnable runnableLoading, runnableLoadErr, runnableTimer;
 
     ImageView uiLoadingimg;
     TextView uiLoadingtip;
@@ -46,6 +48,7 @@ public class PlayerActivity extends AppCompatActivity
         title = intent.getStringExtra("title");
         aid = intent.getStringExtra("aid");
         cid = intent.getStringExtra("cid");
+        time = intent.getIntExtra("time", 0);
         onlineVideoApi = new OnlineVideoApi(aid, cid);
 
         uiLoadingimg = findViewById(R.id.player_loadingimg);
@@ -55,7 +58,7 @@ public class PlayerActivity extends AppCompatActivity
         loadingImgAnim = (AnimationDrawable) uiLoadingimg.getDrawable();
         loadingImgAnim.start();
 
-        runnLoading = new Runnable()
+        runnableLoading = new Runnable()
         {
             @Override
             public void run()
@@ -70,6 +73,8 @@ public class PlayerActivity extends AppCompatActivity
                     intent.putExtra("url_backup", url_backup);
                     intent.putExtra("danmaku", danmaku);
                     intent.putExtra("title", title);
+                    intent.putExtra("identity_name", getResources().getString(R.string.app_name));
+                    intent.putExtra("time", time);
                     startActivityForResult(intent, 0);
                 }
                 catch(Exception e)
@@ -83,6 +88,8 @@ public class PlayerActivity extends AppCompatActivity
                         intent.putExtra("url_backup", url_backup);
                         intent.putExtra("danmaku", danmaku);
                         intent.putExtra("title", title);
+                        intent.putExtra("identity_name", getResources().getString(R.string.app_name));
+                        intent.putExtra("time", time);
                         startActivityForResult(intent, 0);
                     }
                     catch(Exception ee)
@@ -94,12 +101,37 @@ public class PlayerActivity extends AppCompatActivity
             }
         };
 
-        runnLoadErr = new Runnable()
+        runnableLoadErr = new Runnable()
         {
             @Override
             public void run()
             {
                 uiLoadingtip.setText("视频链接获取失败？！");
+            }
+        };
+
+        runnableTimer = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                new Thread(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        try
+                        {
+                            onlineVideoApi.playHistory(time, false);
+                            time += 10;
+                        }
+                        catch (IOException e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
+                handler.postDelayed(this, 10000);
             }
         };
 
@@ -111,17 +143,17 @@ public class PlayerActivity extends AppCompatActivity
                 try
                 {
                     onlineVideoApi.connectionVideoUrl();
-                    onlineVideoApi.playHistory(0, false);
                     url = onlineVideoApi.getVideoUrl();
                     url_backup = onlineVideoApi.getVideoBackupUrl();
                     danmaku = onlineVideoApi.getDanmakuUrl();
-                    handler.post(runnLoading);
+                    handler.post(runnableLoading);
+                    handler.post(runnableTimer);
                 }
                 catch (Exception e)
                 {
                     e.printStackTrace();
                     loadingImgAnim.stop();
-                    handler.post(runnLoadErr);
+                    handler.post(runnableLoadErr);
                 }
             }
         }).start();

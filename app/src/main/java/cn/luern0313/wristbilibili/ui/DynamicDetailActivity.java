@@ -66,6 +66,8 @@ public class DynamicDetailActivity extends AppCompatActivity implements DynamicD
                 findViewById(R.id.dynamic_detail_noweb).setVisibility(View.GONE);
 
                 uiViewPager.setAdapter(pagerAdapter);
+                if(getIntent().hasExtra("page"))
+                    uiViewPager.setCurrentItem(Integer.parseInt(getIntent().getStringExtra("page")));
             }
         };
 
@@ -231,7 +233,8 @@ public class DynamicDetailActivity extends AppCompatActivity implements DynamicD
             if(position == 0)
                 return DynamicDetailFragment.newInstance(dynamicModel);
             else
-                return ReplyFragment.newInstance(dynamicModel.getCardReplyId(), ReplyApi.typeMap.get(dynamicModel.getCardType()), null, 0);
+                return ReplyFragment.newInstance(dynamicModel.getCardReplyId(), ReplyApi.typeMap.containsKey(dynamicModel.getCardType()) ?
+                        ReplyApi.typeMap.get(dynamicModel.getCardType()) : "17", null, 0);
         }
     };
 }

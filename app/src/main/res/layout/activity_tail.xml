@@ -98,11 +98,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tail_preetlay"
-                android:paddingBottom="30dp"
                 android:paddingLeft="32dp"
-                android:paddingRight="32dp"
                 android:paddingTop="6dp"
-                android:text="小尾巴最多70个字符\n\n在小尾巴中可以插入以下预置字符串\n{{device}}机型数据\n{{appname}}应用名称\n{{appauthor}}应用作者\n{{videoid}}软件介绍视频av号"
+                android:paddingRight="32dp"
+                android:paddingBottom="30dp"
+                android:text="小尾巴最多70个字符\n\n在小尾巴中可以插入以下预置字符串，发送时自动替换\n{{device}}机型数据\n{{appname}}应用名称\n{{appauthor}}应用作者\n{{videoid}}软件介绍视频av号"
                 android:textSize="12dp" />
         </LinearLayout>
     </ScrollView>

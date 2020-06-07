@@ -64,6 +64,7 @@ public class UnsupportedLinkApi
             if(supportedLinkMap.containsKey(path))
             {
                 String id = uri.getLastPathSegment() != null ? uri.getLastPathSegment() : "";
+                String[] parameter = uri.getQueryParameterNames().toArray(new String[]{});
                 if(path.equals("video") && !id.startsWith("BV"))
                     url = String.format(supportedLinkMap.get(path).get("url"), "av" + uri.getLastPathSegment());
                 else
@@ -112,6 +113,9 @@ public class UnsupportedLinkApi
                             break;
                         }
                     }
+                    if(intent != null)
+                        for(String i : parameter)
+                            intent.putExtra(i, uri.getQueryParameter(i));
                 }
             }
         }

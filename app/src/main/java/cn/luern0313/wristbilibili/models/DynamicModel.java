@@ -511,47 +511,51 @@ public class DynamicModel implements Serializable
             }
         }
 
-        JSONObject emote = display.has("emoji_info") ? display.optJSONObject("emoji_info") : new JSONObject();
-        JSONArray emoteDetail = emote.has("emoji_details") ? emote.optJSONArray("emoji_details") : new JSONArray();
-        for(int i = 0; i < emoteDetail.length(); i++)
+        if(display != null)
         {
-            JSONObject emoteJson = emoteDetail.optJSONObject(i);
-            String key = emoteJson.optString("text");
-            String tag = "<img src=\"" + emoteJson.optString("url") + "\"/>";
-            for(int j = 0; j < textNodes.size(); j++)
+            JSONObject emote = display.has("emoji_info") ? display.optJSONObject("emoji_info") : new JSONObject();
+            JSONArray emoteDetail = emote.has("emoji_details") ? emote.optJSONArray("emoji_details") : new JSONArray();
+            for (int i = 0; i < emoteDetail.length(); i++)
             {
-                TextNode textNode = textNodes.get(j);
-                if(textNode.getWholeText().contains(key))
-                {
-                    cardEmoteSize.put(emoteJson.optString("url"), emoteJson.has("meta") ? emoteJson.optJSONObject("meta").optInt("size") : 1);
-                    textNode.before(textNode.getWholeText().substring(0, textNode.getWholeText().indexOf(key)));
-                    textNode.before(tag);
-                    textNode.text(textNode.getWholeText().substring(textNode.getWholeText().indexOf(key) + key.length()));
-                    textNodes = document.textNodes();
-                    j--;
-                }
-            }
-        }
-
-        if((extend.has("topic") ? extend.optJSONObject("topic").optInt("is_attach_topic") : 1) == 1)
-        {
-            JSONObject topics = display.has("topic_info") ? display.optJSONObject("topic_info") : new JSONObject();
-            JSONArray topicsDetail = topics.has("topic_details") ? topics.optJSONArray("topic_details") : new JSONArray();
-            for (int i = 0; i < topicsDetail.length(); i++)
-            {
-                JSONObject topicsJSON = topicsDetail.optJSONObject(i);
-                String key = "#" + topicsJSON.optString("topic_name") + "#";
-                String tag = "<a href=\"bilibili://pegasus/channel/" + topicsJSON.optString("topic_id") + "\">" + key + "</a>";
+                JSONObject emoteJson = emoteDetail.optJSONObject(i);
+                String key = emoteJson.optString("text");
+                String tag = "<img src=\"" + emoteJson.optString("url") + "\"/>";
                 for (int j = 0; j < textNodes.size(); j++)
                 {
                     TextNode textNode = textNodes.get(j);
                     if(textNode.getWholeText().contains(key))
                     {
-                        textNode.before(textNode.getWholeText().substring(0, textNode.getWholeText().indexOf(key)));
+                        cardEmoteSize.put(emoteJson.optString("url"), emoteJson.has("meta") ? emoteJson.optJSONObject("meta").optInt("size") : 1);
+                        textNode.before(textNode.getWholeText().substring(0, textNode.getWholeText()
+                                .indexOf(key)));
                         textNode.before(tag);
                         textNode.text(textNode.getWholeText().substring(textNode.getWholeText().indexOf(key) + key.length()));
                         textNodes = document.textNodes();
                         j--;
+                    }
+                }
+            }
+
+            if((extend.has("topic") ? extend.optJSONObject("topic").optInt("is_attach_topic") : 1) == 1)
+            {
+                JSONObject topics = display.has("topic_info") ? display.optJSONObject("topic_info") : new JSONObject();
+                JSONArray topicsDetail = topics.has("topic_details") ? topics.optJSONArray("topic_details") : new JSONArray();
+                for (int i = 0; i < topicsDetail.length(); i++)
+                {
+                    JSONObject topicsJSON = topicsDetail.optJSONObject(i);
+                    String key = "#" + topicsJSON.optString("topic_name") + "#";
+                    String tag = "<a href=\"bilibili://pegasus/channel/" + topicsJSON.optString("topic_id") + "\">" + key + "</a>";
+                    for (int j = 0; j < textNodes.size(); j++)
+                    {
+                        TextNode textNode = textNodes.get(j);
+                        if(textNode.getWholeText().contains(key))
+                        {
+                            textNode.before(textNode.getWholeText().substring(0, textNode.getWholeText().indexOf(key)));
+                            textNode.before(tag);
+                            textNode.text(textNode.getWholeText().substring(textNode.getWholeText().indexOf(key) + key.length()));
+                            textNodes = document.textNodes();
+                            j--;
+                        }
                     }
                 }
             }

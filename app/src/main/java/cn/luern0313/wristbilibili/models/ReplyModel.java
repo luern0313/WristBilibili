@@ -20,7 +20,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import cn.luern0313.wristbilibili.R;
-import cn.luern0313.wristbilibili.util.DataProcessUtil;
 
 /**
  * 被 luern0313 创建于 2020/1/15.
@@ -35,7 +34,7 @@ public class ReplyModel implements Serializable
     public String reply_time;
     public String reply_floor;
     public int reply_like_num;
-    public String reply_reply_num;
+    public int reply_reply_num;
     public ArrayList<String> reply_reply_show = new ArrayList<>();
 
     public String reply_owner_mid;
@@ -74,7 +73,7 @@ public class ReplyModel implements Serializable
 
         reply_floor = replyJson.has("floor") ? ("#" + replyJson.optInt("floor")) : "";
         reply_like_num = replyJson.optInt("like", 0);
-        reply_reply_num = DataProcessUtil.getView(replyJson.optInt("rcount", 0));
+        reply_reply_num = replyJson.optInt("rcount", 0);
 
         JSONObject reply_owner_json = replyJson.has("member") ? replyJson.optJSONObject("member") : new JSONObject();
         reply_owner_mid = reply_owner_json.optString("mid");

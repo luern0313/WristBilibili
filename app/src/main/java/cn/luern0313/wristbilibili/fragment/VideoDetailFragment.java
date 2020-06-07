@@ -181,7 +181,7 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
             LinearLayoutManager layoutManager = new LinearLayoutManager(ctx);
             layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
             ((RecyclerView) rootLayout.findViewById(R.id.vd_video_part)).setLayoutManager(layoutManager);
-            videoPartAdapter = new VideoPartAdapter(videoModel.video_part_array_list);
+            videoPartAdapter = new VideoPartAdapter(videoModel);
             videoPartAdapter.setOnItemClickListener(new VideoPartAdapter.VideoPartListener()
             {
                 @Override
@@ -191,6 +191,8 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
                 }
             });
             ((RecyclerView) rootLayout.findViewById(R.id.vd_video_part)).setAdapter(videoPartAdapter);
+            if(videoModel.video_user_progress_position != -1)
+                layoutManager.scrollToPositionWithOffset(videoModel.video_user_progress_position, 0);
         }
         else rootLayout.findViewById(R.id.vd_video_part_layout).setVisibility(View.GONE);
 
@@ -400,6 +402,7 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
         this.videoModel = videoModel;
         rootLayout.findViewById(R.id.vd_vd_loading).setVisibility(View.GONE);
         setIcon();
+        videoPartAdapter.notifyDataSetChanged();
     }
 
     @Override

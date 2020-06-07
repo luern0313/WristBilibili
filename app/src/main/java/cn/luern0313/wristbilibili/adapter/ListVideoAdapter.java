@@ -120,6 +120,7 @@ public class ListVideoAdapter extends BaseAdapter
         viewHolder.danmaku.setText(video.video_danmaku);
 
         viewHolder.lay.setOnClickListener(onViewClick(position));
+        viewHolder.lay.setOnLongClickListener(onViewLongClick(position));
 
         viewHolder.img.setTag(video.video_cover);
         BitmapDrawable c = setImageFormWeb(video.video_cover);
@@ -145,6 +146,19 @@ public class ListVideoAdapter extends BaseAdapter
             public void onClick(View v)
             {
                 listVideoAdapterListener.onListVideoAdapterClick(v.getId(), position);
+            }
+        };
+    }
+
+    private View.OnLongClickListener onViewLongClick(final int position)
+    {
+        return new View.OnLongClickListener()
+        {
+            @Override
+            public boolean onLongClick(View v)
+            {
+                listVideoAdapterListener.onListVideoAdapterLongClick(v.getId(), position);
+                return true;
             }
         };
     }
@@ -209,5 +223,6 @@ public class ListVideoAdapter extends BaseAdapter
     public interface ListVideoAdapterListener
     {
         void onListVideoAdapterClick(int viewId, int position);
+        void onListVideoAdapterLongClick(int viewId, int position);
     }
 }

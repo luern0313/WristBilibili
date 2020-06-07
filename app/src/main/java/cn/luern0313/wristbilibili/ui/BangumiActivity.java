@@ -172,6 +172,39 @@ public class BangumiActivity extends AppCompatActivity implements BangumiDetailF
             }
         };
 
+        uiViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener()
+        {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels)
+            {
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state)
+            {
+            }
+
+            @Override
+            public void onPageSelected(int position)
+            {
+                while(uiTitle.getDisplayedChild() != position)
+                {
+                    if(uiTitle.getDisplayedChild() < position)
+                    {
+                        uiTitle.setInAnimation(ctx, R.anim.slide_in_right);
+                        uiTitle.setOutAnimation(ctx, R.anim.slide_out_left);
+                        uiTitle.showNext();
+                    }
+                    else
+                    {
+                        uiTitle.setInAnimation(ctx, android.R.anim.slide_in_left);
+                        uiTitle.setOutAnimation(ctx, android.R.anim.slide_out_right);
+                        uiTitle.showPrevious();
+                    }
+                }
+            }
+        });
+
         new Thread(new Runnable()
         {
             @Override

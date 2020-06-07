@@ -235,6 +235,8 @@ public class ExpandableTextView extends TextView
                 });
     }
 
+
+
     /**
      * used in ListView or RecyclerView to update ExpandableTextView
      *
@@ -465,6 +467,12 @@ public class ExpandableTextView extends TextView
         setTextInternal(getNewTextByConfig(), mBufferType);
     }
 
+    public void setMaxLinesOnShrink(int maxLinesOnShrink)
+    {
+        this.mMaxLinesOnShrink = maxLinesOnShrink;
+        //setText(mOrigText, mBufferType);
+    }
+
     @Override
     public void setText(CharSequence text, BufferType type)
     {
@@ -661,7 +669,17 @@ public class ExpandableTextView extends TextView
                     return true;
                 }
             }
-            else
+            else if(event.getAction() == MotionEvent.ACTION_CANCEL)
+            {
+                //ClickableSpan clickableSpan = getPressedSpan(textView, spannable, event);
+                if(mPressedSpan != null)
+                    mPressedSpan.setPressed(false);
+                mPressedSpan = null;
+                Selection.removeSelection(spannable);
+                invalidate();
+                return true;
+            }
+            else if(event.getAction() == MotionEvent.ACTION_UP)
             {
                 ClickableSpan clickableSpan = getPressedSpan(textView, spannable, event);
                 if(mPressedSpan != null)

@@ -2,29 +2,32 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/shape_bg_toolbar_orange"
     android:orientation="horizontal"
-    android:paddingStart="22dp"
-    android:paddingEnd="22dp"
-    android:paddingTop="6dp"
-    android:paddingBottom="6dp"
-    android:background="@drawable/shape_bg_toolbar_orange">
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp">
 
     <TextView
         android:id="@+id/reply_toolbar_total"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:gravity="center_vertical"
         android:layout_weight="1"
-        android:textStyle="bold"
+        android:gravity="center_vertical"
+        android:padding="6dp"
+        android:text="评论"
         android:textSize="15sp"
-        android:text="评论"/>
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/reply_toolbar_sendreply"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:clickable="true"
+        android:focusable="true"
         android:gravity="center_vertical"
+        android:padding="6dp"
         android:text="发送评论"
+        android:textColor="@color/toolbar_text"
         android:textSize="12sp" />
 
 </LinearLayout>

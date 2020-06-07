@@ -42,8 +42,8 @@ public class DownloadApi
                 {
                     DownloadModel downloadItem = new DownloadModel(new JSONObject(fileReader(
                             ctx.getExternalFilesDir(null) + "/download/" + i + "/" + j + "/info.json")));
-                    if(downloadItem.mode == 1) downloadingItems.add(downloadItem);
-                    else if(downloadItem.mode == 0) downloadedItems.add(downloadItem);
+                    if(downloadItem.getMode() == 1) downloadingItems.add(downloadItem);
+                    else if(downloadItem.getMode() == 0) downloadedItems.add(downloadItem);
                 }
                 catch (IOException | JSONException e)
                 {
@@ -74,7 +74,7 @@ public class DownloadApi
     public static int findPositionInList(String url, ArrayList<DownloadModel> list)
     {
         for (int i = 0; i < list.size(); i++)
-            if(list.get(i).url_video.equals(url)) return i;
+            if(list.get(i).getUrlVideo().equals(url)) return i;
         return -1;
     }
 }

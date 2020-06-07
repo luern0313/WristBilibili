@@ -98,16 +98,16 @@ public class AnimationTimelineAdapter extends BaseAdapter
             viewHolder = (ViewHolder) convertView.getTag();
         }
         viewHolder.lay.setOnClickListener(onViewClick(position));
-        viewHolder.name.setText(anim.name);
-        viewHolder.last.setText("更新至" + anim.lastEpisode);
+        viewHolder.name.setText(anim.getName());
+        viewHolder.last.setText("更新至" + anim.getLastEpisode());
         viewHolder.img.setImageResource(R.drawable.img_default_animation);
-        viewHolder.time.setText(anim.time);
+        viewHolder.time.setText(anim.getTime());
 
-        if(anim.isfollow == 1) viewHolder.isfollow.setVisibility(View.VISIBLE);
+        if(anim.getIsFollow() == 1) viewHolder.isfollow.setVisibility(View.VISIBLE);
         else viewHolder.isfollow.setVisibility(View.GONE);
 
-        viewHolder.img.setTag(anim.coverUrl);
-        BitmapDrawable c = setImageFormWeb(anim.coverUrl);
+        viewHolder.img.setTag(anim.getCoverUrl());
+        BitmapDrawable c = setImageFormWeb(anim.getCoverUrl());
         if(c != null) viewHolder.img.setImageDrawable(c);
         return convertView;
     }

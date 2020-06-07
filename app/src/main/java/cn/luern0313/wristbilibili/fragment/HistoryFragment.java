@@ -102,6 +102,12 @@ public class HistoryFragment extends Fragment
                     startActivity(intent);
                 }
             }
+
+            @Override
+            public void onListVideoAdapterLongClick(int viewId, int position)
+            {
+
+            }
         };
 
         runnableUi = new Runnable()

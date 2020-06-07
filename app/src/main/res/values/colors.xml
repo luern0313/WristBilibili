@@ -28,6 +28,10 @@
 
     <color name="tipBG">#88000000</color>
 
+    <color name="toolbar_bg_start">#88F2C056</color>
+    <color name="toolbar_bg_end">#00F2C056</color>
+    <color name="toolbar_text">#C66C00</color>
+
     <color name="ranking_rank_1">#F2C056</color>
     <color name="ranking_rank_1_start">#88F2C056</color>
     <color name="ranking_rank_1_end">#00F2C056</color>

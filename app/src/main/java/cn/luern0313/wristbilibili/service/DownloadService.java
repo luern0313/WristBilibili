@@ -78,9 +78,9 @@ public class DownloadService extends Service
                 super.connected(task, etag, isContinue, soFarBytes, totalBytes);
                 int po = DownloadApi.findPositionInList((String) task.getTag(3), downloadingItems);
                 DownloadModel item = downloadingItems.get(po);
-                item.state = 1;
-                item.id = task.getId();
-                item.size = task.getSmallFileTotalBytes();
+                item.setState(1);
+                item.setId(task.getId());
+                item.setSize(task.getSmallFileTotalBytes());
                 downloadingItems.set(po, item);
 
                 try
@@ -103,8 +103,8 @@ public class DownloadService extends Service
             {
                 int po = DownloadApi.findPositionInList(task.getUrl(), downloadingItems);
                 DownloadModel item = downloadingItems.get(po);
-                item.nowdl = soFarBytes;
-                item.speed = task.getSpeed() * 1024;
+                item.setNowdl(soFarBytes);
+                item.setSpeed(task.getSpeed() * 1024);
                 downloadingItems.set(po, item);
 
                 try
@@ -128,10 +128,10 @@ public class DownloadService extends Service
             {
                 int po = DownloadApi.findPositionInList(task.getUrl(), downloadingItems);
                 DownloadModel item = downloadingItems.get(po);
-                item.mode = 0;
-                item.state = 5;
-                item.nowdl = task.getSmallFileSoFarBytes();
-                item.speed = task.getSpeed() * 1024;
+                item.setMode(0);
+                item.setState(5);
+                item.setNowdl(task.getSmallFileSoFarBytes());
+                item.setSpeed(task.getSpeed() * 1024);
                 downloadingItems.remove(po);
                 downloadedItems.add(item);
                 try
@@ -158,9 +158,9 @@ public class DownloadService extends Service
                 {
                     int po = DownloadApi.findPositionInList(task.getUrl(), downloadingItems);
                     DownloadModel item = downloadingItems.get(po);
-                    item.state = 3;
-                    item.nowdl = task.getSmallFileSoFarBytes();
-                    item.speed = task.getSpeed() * 1024;
+                    item.setState(3);
+                    item.setNowdl(task.getSmallFileSoFarBytes());
+                    item.setSpeed(task.getSpeed() * 1024);
                     downloadingItems.set(po, item);
                     if(downloadListener != null) downloadListener.onPaused();
                 }
@@ -175,14 +175,14 @@ public class DownloadService extends Service
             {
                 int po = DownloadApi.findPositionInList(task.getUrl(), downloadingItems);
                 DownloadModel item = downloadingItems.get(po);
-                item.state = 4;
-                if(e instanceof FileDownloadHttpException) item.tip = "错误的下载链接";
-                else if(e instanceof FileDownloadGiveUpRetryException) item.tip = "无法获取文件信息";
-                else if(e instanceof FileDownloadOutOfSpaceException) item.tip = "储存空间不足";
-                else if(e instanceof PathConflictException) item.tip = "下载文件已存在";
-                else item.tip = "未知错误";
-                item.nowdl = task.getSmallFileSoFarBytes();
-                item.speed = task.getSpeed() * 1024;
+                item.setState(4);
+                if(e instanceof FileDownloadHttpException) item.setTip("错误的下载链接");
+                else if(e instanceof FileDownloadGiveUpRetryException) item.setTip("无法获取文件信息");
+                else if(e instanceof FileDownloadOutOfSpaceException) item.setTip("储存空间不足");
+                else if(e instanceof PathConflictException) item.setTip("下载文件已存在");
+                else item.setTip("未知错误");
+                item.setNowdl(task.getSmallFileSoFarBytes());
+                item.setSpeed(task.getSpeed() * 1024);
                 downloadingItems.set(po, item);
                 if(downloadListener != null) downloadListener.onError();
             }
@@ -210,25 +210,25 @@ public class DownloadService extends Service
 
     public void pause(int position)
     {
-        FileDownloader.getImpl().pause(downloadingItems.get(position).id);
+        FileDownloader.getImpl().pause(downloadingItems.get(position).getId());
         DownloadModel downloadItem = downloadingItems.get(position);
-        downloadItem.state = 2;
-        downloadItem.speed = 0;
+        downloadItem.setState(2);
+        downloadItem.setSpeed(0);
         downloadingItems.set(position, downloadItem);
     }
 
     public void start(int position)
     {
         DownloadModel downloadItem = downloadingItems.get(position);
-        FileDownloader.getImpl().create(downloadItem.url_video).setPath(getExternalFilesDir(
-                null) + "/download/" + downloadItem.aid + "/" + downloadItem.cid + "/video.mp4")
+        FileDownloader.getImpl().create(downloadItem.getUrlVideo()).setPath(getExternalFilesDir(
+                null) + "/download/" + downloadItem.getAid() + "/" + downloadItem.getCid() + "/video.mp4")
                 .addHeader("User-Agent",
                            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36")
-                .addHeader("Referer", "https://www.bilibili.com/").setTag(1, downloadItem.aid)
-                .setTag(2, downloadItem.cid).setTag(3, downloadItem.url_video).setListener(
+                .addHeader("Referer", "https://www.bilibili.com/").setTag(1, downloadItem.getAid())
+                .setTag(2, downloadItem.getCid()).setTag(3, downloadItem.getUrlVideo()).setListener(
                 fileDownloadListener).asInQueueTask().enqueue();
         FileDownloader.getImpl().start(fileDownloadListener, false);
-        downloadItem.state = 0;
+        downloadItem.setState(0);
         downloadingItems.set(position, downloadItem);
     }
 

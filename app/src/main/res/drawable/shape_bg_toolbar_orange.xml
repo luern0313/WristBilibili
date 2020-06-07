@@ -3,9 +3,9 @@
 
     <gradient
         android:angle="225"
-        android:centerColor="@color/ranking_rank_1_end"
+        android:centerColor="@color/toolbar_bg_end"
         android:centerX="0.4"
-        android:startColor="@color/ranking_rank_1_start"
+        android:startColor="@color/toolbar_bg_start"
         android:type="linear" />
 
 </shape>

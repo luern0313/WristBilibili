@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AbsListView;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,9 +25,9 @@ import androidx.fragment.app.Fragment;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.adapter.DynamicAdapter;
 import cn.luern0313.wristbilibili.api.DynamicApi;
-import cn.luern0313.wristbilibili.api.ReplyApi;
 import cn.luern0313.wristbilibili.api.SendDynamicApi;
 import cn.luern0313.wristbilibili.models.DynamicModel;
+import cn.luern0313.wristbilibili.ui.BangumiActivity;
 import cn.luern0313.wristbilibili.ui.SendDynamicActivity;
 import cn.luern0313.wristbilibili.ui.UnsupportedLinkActivity;
 import cn.luern0313.wristbilibili.ui.UserActivity;
@@ -57,7 +56,7 @@ public class DynamicFragment extends Fragment
     private ListView dyListView;
     private WaveSwipeRefreshLayout waveSwipeRefreshLayout;
     private View sendDynamicView;
-    private Button sendDynamicButton;
+    private TextView sendDynamicButton;
     private View loadingView;
     private DynamicAdapter dynamicAdapter;
     private DynamicAdapter.DynamicAdapterListener adapterListener;
@@ -71,7 +70,6 @@ public class DynamicFragment extends Fragment
 
     final private int RESULT_DYNAMIC_SEND_DYNAMIC = 101;
     final private int RESULT_DYNAMIC_SHARE = 102;
-    final private int RESULT_DYNAMIC_REPLY = 103;
 
     public DynamicFragment() {}
 
@@ -373,9 +371,18 @@ public class DynamicFragment extends Fragment
         final DynamicModel dynamicModel = dynamicList.get(position);
         if(viewId == R.id.item_dynamic_author_lay)
         {
-            Intent intent = new Intent(ctx, UserActivity.class);
-            intent.putExtra("mid", dynamicModel.getCardAuthorUid());
-            startActivity(intent);
+            if(dynamicModel.getCardType() != 512 && dynamicModel.getCardType() != 4098 && dynamicModel.getCardType() != 4099 && dynamicModel.getCardType() != 4101)
+            {
+                Intent intent = new Intent(ctx, UserActivity.class);
+                intent.putExtra("mid", dynamicModel.getCardAuthorUid());
+                startActivity(intent);
+            }
+            else
+            {
+                Intent intent = new Intent(ctx, BangumiActivity.class);
+                intent.putExtra("season_id", ((DynamicModel.DynamicBangumiModel) dynamicModel).getBangumiSeasonId());
+                startActivity(intent);
+            }
         }
         else if(viewId == R.id.item_dynamic_share_lay)
         {
@@ -388,10 +395,9 @@ public class DynamicFragment extends Fragment
         }
         else if(viewId == R.id.item_dynamic_reply_lay)
         {
-            Intent intent = new Intent(ctx, SendDynamicActivity.class);
-            intent.putExtra("reply_oid", dynamicModel.getCardId());
-            intent.putExtra("reply_type", ReplyApi.typeMap.get(dynamicModel.getCardType()));
-            startActivityForResult(intent, RESULT_DYNAMIC_REPLY);
+            Intent intent = new Intent(ctx, UnsupportedLinkActivity.class);
+            intent.putExtra("url", dynamicModel.getCardUrl() + "?page=1");
+            startActivity(intent);
         }
         else if(viewId == R.id.item_dynamic_like_lay)
         {
@@ -566,41 +572,6 @@ public class DynamicFragment extends Fragment
                         e.printStackTrace();
                         Looper.prepare();
                         Toast.makeText(ctx, "转发失败，请检查网络...", Toast.LENGTH_SHORT).show();
-                        Looper.loop();
-                    }
-                }
-            }).start();
-        }
-        else if(requestCode == RESULT_DYNAMIC_REPLY)
-        {
-            new Thread(new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    try
-                    {
-                        String result = dynamicApi.sendReply(data.getStringExtra("reply_oid"),
-                                                             data.getStringExtra("reply_type"),
-                                                             data.getStringExtra("text"));
-                        if(result.equals(""))
-                        {
-                            Looper.prepare();
-                            Toast.makeText(ctx, "发送成功！", Toast.LENGTH_SHORT).show();
-                            Looper.loop();
-                        }
-                        else
-                        {
-                            Looper.prepare();
-                            Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
-                            Looper.loop();
-                        }
-                    }
-                    catch (IOException e)
-                    {
-                        e.printStackTrace();
-                        Looper.prepare();
-                        Toast.makeText(ctx, "发送失败，请检查网络...", Toast.LENGTH_SHORT).show();
                         Looper.loop();
                     }
                 }

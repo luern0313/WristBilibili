@@ -6,8 +6,8 @@ android {
         applicationId "cn.luern0313.wristbilibili"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 13
-        versionName "2.6"
+        versionCode 14
+        versionName "3.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         javaCompileOptions { annotationProcessorOptions { includeCompileClasspath = true } }
@@ -18,8 +18,8 @@ android {
     //}
     buildTypes {
         release {
-            minifyEnabled false
-            shrinkResources false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -60,4 +60,5 @@ dependencies {
     implementation 'com.king.view:circleprogressview:1.1.1'
     implementation 'org.projectlombok:lombok:1.16.18'
     implementation 'javax.annotation:javax.annotation-api:1.2'
+    implementation 'com.alibaba:fastjson:1.1.55.android'
 }

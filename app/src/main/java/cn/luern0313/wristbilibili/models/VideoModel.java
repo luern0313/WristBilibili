@@ -53,6 +53,9 @@ public class VideoModel implements Serializable
     public boolean video_user_dislike;
     public int video_user_coin;
     public boolean video_user_fav;
+    public String video_user_progress_cid;
+    public int video_user_progress_position;
+    public int video_user_progress_time;
 
     public ArrayList<VideoRecommendModel> video_recommend_array_list = new ArrayList<>();
     public VideoModel(JSONObject video)
@@ -106,6 +109,12 @@ public class VideoModel implements Serializable
         video_user_dislike = video_user.optInt("dislike") == 1;
         video_user_coin = video_user.optInt("coin");
         video_user_fav = video_user.optInt("favorite") == 1;
+        JSONObject video_history = video.has("history") ? video.optJSONObject("history") : new JSONObject();
+        video_user_progress_cid = String.valueOf(video_history.optInt("cid"));
+        for(int i = 0; i < video_part_array_list.size(); i++)
+            if(video_user_progress_cid.equals(video_part_array_list.get(i).video_part_cid))
+                video_user_progress_position = i;
+        video_user_progress_time = video_history.optInt("progress");
 
         JSONArray video_recommend = video.has("relates") ? video.optJSONArray("relates") : new JSONArray();
         for(int i = 0; i < video_recommend.length(); i++)

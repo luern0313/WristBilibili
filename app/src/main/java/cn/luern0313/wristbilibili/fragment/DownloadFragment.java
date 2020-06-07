@@ -138,14 +138,14 @@ public class DownloadFragment extends Fragment
                     return;
                 if(position < downloadingItems.size())
                 {
-                    if(downloadingItems.get(position).mode != 2)
+                    if(downloadingItems.get(position).getMode() != 2)
                     {
-                        if(downloadingItems.get(position).state == 1)
+                        if(downloadingItems.get(position).getState() == 1)
                         {
                             myBinder.pause(position);
                             downloadAdapter.notifyDataSetChanged();
                         }
-                        else if(downloadingItems.get(position).state == 3 || downloadingItems.get(position).state == 5)
+                        else if(downloadingItems.get(position).getState() == 3 || downloadingItems.get(position).getState() == 5)
                         {
                             myBinder.start(position);
                             downloadAdapter.notifyDataSetChanged();
@@ -161,8 +161,8 @@ public class DownloadFragment extends Fragment
                         Intent intent = new Intent();
                         intent.setComponent(new ComponentName(name, name + ".ui.PlayerActivity"));
                         intent.putExtra("mode", 2);
-                        intent.putExtra("url", ctx.getExternalFilesDir(null) + "/download/" + downloadItem.aid + "/" + downloadItem.cid + "/video.mp4");
-                        intent.putExtra("title", downloadItem.title);
+                        intent.putExtra("url", ctx.getExternalFilesDir(null) + "/download/" + downloadItem.getAid() + "/" + downloadItem.getCid() + "/video.mp4");
+                        intent.putExtra("title", downloadItem.getTitle());
                         startActivityForResult(intent, 0);
                     }
                     else
@@ -198,8 +198,8 @@ public class DownloadFragment extends Fragment
                                     downloadedItems.remove(position - downloadingItems.size());
                                 }
                                 FileUtil.deleteDir(new File(ctx.getExternalFilesDir(null) +
-                                                             "/download/" + downloadItem.aid + "/" + downloadItem.cid + "/"));
-                                File dirFile = new File(ctx.getExternalFilesDir(null) + "/download/" + downloadItem.aid + "/");
+                                                             "/download/" + downloadItem.getAid() + "/" + downloadItem.getCid() + "/"));
+                                File dirFile = new File(ctx.getExternalFilesDir(null) + "/download/" + downloadItem.getAid() + "/");
                                 if(dirFile.list().length == 0)
                                     FileUtil.deleteDir(dirFile);
                                 downloadAdapter.notifyDataSetChanged();

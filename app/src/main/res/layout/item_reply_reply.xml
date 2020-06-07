@@ -49,8 +49,8 @@
             android:background="@drawable/shape_bg_reply_up"
             android:ellipsize="end"
             android:maxLines="1"
-            android:paddingStart="5dp"
-            android:paddingEnd="5dp"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
             android:text="UP"
             android:textColor="@color/white"
             android:textSize="10dp"
@@ -102,38 +102,10 @@
         app:etv_MaxLinesOnShrink="6" />
 
     <LinearLayout
-        android:id="@+id/item_reply_warning"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/item_reply_text"
-        android:layout_marginLeft="2dp"
-        android:layout_marginRight="2dp"
-        android:background="@color/yellow_gray"
-        android:gravity="center"
-        android:padding="4dp"
-        android:visibility="gone">
-
-        <ImageView
-            android:layout_width="14dp"
-            android:layout_height="14dp"
-            android:src="@drawable/icon_warning" />
-
-        <TextView
-            android:id="@+id/item_reply_warning_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="3dp"
-            android:text="@string/reply_report_warning"
-            android:textColor="@color/yellow"
-            android:textSize="10sp" />
-
-    </LinearLayout>
-
-    <LinearLayout
         android:id="@+id/item_reply_reply_show"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/item_reply_warning"
+        android:layout_below="@+id/item_reply_text"
         android:layout_marginLeft="2dp"
         android:layout_marginTop="4dp"
         android:layout_marginRight="2dp"
@@ -189,7 +161,7 @@
         android:paddingStart="5dp"
         android:paddingTop="1px"
         android:paddingBottom="1px"
-        android:text="UP主觉得很赞"
+        android:text="@string/reply_like_up"
         android:textColor="@color/gray_44"
         android:textSize="11sp" />
 

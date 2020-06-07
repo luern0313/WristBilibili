@@ -421,7 +421,7 @@ public class ReplyFragment extends Fragment
     public void onActivityResult(final int requestCode, int resultCode, final Intent data)
     {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode != 0) return;
+        if(resultCode != 0 || data == null) return;
         if(requestCode == RESULT_SEND)
         {
             new Thread(new Runnable()

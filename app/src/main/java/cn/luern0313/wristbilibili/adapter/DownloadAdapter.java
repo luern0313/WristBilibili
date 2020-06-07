@@ -96,12 +96,12 @@ public class DownloadAdapter extends BaseAdapter
     {
         if(position < downloadingItems.size())
         {
-            if(downloadingItems.get(position).mode == 2) return 1;
+            if(downloadingItems.get(position).getMode() == 2) return 1;
             else return 0;
         }
         else
         {
-            if(downloadedItems.get(position - downloadingItems.size()).mode == 2) return 1;
+            if(downloadedItems.get(position - downloadingItems.size()).getMode() == 2) return 1;
             else return 0;
         }
     }
@@ -143,11 +143,11 @@ public class DownloadAdapter extends BaseAdapter
 
         if(type == 0)
         {
-            viewHolder.title.setText(downloadItem.title);
-            viewHolder.size.setText(DataProcessUtil.getSize(downloadItem.size));
+            viewHolder.title.setText(downloadItem.getTitle());
+            viewHolder.size.setText(DataProcessUtil.getSize(downloadItem.getSize()));
             viewHolder.img.setImageResource(R.drawable.img_default_animation);
 
-            if(downloadItem.mode == 0) //下载完成
+            if(downloadItem.getMode() == 0) //下载完成
             {
                 viewHolder.speed.setVisibility(View.GONE);
                 viewHolder.progress.setVisibility(View.GONE);
@@ -161,59 +161,59 @@ public class DownloadAdapter extends BaseAdapter
                 viewHolder.time.setVisibility(View.VISIBLE);
                 viewHolder.prog.setVisibility(View.VISIBLE);
                 viewHolder.time.setTextColor(listView.getResources().getColor(R.color.gray_44));
-                if(downloadItem.state == 0) //初始化
+                if(downloadItem.getState() == 0) //初始化
                 {
-                    viewHolder.size.setText(downloadItem.size == 0 ? "未知" : DataProcessUtil.getSize(downloadItem.size));
-                    viewHolder.speed.setText(DataProcessUtil.getSize(downloadItem.speed) + "/s");
-                    viewHolder.progress.setText((int) (downloadItem.nowdl * 100.0 / downloadItem.size) + "%");
+                    viewHolder.size.setText(downloadItem.getSize() == 0 ? "未知" : DataProcessUtil.getSize(downloadItem.getSize()));
+                    viewHolder.speed.setText(DataProcessUtil.getSize(downloadItem.getSpeed()) + "/s");
+                    viewHolder.progress.setText((int) (downloadItem.getNowdl() * 100.0 / downloadItem.getSize()) + "%");
                     viewHolder.time.setText("连接中..");
                     viewHolder.time.setTextColor(listView.getResources().getColor(R.color.colorAccent));
-                    viewHolder.prog.setProgress((int) (downloadItem.nowdl * 100.0 / downloadItem.size));
+                    viewHolder.prog.setProgress((int) (downloadItem.getNowdl() * 100.0 / downloadItem.getSize()));
                 }
-                else if(downloadItem.state == 1) //下载中
+                else if(downloadItem.getState() == 1) //下载中
                 {
-                    viewHolder.size.setText(DataProcessUtil.getSize(downloadItem.size));
-                    viewHolder.speed.setText(DataProcessUtil.getSize(downloadItem.speed) + "/s");
-                    viewHolder.progress.setText((int) (downloadItem.nowdl * 100.0 / downloadItem.size) + "%");
-                    viewHolder.time.setText(DataProcessUtil.getSurplusTime(downloadItem.size - downloadItem.nowdl, downloadItem.speed));
-                    viewHolder.prog.setProgress((int) (downloadItem.nowdl * 100.0 / downloadItem.size));
+                    viewHolder.size.setText(DataProcessUtil.getSize(downloadItem.getSize()));
+                    viewHolder.speed.setText(DataProcessUtil.getSize(downloadItem.getSpeed()) + "/s");
+                    viewHolder.progress.setText((int) (downloadItem.getNowdl() * 100.0 / downloadItem.getSize()) + "%");
+                    viewHolder.time.setText(DataProcessUtil.getSurplusTime(downloadItem.getSize() - downloadItem.getNowdl(), downloadItem.getSpeed()));
+                    viewHolder.prog.setProgress((int) (downloadItem.getNowdl() * 100.0 / downloadItem.getSize()));
                 }
-                else if(downloadItem.state == 2) //暂停中
+                else if(downloadItem.getState() == 2) //暂停中
                 {
-                    viewHolder.size.setText(DataProcessUtil.getSize(downloadItem.size));
+                    viewHolder.size.setText(DataProcessUtil.getSize(downloadItem.getSize()));
                     viewHolder.speed.setText("0.0B/s");
-                    viewHolder.progress.setText((int) (downloadItem.nowdl * 100.0 / downloadItem.size) + "%");
+                    viewHolder.progress.setText((int) (downloadItem.getNowdl() * 100.0 / downloadItem.getSize()) + "%");
                     viewHolder.time.setText("暂停中..");
                     viewHolder.time.setTextColor(listView.getResources().getColor(R.color.colorAccent));
-                    viewHolder.prog.setProgress((int) (downloadItem.nowdl * 100.0 / downloadItem.size));
+                    viewHolder.prog.setProgress((int) (downloadItem.getNowdl() * 100.0 / downloadItem.getSize()));
                 }
-                else if(downloadItem.state == 3) //暂停
+                else if(downloadItem.getState() == 3) //暂停
                 {
-                    viewHolder.size.setText(DataProcessUtil.getSize(downloadItem.size));
+                    viewHolder.size.setText(DataProcessUtil.getSize(downloadItem.getSize()));
                     viewHolder.speed.setText("0.0B/s");
-                    viewHolder.progress.setText((int) (downloadItem.nowdl * 100.0 / downloadItem.size) + "%");
+                    viewHolder.progress.setText((int) (downloadItem.getNowdl() * 100.0 / downloadItem.getSize()) + "%");
                     viewHolder.time.setText("暂停");
                     viewHolder.time.setTextColor(listView.getResources().getColor(R.color.colorAccent));
-                    viewHolder.prog.setProgress((int) (downloadItem.nowdl * 100.0 / downloadItem.size));
+                    viewHolder.prog.setProgress((int) (downloadItem.getNowdl() * 100.0 / downloadItem.getSize()));
                 }
-                else if(downloadItem.state == 4) //错误
+                else if(downloadItem.getState() == 4) //错误
                 {
-                    viewHolder.size.setText(DataProcessUtil.getSize(downloadItem.size));
-                    viewHolder.speed.setText(DataProcessUtil.getSize(downloadItem.speed) + "/s");
-                    viewHolder.progress.setText((int) (downloadItem.nowdl * 100.0 / downloadItem.size) + "%");
-                    viewHolder.time.setText(downloadItem.tip);
+                    viewHolder.size.setText(DataProcessUtil.getSize(downloadItem.getSize()));
+                    viewHolder.speed.setText(DataProcessUtil.getSize(downloadItem.getSpeed()) + "/s");
+                    viewHolder.progress.setText((int) (downloadItem.getNowdl() * 100.0 / downloadItem.getSize()) + "%");
+                    viewHolder.time.setText(downloadItem.getTip());
                     viewHolder.time.setTextColor(listView.getResources().getColor(R.color.colorAccent));
-                    viewHolder.prog.setProgress((int) (downloadItem.nowdl * 100.0 / downloadItem.size));
+                    viewHolder.prog.setProgress((int) (downloadItem.getNowdl() * 100.0 / downloadItem.getSize()));
                 }
             }
 
-            viewHolder.img.setTag(downloadItem.cover);
-            BitmapDrawable c = setImageFormWeb(downloadItem.cover, downloadItem);
+            viewHolder.img.setTag(downloadItem.getCover());
+            BitmapDrawable c = setImageFormWeb(downloadItem.getCover(), downloadItem);
             if(c != null) viewHolder.img.setImageDrawable(c);
         }
         else if(type == 1)
         {
-            ((TextView) convertView.findViewById(R.id.item_reply_sort_sign)).setText(downloadItem.title);
+            ((TextView) convertView.findViewById(R.id.item_reply_sort_sign)).setText(downloadItem.getTitle());
             convertView.findViewById(R.id.item_reply_sort_change).setVisibility(View.GONE);
             convertView.findViewById(R.id.item_reply_sort_sign).setVisibility(View.VISIBLE);
             if((position == 0 && downloadingItems.size() == 1) || (position == downloadingItems.size() && downloadedItems.size() == 1))
@@ -245,11 +245,11 @@ public class DownloadAdapter extends BaseAdapter
             return mImageCache.get(url);
         else
         {
-            Bitmap bitmap = BitmapFactory.decodeFile(path + downloadItem.aid + "/" + downloadItem.cid + "/cover.png");
+            Bitmap bitmap = BitmapFactory.decodeFile(path + downloadItem.getAid() + "/" + downloadItem.getCid() + "/cover.png");
             if(bitmap != null)
             {
                 BitmapDrawable db = new BitmapDrawable(listView.getResources(), bitmap);
-                mImageCache.put(downloadItem.cover, db);
+                mImageCache.put(downloadItem.getCover(), db);
                 return db;
             }
             else

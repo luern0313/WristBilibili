@@ -146,7 +146,7 @@ public class AnimationTimelineFragment extends Fragment
     private void onViewClick(int id, int position)
     {
         Intent intent = new Intent(ctx, BangumiActivity.class);
-        intent.putExtra("season_id", animationTimelineList.get(position).season_id);
+        intent.putExtra("season_id", animationTimelineList.get(position).getSeasonId());
         startActivity(intent);
     }
 }

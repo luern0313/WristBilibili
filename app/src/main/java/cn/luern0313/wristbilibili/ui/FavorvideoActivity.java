@@ -11,7 +11,6 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -67,6 +66,49 @@ public class FavorvideoActivity extends AppCompatActivity
             {
                 Intent intent = VideoActivity.getActivityIntent(ctx, favorvideoList.get(position).video_aid, "");
                 startActivity(intent);
+            }
+
+            @Override
+            public void onListVideoAdapterLongClick(int viewId, final int position)
+            {
+                new AlertDialog.Builder(ctx)
+                        .setMessage("你确定要取消收藏这个视频吗？")
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which)
+                            {
+                                new Thread(new Runnable()
+                                {
+                                    @Override
+                                    public void run()
+                                    {
+                                        try
+                                        {
+                                            String result = favorVideoApi.cancelFavVideo(String.valueOf(favorvideoList.get(position).video_aid));
+                                            if(result.equals(""))
+                                            {
+                                                favorvideoList.remove(position);
+                                                handler.post(runnableMore);
+                                                Looper.prepare();
+                                                Toast.makeText(ctx, "取消收藏成功！", Toast.LENGTH_SHORT).show();
+                                                Looper.loop();
+                                            }
+                                            else
+                                            {
+                                                Looper.prepare();
+                                                Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
+                                                Looper.loop();
+                                            }
+                                        }
+                                        catch(IOException e)
+                                        {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                }).start();
+                            }
+                        }).setNegativeButton("取消", null).show();
             }
         };
 
@@ -169,54 +211,6 @@ public class FavorvideoActivity extends AppCompatActivity
                 ((TextView) loadingView.findViewById(R.id.wid_load_text)).setText(" 加载中. . .");
                 loadingView.findViewById(R.id.wid_load_button).setVisibility(View.GONE);
                 getMoreFavorVideo();
-            }
-        });
-
-        favvListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener()
-        {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id)
-            {
-                new AlertDialog.Builder(ctx)
-                        .setMessage("你确定要取消收藏这个视频吗？")
-                        .setPositiveButton("确定", new DialogInterface.OnClickListener()
-                        {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which)
-                            {
-                                new Thread(new Runnable()
-                                {
-                                    @Override
-                                    public void run()
-                                    {
-                                        try
-                                        {
-                                            String result = favorVideoApi.cancelFavVideo(String.valueOf(favorvideoList.get(position).video_aid));
-                                            if(result.equals(""))
-                                            {
-                                                favorvideoList.remove(position);
-                                                handler.post(runnableMore);
-                                                Looper.prepare();
-                                                Toast.makeText(ctx, "取消收藏成功！", Toast.LENGTH_SHORT).show();
-                                                Looper.loop();
-                                            }
-                                            else
-                                            {
-                                                Looper.prepare();
-                                                Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
-                                                Looper.loop();
-                                            }
-                                        }
-                                        catch(IOException e)
-                                        {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                }).start();
-                            }
-                        })
-                        .setNegativeButton("取消", null).show();
-                return true;
             }
         });
 

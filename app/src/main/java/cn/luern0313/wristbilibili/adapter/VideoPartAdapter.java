@@ -6,8 +6,6 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import cn.luern0313.wristbilibili.R;
@@ -20,11 +18,11 @@ import cn.luern0313.wristbilibili.models.VideoModel;
 public class VideoPartAdapter extends RecyclerView.Adapter<VideoPartAdapter.ViewHolder>
 {
     private VideoPartListener videoPartListener;
-    private ArrayList<VideoModel.VideoPartModel> videoPartArrayList;
+    private VideoModel videoModel;
 
-    public VideoPartAdapter(ArrayList<VideoModel.VideoPartModel> videoPartArrayList)
+    public VideoPartAdapter(VideoModel videoModel)
     {
-        this.videoPartArrayList = videoPartArrayList;
+        this.videoModel = videoModel;
     }
 
     @NonNull
@@ -38,7 +36,11 @@ public class VideoPartAdapter extends RecyclerView.Adapter<VideoPartAdapter.View
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position)
     {
-        VideoModel.VideoPartModel videoPartModel = videoPartArrayList.get(position);
+        VideoModel.VideoPartModel videoPartModel = videoModel.video_part_array_list.get(position);
+        if(videoModel.video_user_progress_position == position)
+            holder.lay.setBackgroundResource(R.drawable.shape_bg_vd_videopart_press);
+        else
+            holder.lay.setBackgroundResource(R.drawable.selector_bg_vd_videopart);
         holder.text.setText(videoPartModel.video_part_name);
         holder.lay.setOnClickListener(new View.OnClickListener()
         {
@@ -53,7 +55,7 @@ public class VideoPartAdapter extends RecyclerView.Adapter<VideoPartAdapter.View
     @Override
     public int getItemCount()
     {
-        return videoPartArrayList.size();
+        return videoModel.video_part_array_list.size();
     }
 
     public void setOnItemClickListener(VideoPartListener videoPartListener)

@@ -42,7 +42,6 @@ import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 public class MainActivity extends AppCompatActivity
 {
     Context ctx;
-    private String selfMid;
 
     Intent serviceIntent;
     private FragmentManager fm;
@@ -52,7 +51,6 @@ public class MainActivity extends AppCompatActivity
     TextView titleText;
     ImageView titleImg;
 
-    //TODO 一键三连
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState)
     {
@@ -60,12 +58,11 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         ctx = this;
-        selfMid = SharedPreferencesUtil.getString(SharedPreferencesUtil.mid, "");
 
         dm = getResources().getDisplayMetrics();
         fm = getSupportFragmentManager();
         transaction = fm.beginTransaction();
-        transaction.replace(R.id.main_frame, DynamicFragment.newInstance(true, selfMid));
+        transaction.replace(R.id.main_frame, DynamicFragment.newInstance(true, SharedPreferencesUtil.getString(SharedPreferencesUtil.mid, "")));
         transaction.commit();
 
         titleText = findViewById(R.id.main_title_title);
@@ -101,7 +98,7 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         }
 
-        if(SharedPreferencesUtil.contains(SharedPreferencesUtil.mid) && (!selfMid.equals("")))
+        if(SharedPreferencesUtil.contains(SharedPreferencesUtil.mid) && (!SharedPreferencesUtil.getString(SharedPreferencesUtil.mid, "").equals("")))
         {
             new Thread(new Runnable()
             {
@@ -120,11 +117,14 @@ public class MainActivity extends AppCompatActivity
             }).start();
         }
 
+        //if((int) (System.currentTimeMillis() / 1000) > 1590940980)
+            //finish();
+
         //startActivity(VideoActivity.getActivityIntent(ctx, "78732000", ""));
 
-        Intent intent = new Intent(ctx, ArticleActivity.class);
+        /*Intent intent = new Intent(ctx, ArticleActivity.class);
         intent.putExtra("article_id", "4807000");
-        startActivity(intent);
+        startActivity(intent);*/
 
         serviceIntent = new Intent(this, DownloadService.class);
         startService(serviceIntent);
@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity
             switch (data.getIntExtra("activity", 0))
             {
                 case 1:
-                    transaction.replace(R.id.main_frame, DynamicFragment.newInstance(true, selfMid));
+                    transaction.replace(R.id.main_frame, DynamicFragment.newInstance(true, SharedPreferencesUtil.getString(SharedPreferencesUtil.mid, "")));
                     titleText.setText(getResources().getString(R.string.menu_dynamic));
                     titleText.setTextSize(14);
                     break;
@@ -171,7 +171,7 @@ public class MainActivity extends AppCompatActivity
                     titleText.setTextSize(14);
                     break;
                 case 7:
-                    transaction.replace(R.id.main_frame, FavorBoxFragment.newInstance(selfMid));
+                    transaction.replace(R.id.main_frame, FavorBoxFragment.newInstance(SharedPreferencesUtil.getString(SharedPreferencesUtil.mid, "")));
                     titleText.setText(getResources().getString(R.string.menu_collect));
                     titleText.setTextSize(14);
                     break;
