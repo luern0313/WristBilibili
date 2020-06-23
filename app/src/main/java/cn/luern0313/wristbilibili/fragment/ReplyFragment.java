@@ -48,11 +48,9 @@ public class ReplyFragment extends Fragment
     private View rootLayout;
     private Intent resultIntent;
 
-    private String oid;
-    private String type;
+    private String oid, type, sort;
     private ReplyModel root;
     private int position;
-    private String sort;
     private ReplyApi replyApi;
 
     private WaveSwipeRefreshLayout waveSwipeRefreshLayout;
@@ -153,7 +151,7 @@ public class ReplyFragment extends Fragment
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
             {
-                if(visibleItemCount + firstVisibleItem == totalItemCount && !isReplyLoading)
+                if(visibleItemCount + firstVisibleItem == totalItemCount && !isReplyLoading && !replyApi.replyIsEnd)
                 {
                     getMoreReply();
                 }
@@ -271,6 +269,8 @@ public class ReplyFragment extends Fragment
                     }
 
                     isReplyLoading = false;
+                    if(replyApi.replyIsEnd)
+                        ((TextView) layoutLoading.findViewById(R.id.wid_load_text)).setText("  没有更多了...");
                     replyAdapter.notifyDataSetChanged();
                 }
                 catch (Exception e)
@@ -400,18 +400,31 @@ public class ReplyFragment extends Fragment
             }
             else if(viewId == R.id.item_reply_reply_show || viewId == R.id.item_reply_reply)
             {
-                Intent intent = new Intent(ctx, CheckreplyActivity.class);
-                intent.putExtra("oid", oid);
-                intent.putExtra("type", type);
-                intent.putExtra("root", replyModel);
-                intent.putExtra("position", position);
-                startActivityForResult(intent, RESULT_VIEW);
+                if(root == null)
+                {
+                    Intent intent = new Intent(ctx, CheckreplyActivity.class);
+                    intent.putExtra("oid", oid);
+                    intent.putExtra("type", type);
+                    intent.putExtra("root", replyModel);
+                    intent.putExtra("position", position);
+                    startActivityForResult(intent, RESULT_VIEW);
+                }
+                else
+                {
+                    Intent replyIntent = new Intent(ctx, ReplyActivity.class);
+                    replyIntent.putExtra("rpid", replyApi.replyArrayList.get(position).reply_id);
+                    replyIntent.putExtra("type", type);
+                    if(position != 0)
+                        replyIntent.putExtra("text", String.format(getResources().getString(R.string.reply_reply_template),
+                                                         replyApi.replyArrayList.get(position).reply_owner_name));
+                    startActivityForResult(replyIntent, RESULT_SEND);
+                }
             }
         }
         else if(mode == 1)
         {
             Intent replyIntent = new Intent(ctx, ReplyActivity.class);
-            replyIntent.putExtra("oid", oid);
+            replyIntent.putExtra("rpid", root != null ? root.reply_id : "");
             replyIntent.putExtra("type", type);
             startActivityForResult(replyIntent, RESULT_SEND);
         }
@@ -431,7 +444,7 @@ public class ReplyFragment extends Fragment
                 {
                     try
                     {
-                        String result = replyApi.sendReply("", data.getStringExtra("text"));
+                        String result = replyApi.sendReply(data.getStringExtra("rpid"), data.getStringExtra("text"));
                         if(result.equals(""))
                         {
                             Looper.prepare();

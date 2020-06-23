@@ -27,6 +27,7 @@ public class ReplyApi
     public ArrayList<ReplyModel> replyArrayList = new ArrayList<>();
     public int replyCount;
     public boolean replyIsShowFloor;
+    public boolean replyIsEnd;
     private ArrayList<String> webHeaders;
 
     public static HashMap<Integer, String> typeMap = new HashMap<Integer, String>()
@@ -82,6 +83,7 @@ public class ReplyApi
                 if(page == 1)
                 {
                     replyArrayList.clear();
+                    replyIsEnd = false;
                     if(root != null) replyArrayList.add(root);
                     replyArrayList.add(new ReplyModel(3));
                     replyArrayList.add(new ReplyModel(sort.equals("2") ? 1 : 2));
@@ -91,6 +93,9 @@ public class ReplyApi
                 int l = limit != 0 ? Math.min(limit, replyJsonArray.length()) : replyJsonArray.length();
                 for (int i = 0; i < l; i++)
                     replyArrayList.add(new ReplyModel(replyJsonArray.getJSONObject(i), false, String.valueOf(upper.optInt("mid"))));
+
+                if(replyCountJson.optInt("num") * replyCountJson.optInt("size") >= replyCountJson.optInt("count"))
+                    replyIsEnd = true;
 
                 return l;
             }
@@ -107,18 +112,16 @@ public class ReplyApi
         try
         {
             String url = "https://api.bilibili.com/x/v2/reply/add";
-            String per = "oid=" + oid + "&type=" + type + (rpid.equals("") ? "" : ("&root=" + rpid + "&parent=" + rpid)) + "&message=" + text + "&jsonp=jsonp&csrf=" + csrf;
-            JSONObject j = new JSONObject(NetWorkUtil.post(url, per, webHeaders).body().string());
-            if(j.getInt("code") == 0)
+            String arg = "oid=" + oid + "&type=" + type + ((rpid == null || rpid.equals("")) ? "" : ("&root=" + rpid + "&parent=" + rpid)) + "&message=" + text + "&jsonp=jsonp&csrf=" + csrf;
+            JSONObject result = new JSONObject(NetWorkUtil.post(url, arg, webHeaders).body().string());
+            if(result.getInt("code") == 0)
                 return "";
-            else
-                return j.getString("message");
         }
         catch (JSONException | NullPointerException e)
         {
             e.printStackTrace();
-            return "未知问题，请重试";
         }
+        return "未知问题，请重试";
     }
 
     public String reportReply(String replyId, String reason) throws IOException

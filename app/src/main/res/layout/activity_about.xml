@@ -30,8 +30,8 @@
                 android:id="@+id/about_title_extraicon"
                 android:layout_width="12dp"
                 android:layout_height="19dp"
-                android:layout_marginLeft="2dp"
-                android:layout_toLeftOf="@+id/about_title_title"
+                android:layout_marginStart="2dp"
+                android:layout_toStartOf="@+id/about_title_title"
                 android:rotation="90"
                 android:src="@drawable/icon_extra" />
 

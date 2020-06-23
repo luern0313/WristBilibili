@@ -9,8 +9,8 @@
         android:layout_height="wrap_content"
         android:background="@color/mainColor"
         android:gravity="center_vertical"
-        android:paddingBottom="4dp"
-        android:paddingTop="10dp">
+        android:paddingTop="10dp"
+        android:paddingBottom="4dp">
 
         <ViewFlipper
             android:id="@+id/art_title_title"
@@ -23,14 +23,14 @@
                 android:layout_height="wrap_content"
                 android:text="专栏"
                 android:textColor="@color/white"
-                android:textSize="13sp"/>
+                android:textSize="13sp" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="评论"
                 android:textColor="@color/white"
-                android:textSize="13sp"/>
+                android:textSize="13sp" />
 
         </ViewFlipper>
 
@@ -64,6 +64,7 @@
         android:layout_below="@+id/art_title_layout"
         android:background="@color/white"
         android:clickable="true"
+        android:focusable="true"
         android:gravity="center"
         android:orientation="vertical"
         android:paddingBottom="33dp"
@@ -89,6 +90,7 @@
         android:layout_below="@+id/art_title_layout"
         android:background="@color/white"
         android:clickable="true"
+        android:focusable="true"
         android:gravity="center"
         android:orientation="vertical"
         android:paddingBottom="33dp"
@@ -114,6 +116,7 @@
         android:layout_below="@+id/art_title_layout"
         android:background="@color/white"
         android:clickable="true"
+        android:focusable="true"
         android:gravity="center"
         android:orientation="vertical"
         android:paddingBottom="33dp"

@@ -86,6 +86,7 @@ public class DynamicModel implements Serializable
         private String shareText;
         private boolean shareTextExpand;
 
+        private String shareOriginTips;
         private int shareOriginType;
         private DynamicModel shareOriginCard;
 
@@ -98,11 +99,18 @@ public class DynamicModel implements Serializable
                 shareTextOrg = card_item.optString("content");
                 shareText = super.handlerText(shareTextOrg, display, extend);
 
-                JSONObject card_origin = new JSONObject(card.optString("origin"));
-                JSONObject desc_origin = desc.optJSONObject("origin");
-                JSONObject display_origin = display.optJSONObject("origin");
-                JSONObject extend_origin = new JSONObject(card.optString("origin_extend_json"));
+                JSONObject card_origin = new JSONObject(card.optString("origin", "{}"));
+                JSONObject desc_origin = desc.has("origin") ? desc.optJSONObject("origin") : new JSONObject();
+                JSONObject display_origin = display.has("origin") ? display.optJSONObject("origin") : new JSONObject();
+                JSONObject extend_origin = new JSONObject(card.optString("origin_extend_json", "{}"));
+
                 shareOriginType = desc_origin.optInt("type");
+                if(card_item.optInt("miss") == 1)
+                {
+                    shareOriginType = 9999;
+                    shareOriginTips = card_item.optString("tips");
+                }
+
                 switch(shareOriginType)
                 {
                     case 1:
@@ -136,7 +144,7 @@ public class DynamicModel implements Serializable
                         shareOriginCard = new DynamicFavorModel(card_origin, desc_origin, display_origin, extend_origin, true);
                         break;
                     default:
-                        shareOriginCard = new DynamicUnknownModel(card_origin, desc_origin, display_origin, extend_origin, true);
+                        shareOriginCard = new DynamicUnknownModel(card_origin, desc_origin, display_origin, extend_origin, true, shareOriginTips);
                         break;
                 }
             }
@@ -425,11 +433,21 @@ public class DynamicModel implements Serializable
     {"live_play_info":{"area_id":236,"area_name":"主机游戏","cover":"https:\/\/i0.hdslb.com\/bfs\/live\/room_cover\/ab35dec973e4b088ccbc94e137b5ccdfd41b8a59.jpg","link":"https:\/\/live.bilibili.com\/1029","live_id":77037003027252229,"live_screen_type":0,"live_start_time":1590654697,"live_status":1,"online":6080,"parent_area_id":6,"parent_area_name":"单机","play_type":2,"room_id":1029,"room_type":0,"title":"测试","uid":43536},"live_record_info":null,"style":1,"type":1}
     */
 
+    @Getter
+    @Setter
     public class DynamicUnknownModel extends DynamicModel implements Serializable
     {
+        private String unknownTips;
+
         public DynamicUnknownModel(JSONObject card, JSONObject desc, JSONObject display, JSONObject extend, boolean isShared)
         {
+            this(card, desc, display, extend, isShared, "");
+        }
+
+        public DynamicUnknownModel(JSONObject card, JSONObject desc, JSONObject display, JSONObject extend, boolean isShared, String tips)
+        {
             super(card, desc, display, extend, isShared);
+            unknownTips = tips;
         }
     }
 

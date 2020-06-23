@@ -16,7 +16,6 @@ public class ReplyActivity extends AppCompatActivity
 {
     Context ctx;
     Intent inIntent;
-    Intent reusltIntent = new Intent();
 
     EditText uiEditText;
     @Override
@@ -26,12 +25,13 @@ public class ReplyActivity extends AppCompatActivity
         setContentView(R.layout.activity_reply);
         ctx = this;
         inIntent = getIntent();
-        setResult(-1, reusltIntent);
+        setResult(-1, inIntent);
 
         if(!SharedPreferencesUtil.getBoolean(SharedPreferencesUtil.tail, true))
             findViewById(R.id.rp_tail).setVisibility(View.GONE);
 
         uiEditText = findViewById(R.id.rp_edittext);
+        uiEditText.setText(inIntent.getStringExtra("text"));
     }
 
     public void rp_clickVoiceInput(View view)
@@ -55,8 +55,8 @@ public class ReplyActivity extends AppCompatActivity
             String s = uiEditText.getText().toString();
             if(SharedPreferencesUtil.getBoolean(SharedPreferencesUtil.tail, true))
                 s += "\n\n" + TailActivity.getTail(true);
-            reusltIntent.putExtra("text", s);
-            setResult(0, reusltIntent);
+            inIntent.putExtra("text", s);
+            setResult(0, inIntent);
             finish();
         }
         else

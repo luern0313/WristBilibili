@@ -39,6 +39,7 @@
     <string name="dynamic_live_status_1">直播中</string>
     <string name="dynamic_live_status_2">未开播</string>
     <string name="dynamic_favor_desc">%d个内容</string>
+    <string name="dynamic_unknown_tips">暂不支持该类型动态...</string>
 
     <string name="title_activity_listview">ExpandableTextView in ListView</string>
     <string name="title_activity_main">ExpandableTextView</string>
@@ -46,7 +47,7 @@
     <string name="to_shrink_hint">收起</string>
 
     <string name="reply_like_up">UP主觉得很赞</string>
-
     <string name="reply_report_warning">该评论可能存在引战谩骂、人身攻击等行为，请勿对骂，善用举报，点击这里查看详情</string>
+    <string name="reply_reply_template">回复 @%s :</string>
 
 </resources>
