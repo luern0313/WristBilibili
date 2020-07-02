@@ -107,7 +107,7 @@ public class FavorBoxFragment extends Fragment
                 if(viewId == R.id.favor_lay)
                 {
                     Intent intent = new Intent(ctx, FavorvideoActivity.class);
-                    intent.putExtra("fid", favourboxArrayList.get(position).fid);
+                    intent.putExtra("fid", favourboxArrayList.get(position).getFavorBoxFid());
                     intent.putExtra("mid", mid);
                     startActivity(intent);
                 }

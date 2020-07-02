@@ -64,7 +64,7 @@ public class FavorvideoActivity extends AppCompatActivity
             @Override
             public void onListVideoAdapterClick(int viewId, int position)
             {
-                Intent intent = VideoActivity.getActivityIntent(ctx, favorvideoList.get(position).video_aid, "");
+                Intent intent = VideoActivity.getActivityIntent(ctx, favorvideoList.get(position).getVideoAid(), "");
                 startActivity(intent);
             }
 
@@ -85,7 +85,7 @@ public class FavorvideoActivity extends AppCompatActivity
                                     {
                                         try
                                         {
-                                            String result = favorVideoApi.cancelFavVideo(String.valueOf(favorvideoList.get(position).video_aid));
+                                            String result = favorVideoApi.cancelFavVideo(String.valueOf(favorvideoList.get(position).getVideoAid()));
                                             if(result.equals(""))
                                             {
                                                 favorvideoList.remove(position);

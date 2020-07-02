@@ -1,11 +1,7 @@
 package cn.luern0313.wristbilibili.adapter;
 
-import android.content.res.Resources;
-import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
-import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,13 +12,13 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.models.RankingModel;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
-import cn.luern0313.wristbilibili.util.ImageDownloaderUtil;
+import cn.luern0313.wristbilibili.util.ImageTaskUtil;
+import cn.luern0313.wristbilibili.util.LruCacheUtil;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
@@ -33,7 +29,6 @@ public class RankingAdapter extends BaseAdapter
 {
     private LayoutInflater mInflater;
 
-    private LruCache<String, BitmapDrawable> mImageCache;
     private RankingAdapterListener rankingAdapterListener;
 
     private ArrayList<RankingModel> rkList;
@@ -45,25 +40,6 @@ public class RankingAdapter extends BaseAdapter
         this.rkList = rkList;
         this.listView = listView;
         this.rankingAdapterListener = rankingAdapterListener;
-
-        int maxCache = (int) Runtime.getRuntime().maxMemory();
-        int cacheSize = maxCache / 8;
-        mImageCache = new LruCache<String, BitmapDrawable>(cacheSize)
-        {
-            @Override
-            protected int sizeOf(String key, BitmapDrawable value)
-            {
-                try
-                {
-                    return value.getBitmap().getByteCount();
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
-                return 0;
-            }
-        };
     }
 
     @Override
@@ -111,8 +87,8 @@ public class RankingAdapter extends BaseAdapter
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        Drawable playNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_play_num);
-        Drawable danmakuNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_danmu_num);
+        Drawable playNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_number_play);
+        Drawable danmakuNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_number_danmu);
         playNumDrawable.setBounds(0, 0, DataProcessUtil.dip2px(10), DataProcessUtil.dip2px(10));
         danmakuNumDrawable.setBounds(0, 0,DataProcessUtil.dip2px(10), DataProcessUtil.dip2px(10));
         viewHolder.video_play.setCompoundDrawables(playNumDrawable,null, null,null);
@@ -195,60 +171,15 @@ public class RankingAdapter extends BaseAdapter
 
     private BitmapDrawable setImageFormWeb(String url)
     {
-        if(mImageCache.get(url) != null)
+        if(LruCacheUtil.getLruCache().get(url) != null)
         {
-            return mImageCache.get(url);
+            return LruCacheUtil.getLruCache().get(url);
         }
         else
         {
-            ImageTask it = new ImageTask(listView);
+            ImageTaskUtil it = new ImageTaskUtil(listView);
             it.execute(url);
             return null;
-        }
-    }
-
-    class ImageTask extends AsyncTask<String, Void, BitmapDrawable>
-    {
-        private String imageUrl;
-        private Resources listViewResources;
-
-        ImageTask(ListView listView)
-        {
-            this.listViewResources = listView.getResources();
-        }
-
-        @Override
-        protected BitmapDrawable doInBackground(String... params)
-        {
-            try
-            {
-                imageUrl = params[0];
-                Bitmap bitmap = null;
-                bitmap = ImageDownloaderUtil.downloadImage(imageUrl);
-                BitmapDrawable db = new BitmapDrawable(listViewResources, bitmap);
-                // 如果本地还没缓存该图片，就缓存
-                if(mImageCache.get(imageUrl) == null && bitmap != null)
-                {
-                    mImageCache.put(imageUrl, db);
-                }
-                return db;
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(BitmapDrawable result)
-        {
-            // 通过Tag找到我们需要的ImageView，如果该ImageView所在的item已被移出页面，就会直接返回null
-            ImageView iv = listView.findViewWithTag(imageUrl);
-            if(iv != null && result != null)
-            {
-                iv.setImageDrawable(result);
-            }
         }
     }
 

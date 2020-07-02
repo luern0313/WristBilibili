@@ -90,8 +90,8 @@ public class FollowmeActivity extends AppCompatActivity
             {
                 try
                 {
-                    uiVideoTitle.setText(listVideoModel.video_title);
-                    if(listVideoModel.video_title.startsWith("【互动"))
+                    uiVideoTitle.setText(listVideoModel.getVideoTitle());
+                    if(listVideoModel.getVideoTitle().startsWith("【互动"))
                         uiVideoStarLin.setVisibility(View.VISIBLE);
                     uiVideoLC.setVisibility(View.VISIBLE);
                 }
@@ -130,10 +130,10 @@ public class FollowmeActivity extends AppCompatActivity
                     try
                     {
                         listVideoModel = userApi.getUserVideo(1).get(0);
-                        videoDetail = new VideoApi("", listVideoModel.video_bvid);
+                        videoDetail = new VideoApi("", listVideoModel.getVideoBvid());
                         handler.post(runnVideo);
 
-                        byte[] picByte = NetWorkUtil.readStream(NetWorkUtil.get(listVideoModel.video_cover).body().byteStream());
+                        byte[] picByte = NetWorkUtil.readStream(NetWorkUtil.get(listVideoModel.getVideoCover()).body().byteStream());
                         videoCover = BitmapFactory.decodeByteArray(picByte, 0, picByte.length);
                         handler.post(runnImg);
                     }

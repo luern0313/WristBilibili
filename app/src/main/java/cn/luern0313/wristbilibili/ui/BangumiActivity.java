@@ -107,8 +107,8 @@ public class BangumiActivity extends AppCompatActivity implements BangumiDetailF
             @Override
             public void run()
             {
-                ((TextView) uiTitle.findViewWithTag("1")).setText(bangumiModel.bangumi_type_name + "详情");
-                ((TextView) uiTitle.findViewWithTag("2")).setText("单" + bangumiModel.bangumi_type_ep + "评论");
+                ((TextView) uiTitle.findViewWithTag("1")).setText(String.format(getString(R.string.bangumi_title_detail), bangumiModel.bangumi_type_name));
+                ((TextView) uiTitle.findViewWithTag("2")).setText(String.format(getString(R.string.bangumi_title_reply), bangumiModel.bangumi_type_ep));
 
                 uiLoading.setVisibility(View.GONE);
                 uiNoWeb.setVisibility(View.GONE);
@@ -342,18 +342,22 @@ public class BangumiActivity extends AppCompatActivity implements BangumiDetailF
         }
         else if(viewId == R.id.bgm_detail_bt_download_lay)
         {
-            String[] videoPartNames = new String[bangumiModel.bangumi_episodes.size() + bangumiModel.bangumi_sections.size()];
-            for(int i = 0; i < bangumiModel.bangumi_episodes.size(); i++)
-                videoPartNames[i] = "第" + (bangumiModel.bangumi_episodes.get(i).position + 1) + bangumiModel.bangumi_type_ep + " " + bangumiModel.bangumi_episodes.get(i).bangumi_episode_title_long;
-            for(int i = bangumiModel.bangumi_episodes.size(); i < videoPartNames.length; i++)
-                videoPartNames[i] = bangumiModel.bangumi_sections.get(i - bangumiModel.bangumi_episodes.size()).bangumi_episode_title_long.equals("") ?
-                        bangumiModel.bangumi_sections.get(i - bangumiModel.bangumi_episodes.size()).bangumi_episode_title :
-                        bangumiModel.bangumi_sections.get(i - bangumiModel.bangumi_episodes.size()).bangumi_episode_title_long;
-            Intent intent = new Intent(ctx, SelectPartActivity.class);
-            intent.putExtra("title", "分集下载");
-            intent.putExtra("tip", "选择要下载的分集");
-            intent.putExtra("options_name", videoPartNames);
-            startActivityForResult(intent, RESULT_DETAIL_DOWNLOAD);
+            if(bangumiModel.bangumi_right_download)
+            {
+                String[] videoPartNames = new String[bangumiModel.bangumi_episodes.size() + bangumiModel.bangumi_sections.size()];
+                for (int i = 0; i < bangumiModel.bangumi_episodes.size(); i++)
+                    videoPartNames[i] = "第" + (bangumiModel.bangumi_episodes.get(i).position + 1) + bangumiModel.bangumi_type_ep + " " + bangumiModel.bangumi_episodes.get(i).bangumi_episode_title_long;
+                for (int i = bangumiModel.bangumi_episodes.size(); i < videoPartNames.length; i++)
+                    videoPartNames[i] = bangumiModel.bangumi_sections.get(i - bangumiModel.bangumi_episodes.size()).bangumi_episode_title_long.equals("") ? bangumiModel.bangumi_sections.get(i - bangumiModel.bangumi_episodes
+                            .size()).bangumi_episode_title : bangumiModel.bangumi_sections.get(i - bangumiModel.bangumi_episodes.size()).bangumi_episode_title_long;
+                Intent intent = new Intent(ctx, SelectPartActivity.class);
+                intent.putExtra("title", getString(R.string.bangumi_download_title));
+                intent.putExtra("tip", getString(R.string.bangumi_download_tip));
+                intent.putExtra("options_name", videoPartNames);
+                startActivityForResult(intent, RESULT_DETAIL_DOWNLOAD);
+            }
+            else
+                Toast.makeText(ctx, String.format(getString(R.string.bangumi_download_notallow), bangumiModel.bangumi_type_name), Toast.LENGTH_SHORT).show();
         }
         else if(viewId == R.id. bgm_detail_bt_share_lay)
         {

@@ -123,8 +123,8 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
         uiVideoCoinProgress = rootLayout.findViewById(R.id.vd_coin_progress);
         uiVideoFavProgress = rootLayout.findViewById(R.id.vd_fav_progress);
 
-        Drawable playDrawable = getResources().getDrawable(R.drawable.icon_video_play_num);
-        Drawable danmakuDrawable = getResources().getDrawable(R.drawable.icon_video_danmu_num);
+        Drawable playDrawable = getResources().getDrawable(R.drawable.icon_number_play);
+        Drawable danmakuDrawable = getResources().getDrawable(R.drawable.icon_number_danmu);
         playDrawable.setBounds(0,0, DataProcessUtil.dip2px(11), DataProcessUtil.dip2px(11));
         danmakuDrawable.setBounds(0,0, DataProcessUtil.dip2px(11), DataProcessUtil.dip2px(11));
         ((TextView) rootLayout.findViewById(R.id.vd_video_play)).setCompoundDrawables(playDrawable,null, null,null);

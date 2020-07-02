@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity
                     startActivity(new Intent(ctx, FollowmeActivity.class));
                 Intent intent = new Intent(ctx, TextActivity.class);
                 intent.putExtra("title", "更新日志");
-                intent.putExtra("text", getResources().getString(R.string.update));
+                intent.putExtra("text", getString(R.string.update));
                 startActivity(intent);
             }
         }
@@ -142,52 +142,52 @@ public class MainActivity extends AppCompatActivity
             {
                 case 1:
                     transaction.replace(R.id.main_frame, DynamicFragment.newInstance(true, SharedPreferencesUtil.getString(SharedPreferencesUtil.mid, "")));
-                    titleText.setText(getResources().getString(R.string.menu_dynamic));
+                    titleText.setText(getString(R.string.menu_dynamic));
                     titleText.setTextSize(14);
                     break;
                 case 2:
                     transaction.replace(R.id.main_frame, new RecommendFragment());
-                    titleText.setText(getResources().getString(R.string.menu_recommend));
+                    titleText.setText(getString(R.string.menu_recommend));
                     titleText.setTextSize(14);
                     break;
                 case 3:
                     transaction.replace(R.id.main_frame, new RankingFragment());
-                    titleText.setText(getResources().getString(R.string.menu_ranking));
+                    titleText.setText(getString(R.string.menu_ranking));
                     titleText.setTextSize(14);
                     break;
                 case 4:
                     transaction.replace(R.id.main_frame, new AnimationTimelineFragment());
-                    titleText.setText(getResources().getString(R.string.menu_remind));
+                    titleText.setText(getString(R.string.menu_remind));
                     titleText.setTextSize(13);
                     break;
                 case 5:
                     transaction.replace(R.id.main_frame, new DownloadFragment());
-                    titleText.setText(getResources().getString(R.string.menu_download));
+                    titleText.setText(getString(R.string.menu_download));
                     titleText.setTextSize(13);
                     break;
                 case 6:
                     transaction.replace(R.id.main_frame, new SearchFragment());
-                    titleText.setText(getResources().getString(R.string.menu_search));
+                    titleText.setText(getString(R.string.menu_search));
                     titleText.setTextSize(14);
                     break;
                 case 7:
                     transaction.replace(R.id.main_frame, FavorBoxFragment.newInstance(SharedPreferencesUtil.getString(SharedPreferencesUtil.mid, "")));
-                    titleText.setText(getResources().getString(R.string.menu_collect));
+                    titleText.setText(getString(R.string.menu_collect));
                     titleText.setTextSize(14);
                     break;
                 case 8:
                     transaction.replace(R.id.main_frame, new WatchlaterFragment());
-                    titleText.setText(getResources().getString(R.string.menu_watchlater));
+                    titleText.setText(getString(R.string.menu_watchlater));
                     titleText.setTextSize(13);
                     break;
                 case 9:
                     transaction.replace(R.id.main_frame, new HistoryFragment());
-                    titleText.setText(getResources().getString(R.string.menu_history));
+                    titleText.setText(getString(R.string.menu_history));
                     titleText.setTextSize(14);
                     break;
                 case 10:
                     transaction.replace(R.id.main_frame, new SettingFragment());
-                    titleText.setText(getResources().getString(R.string.menu_setting));
+                    titleText.setText(getString(R.string.menu_setting));
                     titleText.setTextSize(14);
                     break;
             }

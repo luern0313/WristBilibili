@@ -107,7 +107,7 @@ public class TailActivity extends AppCompatActivity
         {
             SharedPreferencesUtil.putString(SharedPreferencesUtil.tailCustom, "————该评论来自" + SharedPreferencesUtil.getString(SharedPreferencesUtil.tailModel, "") + "{{device}}端{{appname}}" + (SharedPreferencesUtil.getBoolean(SharedPreferencesUtil.tailAuthor, true) ? "，{{appauthor}} {{videoid}}" : ""));
             SharedPreferencesUtil.removeValue(SharedPreferencesUtil.tailModel);
-            SharedPreferencesUtil.removeValue("tailAuthor");
+            SharedPreferencesUtil.removeValue(SharedPreferencesUtil.tailAuthor);
         }
         String tail = SharedPreferencesUtil.getString(SharedPreferencesUtil.tailCustom, "");
         if(isChange)

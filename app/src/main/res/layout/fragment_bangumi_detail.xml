@@ -76,7 +76,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="查看详情 >"
+                    android:text="@string/bangumi_detail_more"
                     android:textColor="@color/colorPrimary"
                     android:textSize="12sp" />
             </cn.luern0313.wristbilibili.widget.AutoLineLayout>
@@ -116,7 +116,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
-                            android:text="追番"
+                            android:text="@string/bangumi_control_follow_follow"
                             android:textSize="12sp" />
 
                     </LinearLayout>
@@ -143,7 +143,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
-                            android:text="查看封面"
+                            android:text="@string/bangumi_control_cover"
                             android:textSize="12sp" />
 
                     </LinearLayout>
@@ -162,15 +162,17 @@
                         android:padding="3dp">
 
                         <ImageView
+                            android:id="@+id/bgm_detail_bt_download_img"
                             android:layout_width="38dp"
                             android:layout_height="38dp"
                             android:src="@drawable/icon_vdd_play_download" />
 
                         <TextView
+                            android:id="@+id/bgm_detail_bt_download_text"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
-                            android:text="缓存"
+                            android:text="@string/bangumi_control_download_allow"
                             android:textSize="12sp" />
 
                     </LinearLayout>
@@ -197,7 +199,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
-                            android:text="转发"
+                            android:text="@string/bangumi_control_share"
                             android:textSize="12sp" />
 
                     </LinearLayout>

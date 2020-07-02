@@ -12,9 +12,6 @@
     <string name="open_source_other">--------------------------\n本应用使用了以下开源库，向这些开源库的作者致以敬意！\n--------------------------\nCircleImageView\nhdodenhof\nApache License 2.0\nhttps://github.com/hdodenhof/CircleImageView\n--------------------------\nExpandableTextView\nCarbs0126\nApache License 2.0\nhttps://github.com/Carbs0126/ExpandableTextView\n--------------------------\nWaveSwipeRefreshLayout\nrecruit-lifestyle\nApache License 2.0\nhttps://github.com/recruit-lifestyle/WaveSwipeRefreshLayout\n--------------------------\nsketch\npanpf\nApache License 2.0\nhttps://github.com/panpf/sketch\n--------------------------\nokhttp\nsquare\nApache License 2.0\nhttps://github.com/square/okhttp\n--------------------------\nFileDownloader\nlingochamp\nApache License 2.0\nhttps://github.com/lingochamp/FileDownloader\n--------------------------\nHtmlTextView\nSufficientlySecure\nApache License 2.0\nhttps://github.com/SufficientlySecure/html-textview\n--------------------------\nEventBus\ngreenrobot\nApache License 2.0\nhttps://github.com/greenrobot/EventBus\n--------------------------\nCircleProgressView\njenly1314\nMIT License\nhttps://github.com/jenly1314/CircleProgressView\n--------------------------\nLombok\nrzwitserloot\nMIT License\nhttps://github.com/rzwitserloot/lombok\n--------------------------\nfastjson\nalibaba\nApache License 2.0\nhttps://github.com/alibaba/fastjson\n--------------------------\n
     </string>
 
-    <string name="dl_tip_1">视频储存位置：</string>
-    <string name="dl_tip_2">\n\n点击暂停或开始，长按删除本地文件。\n\n创建任务后时间过长链接会失效，请尝试删除后重新下载。</string>
-
     <string name="menu_dynamic">动态</string>
     <string name="menu_recommend">推荐</string>
     <string name="menu_ranking">排行榜</string>
@@ -39,15 +36,52 @@
     <string name="dynamic_live_status_1">直播中</string>
     <string name="dynamic_live_status_2">未开播</string>
     <string name="dynamic_favor_desc">%d个内容</string>
-    <string name="dynamic_unknown_tips">暂不支持该类型动态...</string>
+    <string name="dynamic_unknown_tips">暂不支持该类型动态…</string>
 
     <string name="title_activity_listview">ExpandableTextView in ListView</string>
     <string name="title_activity_main">ExpandableTextView</string>
     <string name="to_expand_hint">展开</string>
     <string name="to_shrink_hint">收起</string>
 
+    <string name="reply_description_head">用户头像</string>
+    <string name="reply_description_off_1">个人认证</string>
+    <string name="reply_description_off_2">企业认证</string>
+    <string name="reply_description_report">举报</string>
+    <string name="reply_description_reply">评论</string>
+    <string name="reply_description_dislike">点踩</string>
+    <string name="reply_description_like">点赞</string>
+    <string name="reply_lv">LV%s</string>
     <string name="reply_like_up">UP主觉得很赞</string>
     <string name="reply_report_warning">该评论可能存在引战谩骂、人身攻击等行为，请勿对骂，善用举报，点击这里查看详情</string>
     <string name="reply_reply_template">回复 @%s :</string>
+
+    <string name="favor_box_see_private">私有</string>
+    <string name="favor_box_see_public">公开</string>
+    <string name="favor_box_count">%s个视频</string>
+
+    <string name="download_mode_1">正在下载</string>
+    <string name="download_mode_2">下载完成</string>
+    <string name="download_tip">视频储存位置：%s\n\n点击暂停或开始，长按删除本地文件。\n\n创建任务后时间过长链接会失效，请尝试删除后重新下载。</string>
+    <string name="download_size">%s/s</string>
+    <string name="download_size_unknown">未知</string>
+    <string name="download_progress">%d%%</string>
+    <string name="download_speed_zero">0.0B/s</string>
+    <string name="download_state_0">连接中…</string>
+    <string name="download_state_2">暂停中…</string>
+    <string name="download_state_3">暂停</string>
+
+    <string name="bangumi_title_detail">%s详情</string>
+    <string name="bangumi_title_reply">单%s评论</string>
+    <string name="bangumi_detail_more">查看详情 ></string>
+    <string name="bangumi_control_follow_follow">追番</string>
+    <string name="bangumi_control_follow_unfollow">已追番</string>
+    <string name="bangumi_control_cover">查看封面</string>
+    <string name="bangumi_control_download_allow">缓存</string>
+    <string name="bangumi_control_download_notallow">版权受限</string>
+    <string name="bangumi_control_share">转发</string>
+    <string name="bangumi_episodes_title">正片-共%d%s</string>
+    <string name="bangumi_download_title">分集下载</string>
+    <string name="bangumi_download_tip">选择要下载的分集</string>
+    <string name="bangumi_download_notallow">抱歉，该%s只可在线观看</string>
 
 </resources>

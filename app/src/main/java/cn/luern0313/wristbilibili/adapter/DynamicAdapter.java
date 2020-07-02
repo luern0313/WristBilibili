@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.Html;
-import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +26,7 @@ import cn.luern0313.wristbilibili.ui.ImgActivity;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
 import cn.luern0313.wristbilibili.util.DynamicAlbumDecoration;
 import cn.luern0313.wristbilibili.util.ImageTaskUtil;
+import cn.luern0313.wristbilibili.util.LruCacheUtil;
 import cn.luern0313.wristbilibili.util.MyApplication;
 import cn.luern0313.wristbilibili.util.ReplyHtmlImageHandlerUtil;
 import cn.luern0313.wristbilibili.widget.ExpandableTextView;
@@ -41,7 +41,6 @@ public class DynamicAdapter extends BaseAdapter
     private Context ctx;
     private LayoutInflater mInflater;
 
-    private LruCache<String, BitmapDrawable> mImageCache;
     private DynamicAdapterListener dynamicAdapterListener;
 
     private ArrayList<DynamicModel> dynamicModelArrayList;
@@ -56,25 +55,6 @@ public class DynamicAdapter extends BaseAdapter
         this.view = view;
         this.dynamicWidth = dynamicWidth;
         this.dynamicAdapterListener = dynamicAdapterListener;
-
-        int maxCache = (int) Runtime.getRuntime().maxMemory();
-        int cacheSize = maxCache / 5;
-        mImageCache = new LruCache<String, BitmapDrawable>(cacheSize)
-        {
-            @Override
-            protected int sizeOf(String key, BitmapDrawable value)
-            {
-                try
-                {
-                    return value.getBitmap().getByteCount();
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
-                return 0;
-            }
-        };
     }
 
     @Override
@@ -106,7 +86,7 @@ public class DynamicAdapter extends BaseAdapter
     {
         int type = getType(dynamicModelArrayList.get(position).getCardType());
         if(type == 0)
-            return getType(((DynamicModel.DynamicShareModel) dynamicModelArrayList.get(position)).getShareOriginCard().getCardType());
+            return getType(((DynamicModel.DynamicShareModel) dynamicModelArrayList.get(position)).getShareOriginType());
         else
             return 16 + type;
     }
@@ -271,7 +251,7 @@ public class DynamicAdapter extends BaseAdapter
                 }
             });
             CharSequence text = DataProcessUtil.getClickableHtml(dynamicModel.getShareText(), new ReplyHtmlImageHandlerUtil(
-                    mImageCache, viewHolder.share_dynamic, dynamicModel.getCardEmoteSize()));
+                    viewHolder.share_dynamic, dynamicModel.getCardEmoteSize()));
             viewHolder.share_dynamic.setOrigText(text);
             viewHolder.share_dynamic.updateForRecyclerView(text, dynamicWidth, dynamicModel.isShareTextExpand() ?
                     ExpandableTextView.STATE_EXPAND : ExpandableTextView.STATE_SHRINK);
@@ -292,7 +272,7 @@ public class DynamicAdapter extends BaseAdapter
 
             if(dynamicModel.isCardIsShared())
             {
-                viewHolder.album_author.setText(String.format(ctx.getResources().getString(R.string.dynamic_album_author), dynamicModel.getAlbumAuthorName()));
+                viewHolder.album_author.setText(String.format(ctx.getString(R.string.dynamic_album_author), dynamicModel.getAlbumAuthorName()));
                 viewHolder.album_author.setVisibility(View.VISIBLE);
             }
             else
@@ -315,7 +295,7 @@ public class DynamicAdapter extends BaseAdapter
                 }
             });
             CharSequence text = DataProcessUtil.getClickableHtml(dynamicModel.getAlbumText(), new ReplyHtmlImageHandlerUtil(
-                    mImageCache, viewHolder.album_text, dynamicModel.getCardEmoteSize()));
+                    viewHolder.album_text, dynamicModel.getCardEmoteSize()));
             viewHolder.album_text.setOrigText(text);
             viewHolder.album_text.updateForRecyclerView(text, dynamicWidth, dynamicModel.isAlbumTextExpand() ?
                     ExpandableTextView.STATE_EXPAND : ExpandableTextView.STATE_SHRINK);
@@ -342,7 +322,7 @@ public class DynamicAdapter extends BaseAdapter
             viewHolder.album_img.setLayoutManager(layoutManager);
             if(viewHolder.album_img.getItemDecorationCount() == 0)
                 viewHolder.album_img.addItemDecoration(DynamicAlbumDecoration.createHorizontal(ctx, Color.argb(0, 0, 0, 0), DataProcessUtil.dip2px(2)));
-            viewHolder.album_img.setAdapter(new DynamicAlbumImgAdapter(dynamicModel.getAlbumImg(), viewHolder.album_img, mImageCache, dynamicAlbumImgAdapterListener));
+            viewHolder.album_img.setAdapter(new DynamicAlbumImgAdapter(dynamicModel.getAlbumImg(), viewHolder.album_img, dynamicAlbumImgAdapterListener));
 
             viewHolder.album_author.setOnClickListener(onViewClick(position, isShared));
         }
@@ -353,7 +333,7 @@ public class DynamicAdapter extends BaseAdapter
 
             if(dynamicModel.isCardIsShared())
             {
-                viewHolder.text_author.setText(String.format(ctx.getResources().getString(R.string.dynamic_text_author), dynamicModel.getTextAuthorName()));
+                viewHolder.text_author.setText(String.format(ctx.getString(R.string.dynamic_text_author), dynamicModel.getTextAuthorName()));
                 viewHolder.text_author.setVisibility(View.VISIBLE);
             }
             else
@@ -376,7 +356,7 @@ public class DynamicAdapter extends BaseAdapter
                 }
             });
             CharSequence text = DataProcessUtil.getClickableHtml(dynamicModel.getTextText(), new ReplyHtmlImageHandlerUtil(
-                    mImageCache, viewHolder.text_text, dynamicModel.getCardEmoteSize()));
+                    viewHolder.text_text, dynamicModel.getCardEmoteSize()));
             viewHolder.text_text.setOrigText(text);
             viewHolder.text_text.updateForRecyclerView(text, dynamicWidth, dynamicModel.isTextTextExpand() ?
                     ExpandableTextView.STATE_EXPAND : ExpandableTextView.STATE_SHRINK);
@@ -425,7 +405,7 @@ public class DynamicAdapter extends BaseAdapter
                     }
                 });
                 CharSequence text = DataProcessUtil.getClickableHtml(dynamicModel.getVideoDynamic(), new ReplyHtmlImageHandlerUtil(
-                        mImageCache, viewHolder.video_dynamic, dynamicModel.getCardEmoteSize()));
+                        viewHolder.video_dynamic, dynamicModel.getCardEmoteSize()));
                 viewHolder.video_dynamic.setOrigText(text);
                 viewHolder.video_dynamic.updateForRecyclerView(text, dynamicWidth, dynamicModel.isVideoDynamicExpand() ?
                         ExpandableTextView.STATE_EXPAND : ExpandableTextView.STATE_SHRINK);
@@ -439,7 +419,7 @@ public class DynamicAdapter extends BaseAdapter
             else
                 viewHolder.video_dynamic.setVisibility(View.GONE);
 
-            viewHolder.video_desc.setText(String.format(ctx.getResources().getString(R.string.dynamic_video_desc), dynamicModel.getVideoDuration(),
+            viewHolder.video_desc.setText(String.format(ctx.getString(R.string.dynamic_video_desc), dynamicModel.getVideoDuration(),
                                                         dynamicModel.getVideoPlay(), dynamicModel.getVideoDanmaku()));
             viewHolder.video_title.setText(dynamicModel.getVideoTitle());
             viewHolder.video_img.setImageResource(R.drawable.img_default_vid);
@@ -487,7 +467,7 @@ public class DynamicAdapter extends BaseAdapter
                     }
                 });
                 CharSequence text = DataProcessUtil.getClickableHtml(dynamicModel.getArticleDynamic(), new ReplyHtmlImageHandlerUtil(
-                        mImageCache, viewHolder.article_dynamic, dynamicModel.getCardEmoteSize()));
+                        viewHolder.article_dynamic, dynamicModel.getCardEmoteSize()));
                 viewHolder.article_dynamic.setOrigText(text);
                 viewHolder.article_dynamic.updateForRecyclerView(text, dynamicWidth, dynamicModel.isArticleDynamicExpand() ?
                         ExpandableTextView.STATE_EXPAND : ExpandableTextView.STATE_SHRINK);
@@ -503,7 +483,7 @@ public class DynamicAdapter extends BaseAdapter
 
             viewHolder.article_title.setText(dynamicModel.getArticleTitle());
             viewHolder.article_desc.setText(dynamicModel.getArticleDesc());
-            viewHolder.article_view.setText(String.format(ctx.getResources().getString(R.string.dynamic_article_view), dynamicModel.getArticleView()));
+            viewHolder.article_view.setText(String.format(ctx.getString(R.string.dynamic_article_view), dynamicModel.getArticleView()));
             viewHolder.article_img.setImageResource(R.drawable.img_default_vid);
 
             viewHolder.article_img.setTag(dynamicModel.getArticleImg());
@@ -526,7 +506,7 @@ public class DynamicAdapter extends BaseAdapter
                 viewHolder.bangumi_author.setVisibility(View.GONE);
 
             viewHolder.bangumi_title.setText(dynamicModel.getBangumiTitle());
-            viewHolder.bangumi_desc.setText(String.format(ctx.getResources().getString(R.string.dynamic_bangumi_desc), dynamicModel.getBangumiView(), dynamicModel.getBangumiDanmaku()));
+            viewHolder.bangumi_desc.setText(String.format(ctx.getString(R.string.dynamic_bangumi_desc), dynamicModel.getBangumiView(), dynamicModel.getBangumiDanmaku()));
             viewHolder.bangumi_img.setImageResource(R.drawable.img_default_vid);
 
             viewHolder.bangumi_img.setTag(dynamicModel.getBangumiImg());
@@ -540,7 +520,7 @@ public class DynamicAdapter extends BaseAdapter
 
             if(dynamicModel.isCardIsShared())
             {
-                viewHolder.url_author.setText(String.format(ctx.getResources().getString(R.string.dynamic_url_author), dynamicModel.getUrlAuthorName()));
+                viewHolder.url_author.setText(String.format(ctx.getString(R.string.dynamic_url_author), dynamicModel.getUrlAuthorName()));
                 viewHolder.url_author.setVisibility(View.VISIBLE);
             }
             else
@@ -565,7 +545,7 @@ public class DynamicAdapter extends BaseAdapter
                     }
                 });
                 CharSequence text = DataProcessUtil.getClickableHtml(dynamicModel.getUrlDynamic(), new ReplyHtmlImageHandlerUtil(
-                        mImageCache, viewHolder.url_dynamic, dynamicModel.getCardEmoteSize()));
+                        viewHolder.url_dynamic, dynamicModel.getCardEmoteSize()));
                 viewHolder.url_dynamic.setOrigText(text);
                 viewHolder.url_dynamic.updateForRecyclerView(text, dynamicWidth, dynamicModel.isUrlDynamicExpand() ?
                         ExpandableTextView.STATE_EXPAND : ExpandableTextView.STATE_SHRINK);
@@ -612,7 +592,7 @@ public class DynamicAdapter extends BaseAdapter
             viewHolder.live_area.setText(dynamicModel.getLiveArea());
             viewHolder.live_online.setText(dynamicModel.getLiveOnline());
 
-            Drawable viewerNumDrawable = ctx.getResources().getDrawable(R.drawable.icon_video_viewer_num_white);
+            Drawable viewerNumDrawable = ctx.getResources().getDrawable(R.drawable.icon_number_viewer_white);
             viewerNumDrawable.setBounds(0,0, DataProcessUtil.dip2px(12), DataProcessUtil.dip2px(2));
             viewHolder.live_online.setCompoundDrawables(viewerNumDrawable,null, null,null);
 
@@ -655,7 +635,7 @@ public class DynamicAdapter extends BaseAdapter
                 viewHolder.favor_author_lay.setVisibility(View.GONE);
 
             viewHolder.favor_title.setText(dynamicModel.getFavorTitle());
-            viewHolder.favor_desc.setText(String.format(ctx.getResources().getString(R.string.dynamic_favor_desc), dynamicModel.getFavorCount()));
+            viewHolder.favor_desc.setText(String.format(ctx.getString(R.string.dynamic_favor_desc), dynamicModel.getFavorCount()));
             viewHolder.favor_img.setImageResource(R.drawable.img_default_vid);
 
             viewHolder.favor_img.setTag(dynamicModel.getFavorImg());
@@ -663,6 +643,16 @@ public class DynamicAdapter extends BaseAdapter
             if(a != null) viewHolder.favor_img.setImageDrawable(a);
 
             viewHolder.favor_author_lay.setOnClickListener(onViewClick(position, isShared));
+        }
+        else
+        {
+            ViewHolder.ViewHolderUnknown viewHolder = (ViewHolder.ViewHolderUnknown) vh;
+            DynamicModel.DynamicUnknownModel dynamicModel = (DynamicModel.DynamicUnknownModel) dm;
+
+            if(dynamicModel.getUnknownTips() != null && !dynamicModel.getUnknownTips().equals(""))
+                viewHolder.unknown_tips.setText(dynamicModel.getUnknownTips());
+            else
+                viewHolder.unknown_tips.setText(ctx.getString(R.string.dynamic_unknown_tips));
         }
 
         if(!isShared)
@@ -714,13 +704,13 @@ public class DynamicAdapter extends BaseAdapter
 
     private BitmapDrawable setImageFormWeb(String url)
     {
-        if(url != null && mImageCache.get(url) != null)
+        if(url != null && LruCacheUtil.getLruCache().get(url) != null)
         {
-            return mImageCache.get(url);
+            return LruCacheUtil.getLruCache().get(url);
         }
         else
         {
-            ImageTaskUtil it = new ImageTaskUtil(view, mImageCache);
+            ImageTaskUtil it = new ImageTaskUtil(view);
             it.execute(url);
             return null;
         }
@@ -944,9 +934,11 @@ public class DynamicAdapter extends BaseAdapter
 
         class ViewHolderUnknown extends ViewHolder
         {
+            TextView unknown_tips;
             ViewHolderUnknown(View view, int type)
             {
                 super(view, type);
+                unknown_tips = view.findViewById(R.id.dynamic_unknown_tips);
             }
         }
     }

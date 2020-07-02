@@ -93,7 +93,7 @@ public class SettingFragment extends Fragment
                 {
                     Intent intent = new Intent(ctx, TextActivity.class);
                     intent.putExtra("title", "更新日志");
-                    intent.putExtra("text", getResources().getString(R.string.update));
+                    intent.putExtra("text", getString(R.string.update));
                     startActivity(intent);
                 }
                 else if(list.get(position).equals("联系作者"))

@@ -73,8 +73,9 @@ public class PlayerActivity extends AppCompatActivity
                     intent.putExtra("url_backup", url_backup);
                     intent.putExtra("danmaku", danmaku);
                     intent.putExtra("title", title);
-                    intent.putExtra("identity_name", getResources().getString(R.string.app_name));
+                    intent.putExtra("identity_name", getString(R.string.app_name));
                     intent.putExtra("time", time);
+                    intent.putExtra("headers", OnlineVideoApi.getPlayerHeaders());
                     startActivityForResult(intent, 0);
                 }
                 catch(Exception e)
@@ -88,8 +89,9 @@ public class PlayerActivity extends AppCompatActivity
                         intent.putExtra("url_backup", url_backup);
                         intent.putExtra("danmaku", danmaku);
                         intent.putExtra("title", title);
-                        intent.putExtra("identity_name", getResources().getString(R.string.app_name));
+                        intent.putExtra("identity_name", getString(R.string.app_name));
                         intent.putExtra("time", time);
+                        intent.putExtra("headers", OnlineVideoApi.getPlayerHeaders());
                         startActivityForResult(intent, 0);
                     }
                     catch(Exception ee)

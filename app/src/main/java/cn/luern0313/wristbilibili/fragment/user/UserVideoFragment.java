@@ -80,7 +80,7 @@ public class UserVideoFragment extends Fragment
             @Override
             public void onListVideoAdapterClick(int viewId, int position)
             {
-                Intent intent = VideoActivity.getActivityIntent(ctx, "", listVideoModelArrayList.get(position).video_bvid);
+                Intent intent = VideoActivity.getActivityIntent(ctx, "", listVideoModelArrayList.get(position).getVideoBvid());
                 startActivity(intent);
             }
 

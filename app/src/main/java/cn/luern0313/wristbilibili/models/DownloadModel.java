@@ -14,44 +14,44 @@ import lombok.Setter;
 @Setter
 public class DownloadModel
 {
-    private int id;
-    private String urlVideo = "";
-    private String urlDanmaku = "";
-    private int mode; //0下载完成 1正在下载 2标题栏
-    private int state = 3; //0初始化 1下载中 2暂停中 3暂停 4错误 5完成
-    private String tip = "";
+    private int downloadId;
+    private String downloadUrlVideo = "";
+    private String downloadUrlDanmaku = "";
+    private int downloadMode; //0下载完成 1正在下载 2标题栏
+    private int downloadState = 3; //0初始化 1下载中 2暂停中 3暂停 4错误 5完成
+    private String downloadTip = "";
 
-    private String title = "";
-    private String cover = "";
-    private String aid = "";
-    private String cid = "";
-    private long nowdl;
-    private long size;
-    private int speed;
+    private String downloadTitle = "";
+    private String downloadCover = "";
+    private String downloadAid = "";
+    private String downloadCid = "";
+    private long downloadNowdl;
+    private long downloadSize;
+    private int downloadSpeed;
 
     public DownloadModel(String uv, String ud, int m, String t, String c, String aid, String cid, int s)
     {
-        urlVideo = uv;
-        urlDanmaku = ud;
-        mode = m;
-        state = s;
-        title = t;
-        cover = c;
-        this.aid = aid;
-        this.cid = cid;
+        downloadUrlVideo = uv;
+        downloadUrlDanmaku = ud;
+        downloadMode = m;
+        downloadState = s;
+        downloadTitle = t;
+        downloadCover = c;
+        this.downloadAid = aid;
+        this.downloadCid = cid;
     }
 
     public DownloadModel(JSONObject json)
     {
-        id = json.optInt("task_id", 0);
-        urlVideo = json.optString("url_video", "");
-        urlDanmaku = json.optString("url_danmaku", "");
-        mode = json.optInt("is_video_downloading", 0);
-        aid = json.optString("video_aid", "");
-        cid = json.optString("video_cid", "");
-        title = json.optString("video_title", "");
-        cover = json.optString("video_cover", "");
-        size = json.optLong("video_total_size", 0);
-        nowdl = json.optLong("video_downloaded_size", 0);
+        downloadId = json.optInt("task_id");
+        downloadUrlVideo = json.optString("url_video");
+        downloadUrlDanmaku = json.optString("url_danmaku");
+        downloadMode = json.optInt("is_video_downloading");
+        downloadAid = json.optString("video_aid");
+        downloadCid = json.optString("video_cid");
+        downloadTitle = json.optString("video_title");
+        downloadCover = LruCacheUtil.getImageUrl(json.optString("video_cover"));
+        downloadSize = json.optLong("video_total_size");
+        downloadNowdl = json.optLong("video_downloaded_size");
     }
 }

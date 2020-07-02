@@ -518,10 +518,10 @@ public class VideoActivity extends AppCompatActivity implements VideoDetailFragm
                         ArrayList<FavorBoxModel> favorBoxArrayList = favorBoxApi.getFavorbox();
                         String[] favorBoxNames = new String[favorBoxArrayList.size()];
                         for (int i = 0; i < favorBoxArrayList.size(); i++)
-                            favorBoxNames[i] = favorBoxArrayList.get(i).title;
+                            favorBoxNames[i] = favorBoxArrayList.get(i).getFavorBoxTitle();
                         String[] favorBoxIds = new String[favorBoxArrayList.size()];
                         for (int i = 0; i < favorBoxArrayList.size(); i++)
-                            favorBoxIds[i] = favorBoxArrayList.get(i).id;
+                            favorBoxIds[i] = favorBoxArrayList.get(i).getFavorBoxId();
                         Intent intent = new Intent(ctx, SelectPartActivity.class);
                         intent.putExtra("title", "收藏");
                         intent.putExtra("tip", "选择收藏夹");

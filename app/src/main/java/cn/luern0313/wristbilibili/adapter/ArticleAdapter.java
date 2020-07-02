@@ -1,11 +1,7 @@
 package cn.luern0313.wristbilibili.adapter;
 
-import android.content.res.Resources;
-import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
-import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +16,6 @@ import org.jsoup.nodes.Document;
 import org.sufficientlysecure.htmltextview.HtmlTextView;
 import org.sufficientlysecure.htmltextview.OnClickATagListener;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import androidx.annotation.Nullable;
@@ -28,7 +23,8 @@ import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.models.article.ArticleCardModel;
 import cn.luern0313.wristbilibili.util.ArticleHtmlImageHandlerUtil;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
-import cn.luern0313.wristbilibili.util.ImageDownloaderUtil;
+import cn.luern0313.wristbilibili.util.ImageTaskUtil;
+import cn.luern0313.wristbilibili.util.LruCacheUtil;
 
 /**
  * 被 luern0313 创建于 2020/2/25.
@@ -37,7 +33,6 @@ public class ArticleAdapter extends BaseAdapter
 {
     private LayoutInflater mInflater;
 
-    private LruCache<String, BitmapDrawable> mImageCache;
     private ArticleAdapterListener articleListener;
 
     private ArrayList<ArticleCardModel> articleCardModelArrayList;
@@ -52,25 +47,6 @@ public class ArticleAdapter extends BaseAdapter
         this.articleCardModelArrayList = articleCardModelArrayList;
         this.listView = listView;
         this.articleListener = articleListener;
-
-        int maxCache = (int) Runtime.getRuntime().maxMemory();
-        int cacheSize = maxCache / 8;
-        mImageCache = new LruCache<String, BitmapDrawable>(cacheSize)
-        {
-            @Override
-            protected int sizeOf(String key, BitmapDrawable value)
-            {
-                try
-                {
-                    return value.getBitmap().getByteCount();
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
-                return 0;
-            }
-        };
     }
 
     @Override
@@ -266,7 +242,7 @@ public class ArticleAdapter extends BaseAdapter
                 articleTextViewHolder.text_text.setVisibility(View.GONE);
             else
             {
-                articleTextViewHolder.text_text.setHtml(articleTextModel.article_text_element, new ArticleHtmlImageHandlerUtil(listView.getContext(), mImageCache, articleTextViewHolder.text_text, img_width, articleTextModel.article_text_articleImageModel));
+                articleTextViewHolder.text_text.setHtml(articleTextModel.article_text_element, new ArticleHtmlImageHandlerUtil(listView.getContext(), articleTextViewHolder.text_text, img_width, articleTextModel.article_text_articleImageModel));
                 articleTextViewHolder.text_text.setOnClickATagListener(new OnClickATagListener()
                 {
                     @Override
@@ -284,8 +260,8 @@ public class ArticleAdapter extends BaseAdapter
             ArticleCardModel.ArticleVideoCardModel articleVideoCardModel = (ArticleCardModel.ArticleVideoCardModel) articleCardModelArrayList.get(position);
 
             Drawable upDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_up);
-            Drawable playNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_play_num_white);
-            Drawable danmakuNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_danmu_num_white);
+            Drawable playNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_number_play_white);
+            Drawable danmakuNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_number_danmu_white);
             upDrawable.setBounds(0, 0, DataProcessUtil.dip2px(12), DataProcessUtil.dip2px(12));
             playNumDrawable.setBounds(0,0, DataProcessUtil.dip2px(12), DataProcessUtil.dip2px(12));
             danmakuNumDrawable.setBounds(0,0, DataProcessUtil.dip2px(12), DataProcessUtil.dip2px(12));
@@ -310,8 +286,8 @@ public class ArticleAdapter extends BaseAdapter
         {
             ArticleCardModel.ArticleBangumiCardModel articleBangumiCardModel = (ArticleCardModel.ArticleBangumiCardModel) articleCardModelArrayList.get(position);
 
-            Drawable playNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_play_num);
-            Drawable followNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_like_num);
+            Drawable playNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_number_play);
+            Drawable followNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_number_like);
             playNumDrawable.setBounds(0,0, DataProcessUtil.dip2px(12), DataProcessUtil.dip2px(12));
             followNumDrawable.setBounds(0,0, DataProcessUtil.dip2px(12), DataProcessUtil.dip2px(12));
             articleBangumiCardViewHolder.bangumi_play.setCompoundDrawables(playNumDrawable,null, null,null);
@@ -335,8 +311,8 @@ public class ArticleAdapter extends BaseAdapter
             ArticleCardModel.ArticleArticleCardModel articleArticleCardModel = (ArticleCardModel.ArticleArticleCardModel) articleCardModelArrayList.get(position);
 
             Drawable upDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_up);
-            Drawable playNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_play_num_white);
-            Drawable replyNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_reply_num_white);
+            Drawable playNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_number_play_white);
+            Drawable replyNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_number_reply_white);
             upDrawable.setBounds(0,0, DataProcessUtil.dip2px(12), DataProcessUtil.dip2px(12));
             playNumDrawable.setBounds(0,0, DataProcessUtil.dip2px(12), DataProcessUtil.dip2px(12));
             replyNumDrawable.setBounds(0,0, DataProcessUtil.dip2px(12), DataProcessUtil.dip2px(12));
@@ -361,8 +337,8 @@ public class ArticleAdapter extends BaseAdapter
             ArticleCardModel.ArticleMusicCardModel articleMusicCardModel = (ArticleCardModel.ArticleMusicCardModel) articleCardModelArrayList.get(position);
 
             Drawable upDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_up);
-            Drawable playNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_play_num);
-            Drawable danmakuNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_danmu_num);
+            Drawable playNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_number_play);
+            Drawable danmakuNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_number_danmu);
             upDrawable.setBounds(0,0, DataProcessUtil.dip2px(12), DataProcessUtil.dip2px(12));
             playNumDrawable.setBounds(0,0, DataProcessUtil.dip2px(12), DataProcessUtil.dip2px(12));
             danmakuNumDrawable.setBounds(0,0, DataProcessUtil.dip2px(12), DataProcessUtil.dip2px(12));
@@ -433,7 +409,7 @@ public class ArticleAdapter extends BaseAdapter
             ArticleCardModel.ArticleLiveCardModel articleLiveCardModel = (ArticleCardModel.ArticleLiveCardModel) articleCardModelArrayList.get(position);
 
             Drawable upDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_up);
-            Drawable viewerDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_viewer_num_white);
+            Drawable viewerDrawable = convertView.getResources().getDrawable(R.drawable.icon_number_viewer_white);
             upDrawable.setBounds(0, 0, DataProcessUtil.dip2px(12), DataProcessUtil.dip2px(12));
             viewerDrawable.setBounds(0, 0, DataProcessUtil.dip2px(12), DataProcessUtil.dip2px(12));
             articleLiveCardViewHolder.live_up_name.setCompoundDrawables(upDrawable,null, null,null);
@@ -567,58 +543,15 @@ public class ArticleAdapter extends BaseAdapter
 
     private BitmapDrawable setImageFormWeb(String url)
     {
-        if(mImageCache.get(url) != null)
+        if(LruCacheUtil.getLruCache().get(url) != null)
         {
-            return mImageCache.get(url);
+            return LruCacheUtil.getLruCache().get(url);
         }
         else
         {
-            ImageTask it = new ImageTask(listView);
+            ImageTaskUtil it = new ImageTaskUtil(listView);
             it.execute(url);
             return null;
-        }
-    }
-
-    class ImageTask extends AsyncTask<String, Void, BitmapDrawable>
-    {
-        private String imageUrl;
-        private Resources listViewResources;
-
-        ImageTask(ListView listView)
-        {
-            this.listViewResources = listView.getResources();
-        }
-
-        @Override
-        protected BitmapDrawable doInBackground(String... params)
-        {
-            try
-            {
-                imageUrl = params[0];
-                Bitmap bitmap = null;
-                bitmap = ImageDownloaderUtil.downloadImage(imageUrl);
-                BitmapDrawable db = new BitmapDrawable(listViewResources, bitmap);
-                if(mImageCache.get(imageUrl) == null && bitmap != null)
-                {
-                    mImageCache.put(imageUrl, db);
-                }
-                return db;
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(BitmapDrawable result)
-        {
-            ImageView iv = listView.findViewWithTag(imageUrl);
-            if(iv != null && result != null)
-            {
-                iv.setImageDrawable(result);
-            }
         }
     }
 

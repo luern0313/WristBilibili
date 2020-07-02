@@ -29,7 +29,7 @@
             android:layout_marginEnd="4dp"
             android:src="@drawable/img_default_head" />
 
-        <de.hdodenhof.circleimageview.CircleImageView
+        <ImageView
             android:id="@+id/item_dynamic_off_1"
             android:layout_width="15dp"
             android:layout_height="15dp"
@@ -38,7 +38,7 @@
             android:layout_marginEnd="-2dp"
             android:src="@drawable/icon_ou_ver_1" />
 
-        <de.hdodenhof.circleimageview.CircleImageView
+        <ImageView
             android:id="@+id/item_dynamic_off_2"
             android:layout_width="15dp"
             android:layout_height="15dp"

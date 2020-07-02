@@ -1,9 +1,7 @@
 package cn.luern0313.wristbilibili.adapter;
 
-import android.content.res.Resources;
-import android.graphics.Bitmap;
+import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
-import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,19 +11,20 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import androidx.collection.LruCache;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.models.FavorBoxModel;
-import cn.luern0313.wristbilibili.util.ImageDownloaderUtil;
+import cn.luern0313.wristbilibili.util.ImageTaskUtil;
+import cn.luern0313.wristbilibili.util.MyApplication;
 
 /**
  * 被 luern0313 创建于 2020/4/25.
  */
 public class FavorBoxAdapter extends BaseAdapter
 {
+    private Context ctx;
     private LayoutInflater mInflater;
 
     private LruCache<String, BitmapDrawable> mImageCache;
@@ -36,7 +35,8 @@ public class FavorBoxAdapter extends BaseAdapter
 
     public FavorBoxAdapter(LayoutInflater inflater, ArrayList<FavorBoxModel> favList, ListView listView, FavorBoxAdapterListener favorBoxAdapterListener)
     {
-        mInflater = inflater;
+        this.ctx = MyApplication.getContext();
+        this.mInflater = inflater;
         this.favList = favList;
         this.listView = listView;
         this.favorBoxAdapterListener = favorBoxAdapterListener;
@@ -102,16 +102,16 @@ public class FavorBoxAdapter extends BaseAdapter
         }
 
         viewHolder.img.setImageResource(R.drawable.img_default_vid);
-        viewHolder.countt.setText(box.count);
-        viewHolder.title.setText(box.title);
-        viewHolder.see.setText(box.see ? "公开" : "私有");
-        viewHolder.count.setText(box.count + "个视频");
+        viewHolder.countt.setText(box.getFavorBoxCount());
+        viewHolder.title.setText(box.getFavorBoxTitle());
+        viewHolder.see.setText(box.isFavorBoxSee() ? ctx.getString(R.string.favor_box_see_public) : ctx.getString(R.string.favor_box_see_private));
+        viewHolder.count.setText(String.format(ctx.getString(R.string.favor_box_count), box.getFavorBoxCount()));
         viewHolder.lay.setOnClickListener(onViewClick(position));
 
         try
         {
-            viewHolder.img.setTag(box.img);
-            BitmapDrawable c = setImageFormWeb(box.img);
+            viewHolder.img.setTag(box.getFavorBoxImg());
+            BitmapDrawable c = setImageFormWeb(box.getFavorBoxImg());
             if(c != null) viewHolder.img.setImageDrawable(c);
         }
         catch (Exception e)
@@ -139,7 +139,7 @@ public class FavorBoxAdapter extends BaseAdapter
         }
         else
         {
-            ImageTask it = new ImageTask(listView);
+            ImageTaskUtil it = new ImageTaskUtil(listView);
             it.execute(url);
             return null;
         }
@@ -155,49 +155,6 @@ public class FavorBoxAdapter extends BaseAdapter
                 favorBoxAdapterListener.onClick(v.getId(), position);
             }
         };
-    }
-
-    class ImageTask extends AsyncTask<String, Void, BitmapDrawable>
-    {
-        private String imageUrl;
-        private Resources listViewResources;
-
-        ImageTask(ListView listView)
-        {
-            this.listViewResources = listView.getResources();
-        }
-
-        @Override
-        protected BitmapDrawable doInBackground(String... params)
-        {
-            try
-            {
-                imageUrl = params[0];
-                Bitmap bitmap = null;
-                bitmap = ImageDownloaderUtil.downloadImage(imageUrl);
-                BitmapDrawable db = new BitmapDrawable(listViewResources, bitmap);
-                if(mImageCache.get(imageUrl) == null && bitmap != null)
-                {
-                    mImageCache.put(imageUrl, db);
-                }
-                return db;
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(BitmapDrawable result)
-        {
-            ImageView iv = listView.findViewWithTag(imageUrl);
-            if(iv != null && result != null)
-            {
-                iv.setImageDrawable(result);
-            }
-        }
     }
 
     public interface FavorBoxAdapterListener

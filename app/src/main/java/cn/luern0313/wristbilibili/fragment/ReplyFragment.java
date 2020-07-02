@@ -415,7 +415,7 @@ public class ReplyFragment extends Fragment
                     replyIntent.putExtra("rpid", replyApi.replyArrayList.get(position).reply_id);
                     replyIntent.putExtra("type", type);
                     if(position != 0)
-                        replyIntent.putExtra("text", String.format(getResources().getString(R.string.reply_reply_template),
+                        replyIntent.putExtra("text", String.format(getString(R.string.reply_reply_template),
                                                          replyApi.replyArrayList.get(position).reply_owner_name));
                     startActivityForResult(replyIntent, RESULT_SEND);
                 }

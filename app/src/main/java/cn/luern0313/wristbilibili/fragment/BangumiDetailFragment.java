@@ -107,7 +107,7 @@ public class BangumiDetailFragment extends Fragment implements View.OnClickListe
         if(bangumiModel.bangumi_episodes.size() != 0)
         {
             rootLayout.findViewById(R.id.bgm_detail_video_part_layout).setVisibility(View.VISIBLE);
-            ((TextView) rootLayout.findViewById(R.id.bgm_detail_video_part_text)).setText("正片-共" + bangumiModel.bangumi_episodes.size() + bangumiModel.bangumi_type_ep);
+            ((TextView) rootLayout.findViewById(R.id.bgm_detail_video_part_text)).setText(String.format(getString(R.string.bangumi_episodes_title), bangumiModel.bangumi_episodes.size(), bangumiModel.bangumi_type_ep));
             LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity().getParent());
             layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
             uiDetailEpisodesRecyclerView.setLayoutManager(layoutManager);
@@ -205,7 +205,6 @@ public class BangumiDetailFragment extends Fragment implements View.OnClickListe
             ((TextView) rootLayout.findViewById(R.id.bgm_detail_bt_follow_text)).setText(bangumiModel.bangumi_type_follow);
         }
     }
-
 
     private void clickBangumiMorePart(View view)
     {

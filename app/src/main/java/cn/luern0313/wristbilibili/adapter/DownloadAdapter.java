@@ -1,10 +1,9 @@
 package cn.luern0313.wristbilibili.adapter;
 
-import android.content.res.Resources;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
-import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,6 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
@@ -23,13 +21,15 @@ import androidx.collection.LruCache;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.models.DownloadModel;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
-import cn.luern0313.wristbilibili.util.ImageDownloaderUtil;
+import cn.luern0313.wristbilibili.util.ImageTaskUtil;
+import cn.luern0313.wristbilibili.util.MyApplication;
 
 /**
  * 被 luern0313 创建于 2020/4/29.
  */
 public class DownloadAdapter extends BaseAdapter
 {
+    private Context ctx;
     private LayoutInflater mInflater;
     private ListView listView;
     private String path;
@@ -41,9 +41,10 @@ public class DownloadAdapter extends BaseAdapter
 
     public DownloadAdapter(LayoutInflater inflater, ArrayList<DownloadModel> dlingList, ArrayList<DownloadModel> dledList, ListView listView, String path)
     {
-        mInflater = inflater;
-        downloadingItems = dlingList;
-        downloadedItems = dledList;
+        this.ctx = MyApplication.getContext();
+        this.mInflater = inflater;
+        this.downloadingItems = dlingList;
+        this.downloadedItems = dledList;
         this.listView = listView;
         this.path = path;
 
@@ -96,12 +97,12 @@ public class DownloadAdapter extends BaseAdapter
     {
         if(position < downloadingItems.size())
         {
-            if(downloadingItems.get(position).getMode() == 2) return 1;
+            if(downloadingItems.get(position).getDownloadMode() == 2) return 1;
             else return 0;
         }
         else
         {
-            if(downloadedItems.get(position - downloadingItems.size()).getMode() == 2) return 1;
+            if(downloadedItems.get(position - downloadingItems.size()).getDownloadMode() == 2) return 1;
             else return 0;
         }
     }
@@ -143,11 +144,11 @@ public class DownloadAdapter extends BaseAdapter
 
         if(type == 0)
         {
-            viewHolder.title.setText(downloadItem.getTitle());
-            viewHolder.size.setText(DataProcessUtil.getSize(downloadItem.getSize()));
+            viewHolder.title.setText(downloadItem.getDownloadTitle());
+            viewHolder.size.setText(DataProcessUtil.getSize(downloadItem.getDownloadSize()));
             viewHolder.img.setImageResource(R.drawable.img_default_animation);
 
-            if(downloadItem.getMode() == 0) //下载完成
+            if(downloadItem.getDownloadMode() == 0) //下载完成
             {
                 viewHolder.speed.setVisibility(View.GONE);
                 viewHolder.progress.setVisibility(View.GONE);
@@ -161,59 +162,59 @@ public class DownloadAdapter extends BaseAdapter
                 viewHolder.time.setVisibility(View.VISIBLE);
                 viewHolder.prog.setVisibility(View.VISIBLE);
                 viewHolder.time.setTextColor(listView.getResources().getColor(R.color.gray_44));
-                if(downloadItem.getState() == 0) //初始化
+                if(downloadItem.getDownloadState() == 0) //初始化
                 {
-                    viewHolder.size.setText(downloadItem.getSize() == 0 ? "未知" : DataProcessUtil.getSize(downloadItem.getSize()));
-                    viewHolder.speed.setText(DataProcessUtil.getSize(downloadItem.getSpeed()) + "/s");
-                    viewHolder.progress.setText((int) (downloadItem.getNowdl() * 100.0 / downloadItem.getSize()) + "%");
-                    viewHolder.time.setText("连接中..");
+                    viewHolder.size.setText(downloadItem.getDownloadSize() == 0 ? ctx.getString(R.string.download_size_unknown) : DataProcessUtil.getSize(downloadItem.getDownloadSize()));
+                    viewHolder.speed.setText(String.format(ctx.getString(R.string.download_size), DataProcessUtil.getSize(downloadItem.getDownloadSpeed())));
+                    viewHolder.progress.setText(String.format(ctx.getString(R.string.download_progress), (int) (downloadItem.getDownloadNowdl() * 100.0 / downloadItem.getDownloadSize())));
+                    viewHolder.time.setText(ctx.getString(R.string.download_state_0));
                     viewHolder.time.setTextColor(listView.getResources().getColor(R.color.colorAccent));
-                    viewHolder.prog.setProgress((int) (downloadItem.getNowdl() * 100.0 / downloadItem.getSize()));
+                    viewHolder.prog.setProgress((int) (downloadItem.getDownloadNowdl() * 100.0 / downloadItem.getDownloadSize()));
                 }
-                else if(downloadItem.getState() == 1) //下载中
+                else if(downloadItem.getDownloadState() == 1) //下载中
                 {
-                    viewHolder.size.setText(DataProcessUtil.getSize(downloadItem.getSize()));
-                    viewHolder.speed.setText(DataProcessUtil.getSize(downloadItem.getSpeed()) + "/s");
-                    viewHolder.progress.setText((int) (downloadItem.getNowdl() * 100.0 / downloadItem.getSize()) + "%");
-                    viewHolder.time.setText(DataProcessUtil.getSurplusTime(downloadItem.getSize() - downloadItem.getNowdl(), downloadItem.getSpeed()));
-                    viewHolder.prog.setProgress((int) (downloadItem.getNowdl() * 100.0 / downloadItem.getSize()));
+                    viewHolder.size.setText(DataProcessUtil.getSize(downloadItem.getDownloadSize()));
+                    viewHolder.speed.setText(String.format(ctx.getString(R.string.download_size), DataProcessUtil.getSize(downloadItem.getDownloadSpeed())));
+                    viewHolder.progress.setText(String.format(ctx.getString(R.string.download_progress), (int) (downloadItem.getDownloadNowdl() * 100.0 / downloadItem.getDownloadSize())));
+                    viewHolder.time.setText(DataProcessUtil.getSurplusTime(downloadItem.getDownloadSize() - downloadItem.getDownloadNowdl(), downloadItem.getDownloadSpeed()));
+                    viewHolder.prog.setProgress((int) (downloadItem.getDownloadNowdl() * 100.0 / downloadItem.getDownloadSize()));
                 }
-                else if(downloadItem.getState() == 2) //暂停中
+                else if(downloadItem.getDownloadState() == 2) //暂停中
                 {
-                    viewHolder.size.setText(DataProcessUtil.getSize(downloadItem.getSize()));
-                    viewHolder.speed.setText("0.0B/s");
-                    viewHolder.progress.setText((int) (downloadItem.getNowdl() * 100.0 / downloadItem.getSize()) + "%");
-                    viewHolder.time.setText("暂停中..");
+                    viewHolder.size.setText(DataProcessUtil.getSize(downloadItem.getDownloadSize()));
+                    viewHolder.speed.setText(ctx.getString(R.string.download_speed_zero));
+                    viewHolder.progress.setText(String.format(ctx.getString(R.string.download_progress), (int) (downloadItem.getDownloadNowdl() * 100.0 / downloadItem.getDownloadSize())));
+                    viewHolder.time.setText(ctx.getString(R.string.download_state_2));
                     viewHolder.time.setTextColor(listView.getResources().getColor(R.color.colorAccent));
-                    viewHolder.prog.setProgress((int) (downloadItem.getNowdl() * 100.0 / downloadItem.getSize()));
+                    viewHolder.prog.setProgress((int) (downloadItem.getDownloadNowdl() * 100.0 / downloadItem.getDownloadSize()));
                 }
-                else if(downloadItem.getState() == 3) //暂停
+                else if(downloadItem.getDownloadState() == 3) //暂停
                 {
-                    viewHolder.size.setText(DataProcessUtil.getSize(downloadItem.getSize()));
-                    viewHolder.speed.setText("0.0B/s");
-                    viewHolder.progress.setText((int) (downloadItem.getNowdl() * 100.0 / downloadItem.getSize()) + "%");
-                    viewHolder.time.setText("暂停");
+                    viewHolder.size.setText(DataProcessUtil.getSize(downloadItem.getDownloadSize()));
+                    viewHolder.speed.setText(ctx.getString(R.string.download_speed_zero));
+                    viewHolder.progress.setText(String.format(ctx.getString(R.string.download_progress), (int) (downloadItem.getDownloadNowdl() * 100.0 / downloadItem.getDownloadSize())));
+                    viewHolder.time.setText(ctx.getString(R.string.download_state_3));
                     viewHolder.time.setTextColor(listView.getResources().getColor(R.color.colorAccent));
-                    viewHolder.prog.setProgress((int) (downloadItem.getNowdl() * 100.0 / downloadItem.getSize()));
+                    viewHolder.prog.setProgress((int) (downloadItem.getDownloadNowdl() * 100.0 / downloadItem.getDownloadSize()));
                 }
-                else if(downloadItem.getState() == 4) //错误
+                else if(downloadItem.getDownloadState() == 4) //错误
                 {
-                    viewHolder.size.setText(DataProcessUtil.getSize(downloadItem.getSize()));
-                    viewHolder.speed.setText(DataProcessUtil.getSize(downloadItem.getSpeed()) + "/s");
-                    viewHolder.progress.setText((int) (downloadItem.getNowdl() * 100.0 / downloadItem.getSize()) + "%");
-                    viewHolder.time.setText(downloadItem.getTip());
+                    viewHolder.size.setText(DataProcessUtil.getSize(downloadItem.getDownloadSize()));
+                    viewHolder.speed.setText(String.format(ctx.getString(R.string.download_size), DataProcessUtil.getSize(downloadItem.getDownloadSpeed())));
+                    viewHolder.progress.setText(String.format(ctx.getString(R.string.download_progress), (int) (downloadItem.getDownloadNowdl() * 100.0 / downloadItem.getDownloadSize())));
+                    viewHolder.time.setText(downloadItem.getDownloadTip());
                     viewHolder.time.setTextColor(listView.getResources().getColor(R.color.colorAccent));
-                    viewHolder.prog.setProgress((int) (downloadItem.getNowdl() * 100.0 / downloadItem.getSize()));
+                    viewHolder.prog.setProgress((int) (downloadItem.getDownloadNowdl() * 100.0 / downloadItem.getDownloadSize()));
                 }
             }
 
-            viewHolder.img.setTag(downloadItem.getCover());
-            BitmapDrawable c = setImageFormWeb(downloadItem.getCover(), downloadItem);
+            viewHolder.img.setTag(downloadItem.getDownloadCover());
+            BitmapDrawable c = setImageFormWeb(downloadItem.getDownloadCover(), downloadItem);
             if(c != null) viewHolder.img.setImageDrawable(c);
         }
         else if(type == 1)
         {
-            ((TextView) convertView.findViewById(R.id.item_reply_sort_sign)).setText(downloadItem.getTitle());
+            ((TextView) convertView.findViewById(R.id.item_reply_sort_sign)).setText(downloadItem.getDownloadTitle());
             convertView.findViewById(R.id.item_reply_sort_change).setVisibility(View.GONE);
             convertView.findViewById(R.id.item_reply_sort_sign).setVisibility(View.VISIBLE);
             if((position == 0 && downloadingItems.size() == 1) || (position == downloadingItems.size() && downloadedItems.size() == 1))
@@ -245,62 +246,19 @@ public class DownloadAdapter extends BaseAdapter
             return mImageCache.get(url);
         else
         {
-            Bitmap bitmap = BitmapFactory.decodeFile(path + downloadItem.getAid() + "/" + downloadItem.getCid() + "/cover.png");
+            Bitmap bitmap = BitmapFactory.decodeFile(path + downloadItem.getDownloadAid() + "/" + downloadItem.getDownloadCid() + "/cover.png");
             if(bitmap != null)
             {
                 BitmapDrawable db = new BitmapDrawable(listView.getResources(), bitmap);
-                mImageCache.put(downloadItem.getCover(), db);
+                mImageCache.put(downloadItem.getDownloadCover(), db);
                 return db;
             }
             else
             {
-                ImageTask it = new ImageTask(listView);
+                ImageTaskUtil it = new ImageTaskUtil(listView);
                 it.execute(url);
             }
             return null;
-        }
-    }
-
-    class ImageTask extends AsyncTask<String, Void, BitmapDrawable>
-    {
-        private String imageUrl;
-        private Resources listViewResources;
-
-        ImageTask(ListView listView)
-        {
-            this.listViewResources = listView.getResources();
-        }
-
-        @Override
-        protected BitmapDrawable doInBackground(String... params)
-        {
-            try
-            {
-                imageUrl = params[0];
-                Bitmap bitmap = ImageDownloaderUtil.downloadImage(imageUrl);
-                BitmapDrawable db = new BitmapDrawable(listViewResources, bitmap);
-                if(mImageCache.get(imageUrl) == null && bitmap != null)
-                {
-                    mImageCache.put(imageUrl, db);
-                }
-                return db;
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(BitmapDrawable result)
-        {
-            // 通过Tag找到我们需要的ImageView，如果该ImageView所在的item已被移出页面，就会直接返回null
-            ImageView iv = listView.findViewWithTag(imageUrl);
-            if(iv != null && result != null)
-            {
-                iv.setImageDrawable(result);
-            }
         }
     }
 }

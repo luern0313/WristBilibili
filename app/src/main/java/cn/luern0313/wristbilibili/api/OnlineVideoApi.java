@@ -6,6 +6,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
@@ -25,6 +26,14 @@ public class OnlineVideoApi
 
     private JSONObject playUrlJson;
     private String playUrl;
+
+    private static HashMap<String, String> playerHeaders = new HashMap<String, String>()
+    {{
+        put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36");
+        put("Referer", "https://www.bilibili.com/");
+        put("Origin", "https://www.bilibili.com/");
+    }};
+
 
     public OnlineVideoApi(String aid, String cid)
     {
@@ -116,6 +125,11 @@ public class OnlineVideoApi
             e.printStackTrace();
         }
         return "未知错误";
+    }
+
+    public static HashMap<String, String> getPlayerHeaders()
+    {
+        return playerHeaders;
     }
 }
 

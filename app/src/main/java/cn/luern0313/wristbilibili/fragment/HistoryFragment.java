@@ -91,14 +91,14 @@ public class HistoryFragment extends Fragment
             @Override
             public void onListVideoAdapterClick(int viewId, int position)
             {
-                if(historyArrayList.get(position).video_bvid != null && !historyArrayList.get(position).video_bvid.equals(""))
+                if(historyArrayList.get(position).getVideoBvid() != null && !historyArrayList.get(position).getVideoBvid().equals(""))
                 {
-                    Intent intent = VideoActivity.getActivityIntent(ctx, "", historyArrayList.get(position).video_bvid);
+                    Intent intent = VideoActivity.getActivityIntent(ctx, "", historyArrayList.get(position).getVideoBvid());
                     startActivity(intent);
                 }
                 else
                 {
-                    Intent intent = VideoActivity.getActivityIntent(ctx, historyArrayList.get(position).video_aid, "");
+                    Intent intent = VideoActivity.getActivityIntent(ctx, historyArrayList.get(position).getVideoAid(), "");
                     startActivity(intent);
                 }
             }

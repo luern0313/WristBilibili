@@ -1,7 +1,6 @@
 package cn.luern0313.wristbilibili.adapter;
 
 import android.graphics.drawable.BitmapDrawable;
-import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +14,7 @@ import java.util.ArrayList;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.models.UserListPeopleModel;
 import cn.luern0313.wristbilibili.util.ImageTaskUtil;
+import cn.luern0313.wristbilibili.util.LruCacheUtil;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
@@ -24,7 +24,6 @@ public class UserListPeopleAdapter extends BaseAdapter
 {
     private LayoutInflater mInflater;
 
-    private LruCache<String, BitmapDrawable> mImageCache;
     private UserListPeopleAdapterListener userListPeopleAdapterListener;
     private int mode;
 
@@ -38,25 +37,6 @@ public class UserListPeopleAdapter extends BaseAdapter
         this.mode = mode;
         this.listView = listView;
         this.userListPeopleAdapterListener = userListPeopleAdapterListener;
-
-        int maxCache = (int) Runtime.getRuntime().maxMemory();
-        int cacheSize = maxCache / 8;
-        mImageCache = new LruCache<String, BitmapDrawable>(cacheSize)
-        {
-            @Override
-            protected int sizeOf(String key, BitmapDrawable value)
-            {
-                try
-                {
-                    return value.getBitmap().getByteCount();
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
-                return 0;
-            }
-        };
     }
 
     @Override
@@ -162,13 +142,13 @@ public class UserListPeopleAdapter extends BaseAdapter
 
     private BitmapDrawable setImageFormWeb(String url)
     {
-        if(mImageCache.get(url) != null)
+        if(LruCacheUtil.getLruCache().get(url) != null)
         {
-            return mImageCache.get(url);
+            return LruCacheUtil.getLruCache().get(url);
         }
         else
         {
-            ImageTaskUtil it = new ImageTaskUtil(listView, mImageCache);
+            ImageTaskUtil it = new ImageTaskUtil(listView);
             it.execute(url);
             return null;
         }

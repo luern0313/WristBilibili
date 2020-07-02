@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.models.DownloadModel;
 
 import static cn.luern0313.wristbilibili.util.FileUtil.fileReader;
@@ -42,8 +43,8 @@ public class DownloadApi
                 {
                     DownloadModel downloadItem = new DownloadModel(new JSONObject(fileReader(
                             ctx.getExternalFilesDir(null) + "/download/" + i + "/" + j + "/info.json")));
-                    if(downloadItem.getMode() == 1) downloadingItems.add(downloadItem);
-                    else if(downloadItem.getMode() == 0) downloadedItems.add(downloadItem);
+                    if(downloadItem.getDownloadMode() == 1) downloadingItems.add(downloadItem);
+                    else if(downloadItem.getDownloadMode() == 0) downloadedItems.add(downloadItem);
                 }
                 catch (IOException | JSONException e)
                 {
@@ -57,7 +58,7 @@ public class DownloadApi
     {
         return new ArrayList<DownloadModel>()
         {{
-            add(new DownloadModel("", "", 2, "正在下载", "", "", "", 0));
+            add(new DownloadModel("", "", 2, ctx.getString(R.string.download_mode_1), "", "", "", 0));
             addAll(downloadingItems);
         }};
     }
@@ -66,7 +67,7 @@ public class DownloadApi
     {
         return new ArrayList<DownloadModel>()
         {{
-            add(new DownloadModel("", "", 2, "下载完成", "", "", "", 0));
+            add(new DownloadModel("", "", 2, ctx.getString(R.string.download_mode_2), "", "", "", 0));
             addAll(downloadedItems);
         }};
     }
@@ -74,7 +75,7 @@ public class DownloadApi
     public static int findPositionInList(String url, ArrayList<DownloadModel> list)
     {
         for (int i = 0; i < list.size(); i++)
-            if(list.get(i).getUrlVideo().equals(url)) return i;
+            if(list.get(i).getDownloadUrlVideo().equals(url)) return i;
         return -1;
     }
 }

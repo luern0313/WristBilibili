@@ -43,6 +43,7 @@ public class ReplyModel implements Serializable
     public String reply_owner_name;
     public String reply_owner_lv;
     public int reply_owner_vip;
+    public int reply_owner_official;
 
     public boolean reply_is_up;
     public boolean reply_is_up_like;
@@ -84,6 +85,8 @@ public class ReplyModel implements Serializable
                 String.valueOf(reply_owner_json.optJSONObject("level_info").optInt("current_level")) : "0";
         reply_owner_vip = reply_owner_json.has("vip") ?
                 reply_owner_json.optJSONObject("vip").optInt("vipType") : 0;
+        JSONObject reply_owner_official_json = reply_owner_json.has("official_verify") ? reply_owner_json.optJSONObject("official_verify") : new JSONObject();
+        reply_owner_official = reply_owner_official_json.optInt("type");
 
         reply_is_up = reply_owner_mid.equals(upUid);
         JSONObject up_action = replyJson.has("up_action") ? replyJson.optJSONObject("up_action") : new JSONObject();

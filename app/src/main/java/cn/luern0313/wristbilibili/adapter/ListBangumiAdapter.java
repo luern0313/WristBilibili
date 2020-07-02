@@ -2,7 +2,6 @@ package cn.luern0313.wristbilibili.adapter;
 
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +17,7 @@ import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.models.ListBangumiModel;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
 import cn.luern0313.wristbilibili.util.ImageTaskUtil;
+import cn.luern0313.wristbilibili.util.LruCacheUtil;
 
 /**
  * 被 luern0313 创建于 2020/1/31.
@@ -27,7 +27,6 @@ public class ListBangumiAdapter extends BaseAdapter
 {
     private LayoutInflater mInflater;
 
-    private LruCache<String, BitmapDrawable> mImageCache;
     private ListBangumiAdapterListener listBangumiAdapterListener;
 
     private ArrayList<ListBangumiModel> listBangumiModelArrayList;
@@ -39,25 +38,6 @@ public class ListBangumiAdapter extends BaseAdapter
         this.listBangumiModelArrayList = listBangumiModelArrayList;
         this.listView = listView;
         this.listBangumiAdapterListener = listBangumiAdapterListener;
-
-        int maxCache = (int) Runtime.getRuntime().maxMemory();
-        int cacheSize = maxCache / 8;
-        mImageCache = new LruCache<String, BitmapDrawable>(cacheSize)
-        {
-            @Override
-            protected int sizeOf(String key, BitmapDrawable value)
-            {
-                try
-                {
-                    return value.getBitmap().getByteCount();
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
-                return 0;
-            }
-        };
     }
 
     @Override
@@ -108,8 +88,8 @@ public class ListBangumiAdapter extends BaseAdapter
         viewHolder.newep.setText(bangumiRecommendModel.bangumi_new);
         viewHolder.score.setText(bangumiRecommendModel.bangumi_score);
 
-        Drawable playNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_play_num);
-        Drawable likeNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_like_num);
+        Drawable playNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_number_play);
+        Drawable likeNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_number_like);
         playNumDrawable.setBounds(0, 0, DataProcessUtil.dip2px(10), DataProcessUtil.dip2px(10));
         likeNumDrawable.setBounds(0, 0, DataProcessUtil.dip2px(10), DataProcessUtil.dip2px(10));
         viewHolder.play.setCompoundDrawables(playNumDrawable,null, null,null);
@@ -148,13 +128,13 @@ public class ListBangumiAdapter extends BaseAdapter
 
     private BitmapDrawable setImageFormWeb(String url)
     {
-        if(mImageCache.get(url) != null)
+        if(LruCacheUtil.getLruCache().get(url) != null)
         {
-            return mImageCache.get(url);
+            return LruCacheUtil.getLruCache().get(url);
         }
         else
         {
-            ImageTaskUtil it = new ImageTaskUtil(listView, mImageCache);
+            ImageTaskUtil it = new ImageTaskUtil(listView);
             it.execute(url);
             return null;
         }

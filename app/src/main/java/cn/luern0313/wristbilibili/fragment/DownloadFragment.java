@@ -138,14 +138,14 @@ public class DownloadFragment extends Fragment
                     return;
                 if(position < downloadingItems.size())
                 {
-                    if(downloadingItems.get(position).getMode() != 2)
+                    if(downloadingItems.get(position).getDownloadMode() != 2)
                     {
-                        if(downloadingItems.get(position).getState() == 1)
+                        if(downloadingItems.get(position).getDownloadState() == 1)
                         {
                             myBinder.pause(position);
                             downloadAdapter.notifyDataSetChanged();
                         }
-                        else if(downloadingItems.get(position).getState() == 3 || downloadingItems.get(position).getState() == 5)
+                        else if(downloadingItems.get(position).getDownloadState() == 3 || downloadingItems.get(position).getDownloadState() == 5)
                         {
                             myBinder.start(position);
                             downloadAdapter.notifyDataSetChanged();
@@ -161,8 +161,8 @@ public class DownloadFragment extends Fragment
                         Intent intent = new Intent();
                         intent.setComponent(new ComponentName(name, name + ".ui.PlayerActivity"));
                         intent.putExtra("mode", 2);
-                        intent.putExtra("url", ctx.getExternalFilesDir(null) + "/download/" + downloadItem.getAid() + "/" + downloadItem.getCid() + "/video.mp4");
-                        intent.putExtra("title", downloadItem.getTitle());
+                        intent.putExtra("url", ctx.getExternalFilesDir(null) + "/download/" + downloadItem.getDownloadAid() + "/" + downloadItem.getDownloadCid() + "/video.mp4");
+                        intent.putExtra("title", downloadItem.getDownloadTitle());
                         startActivityForResult(intent, 0);
                     }
                     else
@@ -198,8 +198,8 @@ public class DownloadFragment extends Fragment
                                     downloadedItems.remove(position - downloadingItems.size());
                                 }
                                 FileUtil.deleteDir(new File(ctx.getExternalFilesDir(null) +
-                                                             "/download/" + downloadItem.getAid() + "/" + downloadItem.getCid() + "/"));
-                                File dirFile = new File(ctx.getExternalFilesDir(null) + "/download/" + downloadItem.getAid() + "/");
+                                                             "/download/" + downloadItem.getDownloadAid() + "/" + downloadItem.getDownloadCid() + "/"));
+                                File dirFile = new File(ctx.getExternalFilesDir(null) + "/download/" + downloadItem.getDownloadAid() + "/");
                                 if(dirFile.list().length == 0)
                                     FileUtil.deleteDir(dirFile);
                                 downloadAdapter.notifyDataSetChanged();
@@ -210,7 +210,7 @@ public class DownloadFragment extends Fragment
             }
         });
 
-        uiTip.setText(getString(R.string.dl_tip_1) + BASE_DOWNLOAD_PATH + getString(R.string.dl_tip_2));
+        uiTip.setText(String.format(getString(R.string.download_tip), BASE_DOWNLOAD_PATH));
 
         uiTipBtu.setOnClickListener(new View.OnClickListener()
         {

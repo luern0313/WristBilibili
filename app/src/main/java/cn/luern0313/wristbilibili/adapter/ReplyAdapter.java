@@ -1,13 +1,10 @@
 package cn.luern0313.wristbilibili.adapter;
 
-import android.content.res.Resources;
-import android.graphics.Bitmap;
+import android.content.Context;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.text.Html;
-import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,13 +14,14 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.models.ReplyModel;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
-import cn.luern0313.wristbilibili.util.ImageDownloaderUtil;
+import cn.luern0313.wristbilibili.util.ImageTaskUtil;
+import cn.luern0313.wristbilibili.util.LruCacheUtil;
+import cn.luern0313.wristbilibili.util.MyApplication;
 import cn.luern0313.wristbilibili.util.ReplyHtmlImageHandlerUtil;
 import cn.luern0313.wristbilibili.widget.ExpandableTextView;
 
@@ -33,9 +31,9 @@ import cn.luern0313.wristbilibili.widget.ExpandableTextView;
 
 public class ReplyAdapter extends BaseAdapter
 {
+    private Context ctx;
     private LayoutInflater mInflater;
 
-    private LruCache<String, BitmapDrawable> mImageCache;
     private ReplyAdapterListener replyAdapterListener;
 
     private ArrayList<ReplyModel> replyList;
@@ -48,7 +46,8 @@ public class ReplyAdapter extends BaseAdapter
 
     public ReplyAdapter(LayoutInflater inflater, ListView listView, ArrayList<ReplyModel> replyList, boolean isShowFloor, boolean isHasRoot, int replyCount, int replyWidth, ReplyAdapterListener replyAdapterListener)
     {
-        mInflater = inflater;
+        this.ctx = MyApplication.getContext();
+        this.mInflater = inflater;
         this.replyList = replyList;
         this.listView = listView;
         this.isShowFloor = isShowFloor;
@@ -56,25 +55,6 @@ public class ReplyAdapter extends BaseAdapter
         this.replyCount = replyCount;
         this.replyWidth = replyWidth;
         this.replyAdapterListener = replyAdapterListener;
-
-        int maxCache = (int) Runtime.getRuntime().maxMemory();
-        int cacheSize = maxCache / 8;
-        mImageCache = new LruCache<String, BitmapDrawable>(cacheSize)
-        {
-            @Override
-            protected int sizeOf(String key, BitmapDrawable value)
-            {
-                try
-                {
-                    return value.getBitmap().getByteCount();
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
-                return 0;
-            }
-        };
     }
 
     @Override
@@ -122,6 +102,8 @@ public class ReplyAdapter extends BaseAdapter
                     viewHolder = new ViewHolder();
                     convertView.setTag(viewHolder);
                     viewHolder.reply_img = convertView.findViewById(R.id.item_reply_head);
+                    viewHolder.reply_off_1 = convertView.findViewById(R.id.item_reply_off_1);
+                    viewHolder.reply_off_2 = convertView.findViewById(R.id.item_reply_off_2);
                     viewHolder.reply_name = convertView.findViewById(R.id.item_reply_name);
                     viewHolder.reply_is_up = convertView.findViewById(R.id.item_reply_up);
                     viewHolder.reply_time = convertView.findViewById(R.id.item_reply_time);
@@ -180,6 +162,22 @@ public class ReplyAdapter extends BaseAdapter
         if(type == 0)
         {
             viewHolder.reply_img.setImageResource(R.drawable.img_default_avatar);
+            if(replyModel.reply_owner_official == 0)
+            {
+                viewHolder.reply_off_1.setVisibility(View.VISIBLE);
+                viewHolder.reply_off_2.setVisibility(View.GONE);
+            }
+            else if(replyModel.reply_owner_official == 1)
+            {
+                viewHolder.reply_off_1.setVisibility(View.GONE);
+                viewHolder.reply_off_2.setVisibility(View.VISIBLE);
+            }
+            else
+            {
+                viewHolder.reply_off_1.setVisibility(View.GONE);
+                viewHolder.reply_off_2.setVisibility(View.GONE);
+            }
+
             viewHolder.reply_name.setText(replyModel.reply_owner_name);
             viewHolder.reply_time.setText(replyModel.reply_time);
 
@@ -187,7 +185,7 @@ public class ReplyAdapter extends BaseAdapter
             viewHolder.reply_floor.setVisibility(isShowFloor ? View.VISIBLE : View.GONE);
             if(isShowFloor)
                 viewHolder.reply_floor.setText(replyModel.reply_floor);
-            viewHolder.reply_level.setText("LV" + replyModel.reply_owner_lv);
+            viewHolder.reply_level.setText(String.format(ctx.getString(R.string.reply_lv), replyModel.reply_owner_lv));
 
             viewHolder.reply_text.setExpandListener(new ExpandableTextView.OnExpandListener()
             {
@@ -204,7 +202,7 @@ public class ReplyAdapter extends BaseAdapter
                 }
             });
             CharSequence text = DataProcessUtil.getClickableHtml(replyModel.reply_text, new ReplyHtmlImageHandlerUtil(
-                    mImageCache, viewHolder.reply_text, replyModel.reply_emote_size));
+                    viewHolder.reply_text, replyModel.reply_emote_size));
             viewHolder.reply_text.setOrigText(text);
             viewHolder.reply_text.updateForRecyclerView(text, replyWidth, replyModel.reply_text_expend ?
                     ExpandableTextView.STATE_EXPAND : ExpandableTextView.STATE_SHRINK);
@@ -227,17 +225,17 @@ public class ReplyAdapter extends BaseAdapter
                         viewHolder.reply_reply_show_3.setVisibility(View.VISIBLE);
                         viewHolder.reply_reply_show_3.setText(
                                 DataProcessUtil.getClickableHtml(replyModel.reply_reply_show.get(2),
-                                              new ReplyHtmlImageHandlerUtil(mImageCache, viewHolder.reply_reply_show_3, replyModel.reply_emote_size)));
+                                              new ReplyHtmlImageHandlerUtil(viewHolder.reply_reply_show_3, replyModel.reply_emote_size)));
                     case 2:
                         viewHolder.reply_reply_show_2.setVisibility(View.VISIBLE);
                         viewHolder.reply_reply_show_2.setText(
                                 DataProcessUtil.getClickableHtml(replyModel.reply_reply_show.get(1),
-                                              new ReplyHtmlImageHandlerUtil(mImageCache, viewHolder.reply_reply_show_2, replyModel.reply_emote_size)));
+                                              new ReplyHtmlImageHandlerUtil(viewHolder.reply_reply_show_2, replyModel.reply_emote_size)));
                     case 1:
                         viewHolder.reply_reply_show_1.setVisibility(View.VISIBLE);
                         viewHolder.reply_reply_show_1.setText(
                                 DataProcessUtil.getClickableHtml(replyModel.reply_reply_show.get(0),
-                                              new ReplyHtmlImageHandlerUtil(mImageCache, viewHolder.reply_reply_show_1, replyModel.reply_emote_size)));
+                                              new ReplyHtmlImageHandlerUtil(viewHolder.reply_reply_show_1, replyModel.reply_emote_size)));
                 }
                 if(replyModel.reply_reply_num > Math.min(replyModel.reply_reply_show.size(), 3))
                 {
@@ -337,6 +335,8 @@ public class ReplyAdapter extends BaseAdapter
     class ViewHolder
     {
         ImageView reply_img;
+        ImageView reply_off_1;
+        ImageView reply_off_2;
         TextView reply_name;
         TextView reply_is_up;
         TextView reply_time;
@@ -360,58 +360,15 @@ public class ReplyAdapter extends BaseAdapter
 
     private BitmapDrawable setImageFormWeb(String url)
     {
-        if(mImageCache.get(url) != null)
+        if(LruCacheUtil.getLruCache().get(url) != null)
         {
-            return mImageCache.get(url);
+            return LruCacheUtil.getLruCache().get(url);
         }
         else
         {
-            ImageTask it = new ImageTask(listView);
+            ImageTaskUtil it = new ImageTaskUtil(listView);
             it.execute(url);
             return null;
-        }
-    }
-
-    class ImageTask extends AsyncTask<String, Void, BitmapDrawable>
-    {
-        private String imageUrl;
-        private Resources listViewResources;
-
-        ImageTask(ListView listView)
-        {
-            this.listViewResources = listView.getResources();
-        }
-
-        @Override
-        protected BitmapDrawable doInBackground(String... params)
-        {
-            try
-            {
-                imageUrl = params[0];
-                Bitmap bitmap = null;
-                bitmap = ImageDownloaderUtil.downloadImage(imageUrl);
-                BitmapDrawable db = new BitmapDrawable(listViewResources, bitmap);
-                if(mImageCache.get(imageUrl) == null && bitmap != null)
-                {
-                    mImageCache.put(imageUrl, db);
-                }
-                return db;
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(BitmapDrawable result)
-        {
-            ImageView iv = listView.findViewWithTag(imageUrl);
-            if(iv != null && result != null)
-            {
-                iv.setImageDrawable(result);
-            }
         }
     }
 

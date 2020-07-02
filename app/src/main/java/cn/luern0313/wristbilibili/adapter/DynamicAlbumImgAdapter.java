@@ -1,7 +1,6 @@
 package cn.luern0313.wristbilibili.adapter;
 
 import android.graphics.drawable.BitmapDrawable;
-import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.util.ImageTaskUtil;
+import cn.luern0313.wristbilibili.util.LruCacheUtil;
 
 /**
  * 被 luern0313 创建于 2020/5/19.
@@ -22,15 +22,13 @@ public class DynamicAlbumImgAdapter extends RecyclerView.Adapter<DynamicAlbumImg
     private RecyclerView recyclerView;
     private ArrayList<String> urlArrayList;
 
-    private LruCache<String, BitmapDrawable> mImageCache;
     private DynamicAlbumImgAdapterListener dynamicAlbumImgAdapterListener;
 
-    public DynamicAlbumImgAdapter(ArrayList<String> urlArrayList, RecyclerView recyclerView, LruCache mImageCache, DynamicAlbumImgAdapterListener dynamicAlbumImgAdapterListener)
+    public DynamicAlbumImgAdapter(ArrayList<String> urlArrayList, RecyclerView recyclerView, DynamicAlbumImgAdapterListener dynamicAlbumImgAdapterListener)
     {
         this.recyclerView = recyclerView;
         this.urlArrayList = urlArrayList;
         this.dynamicAlbumImgAdapterListener = dynamicAlbumImgAdapterListener;
-        this.mImageCache = mImageCache;
     }
 
     class ViewHolder extends RecyclerView.ViewHolder
@@ -78,13 +76,13 @@ public class DynamicAlbumImgAdapter extends RecyclerView.Adapter<DynamicAlbumImg
 
     private BitmapDrawable setImageFormWeb(String url)
     {
-        if(url != null && mImageCache.get(url) != null)
+        if(url != null && LruCacheUtil.getLruCache().get(url) != null)
         {
-            return mImageCache.get(url);
+            return LruCacheUtil.getLruCache().get(url);
         }
         else
         {
-            ImageTaskUtil it = new ImageTaskUtil(recyclerView, mImageCache);
+            ImageTaskUtil it = new ImageTaskUtil(recyclerView);
             it.execute(url);
             return null;
         }

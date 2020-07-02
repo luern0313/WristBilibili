@@ -11,43 +11,45 @@ import lombok.Setter;
  * 被 luern0313 创建于 2020/2/2.
  */
 
+@Getter
+@Setter
 public class ListVideoModel
 {
-    public String video_aid;
-    public String video_bvid;
-    public String video_title;
-    public String video_cover;
-    public String video_play;
-    public String video_danmaku;
-    public String video_owner_name;
+    private String videoAid;
+    private String videoBvid;
+    private String videoTitle;
+    private String videoCover;
+    private String videoPlay;
+    private String videoDanmaku;
+    private String videoOwnerName;
 
     public ListVideoModel(JSONObject video, int mode)
     {
         if(mode == 0)
         {
-            video_aid = video.optString("aid");
-            video_bvid = video.optString("bvid");
-            video_title = video.optString("title");
-            video_cover = DataProcessUtil.handleUrl(video.optString("pic"));
+            videoAid = video.optString("aid");
+            videoBvid = video.optString("bvid");
+            videoTitle = video.optString("title");
+            videoCover = LruCacheUtil.getImageUrl(DataProcessUtil.handleUrl(video.optString("pic")));
 
             JSONObject stat = video.has("stat") ? video.optJSONObject("stat") : new JSONObject();
-            video_play = DataProcessUtil.getView(stat.optInt("view"));
-            video_danmaku = DataProcessUtil.getView(stat.optInt("danmaku"));
+            videoPlay = DataProcessUtil.getView(stat.optInt("view"));
+            videoDanmaku = DataProcessUtil.getView(stat.optInt("danmaku"));
 
             JSONObject owner = video.has("owner") ? video.optJSONObject("owner") : new JSONObject();
-            video_owner_name = owner.optString("name");
+            videoOwnerName = owner.optString("name");
         }
         else
         {
-            video_aid = video.optString("aid");
-            video_bvid = video.optString("bvid");
-            video_title = video.optString("title");
-            video_cover = DataProcessUtil.handleUrl(video.optString("pic"));
+            videoAid = video.optString("aid");
+            videoBvid = video.optString("bvid");
+            videoTitle = video.optString("title");
+            videoCover = LruCacheUtil.getImageUrl(DataProcessUtil.handleUrl(video.optString("pic")));
 
-            video_play = DataProcessUtil.getView(video.optInt("play"));
-            video_danmaku = DataProcessUtil.getView(video.optInt("video_review"));
+            videoPlay = DataProcessUtil.getView(video.optInt("play"));
+            videoDanmaku = DataProcessUtil.getView(video.optInt("video_review"));
 
-            video_owner_name = video.optString("author");
+            videoOwnerName = video.optString("author");
         }
     }
 }

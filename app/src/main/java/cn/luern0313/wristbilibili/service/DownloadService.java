@@ -78,9 +78,9 @@ public class DownloadService extends Service
                 super.connected(task, etag, isContinue, soFarBytes, totalBytes);
                 int po = DownloadApi.findPositionInList((String) task.getTag(3), downloadingItems);
                 DownloadModel item = downloadingItems.get(po);
-                item.setState(1);
-                item.setId(task.getId());
-                item.setSize(task.getSmallFileTotalBytes());
+                item.setDownloadState(1);
+                item.setDownloadId(task.getId());
+                item.setDownloadSize(task.getSmallFileTotalBytes());
                 downloadingItems.set(po, item);
 
                 try
@@ -103,8 +103,8 @@ public class DownloadService extends Service
             {
                 int po = DownloadApi.findPositionInList(task.getUrl(), downloadingItems);
                 DownloadModel item = downloadingItems.get(po);
-                item.setNowdl(soFarBytes);
-                item.setSpeed(task.getSpeed() * 1024);
+                item.setDownloadNowdl(soFarBytes);
+                item.setDownloadSpeed(task.getSpeed() * 1024);
                 downloadingItems.set(po, item);
 
                 try
@@ -128,10 +128,10 @@ public class DownloadService extends Service
             {
                 int po = DownloadApi.findPositionInList(task.getUrl(), downloadingItems);
                 DownloadModel item = downloadingItems.get(po);
-                item.setMode(0);
-                item.setState(5);
-                item.setNowdl(task.getSmallFileSoFarBytes());
-                item.setSpeed(task.getSpeed() * 1024);
+                item.setDownloadMode(0);
+                item.setDownloadState(5);
+                item.setDownloadNowdl(task.getSmallFileSoFarBytes());
+                item.setDownloadSpeed(task.getSpeed() * 1024);
                 downloadingItems.remove(po);
                 downloadedItems.add(item);
                 try
@@ -158,9 +158,9 @@ public class DownloadService extends Service
                 {
                     int po = DownloadApi.findPositionInList(task.getUrl(), downloadingItems);
                     DownloadModel item = downloadingItems.get(po);
-                    item.setState(3);
-                    item.setNowdl(task.getSmallFileSoFarBytes());
-                    item.setSpeed(task.getSpeed() * 1024);
+                    item.setDownloadState(3);
+                    item.setDownloadNowdl(task.getSmallFileSoFarBytes());
+                    item.setDownloadSpeed(task.getSpeed() * 1024);
                     downloadingItems.set(po, item);
                     if(downloadListener != null) downloadListener.onPaused();
                 }
@@ -175,14 +175,14 @@ public class DownloadService extends Service
             {
                 int po = DownloadApi.findPositionInList(task.getUrl(), downloadingItems);
                 DownloadModel item = downloadingItems.get(po);
-                item.setState(4);
-                if(e instanceof FileDownloadHttpException) item.setTip("错误的下载链接");
-                else if(e instanceof FileDownloadGiveUpRetryException) item.setTip("无法获取文件信息");
-                else if(e instanceof FileDownloadOutOfSpaceException) item.setTip("储存空间不足");
-                else if(e instanceof PathConflictException) item.setTip("下载文件已存在");
-                else item.setTip("未知错误");
-                item.setNowdl(task.getSmallFileSoFarBytes());
-                item.setSpeed(task.getSpeed() * 1024);
+                item.setDownloadState(4);
+                if(e instanceof FileDownloadHttpException) item.setDownloadTip("错误的下载链接");
+                else if(e instanceof FileDownloadGiveUpRetryException) item.setDownloadTip("无法获取文件信息");
+                else if(e instanceof FileDownloadOutOfSpaceException) item.setDownloadTip("储存空间不足");
+                else if(e instanceof PathConflictException) item.setDownloadTip("下载文件已存在");
+                else item.setDownloadTip("未知错误");
+                item.setDownloadNowdl(task.getSmallFileSoFarBytes());
+                item.setDownloadSpeed(task.getSpeed() * 1024);
                 downloadingItems.set(po, item);
                 if(downloadListener != null) downloadListener.onError();
             }
@@ -210,25 +210,25 @@ public class DownloadService extends Service
 
     public void pause(int position)
     {
-        FileDownloader.getImpl().pause(downloadingItems.get(position).getId());
+        FileDownloader.getImpl().pause(downloadingItems.get(position).getDownloadId());
         DownloadModel downloadItem = downloadingItems.get(position);
-        downloadItem.setState(2);
-        downloadItem.setSpeed(0);
+        downloadItem.setDownloadState(2);
+        downloadItem.setDownloadSpeed(0);
         downloadingItems.set(position, downloadItem);
     }
 
     public void start(int position)
     {
         DownloadModel downloadItem = downloadingItems.get(position);
-        FileDownloader.getImpl().create(downloadItem.getUrlVideo()).setPath(getExternalFilesDir(
-                null) + "/download/" + downloadItem.getAid() + "/" + downloadItem.getCid() + "/video.mp4")
+        FileDownloader.getImpl().create(downloadItem.getDownloadUrlVideo()).setPath(getExternalFilesDir(
+                null) + "/download/" + downloadItem.getDownloadAid() + "/" + downloadItem.getDownloadCid() + "/video.mp4")
                 .addHeader("User-Agent",
                            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36")
-                .addHeader("Referer", "https://www.bilibili.com/").setTag(1, downloadItem.getAid())
-                .setTag(2, downloadItem.getCid()).setTag(3, downloadItem.getUrlVideo()).setListener(
+                .addHeader("Referer", "https://www.bilibili.com/").setTag(1, downloadItem.getDownloadAid())
+                .setTag(2, downloadItem.getDownloadCid()).setTag(3, downloadItem.getDownloadUrlVideo()).setListener(
                 fileDownloadListener).asInQueueTask().enqueue();
         FileDownloader.getImpl().start(fileDownloadListener, false);
-        downloadItem.setState(0);
+        downloadItem.setDownloadState(0);
         downloadingItems.set(position, downloadItem);
     }
 
