@@ -23,7 +23,28 @@
         android:layout_marginBottom="2dp"
         android:clickable="true"
         android:focusable="true"
+        android:contentDescription="@string/reply_description_head"
         android:src="@drawable/img_default_head" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/item_reply_off_1"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_alignEnd="@+id/item_reply_head"
+        android:layout_alignBottom="@+id/item_reply_head"
+        android:contentDescription="@string/reply_description_off_1"
+        android:layout_marginEnd="-2dp"
+        android:src="@drawable/icon_ou_ver_1" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/item_reply_off_2"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_alignEnd="@+id/item_reply_head"
+        android:layout_alignBottom="@+id/item_reply_head"
+        android:contentDescription="@string/reply_description_off_2"
+        android:layout_marginEnd="-2dp"
+        android:src="@drawable/icon_ou_ver_2" />
 
     <LinearLayout
         android:id="@+id/item_reply_name_lay"
@@ -179,28 +200,31 @@
             android:id="@+id/item_reply_report"
             android:layout_width="26dp"
             android:layout_height="26dp"
-            android:padding="4dp"
             android:clickable="true"
+            android:contentDescription="@string/reply_description_report"
             android:focusable="true"
+            android:padding="4dp"
             android:src="@drawable/icon_report" />
 
         <ImageView
             android:id="@+id/item_reply_reply"
             android:layout_width="26dp"
             android:layout_height="26dp"
-            android:padding="4dp"
             android:clickable="true"
             android:focusable="true"
-            android:src="@drawable/icon_reply" />
+            android:padding="4dp"
+            android:src="@drawable/icon_reply"
+            android:contentDescription="@string/reply_description_reply" />
 
         <ImageView
             android:id="@+id/item_reply_dislike"
             android:layout_width="26dp"
             android:layout_height="26dp"
-            android:padding="4dp"
             android:clickable="true"
             android:focusable="true"
-            android:src="@drawable/icon_dislike" />
+            android:padding="4dp"
+            android:src="@drawable/icon_dislike"
+            android:contentDescription="@string/reply_description_dislike" />
 
         <LinearLayout
             android:id="@+id/item_reply_like"
@@ -216,7 +240,8 @@
                 android:layout_width="18dp"
                 android:layout_height="18dp"
                 android:layout_margin="4dp"
-                android:src="@drawable/icon_like" />
+                android:src="@drawable/icon_like"
+                android:contentDescription="@string/reply_description_like"  />
 
             <TextView
                 android:id="@+id/item_reply_like_n"
