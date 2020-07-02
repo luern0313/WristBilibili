@@ -2,6 +2,7 @@ package cn.luern0313.wristbilibili.models;
 
 import org.json.JSONObject;
 
+import cn.luern0313.wristbilibili.util.LruCacheUtil;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,7 +24,7 @@ public class AnimationTimelineModel
     {
         seasonId = String.valueOf(anim.optInt("season_id"));
         name = anim.optString("title");
-        coverUrl = anim.optString("square_cover");
+        coverUrl = LruCacheUtil.getImageUrl(anim.optString("square_cover"));
         lastEpisode = anim.optString("pub_index");
         isFollow = (int) anim.opt("follow");
         time = day + anim.optString("pub_time");

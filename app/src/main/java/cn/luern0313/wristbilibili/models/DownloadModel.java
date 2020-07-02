@@ -2,6 +2,7 @@ package cn.luern0313.wristbilibili.models;
 
 import org.json.JSONObject;
 
+import cn.luern0313.wristbilibili.util.LruCacheUtil;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -4,11 +4,12 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
-import android.util.LruCache;
 import android.view.View;
 import android.widget.ImageView;
 
 import java.io.IOException;
+
+import cn.luern0313.wristbilibili.R;
 
 /**
  * 被 luern0313 创建于 2020/1/14.
@@ -19,15 +20,26 @@ public class ImageTaskUtil extends AsyncTask<String, Void, BitmapDrawable>
     private String imageUrl;
     private View view;
     private Resources listViewResources;
-    private LruCache<String, BitmapDrawable> mImageCache;
+    private int width;
+    private boolean isImgActivity;
 
+    public ImageTaskUtil(View view)
+    {
+        this(view, 170);
+    }
 
-    public ImageTaskUtil(View view, LruCache<String, BitmapDrawable> mImageCache)
+    public ImageTaskUtil(View view, int width)
+    {
+        this(view, width, false);
+    }
+
+    public ImageTaskUtil(View view, int width, boolean isImgActivity)
     {
         super();
         this.view = view;
         this.listViewResources = view.getResources();
-        this.mImageCache = mImageCache;
+        this.width = width;
+        this.isImgActivity = isImgActivity;
     }
 
     @Override
@@ -36,13 +48,11 @@ public class ImageTaskUtil extends AsyncTask<String, Void, BitmapDrawable>
         try
         {
             imageUrl = params[0];
-            Bitmap bitmap = null;
-            bitmap = ImageDownloaderUtil.downloadImage(imageUrl);
+            Bitmap bitmap = ImageDownloaderUtil.downloadImage(imageUrl, width);
             BitmapDrawable db = new BitmapDrawable(listViewResources, bitmap);
-            // 如果本地还没缓存该图片，就缓存
-            if(mImageCache.get(imageUrl) == null && bitmap != null)
+            if(LruCacheUtil.getLruCache().get(imageUrl) == null && bitmap != null)
             {
-                mImageCache.put(imageUrl, db);
+                LruCacheUtil.getLruCache().put(imageUrl, db);
             }
             return db;
         }
@@ -56,8 +66,11 @@ public class ImageTaskUtil extends AsyncTask<String, Void, BitmapDrawable>
     @Override
     protected void onPostExecute(BitmapDrawable result)
     {
-        // 通过Tag找到我们需要的ImageView，如果该ImageView所在的item已被移出页面，就会直接返回null
-        ImageView iv = view.findViewWithTag(imageUrl);
+        ImageView iv;
+        if(!isImgActivity)
+           iv = view.findViewWithTag(imageUrl);
+        else
+            iv = view.findViewWithTag(imageUrl).findViewById(R.id.vp_imageView);
         if(iv != null && result != null)
         {
             iv.setImageDrawable(result);

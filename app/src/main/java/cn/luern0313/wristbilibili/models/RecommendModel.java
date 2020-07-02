@@ -2,6 +2,8 @@ package cn.luern0313.wristbilibili.models;
 
 import org.json.JSONObject;
 
+import cn.luern0313.wristbilibili.util.LruCacheUtil;
+
 /**
  * 被 luern0313 创建于 2020/1/15.
  */
@@ -24,7 +26,7 @@ public class RecommendModel
     {
         video_aid = video.optString("param");
         video_title = video.optString("title");
-        video_img = video.optString("cover");
+        video_img = LruCacheUtil.getImageUrl(video.optString("cover"));
         video_time = video.optString("cover_right_text");
         video_data_1_icon = video.optInt("cover_left_icon_1");
         video_data_1_text = video.optString("cover_left_text_1");

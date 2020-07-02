@@ -3,13 +3,9 @@ package cn.luern0313.wristbilibili.ui;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.LruCache;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +14,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
@@ -27,7 +22,8 @@ import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
-import cn.luern0313.wristbilibili.util.ImageDownloaderUtil;
+import cn.luern0313.wristbilibili.util.ImageTaskUtil;
+import cn.luern0313.wristbilibili.util.LruCacheUtil;
 import me.panpf.sketch.SketchImageView;
 
 public class ImgActivity extends AppCompatActivity
@@ -44,7 +40,6 @@ public class ImgActivity extends AppCompatActivity
     ViewFlipper uiViewFlipper;
     TextView uiImgCount;
 
-    LruCache<String, BitmapDrawable> mImageCache;
     Handler handler = new Handler();
     Runnable runnableTimer;
 
@@ -75,29 +70,11 @@ public class ImgActivity extends AppCompatActivity
         viewList = new ArrayList<>();
         for(String s : imgUrlList)
         {
+            String url = LruCacheUtil.getImageUrl(s, 500);
             View view = inflater.inflate(R.layout.viewpager_img_img, null);
-            view.setTag(s);
+            view.setTag(url);
             viewList.add(view);
         }
-
-        int maxCache = (int) Runtime.getRuntime().maxMemory();
-        int cacheSize = maxCache / 8;
-        mImageCache = new LruCache<String, BitmapDrawable>(cacheSize)
-        {
-            @Override
-            protected int sizeOf(String key, BitmapDrawable value)
-            {
-                try
-                {
-                    return value.getBitmap().getByteCount();
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
-                return 0;
-            }
-        };
 
         PagerAdapter pagerAdapter = new ImgPagerAdapter();
 
@@ -213,6 +190,7 @@ public class ImgActivity extends AppCompatActivity
                     showTab(isShowTab);
                 }
             });
+
             BitmapDrawable b = setImageFormWeb((String) v.getTag());
             if(b != null)
                 ((SketchImageView) v.findViewById(R.id.vp_imageView).findViewById(R.id.vp_imageView)).setImageDrawable(b);
@@ -220,70 +198,17 @@ public class ImgActivity extends AppCompatActivity
             return v.getTag();
         }
 
-        BitmapDrawable setImageFormWeb(String url)
+        private BitmapDrawable setImageFormWeb(String url)
         {
-            if(mImageCache.get(url) != null)
+            if(LruCacheUtil.getLruCache().get(url) != null)
             {
-                return mImageCache.get(url);
+                return LruCacheUtil.getLruCache().get(url);
             }
             else
             {
-                ImageTask it = new ImageTask(uiViewPager);
+                ImageTaskUtil it = new ImageTaskUtil(uiViewPager, 500, true);
                 it.execute(url);
                 return null;
-            }
-        }
-
-        class ImageTask extends AsyncTask<String, Void, BitmapDrawable>
-        {
-            private String imageUrl;
-            private Resources viewpagerResources;
-
-            ImageTask(ViewPager viewPager)
-            {
-                this.viewpagerResources = viewPager.getResources();
-            }
-
-            @Override
-            protected BitmapDrawable doInBackground(String... params)
-            {
-                try
-                {
-                    imageUrl = params[0];
-                    Bitmap bitmap = null;
-                    bitmap = ImageDownloaderUtil.downloadImage(imageUrl, 500);
-                    BitmapDrawable db = new BitmapDrawable(viewpagerResources, bitmap);
-                    // 如果本地还没缓存该图片，就缓存
-                    if(mImageCache.get(imageUrl) == null && bitmap != null)
-                    {
-                        mImageCache.put(imageUrl, db);
-                    }
-                    return db;
-                }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(BitmapDrawable result)
-            {
-                try
-                {
-                    // 通过Tag找到我们需要的ImageView，如果该ImageView所在的item已被移出页面，就会直接返回null
-                    View iv = uiViewPager.findViewWithTag(imageUrl);
-                    if(iv != null && result != null)
-                    {
-                        ((SketchImageView) iv.findViewById(R.id.vp_imageView)).setImageDrawable(
-                                result);
-                    }
-                }
-                catch (NullPointerException e)
-                {
-                    e.printStackTrace();
-                }
             }
         }
     }

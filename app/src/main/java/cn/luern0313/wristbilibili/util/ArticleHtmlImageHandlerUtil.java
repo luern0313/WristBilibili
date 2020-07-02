@@ -6,7 +6,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LevelListDrawable;
 import android.text.Html;
-import android.util.LruCache;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -26,15 +25,13 @@ public class ArticleHtmlImageHandlerUtil implements Html.ImageGetter
 {
     private Context ctx;
     private TextView container;
-    private LruCache<String, BitmapDrawable> lruCache;
     private int width;
     private ArticleImageModel articleImageModel;
 
-    public ArticleHtmlImageHandlerUtil(Context ctx, LruCache<String, BitmapDrawable> lruCache, TextView text, int width, ArticleImageModel articleImageModel)
+    public ArticleHtmlImageHandlerUtil(Context ctx, TextView text, int width, ArticleImageModel articleImageModel)
     {
         this.ctx = ctx;
         this.container = text;
-        this.lruCache = lruCache;
         this.width = width;
         this.articleImageModel = articleImageModel;
     }
@@ -49,7 +46,7 @@ public class ArticleHtmlImageHandlerUtil implements Html.ImageGetter
         if(source.endsWith(".webp"))
             source = source.substring(0, source.lastIndexOf("@"));
 
-        if(lruCache.get(source) != null) return lruCache.get(source);
+        if(LruCacheUtil.getLruCache().get(source) != null) return LruCacheUtil.getLruCache().get(source);
         else {
             final LevelListDrawable drawable = new LevelListDrawable();
             final String finalSource = source;
@@ -65,7 +62,7 @@ public class ArticleHtmlImageHandlerUtil implements Html.ImageGetter
                         public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition)
                         {
                             BitmapDrawable bitmapDrawable = new BitmapDrawable(resource);
-                            if(lruCache.get(finalSource) == null) lruCache.put(finalSource, bitmapDrawable);
+                            if(LruCacheUtil.getLruCache().get(finalSource) == null) LruCacheUtil.getLruCache().put(finalSource, bitmapDrawable);
                             float img_width = resource.getWidth();
                             float img_height = resource.getHeight();
                             int left = img_width < width ? (int) ((width - img_width) / 2) : 0;

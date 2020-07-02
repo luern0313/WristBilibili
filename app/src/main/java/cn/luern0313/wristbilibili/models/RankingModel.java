@@ -2,6 +2,8 @@ package cn.luern0313.wristbilibili.models;
 
 import org.json.JSONObject;
 
+import cn.luern0313.wristbilibili.util.LruCacheUtil;
+
 /**
  * 被 luern0313 创建于 2020/1/15.
  */
@@ -21,12 +23,12 @@ public class RankingModel
     {
         video_aid = "av".equals(jsonObject.optString("goto")) ? jsonObject.optString("param") : "";
         video_title = jsonObject.optString("title");
-        video_pic = jsonObject.optString("cover");
+        video_pic = LruCacheUtil.getImageUrl(jsonObject.optString("cover"));
         video_score = String.valueOf(jsonObject.optInt("pts"));
         video_play = jsonObject.optInt("play");
         video_danmaku = jsonObject.optInt("danmaku");
         up_mid = String.valueOf(jsonObject.optInt("mid"));
         up_name = jsonObject.optString("name");
-        up_face = jsonObject.optString("face");
+        up_face = LruCacheUtil.getImageUrl(jsonObject.optString("face"));
     }
 }

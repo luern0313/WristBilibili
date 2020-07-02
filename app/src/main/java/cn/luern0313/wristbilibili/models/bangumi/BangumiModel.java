@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
+import cn.luern0313.wristbilibili.util.LruCacheUtil;
 
 /**
  * 被 luern0313 创建于 2020/1/21.
@@ -55,8 +56,8 @@ public class BangumiModel implements Serializable
         bangumi_like = DataProcessUtil.getView(bangumi.optJSONObject("stat").optInt("favorites"));
         bangumi_series = bangumi.optJSONObject("publish").optString("time_length_show");
         bangumi_needvip = bangumi.optString("badge");
-        bangumi_cover = bangumi.optString("cover");
-        bangumi_cover_small = bangumi.optString("square_cover");
+        bangumi_cover = LruCacheUtil.getImageUrl(bangumi.optString("cover"));
+        bangumi_cover_small = LruCacheUtil.getImageUrl(bangumi.optString("square_cover"));
 
         JSONObject bangumi_user_jsonobject = bangumi.has("user_status") ? bangumi.optJSONObject("user_status") : new JSONObject();
         bangumi_user_is_follow = bangumi_user_jsonobject.optInt("follow") == 1;

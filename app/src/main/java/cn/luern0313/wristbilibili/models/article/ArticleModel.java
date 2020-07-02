@@ -8,11 +8,11 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
+
+import cn.luern0313.wristbilibili.util.DataProcessUtil;
+import cn.luern0313.wristbilibili.util.LruCacheUtil;
 
 /**
  * 被 luern0313 创建于 2020/2/20.
@@ -56,19 +56,17 @@ public class ArticleModel implements Serializable
         JSONArray cover = article.optJSONArray("origin_image_urls");
         article_cover = new String[cover.length()];
         for(int i = 0; i < cover.length(); i++)
-            article_cover[i] = cover.optString(i);
+            article_cover[i] = LruCacheUtil.getImageUrl(cover.optString(i));
         Elements info = element.getElementsByClass("info").first().children();
         article_channel = info.get(0).text();
         article_channel = article_channel.substring(0, article_channel.length() - 2);
-        String timestamp = info.get(1).attr("data-ts");
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
-        article_time = format.format(new Date(Integer.valueOf(timestamp) * 1000L));
+        article_time = DataProcessUtil.getTime(Integer.parseInt(info.get(1).attr("data-ts")), "yyyy-MM-dd HH:mm");
 
         JSONObject up = more.has("author") ? more.optJSONObject("author") : new JSONObject();
         JSONObject up_off = up.has("official_verify") ? up.optJSONObject("official_verify") : new JSONObject();
         JSONObject up_vip = up.has("vip") ? up.optJSONObject("vip") : new JSONObject();
         article_up_name = up.optString("name");
-        article_up_face = up.optString("face");
+        article_up_face = LruCacheUtil.getImageUrl(up.optString("face"));
         article_up_mid = up.optString("mid");
         article_up_fans_num = up.optInt("fans");
         article_up_official = up_off.optInt("type");

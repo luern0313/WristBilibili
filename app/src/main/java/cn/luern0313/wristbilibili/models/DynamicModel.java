@@ -16,6 +16,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
+import cn.luern0313.wristbilibili.util.LruCacheUtil;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -63,7 +64,7 @@ public class DynamicModel implements Serializable
         JSONObject author_info = author.has("info") ? author.optJSONObject("info") : new JSONObject();
         cardAuthorName = author_info.optString("uname");
         cardAuthorUid = String.valueOf(author_info.optInt("uid"));
-        cardAuthorImg = author_info.optString("face");
+        cardAuthorImg = LruCacheUtil.getImageUrl(author_info.optString("face"));
         JSONObject author_card = author.has("card") ? author.optJSONObject("card") : new JSONObject();
         JSONObject author_card_official = author_card.has("official_verify") ? author_card.optJSONObject("official_verify") : new JSONObject();
         cardAuthorOfficial = author_card_official.optInt("type", -1);
@@ -181,7 +182,7 @@ public class DynamicModel implements Serializable
             JSONArray card_img = card_item.optJSONArray("pictures");
             albumImg = new ArrayList<>();
             for(int i = 0; i < card_img.length(); i++)
-                albumImg.add(card_img.optJSONObject(i).optString("img_src"));
+                albumImg.add(LruCacheUtil.getImageUrl(card_img.optJSONObject(i).optString("img_src")));
 
             super.cardReplyId = String.valueOf(card_item.optInt("id"));
             super.cardReplyNum = DataProcessUtil.getView(card_item.optInt("reply"));
@@ -233,7 +234,7 @@ public class DynamicModel implements Serializable
             super(card, desc, display, extend, isShared);
             JSONObject card_owner = card.has("owner") ? card.optJSONObject("owner") : new JSONObject();
             videoAuthorName = card_owner.optString("name");
-            videoAuthorImg = card_owner.optString("face");
+            videoAuthorImg = LruCacheUtil.getImageUrl(card_owner.optString("face"));
             videoAuthorUid = String.valueOf(card_owner.optInt("mid"));
             videoAid = String.valueOf(card.optInt("aid"));
             videoBvid = card.optString("bvid");
@@ -243,7 +244,7 @@ public class DynamicModel implements Serializable
                 videoDynamic = super.handlerText(videoDynamicOrg, display, extend);
             }
             videoTitle = card.optString("title");
-            videoImg = card.optString("pic");
+            videoImg = LruCacheUtil.getImageUrl(card.optString("pic"));
             videoDesc = card.optString("desc");
             videoDuration = DataProcessUtil.getMinFromSec(card.optInt("duration"));
             JSONObject card_stat = card.has("stat") ? card.optJSONObject("stat") : new JSONObject();
@@ -277,7 +278,7 @@ public class DynamicModel implements Serializable
             articleId = String.valueOf(card.optInt("id"));
             JSONObject card_author = card.has("author") ? card.optJSONObject("author") : new JSONObject();
             articleAuthorName = card_author.optString("name");
-            articleAuthorImg = card_author.optString("face");
+            articleAuthorImg = LruCacheUtil.getImageUrl(card_author.optString("face"));
             articleAuthorUid = String.valueOf(card_author.optInt("mid"));
             if(!card.optString("dynamic").equals(""))
             {
@@ -287,7 +288,7 @@ public class DynamicModel implements Serializable
             articleTitle = card.optString("title");
             articleDesc = card.optString("summary");
             JSONArray card_img = card.has("image_urls") ? card.optJSONArray("image_urls") : new JSONArray();
-            articleImg = card_img.optString(0);
+            articleImg = LruCacheUtil.getImageUrl(card_img.optString(0));
             JSONObject card_stat = card.has("stats") ? card.optJSONObject("stats") : new JSONObject();
             articleView = DataProcessUtil.getView(card_stat.optInt("view"));
 
@@ -312,7 +313,7 @@ public class DynamicModel implements Serializable
         {
             super(card, desc, display, extend, isShared);
             bangumiTitle = card.optString("new_desc");
-            bangumiImg = card.optString("cover");
+            bangumiImg = LruCacheUtil.getImageUrl(card.optString("cover"));
             bangumiView = DataProcessUtil.getView(card.optInt("play_count"));
             bangumiDanmaku = DataProcessUtil.getView(card.optInt("bullet_count"));
 
@@ -324,7 +325,7 @@ public class DynamicModel implements Serializable
             if(!isShared)
             {
                 super.cardAuthorName = card_info.optString("title");
-                super.cardAuthorImg = card_info.optString("cover");
+                super.cardAuthorImg = LruCacheUtil.getImageUrl(card_info.optString("cover"));
                 super.cardAuthorOfficial = -1;
             }
 
@@ -361,7 +362,7 @@ public class DynamicModel implements Serializable
             JSONObject card_sketch = card.has("sketch") ? card.optJSONObject("sketch") : new JSONObject();
             urlTitle = card_sketch.optString("title");
             urlDesc = card_sketch.optString("desc_text");
-            urlImg = card_sketch.optString("cover_url");
+            urlImg = LruCacheUtil.getImageUrl(card_sketch.optString("cover_url"));
             urlUrl = card_sketch.optString("target_url");
         }
     }
@@ -387,8 +388,8 @@ public class DynamicModel implements Serializable
             liveTitle = card.optString("title");
             liveAuthorName = card.optString("uname");
             liveAuthorUid = String.valueOf(card.optInt("uid"));
-            liveAuthorImg = card.optString("face");
-            liveImg = card.optString("cover");
+            liveAuthorImg = LruCacheUtil.getImageUrl(card.optString("face"));
+            liveImg = LruCacheUtil.getImageUrl(card.optString("cover"));
             liveArea = card.optString("area_v2_name");
             liveOnline = DataProcessUtil.getView(card.optInt("online"));
             liveStatus = card.optInt("live_status") == 1;
@@ -414,12 +415,12 @@ public class DynamicModel implements Serializable
             super(card, desc, display, extend, isShared);
             favorTitle = card.optString("title");
             favorId = String.valueOf(card.optInt("fid"));
-            favorImg = card.optString("cover");
+            favorImg = LruCacheUtil.getImageUrl(card.optString("cover"));
             favorCount = card.optInt("media_count");
             JSONObject card_upper = card.has("upper") ? card.optJSONObject("upper") : new JSONObject();
             favorAuthorName = card_upper.optString("name");
             favorAuthorUid = String.valueOf(card_upper.optInt("mid"));
-            favorAuthorImg = card_upper.optString("face");
+            favorAuthorImg = LruCacheUtil.getImageUrl(card_upper.optString("face"));
 
             super.cardUrl = "bilibili://collect/" + favorId + "?uid=" + favorAuthorUid;
         }

@@ -20,6 +20,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import cn.luern0313.wristbilibili.R;
+import cn.luern0313.wristbilibili.util.LruCacheUtil;
 
 /**
  * 被 luern0313 创建于 2020/1/15.
@@ -77,7 +78,7 @@ public class ReplyModel implements Serializable
 
         JSONObject reply_owner_json = replyJson.has("member") ? replyJson.optJSONObject("member") : new JSONObject();
         reply_owner_mid = reply_owner_json.optString("mid");
-        reply_owner_face = reply_owner_json.optString("avatar");
+        reply_owner_face = LruCacheUtil.getImageUrl(reply_owner_json.optString("avatar"));
         reply_owner_name = reply_owner_json.optString("uname");
         reply_owner_lv = reply_owner_json.has("level_info") ?
                 String.valueOf(reply_owner_json.optJSONObject("level_info").optInt("current_level")) : "0";

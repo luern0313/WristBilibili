@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
+import cn.luern0313.wristbilibili.util.LruCacheUtil;
 
 /**
  * 被 luern0313 创建于 2020/2/3.
@@ -32,7 +33,7 @@ public class SearchModel
             search_bangumi_title = bangumi.optString("title").replaceAll("<em class=\"keyword\">", "<keyword>");
             search_bangumi_title = search_bangumi_title.replaceAll("</em>", "</keyword>");
             search_bangumi_title = "<body>" + search_bangumi_title + "</body>";
-            search_bangumi_cover = "http:" + bangumi.optString("cover");
+            search_bangumi_cover = LruCacheUtil.getImageUrl("http:" + bangumi.optString("cover"));
             search_bangumi_season_id = String.valueOf(bangumi.optInt("season_id"));
             search_bangumi_episode_count = bangumi.optInt("ep_size");
 
@@ -61,7 +62,7 @@ public class SearchModel
         {
             search_mode = 1;
             search_user_name = user.optString("uname");
-            search_user_face = "http:" + user.optString("upic");
+            search_user_face = LruCacheUtil.getImageUrl("http:" + user.optString("upic"));
             search_user_mid = String.valueOf(user.optInt("mid"));
             search_user_sign = user.optString("usign");
 
@@ -91,7 +92,7 @@ public class SearchModel
             search_video_title = search_video_title.replaceAll("</em>", "</keyword>");
             search_video_title = "<body>" + search_video_title + "</body>";
             search_video_aid = String.valueOf(video.optInt("aid"));
-            search_video_cover = "http:" + video.optString("pic");
+            search_video_cover = LruCacheUtil.getImageUrl("http:" + video.optString("pic"));
             search_video_play = DataProcessUtil.getView(video.optInt("play"));
             search_video_danmaku = DataProcessUtil.getView(video.optInt("video_review"));
             search_video_up_name = video.optString("author");

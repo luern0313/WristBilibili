@@ -2,6 +2,7 @@ package cn.luern0313.wristbilibili.util;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -28,14 +29,16 @@ public class ImageDownloaderUtil
 
     public static Bitmap downloadImage(String imageUrl, int width) throws IOException
     {
-        HttpURLConnection con = null;
-        Bitmap bitmap = null;
         URL url = new URL(imageUrl);
-        con = (HttpURLConnection) url.openConnection();
-        con.setConnectTimeout(5 * 1000);
-        con.setReadTimeout(10 * 1000);
-        bitmap = getCompressBitmap(con.getInputStream(), width);
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        con.setConnectTimeout(4 * 1000);
+        con.setReadTimeout(4 * 1000);
+        Bitmap bitmap = getCompressBitmap(con.getInputStream(), width);
         con.disconnect();
+        if(LruCacheUtil.getLruCache().get(imageUrl) == null && bitmap != null)
+        {
+            LruCacheUtil.getLruCache().put(imageUrl, new BitmapDrawable(MyApplication.getContext().getResources(), bitmap));
+        }
         return bitmap;
     }
 
@@ -54,9 +57,9 @@ public class ImageDownloaderUtil
 
         //获取比率最大的那个
         if (outWidth > width || outHeight > realHeight) {
-            int withRadio = Math.round(outWidth / width);
-            int heightRadio = Math.round(outHeight / realHeight);
-            inSampleSize = withRadio > heightRadio ? withRadio : heightRadio;
+            int withRadio = Math.round((float) outWidth / width);
+            int heightRadio = Math.round((float)outHeight / realHeight);
+            inSampleSize = Math.max(withRadio, heightRadio);
         }
         return inSampleSize;
     }

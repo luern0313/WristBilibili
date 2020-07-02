@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
+import cn.luern0313.wristbilibili.util.LruCacheUtil;
 
 /**
  * 被 luern0313 创建于 2020/2/28.
@@ -51,7 +52,7 @@ public class ArticleCardModel implements Serializable
 
             article_video_card_id = String.valueOf(videoCard.optString("bvid"));
             article_video_card_title = videoCard.optString("title");
-            article_video_card_cover = videoCard.optString("pic");
+            article_video_card_cover = LruCacheUtil.getImageUrl(videoCard.optString("pic"));
             article_video_card_time = DataProcessUtil.getMinFromSec(videoCard.optInt("duration"));
 
             JSONObject stat = videoCard.has("stat") ? videoCard.optJSONObject("stat") : new JSONObject();
@@ -80,7 +81,7 @@ public class ArticleCardModel implements Serializable
 
             article_bangumi_card_id = String.valueOf(bangumiCard.optInt("season_id"));
             article_bangumi_card_title = bangumiCard.optString("title");
-            article_bangumi_card_cover = bangumiCard.optString("cover");
+            article_bangumi_card_cover = LruCacheUtil.getImageUrl(bangumiCard.optString("cover"));
             article_bangumi_card_play = DataProcessUtil.getView(bangumiCard.optInt("play_count"));
             article_bangumi_card_follow = DataProcessUtil.getView(bangumiCard.optInt("follow_count"));
             article_bangumi_card_type_name = bangumiCard.optString("season_type_name");
@@ -106,7 +107,7 @@ public class ArticleCardModel implements Serializable
             article_article_card_id = String.valueOf(articleCard.optInt("id"));
             article_article_card_title = articleCard.optString("title");
             article_article_card_cover = articleCard.has("image_urls") ?
-                    articleCard.optJSONArray("image_urls").optString(0) : "";
+                    LruCacheUtil.getImageUrl(articleCard.optJSONArray("image_urls").optString(0)) : "";
 
             JSONObject stat = articleCard.has("stats") ? articleCard.optJSONObject("stats") : new JSONObject();
             article_article_card_view = DataProcessUtil.getView(stat.optInt("view"));
@@ -133,7 +134,7 @@ public class ArticleCardModel implements Serializable
 
             article_music_card_id = String.valueOf(musicCard.optInt("song_id"));
             article_music_card_title = musicCard.optString("title");
-            article_music_card_cover = musicCard.optString("cover_url");
+            article_music_card_cover = LruCacheUtil.getImageUrl(musicCard.optString("cover_url"));
             article_music_card_play = DataProcessUtil.getView(musicCard.optInt("play_num"));
             article_music_card_reply = DataProcessUtil.getView(musicCard.optInt("reply_num"));
             article_music_card_up_name = musicCard.optString("up_name");
@@ -156,7 +157,7 @@ public class ArticleCardModel implements Serializable
 
             article_ticket_card_id = String.valueOf(ticketCard.optInt("id"));
             article_ticket_card_title = ticketCard.optString("name");
-            article_ticket_card_cover = "http:" + ticketCard.optString("performance_image");
+            article_ticket_card_cover = LruCacheUtil.getImageUrl("http:" + ticketCard.optString("performance_image"));
 
             SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
             article_ticket_card_time = format.format(new Date(ticketCard.optInt("start_time") * 1000L));
@@ -181,7 +182,7 @@ public class ArticleCardModel implements Serializable
             article_shop_card_id = String.valueOf(shopCard.optInt("itemsId"));
             article_shop_card_title = shopCard.optString("name");
             article_shop_card_cover = shopCard.has("img") ?
-                    "http:" + shopCard.optJSONArray("img").optString(0) : "";
+                    LruCacheUtil.getImageUrl("http:" + shopCard.optJSONArray("img").optString(0)) : "";
             article_shop_card_detail = shopCard.optString("brief");
             article_shop_card_price = "￥" + shopCard.optInt("price") / 100.0;
         }
@@ -202,7 +203,7 @@ public class ArticleCardModel implements Serializable
 
             article_container_card_id = String.valueOf(containerCard.optInt("id"));
             article_container_card_title = containerCard.optString("title");
-            article_container_card_cover = containerCard.optString("vertical_cover");
+            article_container_card_cover = LruCacheUtil.getImageUrl(containerCard.optString("vertical_cover"));
             article_container_card_detail = containerCard.optString("evaluate");
             article_container_card_author = containerCard.has("author") ?
                     containerCard.optJSONArray("author").optString(0) : "";
@@ -225,7 +226,7 @@ public class ArticleCardModel implements Serializable
 
             article_live_card_id = String.valueOf(liveCard.optInt("room_id"));
             article_live_card_title = liveCard.optString("title");
-            article_live_card_cover = liveCard.optString("cover");
+            article_live_card_cover = LruCacheUtil.getImageUrl(liveCard.optString("cover"));
             article_live_card_area = liveCard.optString("area_v2_name");
             article_live_card_status = liveCard.optInt("live_status");
             article_live_card_online = String.valueOf(liveCard.optInt("online"));

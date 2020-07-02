@@ -7,6 +7,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import cn.luern0313.wristbilibili.util.LruCacheUtil;
+
 /**
  * 被 luern0313 创建于 2020/1/15.
  */
@@ -25,7 +27,7 @@ public class UserListPeopleModel implements Serializable
     {
         this.people_uid = String.valueOf(people.optInt("mid", 0));
         this.people_name = people.optString("uname", "");
-        this.people_face = people.optString("face", "");
+        this.people_face = LruCacheUtil.getImageUrl(people.optString("face", ""));
         this.people_sign = people.optString("sign", "");
         Date date = new Date(people.optInt("mtime", 0) * 1000L);
         SimpleDateFormat format = new SimpleDateFormat("yy-MM-dd HH:mm", Locale.getDefault());

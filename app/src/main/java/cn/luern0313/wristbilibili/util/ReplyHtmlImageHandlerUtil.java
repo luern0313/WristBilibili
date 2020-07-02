@@ -6,7 +6,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LevelListDrawable;
 import android.text.Html;
-import android.util.LruCache;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -27,14 +26,12 @@ public class ReplyHtmlImageHandlerUtil implements Html.ImageGetter
 {
     private Context ctx;
     private TextView container;
-    private LruCache<String, BitmapDrawable> lruCache;
     private HashMap<String, Integer> emoteSize;
 
-    public ReplyHtmlImageHandlerUtil(LruCache<String, BitmapDrawable> lruCache, TextView text, HashMap<String, Integer> emoteSize)
+    public ReplyHtmlImageHandlerUtil(TextView text, HashMap<String, Integer> emoteSize)
     {
         this.ctx = MyApplication.getContext();
         this.container = text;
-        this.lruCache = lruCache;
         this.emoteSize = emoteSize;
     }
 
@@ -55,7 +52,8 @@ public class ReplyHtmlImageHandlerUtil implements Html.ImageGetter
             if(source.indexOf("//") == 0) source = "http:" + source;
             if(source.endsWith(".webp")) source = source.substring(0, source.lastIndexOf("@"));
 
-            if(lruCache.get(source) != null) return lruCache.get(source);
+            if(LruCacheUtil.getLruCache().get(source) != null)
+                return LruCacheUtil.getLruCache().get(source);
             else
             {
                 final LevelListDrawable drawable = new LevelListDrawable();
@@ -70,8 +68,8 @@ public class ReplyHtmlImageHandlerUtil implements Html.ImageGetter
                             @Override
                             public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition)
                             {
-                                BitmapDrawable bitmapDrawable = new BitmapDrawable(resource);
-                                if(lruCache.get(finalSource) == null) lruCache.put(finalSource, bitmapDrawable);
+                                BitmapDrawable bitmapDrawable = new BitmapDrawable(ctx.getResources(), resource);
+                                if(LruCacheUtil.getLruCache().get(finalSource) == null) LruCacheUtil.getLruCache().put(finalSource, bitmapDrawable);
 
                                 drawable.addLevel(1, 1, bitmapDrawable);
                                 drawable.setLevel(1);

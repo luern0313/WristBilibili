@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
+import cn.luern0313.wristbilibili.util.LruCacheUtil;
 
 /**
  * 被 luern0313 创建于 2020/4/23.
@@ -37,7 +38,7 @@ public class UserModel implements Serializable
         JSONObject card = user.has("card") ? user.optJSONObject("card") : new JSONObject();
         user_card_mid = String.valueOf(card.optInt("mid"));
         user_card_name = card.optString("name");
-        user_card_face = card.optString("face");
+        user_card_face = LruCacheUtil.getImageUrl(card.optString("face"));
         user_card_sign = card.optString("sign");
         user_card_fans_num = card.optInt("fans");
         user_card_follow_num = card.optInt("attention");
@@ -49,7 +50,7 @@ public class UserModel implements Serializable
         user_card_official_verify = card_official.optString("title");
         JSONObject card_vip = card.has("vip") ? card.optJSONObject("vip") : new JSONObject();
         JSONObject nameplate = card.has("nameplate") ? card.optJSONObject("nameplate") : new JSONObject();
-        user_card_nameplate_img = nameplate.optString("image_small");
+        user_card_nameplate_img = LruCacheUtil.getImageUrl(nameplate.optString("image_small"));
         user_card_vip = card_vip.optInt("vipType");
 
         JSONArray tab = user.has("tab2") ? user.optJSONArray("tab2") : new JSONArray();

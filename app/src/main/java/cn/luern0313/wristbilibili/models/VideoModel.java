@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
+import cn.luern0313.wristbilibili.util.LruCacheUtil;
 
 /**
  * 被 luern0313 创建于 2020/2/2.
@@ -64,7 +65,7 @@ public class VideoModel implements Serializable
         video_bvid = video.has("bvid") ? String.valueOf(video.optString("bvid")) : "";
         video_cid = String.valueOf(video.optInt("cid"));
         video_title = video.optString("title");
-        video_cover = video.optString("pic");
+        video_cover = LruCacheUtil.getImageUrl(video.optString("pic"));
         video_desc = video.optString("desc");
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
         video_time = format.format(new Date(video.optInt("pubdate") * 1000L));
@@ -89,7 +90,7 @@ public class VideoModel implements Serializable
         JSONObject video_owner_other_official = video_owner_other.has("official_verify") ? video_owner_other.optJSONObject("official_verify") : new JSONObject();
         JSONObject video_owner_other_vip = video_owner_other.has("vip") ? video_owner_other.optJSONObject("vip") : new JSONObject();
         video_up_name = video_owner.optString("name");
-        video_up_face = video_owner.optString("face");
+        video_up_face = LruCacheUtil.getImageUrl(video_owner.optString("face"));
         video_up_mid = String.valueOf(video_owner.optInt("mid"));
         video_up_official = video_owner_other_official.optInt("type");
         video_up_fan_num = video_owner_other.optInt("fans");
@@ -98,7 +99,7 @@ public class VideoModel implements Serializable
         JSONObject video_season = video.has("season") ? video.optJSONObject("season") : new JSONObject();
         video_season_id = String.valueOf(video_season.optInt("season_id"));
         video_season_title = video_season.optString("title");
-        video_season_cover = video_season.optString("cover");
+        video_season_cover = LruCacheUtil.getImageUrl(video_season.optString("cover"));
         video_season_is_finish = video_season.optInt("is_finish") == 1;
         video_season_new_ep = video_season.optString("newest_ep_index");
         video_season_total = video_season.optString("total_count");
