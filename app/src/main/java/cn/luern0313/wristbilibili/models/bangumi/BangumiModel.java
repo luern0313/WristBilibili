@@ -48,6 +48,8 @@ public class BangumiModel implements Serializable
     public String bangumi_type_name;
     public String bangumi_type_follow;
     public String bangumi_type_ep;
+
+    public boolean bangumi_right_download;
     public BangumiModel(JSONObject bangumi)
     {
         bangumi_title = bangumi.optString("season_title");
@@ -127,6 +129,9 @@ public class BangumiModel implements Serializable
         bangumi_type_name = (bangumi_detail_typename.equals("番剧") || bangumi_detail_typename.equals("国创")) ? "番剧" : "影视";
         bangumi_type_follow = bangumi_type_name.equals("番剧") ? "追番" : "追剧";
         bangumi_type_ep = bangumi_type_name.equals("番剧") ? "话" : "集";
+
+        JSONObject bangumi_detail_rights = bangumi.has("rights") ? bangumi.optJSONObject("rights") : new JSONObject();
+        bangumi_right_download = bangumi_detail_rights.optInt("allow_download") == 1;
     }
 
     public class BangumiEpisodeModel implements Serializable

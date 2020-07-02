@@ -95,8 +95,14 @@ public class BangumiDetailFragment extends Fragment implements View.OnClickListe
         if(bangumiModel.bangumi_needvip.equals("")) rootLayout.findViewById(R.id.bgm_detail_needvip).setVisibility(View.GONE);
         else ((TextView) rootLayout.findViewById(R.id.bgm_detail_needvip)).setText(bangumiModel.bangumi_needvip);
 
-        Drawable playNumDrawable = getResources().getDrawable(R.drawable.icon_video_play_num);
-        Drawable danmakuNumDrawable = getResources().getDrawable(R.drawable.icon_video_like_num);
+        if(!bangumiModel.bangumi_right_download)
+        {
+            rootLayout.findViewById(R.id.bgm_detail_bt_download_lay).setAlpha(0.5f);
+            ((TextView) rootLayout.findViewById(R.id.bgm_detail_bt_download_text)).setText(R.string.bangumi_control_download_notallow);
+        }
+
+        Drawable playNumDrawable = getResources().getDrawable(R.drawable.icon_number_play);
+        Drawable danmakuNumDrawable = getResources().getDrawable(R.drawable.icon_number_like);
         playNumDrawable.setBounds(0, 0, DataProcessUtil.dip2px(12), DataProcessUtil.dip2px(12));
         danmakuNumDrawable.setBounds(0, 0, DataProcessUtil.dip2px(12), DataProcessUtil.dip2px(12));
         ((TextView) rootLayout.findViewById(R.id.bgm_detail_play)).setCompoundDrawables(playNumDrawable, null, null, null);
