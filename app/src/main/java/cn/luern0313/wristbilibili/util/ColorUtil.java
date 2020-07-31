@@ -2,6 +2,7 @@ package cn.luern0313.wristbilibili.util;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 
 import androidx.annotation.AttrRes;
@@ -14,11 +15,15 @@ import cn.luern0313.wristbilibili.R;
 public class ColorUtil
 {
     public static @ColorInt int getColor(@AttrRes int attr, @ColorInt int defaultColor, Context context){
+        return getColor(attr, defaultColor, context.getTheme());
+    }
+
+    public static @ColorInt int getColor(@AttrRes int attr, @ColorInt int defaultColor, Resources.Theme theme){
         @ColorInt int result;
-        TypedArray array = context.getTheme().obtainStyledAttributes(new int[]
-        {
-            attr
-        });
+        TypedArray array = theme.obtainStyledAttributes(new int[]
+                {
+                        attr
+                });
         result = array.getColor(0, defaultColor);
         array.recycle();
         return result;
@@ -29,7 +34,7 @@ public class ColorUtil
         @SuppressLint("ResourceType")
         TypedArray array = context.getTheme().obtainStyledAttributes(attrs);
         for(int i = 0; i < results.length; i++) {
-            results[i] = array.getColor(0, defaultColors[i]);
+            results[i] = array.getColor(i, defaultColors[i]);
         }
         array.recycle();
         return results;

@@ -22,4 +22,5 @@
 
     <attr format="color" name="colorTitle"/>
     <attr format="color" name="colorDynamicShareBack"/>
+    <attr format="color" name="colorMenuIconBack"/>
 </resources>
