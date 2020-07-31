@@ -46,7 +46,8 @@ public class ThemeUtil {
     {
         new Theme("少女粉", R.color.mainColor, R.style.AppTheme, 0),
         new Theme("黑暗模式", R.color.colorPrimaryDarkNormal, R.style.DarkTheme, 1),
-        new Theme("天依蓝", R.color.mainColorBlue, R.style.BlueTheme, 2)
+        new Theme("天依蓝", R.color.mainColorBlue, R.style.BlueTheme, 2),
+        new Theme("初音绿", R.color.mainColorGreen, R.style.GreenTheme, 3)
     };
 
     private static final ArrayList<ThemeChangeListener> listenerList =

@@ -14,9 +14,17 @@
 
     <style name="BlueTheme" parent="AppTheme">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/primaryBlue</item>
+        <item name="colorPrimary">@color/colorPrimaryBlue</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/mainColorBlue</item>
+        <item name="android:windowBackground">@color/activityBG</item>
+    </style>
+
+    <style name="GreenTheme" parent="AppTheme">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimaryGreen</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/mainColorGreen</item>
         <item name="android:windowBackground">@color/activityBG</item>
     </style>
 

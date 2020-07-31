@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,7 +20,7 @@ public class ThemeActivity extends BaseActivity
     private static class ThemeViewHolder extends RecyclerView.ViewHolder
     {
         TextView nameView;
-        View colorView;
+        CardView colorView;
         View itemView;
         View checkView;
 
@@ -59,7 +60,7 @@ public class ThemeActivity extends BaseActivity
             public void onBindViewHolder(@NonNull ThemeViewHolder holder, int position)
             {
                 holder.nameView.setText(ThemeUtil.themes[position].name);
-                holder.colorView.setBackgroundColor(getResources().getColor(
+                holder.colorView.setCardBackgroundColor(getResources().getColor(
                         ThemeUtil.themes[position].previewColor));
                 holder.checkView.setVisibility(ThemeUtil.getCurrentThemePos() == position ?
                         View.VISIBLE : View.INVISIBLE);
