@@ -39,7 +39,7 @@ import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
  * fragment.....
  */
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends BaseActivity
 {
     Context ctx;
 

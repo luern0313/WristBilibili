@@ -10,16 +10,16 @@
         android:orientation="vertical">
 
         <RelativeLayout
-            android:id="@+id/join_title_layout"
+            android:id="@+id/theme_title_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/mainColor"
+            android:background="?attr/colorPrimary"
             android:gravity="center_vertical"
             android:paddingBottom="4dp"
             android:paddingTop="10dp">
 
             <TextView
-                android:id="@+id/join_title_title"
+                android:id="@+id/theme_title_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
@@ -28,11 +28,11 @@
                 android:textSize="13sp" />
 
             <ImageView
-                android:id="@+id/join_title_extraicon"
+                android:id="@+id/theme_title_extraicon"
                 android:layout_width="12dp"
                 android:layout_height="19dp"
                 android:layout_marginLeft="2dp"
-                android:layout_toLeftOf="@+id/join_title_title"
+                android:layout_toLeftOf="@+id/theme_title_text"
                 android:rotation="90"
                 android:src="@drawable/icon_extra" />
 

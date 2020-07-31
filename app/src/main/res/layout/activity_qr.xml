@@ -13,7 +13,7 @@
             android:id="@+id/qr_title_layout"
             android:layout_width="match_parent"
             android:layout_height="33dp"
-            android:background="@color/mainColor"
+            android:background="?attr/colorPrimary"
             android:gravity="center_vertical"
             android:onClick="loginTitle"
             android:paddingBottom="4dp"

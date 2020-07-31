@@ -39,7 +39,7 @@ import cn.luern0313.wristbilibili.models.VideoModel;
 import cn.luern0313.wristbilibili.service.DownloadService;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
-public class VideoActivity extends AppCompatActivity implements VideoDetailFragment.VideoDetailFragmentListener
+public class VideoActivity extends BaseActivity implements VideoDetailFragment.VideoDetailFragmentListener
 {
     Context ctx;
     Intent intent;

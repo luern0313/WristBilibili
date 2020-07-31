@@ -23,6 +23,7 @@ public class SharedPreferencesUtil
     public static String tailModel = "tailModel";
     public static String tailAuthor = "tailAuthor";
     public static String tipVd = "tip_vd";
+    public static String theme = "theme";
 
     private static SharedPreferences sharedPreferences = MyApplication.getContext().getSharedPreferences("default", Context.MODE_PRIVATE);
     private static SharedPreferences.Editor editor = sharedPreferences.edit();

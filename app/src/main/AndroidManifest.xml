@@ -76,6 +76,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.DynamicDetailActivity"/>
+        <activity android:name=".ui.ThemeActivity"/>
     </application>
 
 </manifest>

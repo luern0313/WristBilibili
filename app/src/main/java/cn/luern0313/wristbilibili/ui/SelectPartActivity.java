@@ -13,7 +13,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import cn.luern0313.wristbilibili.R;
 
-public class SelectPartActivity extends AppCompatActivity
+public class SelectPartActivity extends BaseActivity
 {
     Context ctx;
     Intent inIntent;

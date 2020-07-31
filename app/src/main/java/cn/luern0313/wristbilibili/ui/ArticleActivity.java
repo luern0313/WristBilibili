@@ -31,7 +31,7 @@ import cn.luern0313.wristbilibili.models.article.ArticleModel;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
 
-public class ArticleActivity extends AppCompatActivity implements ArticleDetailFragment.ArticleDetailFragmentListener
+public class ArticleActivity extends BaseActivity implements ArticleDetailFragment.ArticleDetailFragmentListener
 {
     Context ctx;
     Intent intent;

@@ -25,6 +25,7 @@ import cn.luern0313.wristbilibili.ui.SueActivity;
 import cn.luern0313.wristbilibili.ui.SupportActivity;
 import cn.luern0313.wristbilibili.ui.TailActivity;
 import cn.luern0313.wristbilibili.ui.TextActivity;
+import cn.luern0313.wristbilibili.ui.ThemeActivity;
 import cn.luern0313.wristbilibili.ui.VideoActivity;
 
 /**
@@ -46,7 +47,7 @@ public class SettingFragment extends Fragment
 
         setList = rootLayout.findViewById(R.id.set_listview);
 
-        final ArrayList<String> list = new ArrayList<String>(Arrays.asList("注销", "关注作者b站账号", "小尾巴设置", "发动态炫耀一下", "查看介绍视频", "支持作者", "关于开源", "更新日志", "联系作者", "关于"));
+        final ArrayList<String> list = new ArrayList<String>(Arrays.asList("注销", "关注作者b站账号", "主题设置", "小尾巴设置", "发动态炫耀一下", "查看介绍视频", "支持作者", "关于开源", "更新日志", "联系作者", "关于"));
         mAdapter mAdapter = new mAdapter(inflater, list);
         setList.setAdapter(mAdapter);
 
@@ -63,6 +64,11 @@ public class SettingFragment extends Fragment
                 else if(list.get(position).equals("关注作者b站账号"))
                 {
                     Intent intent = new Intent(ctx, FollowmeActivity.class);
+                    startActivity(intent);
+                }
+                else if(list.get(position).equals("主题设置"))
+                {
+                    Intent intent = new Intent(ctx, ThemeActivity.class);
                     startActivity(intent);
                 }
                 else if(list.get(position).equals("小尾巴设置"))
@@ -105,6 +111,10 @@ public class SettingFragment extends Fragment
                 {
                     Intent intent = new Intent(ctx, AboutActivity.class);
                     startActivity(intent);
+                }
+                else
+                {
+                    throw new AssertionError();
                 }
             }
         });

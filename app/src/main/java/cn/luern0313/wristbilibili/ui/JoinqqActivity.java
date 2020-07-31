@@ -5,7 +5,7 @@ import android.os.Bundle;
 
 import cn.luern0313.wristbilibili.R;
 
-public class JoinqqActivity extends AppCompatActivity
+public class JoinqqActivity extends BaseActivity
 {
     @Override
     protected void onCreate(Bundle savedInstanceState)

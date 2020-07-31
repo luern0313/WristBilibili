@@ -30,7 +30,7 @@ import cn.luern0313.wristbilibili.util.DataProcessUtil;
 import cn.luern0313.wristbilibili.util.ImageDownloaderUtil;
 import me.panpf.sketch.SketchImageView;
 
-public class ImgActivity extends AppCompatActivity
+public class ImgActivity extends BaseActivity
 {
     Context ctx;
     Intent intent;

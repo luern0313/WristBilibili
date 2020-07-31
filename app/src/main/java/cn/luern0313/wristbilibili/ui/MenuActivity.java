@@ -23,7 +23,7 @@ import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.UserInfoApi;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
-public class MenuActivity extends AppCompatActivity
+public class MenuActivity extends BaseActivity
 {
     Context ctx;
 

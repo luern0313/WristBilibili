@@ -25,7 +25,7 @@ import cn.luern0313.wristbilibili.api.FavorVideoApi;
 import cn.luern0313.wristbilibili.models.ListVideoModel;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
-public class FavorvideoActivity extends AppCompatActivity
+public class FavorvideoActivity extends BaseActivity
 {
     Context ctx;
     Intent intent;

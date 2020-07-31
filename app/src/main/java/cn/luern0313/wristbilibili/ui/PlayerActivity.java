@@ -19,7 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.OnlineVideoApi;
 
-public class PlayerActivity extends AppCompatActivity
+public class PlayerActivity extends BaseActivity
 {
     Context ctx;
     Intent intent;

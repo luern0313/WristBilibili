@@ -5,7 +5,7 @@ import android.os.Bundle;
 
 import cn.luern0313.wristbilibili.R;
 
-public class OpensourceActivity extends AppCompatActivity
+public class OpensourceActivity extends BaseActivity
 {
 
     @Override

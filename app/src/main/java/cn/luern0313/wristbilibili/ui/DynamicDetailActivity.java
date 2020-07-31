@@ -30,7 +30,7 @@ import cn.luern0313.wristbilibili.models.DynamicModel;
 import cn.luern0313.wristbilibili.util.MyApplication;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
-public class DynamicDetailActivity extends AppCompatActivity implements DynamicDetailFragment.DynamicDetailFragmentListener
+public class DynamicDetailActivity extends BaseActivity implements DynamicDetailFragment.DynamicDetailFragmentListener
 {
     Context ctx;
     LayoutInflater inflater;

@@ -20,4 +20,6 @@
         </attr>
     </declare-styleable>
 
+    <attr format="color" name="colorTitle"/>
+    <attr format="color" name="colorDynamicShareBack"/>
 </resources>

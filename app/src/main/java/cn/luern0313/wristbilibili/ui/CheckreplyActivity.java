@@ -12,7 +12,7 @@ import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.fragment.ReplyFragment;
 import cn.luern0313.wristbilibili.models.ReplyModel;
 
-public class CheckreplyActivity extends AppCompatActivity
+public class CheckreplyActivity extends BaseActivity
 {
     Context ctx;
     LayoutInflater inflater;

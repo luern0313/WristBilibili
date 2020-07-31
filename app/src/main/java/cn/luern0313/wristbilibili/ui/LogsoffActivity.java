@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
-public class LogsoffActivity extends AppCompatActivity
+public class LogsoffActivity extends BaseActivity
 {
     Context ctx;
     LinearLayout nologinLayout;
