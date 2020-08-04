@@ -19,6 +19,7 @@ import cn.luern0313.wristbilibili.adapter.AnimationTimelineAdapter;
 import cn.luern0313.wristbilibili.api.AnimationTimelineApi;
 import cn.luern0313.wristbilibili.models.AnimationTimelineModel;
 import cn.luern0313.wristbilibili.ui.BangumiActivity;
+import cn.luern0313.wristbilibili.util.ColorUtil;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
@@ -50,7 +51,8 @@ public class AnimationTimelineFragment extends Fragment
         arListView = rootLayout.findViewById(R.id.ar_listview);
         waveSwipeRefreshLayout = rootLayout.findViewById(R.id.ar_swipe);
         waveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
-        waveSwipeRefreshLayout.setWaveColor(Color.argb(255, 250, 114, 152));
+        waveSwipeRefreshLayout.setWaveColor(ColorUtil.getColor(R.attr.colorPrimary, R.color.mainColor,
+                getContext()));
         waveSwipeRefreshLayout.setOnRefreshListener(new WaveSwipeRefreshLayout.OnRefreshListener()
         {
             @Override

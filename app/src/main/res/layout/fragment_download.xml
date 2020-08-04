@@ -18,7 +18,7 @@
         android:id="@+id/dl_nothing"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
+        android:background="?android:attr/colorBackground"
         android:gravity="center"
         android:orientation="vertical"
         android:paddingBottom="33dp"
@@ -65,7 +65,7 @@
         android:id="@+id/dl_loading"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
+        android:background="?android:attr/colorBackground"
         android:gravity="center"
         android:orientation="vertical"
         android:paddingBottom="20dp">

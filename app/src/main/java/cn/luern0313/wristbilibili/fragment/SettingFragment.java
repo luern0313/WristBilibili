@@ -31,6 +31,8 @@ import cn.luern0313.wristbilibili.ui.VideoActivity;
 /**
  * Created by liupe on 2018/11/15.
  * 说是设置。。好像没有真的可以设置的东西。。
+ * 有了主题
+ * -- by fifth_light
  */
 
 public class SettingFragment extends Fragment

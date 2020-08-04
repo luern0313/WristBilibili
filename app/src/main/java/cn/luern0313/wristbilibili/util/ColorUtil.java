@@ -9,13 +9,14 @@ import androidx.annotation.AttrRes;
 import androidx.annotation.ColorInt;
 import androidx.annotation.ColorRes;
 import androidx.annotation.StyleableRes;
+import androidx.core.content.ContextCompat;
 
 import cn.luern0313.wristbilibili.R;
 
 public class ColorUtil
 {
-    public static @ColorInt int getColor(@AttrRes int attr, @ColorInt int defaultColor, Context context){
-        return getColor(attr, defaultColor, context.getTheme());
+    public static @ColorInt int getColor(@AttrRes int attr, @ColorRes int defaultColorRes, Context context){
+        return getColor(attr, ContextCompat.getColor(context, defaultColorRes), context.getTheme());
     }
 
     public static @ColorInt int getColor(@AttrRes int attr, @ColorInt int defaultColor, Resources.Theme theme){

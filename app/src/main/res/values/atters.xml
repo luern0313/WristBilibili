@@ -21,6 +21,6 @@
     </declare-styleable>
 
     <attr format="color" name="colorTitle"/>
-    <attr format="color" name="colorDynamicShareBack"/>
+    <attr format="color" name="colorLayerBack"/>
     <attr format="color" name="colorMenuIconBack"/>
 </resources>

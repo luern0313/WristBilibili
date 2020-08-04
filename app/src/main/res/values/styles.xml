@@ -8,8 +8,9 @@
         <item name="android:windowBackground">@color/activityBG</item>
         <item name="android:textColor">?android:attr/colorForeground</item>
         <item name="android:colorForeground">@color/gray_77</item>
+        <item name="android:textColorHint">@color/gray_44</item>
         <item name="colorTitle">@color/gray_44</item>
-        <item name="colorDynamicShareBack">@color/gray_ee</item>
+        <item name="colorLayerBack">@color/gray_ee</item>
         <item name="colorMenuIconBack">@color/pink_light</item>
     </style>
 
@@ -40,8 +41,9 @@
         <item name="android:windowBackground">@color/bgDark</item>
         <item name="android:colorBackground">@color/bgDark</item>
         <item name="android:colorForeground">@color/colorForeDark</item>
+        <item name="android:textColorHint">@color/gray_77</item>
         <item name="colorTitle">@color/gray_aa</item>
-        <item name="colorDynamicShareBack">@color/gray_44</item>
+        <item name="colorLayerBack">@color/gray_44</item>
         <item name="colorMenuIconBack">?attr/colorPrimaryDark</item>
     </style>
 

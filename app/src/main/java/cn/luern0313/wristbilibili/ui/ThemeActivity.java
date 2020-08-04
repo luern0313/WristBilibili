@@ -82,7 +82,7 @@ public class ThemeActivity extends AppCompatActivity
                     public void onClick(View v)
                     {
                         @ColorInt int prevBack = ColorUtil.getColor(android.R.attr.colorBackground,
-                                getResources().getColor(R.color.activityBG), rv.getContext());
+                                R.color.activityBG, rv.getContext());
                         ThemeUtil.changeCurrentTheme(ThemeUtil.themes[finalPos]);
                         ThemeUtil.changeTheme(rv.getContext(),
                                 ThemeUtil.getCurrentTheme());
