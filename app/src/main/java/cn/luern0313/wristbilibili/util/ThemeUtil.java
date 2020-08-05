@@ -34,9 +34,24 @@ public class ThemeUtil {
         public int getStyle() {
             return style;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Theme theme = (Theme) o;
+
+            return id == theme.id;
+        }
+
+        @Override
+        public int hashCode() {
+            return id;
+        }
     }
 
-    public static interface ThemeChangeListener {
+    public interface ThemeChangeListener {
         void onThemeChange();
     }
 

@@ -98,7 +98,7 @@ public class ThemeActivity extends AppCompatActivity
                         primary = colors[0];
                         back = colors[1];
                         fore = colors[2];
-                        animate((ViewGroup) findViewById(R.id.theme_root), "backgroundColor",
+                        animate((ViewGroup) findViewById(R.id.theme_list), "backgroundColor",
                                 prevBack, back);
                         changeTheme((ViewGroup) findViewById(R.id.theme_root));
                         notifyDataSetChanged();
@@ -124,15 +124,11 @@ public class ThemeActivity extends AppCompatActivity
             {
                 changeTheme((ViewGroup) v);
             }
-            switch (v.getId())
-            {
-                case R.id.theme_title_layout:
-                    animate(v, "backgroundColor", ((ColorDrawable) v.getBackground()).getColor(), primary);
-                    break;
-                case R.id.theme_item_name:
-                    assert v instanceof TextView;
-                    animate(v, "textColor", ((TextView) v).getTextColors().getDefaultColor(), fore);
-                    break;
+            if(v.getId() == R.id.theme_title_layout) {
+                animate(v, "backgroundColor", ((ColorDrawable) v.getBackground()).getColor(), primary);
+            } else if (v.getId() == R.id.theme_item_name) {
+                assert v instanceof TextView;
+                animate(v, "textColor", ((TextView) v).getTextColors().getDefaultColor(), fore);
             }
         }
     }
@@ -141,7 +137,7 @@ public class ThemeActivity extends AppCompatActivity
     {
         ObjectAnimator animator = ObjectAnimator.ofArgb(view, name, from, to);
         animator.setInterpolator(new AccelerateDecelerateInterpolator());
-        animator.setDuration(300);
+        animator.setDuration(1000);
         animator.start();
     }
 }
