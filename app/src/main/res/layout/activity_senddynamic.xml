@@ -57,11 +57,11 @@
                 android:id="@+id/senddy_share"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/gray_da"
-                android:paddingBottom="6dp"
+                android:background="?attr/colorLayerBack"
                 android:paddingLeft="24dp"
-                android:paddingRight="24dp"
                 android:paddingTop="6dp"
+                android:paddingRight="24dp"
+                android:paddingBottom="6dp"
                 android:visibility="gone">
 
                 <TextView

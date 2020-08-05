@@ -67,7 +67,7 @@
                     android:layout_centerHorizontal="false"
                     android:gravity="center"
                     android:text="打开哔哩哔哩客户端 - 扫一扫"
-                    android:textColor="@color/mainColor"
+                    android:textColor="?attr/colorAccent"
                     android:textSize="12sp" />
 
                 <ImageView
@@ -87,7 +87,7 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_marginBottom="10dp"
                     android:layout_marginTop="8dp"
-                    android:src="@drawable/img_qrloading" />
+                    android:src="@drawable/ic_qrloading" />
 
                 <ImageView
                     android:id="@+id/login_qrerr"
@@ -105,7 +105,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_below="@+id/login_change_mode"
-                android:background="@color/activityBG"
+                android:background="?android:attr/colorBackground"
                 android:orientation="vertical"
                 android:paddingLeft="22dp"
                 android:paddingRight="22dp"

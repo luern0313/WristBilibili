@@ -8,7 +8,7 @@
         android:id="@+id/user_video_loading"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
+        android:background="?android:attr/colorBackground"
         android:gravity="center"
         android:orientation="vertical"
         android:paddingBottom="33dp">
@@ -55,7 +55,7 @@
         android:id="@+id/user_video_nonthing"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/activityBG"
+        android:background="?android:attr/colorBackground"
         android:clickable="true"
         android:focusable="true"
         android:gravity="center"

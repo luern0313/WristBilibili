@@ -57,7 +57,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="8dp"
             android:layout_marginTop="6dp"
-            android:src="@drawable/img_qrloading" />
+            android:src="@drawable/ic_qrloading"/>
 
         <TextView
             android:id="@+id/qr_tip2"

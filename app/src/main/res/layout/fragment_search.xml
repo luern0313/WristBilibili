@@ -28,7 +28,7 @@
         android:id="@+id/sea_listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
+        android:background="?android:attr/colorBackground"
         android:divider="@color/alpha"
         android:dividerHeight="2dp"
         android:paddingTop="34dp"
@@ -38,12 +38,12 @@
         android:id="@+id/sea_noweb"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
+        android:background="?android:attr/colorBackground"
         android:clickable="true"
         android:gravity="center"
         android:orientation="vertical"
-        android:paddingBottom="20dp"
         android:paddingTop="32dp"
+        android:paddingBottom="20dp"
         android:visibility="gone">
 
         <ImageView
@@ -58,12 +58,12 @@
         android:id="@+id/sea_searching"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
+        android:background="?android:attr/colorBackground"
         android:clickable="true"
         android:gravity="center"
         android:orientation="vertical"
-        android:paddingBottom="20dp"
         android:paddingTop="32dp"
+        android:paddingBottom="20dp"
         android:visibility="gone">
 
         <ImageView
@@ -78,12 +78,12 @@
         android:id="@+id/sea_nonthing"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
+        android:background="?android:attr/colorBackground"
         android:clickable="true"
         android:gravity="center"
         android:orientation="vertical"
-        android:paddingBottom="20dp"
         android:paddingTop="32dp"
+        android:paddingBottom="20dp"
         android:visibility="gone">
 
         <ImageView
