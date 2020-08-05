@@ -79,7 +79,7 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_alignParentRight="true"
-                    android:src="@drawable/icon_voiceinput_search" />
+                    android:src="@drawable/ic_voiceinput_search" />
 
                 <EditText
                     android:id="@+id/tail_preview"

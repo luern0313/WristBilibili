@@ -12,6 +12,7 @@
         <item name="colorTitle">@color/gray_44</item>
         <item name="colorLayerBack">@color/gray_ee</item>
         <item name="colorMenuIconBack">@color/pink_light</item>
+        <item name="colorAccentForeground">@color/white</item>
     </style>
 
     <style name="BlueTheme" parent="AppTheme">

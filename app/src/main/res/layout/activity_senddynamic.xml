@@ -112,17 +112,21 @@
                 android:layout_marginTop="8dp"
                 android:orientation="horizontal">
 
-                <Button
+                <ImageButton
                     android:layout_width="42dp"
                     android:layout_height="42dp"
                     android:layout_marginRight="32dp"
-                    android:background="@drawable/icon_reply_voiceinput"
+                    android:src="@drawable/ic_reply_voiceinput"
+                    android:scaleType="fitCenter"
+                    android:background="@color/alpha"
                     android:onClick="senddy_clickVoiceInput" />
 
-                <Button
+                <ImageButton
                     android:layout_width="42dp"
                     android:layout_height="42dp"
-                    android:background="@drawable/icon_reply_send"
+                    android:src="@drawable/ic_reply_send"
+                    android:scaleType="fitCenter"
+                    android:background="@color/alpha"
                     android:onClick="senddy_clickSend" />
 
             </LinearLayout>
