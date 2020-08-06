@@ -18,7 +18,8 @@ import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.adapter.FavorBoxAdapter;
 import cn.luern0313.wristbilibili.api.FavorBoxApi;
 import cn.luern0313.wristbilibili.models.FavorBoxModel;
-import cn.luern0313.wristbilibili.ui.FavorvideoActivity;
+import cn.luern0313.wristbilibili.ui.FavorArticleActivity;
+import cn.luern0313.wristbilibili.ui.FavorVideoActivity;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
@@ -35,7 +36,7 @@ public class FavorBoxFragment extends Fragment
     private Context ctx;
     private String mid;
     private FavorBoxApi favorBoxApi;
-    private ArrayList<FavorBoxModel> favourboxArrayList;
+    private ArrayList<FavorBoxModel> favorBoxArrayList;
     private FavorBoxAdapter.FavorBoxAdapterListener favorBoxAdapterListener;
 
     private View rootLayout;

@@ -1,41 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/fav_nologin"
+    <RelativeLayout
+        android:id="@+id/favv_title_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clickable="true"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:paddingBottom="33dp"
-        android:visibility="gone">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="92dp"
-            android:padding="6dp"
-            android:src="@drawable/img_nologin" />
+        android:layout_height="wrap_content"
+        android:background="@color/mainColor"
+        android:gravity="center_vertical"
+        android:paddingTop="10dp"
+        android:paddingBottom="4dp">
 
         <TextView
+            android:id="@+id/favv_title_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="你好像还没有登录...\n点上面的按钮试试吧"
-            android:textSize="13sp" />
+            android:layout_centerHorizontal="true"
+            android:text="收藏夹"
+            android:textColor="@color/white" />
 
-    </LinearLayout>
+        <ImageView
+            android:id="@+id/favv_title_extraicon"
+            android:layout_width="12dp"
+            android:layout_height="19dp"
+            android:layout_marginStart="2dp"
+            android:layout_toStartOf="@+id/favv_title_title"
+            android:rotation="90"
+            android:src="@drawable/icon_extra" />
+    </RelativeLayout>
 
     <LinearLayout
-        android:id="@+id/fav_noweb"
+        android:id="@+id/favv_noweb"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@+id/favv_title_layout"
+        android:background="@color/activityBG"
         android:clickable="true"
+        android:focusable="true"
         android:gravity="center"
         android:orientation="vertical"
-        android:paddingBottom="33dp"
+        android:paddingBottom="20dp"
         android:visibility="gone">
 
         <ImageView
@@ -47,19 +52,21 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="好像没有网络...\n检查一下网络连接？"
+            android:text="@string/main_tip_no_web"
             android:textSize="13sp" />
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/fav_nonthing"
+        android:id="@+id/favv_nonthing"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/activityBG"
+        android:layout_below="@+id/favv_title_layout"
+        android:background="@color/white"
         android:clickable="true"
+        android:focusable="true"
         android:gravity="center"
         android:orientation="vertical"
-        android:paddingBottom="33dp"
+        android:paddingBottom="20dp"
         android:visibility="gone">
 
         <ImageView
@@ -71,24 +78,21 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="这里什么也没有. . ." />
+            android:text="@string/main_tip_no_data" />
 
     </LinearLayout>
 
     <jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout
-        android:id="@+id/fav_swipe"
+        android:id="@+id/favv_swipe"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_below="@+id/favv_title_layout">
 
         <ListView
-            android:id="@+id/fav_listview"
+            android:id="@+id/favv_listview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:divider="@color/alpha"
-            android:dividerHeight="1dp"
-            android:paddingBottom="22dp" />
+            android:divider="@null" />
     </jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout>
-
 
 </RelativeLayout>

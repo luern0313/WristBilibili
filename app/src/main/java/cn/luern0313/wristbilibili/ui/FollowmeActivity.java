@@ -179,7 +179,7 @@ public class FollowmeActivity extends AppCompatActivity
             public void onClick(View v)
             {
                 if(videoDetail != null)
-                    startActivity(VideoActivity.getActivityIntent(ctx, videoDetail.aid, ""));
+                    startActivity(VideoActivity.getActivityIntent(ctx, "", videoDetail.bvid));
             }
         });
 

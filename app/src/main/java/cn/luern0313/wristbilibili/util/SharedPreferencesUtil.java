@@ -12,6 +12,7 @@ public class SharedPreferencesUtil
     public static String mid = "mid";
     public static String csrf = "csrf";
     public static String accessKey = "access_key";
+    public static String refreshToken = "refresh_token";
     public static String firstPickUp = "firstPickUp";
     public static String ver = "ver";
     public static String userName = "userName";

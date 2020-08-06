@@ -3,10 +3,14 @@
     android:id="@+id/favor_lay"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:paddingBottom="2dp"
+    android:background="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:descendantFocusability="blocksDescendants"
+    android:focusable="true"
     android:paddingLeft="19dp"
+    android:paddingTop="2dp"
     android:paddingRight="19dp"
-    android:paddingTop="2dp">
+    android:paddingBottom="2dp">
 
     <ImageView
         android:id="@+id/favor_img"
@@ -30,8 +34,8 @@
             android:id="@+id/favor_countt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
             android:layout_marginTop="1dp"
+            android:layout_marginBottom="4dp"
             android:textColor="#e0e0e0"
             android:textSize="11sp" />
 
@@ -54,9 +58,9 @@
             android:id="@+id/favor_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="6dp"
             android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
+            android:layout_marginBottom="6dp"
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="@color/gray_44" />

@@ -131,7 +131,7 @@ public class FavorBoxAdapter extends BaseAdapter
         TextView count;
     }
 
-    BitmapDrawable setImageFormWeb(String url)
+    private BitmapDrawable setImageFormWeb(String url)
     {
         if(mImageCache.get(url) != null)
         {

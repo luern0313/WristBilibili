@@ -1,1 +1,2 @@
-include ':app'
+include ':app', ':Lson'
+project(':Lson').projectDir = new File('../Lson')

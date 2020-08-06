@@ -6,8 +6,10 @@ import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -55,10 +57,7 @@ public class ArticleActivity extends AppCompatActivity implements ArticleDetailF
     AnimationDrawable loadingImgAnim;
 
     Handler handler = new Handler();
-    Runnable runnableUi;
-    Runnable runnableNoWeb;
-    Runnable runnableNodata;
-    Runnable runnableLoadingFin;
+    Runnable runnableUi, runnableNoWeb, runnableNodata, runnableLoadingFin;
 
     final private int RESULT_DETAIL_SHARE = 101;
     @Override
@@ -69,6 +68,10 @@ public class ArticleActivity extends AppCompatActivity implements ArticleDetailF
         ctx = this;
         intent = getIntent();
         article_id = intent.getStringExtra("article_id");
+
+        WindowManager manager = this.getWindowManager();
+        DisplayMetrics outMetrics = new DisplayMetrics();
+        manager.getDefaultDisplay().getMetrics(outMetrics);
 
         inflater = getLayoutInflater();
         layoutReplyLoading = inflater.inflate(R.layout.widget_loading, null);
@@ -81,7 +84,7 @@ public class ArticleActivity extends AppCompatActivity implements ArticleDetailF
         uiNoWeb = findViewById(R.id.art_noweb);
 
         isLogin = SharedPreferencesUtil.contains(SharedPreferencesUtil.cookies);
-        articleApi = new ArticleApi(article_id);
+        articleApi = new ArticleApi(article_id, outMetrics.widthPixels);
 
         uiLoadingImg.setImageResource(R.drawable.anim_loading);
         loadingImgAnim = (AnimationDrawable) uiLoadingImg.getDrawable();

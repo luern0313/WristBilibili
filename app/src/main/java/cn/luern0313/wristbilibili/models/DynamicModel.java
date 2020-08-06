@@ -47,7 +47,7 @@ public class DynamicModel implements Serializable
 
     private boolean cardUserLike;
 
-    private HashMap<String, Integer> cardEmoteSize = new HashMap<String, Integer>();
+    private HashMap<String, Integer> cardEmoteSize = new HashMap<>();
 
     public DynamicModel(){}
 
@@ -545,8 +545,7 @@ public class DynamicModel implements Serializable
                     if(textNode.getWholeText().contains(key))
                     {
                         cardEmoteSize.put(emoteJson.optString("url"), emoteJson.has("meta") ? emoteJson.optJSONObject("meta").optInt("size") : 1);
-                        textNode.before(textNode.getWholeText().substring(0, textNode.getWholeText()
-                                .indexOf(key)));
+                        textNode.before(textNode.getWholeText().substring(0, textNode.getWholeText().indexOf(key)));
                         textNode.before(tag);
                         textNode.text(textNode.getWholeText().substring(textNode.getWholeText().indexOf(key) + key.length()));
                         textNodes = document.textNodes();

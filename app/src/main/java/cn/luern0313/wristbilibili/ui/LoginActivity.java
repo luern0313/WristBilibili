@@ -213,6 +213,7 @@ public class LoginActivity extends AppCompatActivity
                             cookies = new StringBuilder(cookies.substring(0, cookies.length() - 2));
 
                             SharedPreferencesUtil.putString(SharedPreferencesUtil.accessKey, userLoginApi.getAccessKey(cookies.toString()));
+                            SharedPreferencesUtil.putString(SharedPreferencesUtil.refreshToken, userLoginApi.getAccessKey(cookies.toString()));
                             SharedPreferencesUtil.putString(SharedPreferencesUtil.cookies, cookies.toString());
                             SharedPreferencesUtil.putString(SharedPreferencesUtil.mid, getInfoFromCookie("DedeUserID", cookies.toString()));
                             SharedPreferencesUtil.putString(SharedPreferencesUtil.csrf, getInfoFromCookie("bili_jct", cookies.toString()));

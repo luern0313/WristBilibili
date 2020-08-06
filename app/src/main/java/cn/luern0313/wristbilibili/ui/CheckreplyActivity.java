@@ -20,8 +20,6 @@ public class CheckreplyActivity extends AppCompatActivity
     ReplyModel root;
     int position;
 
-    private FragmentManager fm;
-    private FragmentTransaction transaction;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -33,8 +31,8 @@ public class CheckreplyActivity extends AppCompatActivity
         root = intent.hasExtra("root") ? (ReplyModel) intent.getSerializableExtra("root") : null;
         position = intent.getIntExtra("position", -1);
 
-        fm = getSupportFragmentManager();
-        transaction = fm.beginTransaction();
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction transaction = fm.beginTransaction();
         transaction.replace(R.id.cr_frame, ReplyFragment.newInstance(intent.getStringExtra("oid"), intent.getStringExtra("type"), root, position));
         transaction.commit();
     }

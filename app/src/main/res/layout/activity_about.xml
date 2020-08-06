@@ -55,7 +55,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="腕上哔哩v3.0"
+                android:text="腕上哔哩v3.1"
                 android:textStyle="bold" />
 
             <TextView

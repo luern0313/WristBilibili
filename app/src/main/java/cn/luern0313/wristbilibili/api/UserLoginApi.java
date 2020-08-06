@@ -3,6 +3,7 @@ package cn.luern0313.wristbilibili.api;
 import android.graphics.Bitmap;
 import android.util.Base64;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -75,17 +76,17 @@ public class UserLoginApi
             name = URLEncoder.encode(name, "UTF-8");
             pw = URLEncoder.encode(pw, "UTF-8");
 
-            String url = "https://passport.bilibili.com/api/oauth2/login";
+            String url = "https://passport.bilibili.com/api/v3/oauth2/login";
             ArrayList<String> headers = new ArrayList<String>()
             {{
                 add("Referer"); add("http://www.bilibili.com/");
                 add("Cookie"); add("sid=" + sid);
-                add("User-Agent"); add("");
+                add("User-Agent"); add("Mozilla/5.0 (Windows NT 10.0; Win64; x64; WebView/3.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36 Edge/18.18363");
             }};
-            String temp_params = "appkey=" + ConfInfoApi.getBConf("appkey") + "&build=" + ConfInfoApi.getBConf("build") +
-                    "&captcha=&mobi_app=" + ConfInfoApi.getBConf("mobi_app") + "&password=" + pw + "&platform=" +
-                    ConfInfoApi.getBConf("platform") + "&ts=" + (int) (System.currentTimeMillis() / 1000) + "&username=" + name;
-            String sign = ConfInfoApi.calc_sign(temp_params, ConfInfoApi.getBConf("app_secret"));
+            String temp_params = "appkey=" + ConfInfoApi.getTVConf("appkey") + "&build=" + ConfInfoApi.getTVConf("build") +
+                    "&captcha=&mobi_app=" + ConfInfoApi.getTVConf("mobi_app") + "&password=" + pw + "&platform=" +
+                    ConfInfoApi.getTVConf("platform") + "&ts=" + (int) (System.currentTimeMillis() / 1000) + "&username=" + name;
+            String sign = ConfInfoApi.calc_sign(temp_params, ConfInfoApi.getTVConf("app_secret"));
             JSONObject loginResult = new JSONObject(NetWorkUtil.post(url, temp_params + "&sign=" + sign, headers).body().string());
 
             if(loginResult.getInt("code") == -629) return "账号或密码错误";
@@ -93,13 +94,30 @@ public class UserLoginApi
             else if(loginResult.getInt("code") != 0) return loginResult.getInt("code") + "错误，请使用扫码登录";
 
             JSONObject resultJSON = loginResult.optJSONObject("data");
-            String access_token = resultJSON.getString("access_token");
-            String cookie = getCookie(access_token);
+            JSONObject tokenJSON = resultJSON.has("token_info") ? resultJSON.optJSONObject("token_info") : new JSONObject();
+
+            JSONArray cookieJSON = resultJSON.optJSONObject("cookie_info").getJSONArray("cookies");
+            String access_token = tokenJSON.optString("access_token");
+            String refresh_token = tokenJSON.optString("refresh_token");
+            StringBuilder cookie = new StringBuilder();
+            for (int i = 0; i < cookieJSON.length(); i++)
+            {
+                if(i != 0)
+                    cookie.append("; ");
+                JSONObject c = cookieJSON.getJSONObject(i);
+                cookie.append(c.getString("name")).append("=").append(c.getString("value"));
+                if(c.getString("name").equals("DedeUserID"))
+                    SharedPreferencesUtil.putString(SharedPreferencesUtil.mid, c.getString("value"));
+                else if(c.getString("name").equals("bili_jct"))
+                    SharedPreferencesUtil.putString(SharedPreferencesUtil.csrf, c.getString("value"));
+            }
+            /*String cookie = getCookie(access_token);
             if(cookie.equals(""))
-                return "未知错误，请使用扫码登录";
+                return "未知错误，请使用扫码登录";*/
 
             SharedPreferencesUtil.putString(SharedPreferencesUtil.accessKey, access_token);
-            SharedPreferencesUtil.putString(SharedPreferencesUtil.cookies, cookie);
+            SharedPreferencesUtil.putString(SharedPreferencesUtil.refreshToken, refresh_token);
+            SharedPreferencesUtil.putString(SharedPreferencesUtil.cookies, cookie.toString());
             return "";
         }
         catch (IOException e)
@@ -127,11 +145,11 @@ public class UserLoginApi
                 add("Referer"); add("http://www.bilibili.com/");
                 add("Connection"); add("Keep-Alive");
             }};
-            String temp_params = "access_key=" + access_key + "&appkey=" + ConfInfoApi.getBConf("appkey") +
-                    "&build=" + ConfInfoApi.getBConf("build") + "&gourl=" + URLEncoder.encode("https://account.bilibili.com/account/home", "utf-8") +
-                    "&mobi_app=" + ConfInfoApi.getBConf("mobi_app") + "&platform=" + ConfInfoApi.getBConf("platform") +
+            String temp_params = "access_key=" + access_key + "&appkey=" + ConfInfoApi.getTVConf("appkey") +
+                    "&build=" + ConfInfoApi.getTVConf("build") + "&gourl=" + URLEncoder.encode("https://account.bilibili.com/account/home", "utf-8") +
+                    "&mobi_app=" + ConfInfoApi.getTVConf("mobi_app") + "&platform=" + ConfInfoApi.getTVConf("platform") +
                     "&ts=" + (int) (System.currentTimeMillis() / 1000);
-            String sign = ConfInfoApi.calc_sign(temp_params, ConfInfoApi.getBConf("app_secret"));
+            String sign = ConfInfoApi.calc_sign(temp_params, ConfInfoApi.getTVConf("app_secret"));
 
             OkHttpClient client = new OkHttpClient.Builder().connectTimeout(15, TimeUnit.SECONDS)
                     .followRedirects(false).readTimeout(15, TimeUnit.SECONDS).build();
@@ -184,9 +202,9 @@ public class UserLoginApi
             }};
 
             String url = "https://passport.bilibili.com/api/oauth2/getKey";
-            String temp_per = "appkey=" + ConfInfoApi.getBConf("appkey");
-            String sign = ConfInfoApi.calc_sign(temp_per, ConfInfoApi.getBConf("app_secret"));
-            Response response = NetWorkUtil.post(url, "appkey=" + ConfInfoApi.getBConf("appkey") + "&sign=" + sign, headers);
+            String temp_per = "appkey=" + ConfInfoApi.getTVConf("appkey");
+            String sign = ConfInfoApi.calc_sign(temp_per, ConfInfoApi.getTVConf("app_secret"));
+            Response response = NetWorkUtil.post(url, "appkey=" + ConfInfoApi.getTVConf("appkey") + "&sign=" + sign, headers);
             sid = response.header("set-header");
             return new JSONObject(response.body().string()).getJSONObject("data");
         }

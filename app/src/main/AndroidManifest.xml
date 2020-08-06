@@ -22,6 +22,7 @@
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup"
         tools:targetApi="n">
+        <activity android:name=".ui.FavorArticleActivity"></activity>
 
         <meta-data
             android:name="com.google.android.wearable.standalone"
@@ -51,7 +52,7 @@
         <activity android:name=".ui.QRActivity" />
         <activity android:name=".ui.ImgActivity" />
         <activity android:name=".ui.LogsoffActivity" />
-        <activity android:name=".ui.FavorvideoActivity" />
+        <activity android:name=".ui.FavorVideoActivity" />
         <activity android:name=".ui.UserActivity" />
         <activity android:name=".ui.SueActivity" />
         <activity android:name=".ui.ReplyActivity" />
@@ -75,7 +76,7 @@
                 <data android:scheme="https" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.DynamicDetailActivity"/>
+        <activity android:name=".ui.DynamicDetailActivity" />
     </application>
 
 </manifest>

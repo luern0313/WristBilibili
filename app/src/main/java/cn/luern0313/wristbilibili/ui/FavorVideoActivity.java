@@ -25,7 +25,7 @@ import cn.luern0313.wristbilibili.api.FavorVideoApi;
 import cn.luern0313.wristbilibili.models.ListVideoModel;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
-public class FavorvideoActivity extends AppCompatActivity
+public class FavorVideoActivity extends AppCompatActivity
 {
     Context ctx;
     Intent intent;
@@ -52,7 +52,7 @@ public class FavorvideoActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_favorvideo);
+        setContentView(R.layout.activity_favor_video);
         ctx = this;
         intent = getIntent();
         inflater = getLayoutInflater();
@@ -72,8 +72,8 @@ public class FavorvideoActivity extends AppCompatActivity
             public void onListVideoAdapterLongClick(int viewId, final int position)
             {
                 new AlertDialog.Builder(ctx)
-                        .setMessage("你确定要取消收藏这个视频吗？")
-                        .setPositiveButton("确定", new DialogInterface.OnClickListener()
+                        .setMessage(ctx.getString(R.string.favor_video_delete_message))
+                        .setPositiveButton(ctx.getString(R.string.favor_video_delete_ok), new DialogInterface.OnClickListener()
                         {
                             @Override
                             public void onClick(DialogInterface dialog, int which)
@@ -91,15 +91,14 @@ public class FavorvideoActivity extends AppCompatActivity
                                                 favorvideoList.remove(position);
                                                 handler.post(runnableMore);
                                                 Looper.prepare();
-                                                Toast.makeText(ctx, "取消收藏成功！", Toast.LENGTH_SHORT).show();
-                                                Looper.loop();
+                                                Toast.makeText(ctx, ctx.getString(R.string.favor_video_delete_message), Toast.LENGTH_SHORT).show();
                                             }
                                             else
                                             {
                                                 Looper.prepare();
                                                 Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
-                                                Looper.loop();
                                             }
+                                            Looper.loop();
                                         }
                                         catch(IOException e)
                                         {
@@ -108,7 +107,7 @@ public class FavorvideoActivity extends AppCompatActivity
                                     }
                                 }).start();
                             }
-                        }).setNegativeButton("取消", null).show();
+                        }).setNegativeButton(ctx.getString(R.string.favor_video_delete_cancel), null).show();
             }
         };
 
@@ -179,7 +178,7 @@ public class FavorvideoActivity extends AppCompatActivity
             @Override
             public void run()
             {
-                ((TextView) loadingView.findViewById(R.id.wid_load_text)).setText("好像没有网络...\n检查下网络？");
+                ((TextView) loadingView.findViewById(R.id.wid_load_text)).setText(ctx.getString(R.string.main_tip_no_more_web));
                 loadingView.findViewById(R.id.wid_load_button).setVisibility(View.VISIBLE);
             }
         };
@@ -189,7 +188,7 @@ public class FavorvideoActivity extends AppCompatActivity
             @Override
             public void run()
             {
-                ((TextView) loadingView.findViewById(R.id.wid_load_text)).setText("  没有更多了...");
+                ((TextView) loadingView.findViewById(R.id.wid_load_text)).setText(ctx.getString(R.string.main_tip_no_more_data));
             }
         };
 
@@ -208,7 +207,7 @@ public class FavorvideoActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                ((TextView) loadingView.findViewById(R.id.wid_load_text)).setText(" 加载中. . .");
+                ((TextView) loadingView.findViewById(R.id.wid_load_text)).setText(ctx.getString(R.string.main_tip_no_more_data_loading));
                 loadingView.findViewById(R.id.wid_load_button).setVisibility(View.GONE);
                 getMoreFavorVideo();
             }

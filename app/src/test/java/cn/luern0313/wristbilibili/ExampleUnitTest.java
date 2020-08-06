@@ -2,6 +2,20 @@ package cn.luern0313.wristbilibili;
 
 import org.junit.Test;
 
+import java.lang.annotation.Annotation;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.util.ArrayList;
+
+import cn.luern0313.lson.LsonDefinedAnnotation;
+import cn.luern0313.lson.LsonParser;
+import cn.luern0313.lson.LsonUtil;
+import cn.luern0313.lson.annotation.LsonPath;
+import lombok.SneakyThrows;
+import lombok.ToString;
+
 /**
  * Example local unit test, which will execute on the development machine (host).
  *
@@ -9,28 +23,42 @@ import org.junit.Test;
  */
 public class ExampleUnitTest
 {
+    @SneakyThrows
     @Test
-    public void test() throws InterruptedException
+    public void test()
     {
-        Person p = new Student();
-        p.a();
+        String json = "{\"a\": [\"111\", \"222\"]}";
+        LsonUtil.setLsonAnnotationListener(new E());
+        A a = LsonUtil.fromJson(LsonParser.parseString(json), A.class);
+        System.out.println();
+        System.out.println(a.a.get(0));
+        System.out.println(a.a.get(1));
     }
 
-    public class Person
+    class E implements LsonUtil.LsonAnnotationListener
     {
-        void a()
+        @Override
+        public Object handleAnnotation(Object value, Annotation annotation)
         {
-            System.out.println("1");
+            System.out.println((String) value);
+            return "7777";
         }
     }
 
-    public class Student extends Person
+    @ToString
+    public static class A
     {
-        void a()
-        {
-            System.out.println("1");
-        }
+        @Q("A")
+        @LsonPath("a")
+        private ArrayList<String> a;
     }
 
+    @Target(ElementType.FIELD)
+    @Retention(RetentionPolicy.RUNTIME)
+    @LsonDefinedAnnotation
+    public @interface Q
+    {
+        String value();
+    }
 
 }

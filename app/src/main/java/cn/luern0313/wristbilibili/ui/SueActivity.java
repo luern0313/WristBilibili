@@ -52,6 +52,15 @@ public class SueActivity extends AppCompatActivity
                 uiLoading.setVisibility(View.GONE);
             }
         };
+
+        findViewById(R.id.dt_title_layout).setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                finish();
+            }
+        });
     }
 
     public void clickRe(View view)

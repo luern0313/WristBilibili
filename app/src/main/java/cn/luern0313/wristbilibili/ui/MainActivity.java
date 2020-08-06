@@ -117,14 +117,15 @@ public class MainActivity extends AppCompatActivity
             }).start();
         }
 
-        //if((int) (System.currentTimeMillis() / 1000) > 1590940980)
-            //finish();
+        //Toast.makeText(ctx, "请注意，你正在使用测试版本", Toast.LENGTH_LONG).show();
+        //if((int) (System.currentTimeMillis() / 1000) > 1593791999)
+        //    finish();
 
         //startActivity(VideoActivity.getActivityIntent(ctx, "78732000", ""));
 
-        /*Intent intent = new Intent(ctx, ArticleActivity.class);
-        intent.putExtra("article_id", "4807000");
-        startActivity(intent);*/
+        Intent intent = new Intent(ctx, ArticleActivity.class);
+        intent.putExtra("article_id", "6938689");
+        startActivity(intent);
 
         serviceIntent = new Intent(this, DownloadService.class);
         startService(serviceIntent);
@@ -171,7 +172,7 @@ public class MainActivity extends AppCompatActivity
                     titleText.setTextSize(14);
                     break;
                 case 7:
-                    transaction.replace(R.id.main_frame, FavorBoxFragment.newInstance(SharedPreferencesUtil.getString(SharedPreferencesUtil.mid, "")));
+                    transaction.replace(R.id.main_frame, FavorBoxFragment.newInstance(SharedPreferencesUtil.getString(SharedPreferencesUtil.mid, ""), true));
                     titleText.setText(getString(R.string.menu_collect));
                     titleText.setTextSize(14);
                     break;
