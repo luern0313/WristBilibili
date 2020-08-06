@@ -1,12 +1,15 @@
 package cn.luern0313.wristbilibili.api;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
+import cn.luern0313.lson.LsonArrayUtil;
+import cn.luern0313.lson.LsonObjectUtil;
+import cn.luern0313.lson.LsonParser;
+import cn.luern0313.lson.LsonUtil;
 import cn.luern0313.wristbilibili.models.ListVideoModel;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
@@ -37,25 +40,17 @@ public class FavorVideoApi
 
     public ArrayList<ListVideoModel> getFavorVideo(int page) throws IOException
     {
-        try
+        String url = "http://api.bilibili.com/x/space/fav/arc";
+        String arg = "vmid=" + mid + "&ps=30&fid=" + fid + "&tid=0&keyword=&pn=" + page + "&order=fav_time";
+        LsonObjectUtil result = LsonParser.parseString(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string());
+        ArrayList<ListVideoModel> arrayList = new ArrayList<>();
+        if(result.getAsInt("code", -1) == 0)
         {
-            String url = "http://api.bilibili.com/x/space/fav/arc";
-            String arg = "vmid=" + mid + "&ps=30&fid=" + fid + "&tid=0&keyword=&pn=" + page + "&order=fav_time";
-            JSONObject result = new JSONObject(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string());
-            ArrayList<ListVideoModel> arrayList = new ArrayList<>();
-            if(result.optInt("code") == 0)
-            {
-                JSONArray v = result.getJSONObject("data").getJSONArray("archives");
-                for(int i = 0; i < v.length(); i++)
-                    arrayList.add(new ListVideoModel(v.getJSONObject(i), 0));
-                return arrayList;
-            }
+            LsonArrayUtil videoArray = result.getAsJsonObject("data").getAsJsonArray("archives");
+            for(int i = 0; i < videoArray.size(); i++)
+                arrayList.add(LsonUtil.fromJson(videoArray.getAsJsonObject(i), ListVideoModel.class));
         }
-        catch (JSONException e)
-        {
-            e.printStackTrace();
-        }
-        return null;
+        return arrayList;
     }
 
     public String cancelFavVideo(String aid) throws IOException

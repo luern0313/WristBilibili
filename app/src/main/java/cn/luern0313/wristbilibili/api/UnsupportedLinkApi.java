@@ -15,7 +15,7 @@ import cn.luern0313.wristbilibili.models.UnsupportedLinkModel;
 import cn.luern0313.wristbilibili.ui.ArticleActivity;
 import cn.luern0313.wristbilibili.ui.BangumiActivity;
 import cn.luern0313.wristbilibili.ui.DynamicDetailActivity;
-import cn.luern0313.wristbilibili.ui.FavorvideoActivity;
+import cn.luern0313.wristbilibili.ui.FavorVideoActivity;
 import cn.luern0313.wristbilibili.ui.UserActivity;
 import cn.luern0313.wristbilibili.ui.VideoActivity;
 import cn.luern0313.wristbilibili.util.MyApplication;
@@ -101,7 +101,7 @@ public class UnsupportedLinkApi
                         }
                         case "collect":
                         {
-                            intent = new Intent(ctx, FavorvideoActivity.class);
+                            intent = new Intent(ctx, FavorVideoActivity.class);
                             intent.putExtra("mid", uri.getQueryParameter("uid"));
                             intent.putExtra("fid", id);
                             break;

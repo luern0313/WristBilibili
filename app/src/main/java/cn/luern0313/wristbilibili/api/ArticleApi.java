@@ -28,11 +28,14 @@ public class ArticleApi
     private String article_id;
     private ArticleModel articleModel;
 
-    public ArticleApi(String article_id)
+    private static int ARTICLE_IMAGE_WIDTH_SIZE = 400;
+
+    public ArticleApi(String article_id, int width)
     {
         this.mid = SharedPreferencesUtil.getString(SharedPreferencesUtil.mid, "");
         this.csrf = SharedPreferencesUtil.getString(SharedPreferencesUtil.csrf, "");
         this.article_id = article_id;
+        ARTICLE_IMAGE_WIDTH_SIZE = width;
 
         webHeaders = new ArrayList<String>(){{
             add("Cookie"); add(SharedPreferencesUtil.getString(SharedPreferencesUtil.cookies, ""));
@@ -170,5 +173,10 @@ public class ArticleApi
             e.printStackTrace();
         }
         return "关注UP主失败";
+    }
+
+    public static int getArticleImageWidthSize()
+    {
+        return ARTICLE_IMAGE_WIDTH_SIZE;
     }
 }

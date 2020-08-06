@@ -145,8 +145,16 @@ public class AnimationTimelineFragment extends Fragment
 
     private void onViewClick(int id, int position)
     {
+        AnimationTimelineModel.AnimationTimelineSeasonModel animationTimelineSeasonModel = null;
+        for (int i = 0; i < animationTimelineList.size(); i++)
+        {
+            if(position > animationTimelineList.get(i).getSeasonModelArrayList().size())
+                position -= animationTimelineList.get(i).getSeasonModelArrayList().size();
+            else
+                animationTimelineSeasonModel = animationTimelineList.get(i).getSeasonModelArrayList().get(position);
+        }
         Intent intent = new Intent(ctx, BangumiActivity.class);
-        intent.putExtra("season_id", animationTimelineList.get(position).getSeasonId());
+        intent.putExtra("season_id", animationTimelineSeasonModel.getSeasonId());
         startActivity(intent);
     }
 }

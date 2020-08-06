@@ -1,39 +1,53 @@
 package cn.luern0313.wristbilibili.models;
 
-import org.json.JSONObject;
-
-import cn.luern0313.wristbilibili.util.LruCacheUtil;
+import cn.luern0313.lson.annotation.LsonPath;
+import cn.luern0313.wristbilibili.util.json.ImageUrlHandle;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 被 luern0313 创建于 2020/1/15.
  */
 
+@Getter
+@Setter
 public class RecommendModel
 {
-    public int mode;
+    private int mode = 0;
 
-    public String video_aid;
-    public String video_title;
-    public String video_img;
-    public String video_time;
-    public int video_data_1_icon;
-    public String video_data_1_text;
-    public int video_data_2_icon;
-    public String video_data_2_text;
-    public String video_recommend_reason;
-    public String video_lable;
-    public RecommendModel(JSONObject video)
+    @LsonPath("param")
+    private String aid;
+
+    @LsonPath("title")
+    private String title;
+
+    @ImageUrlHandle
+    @LsonPath("cover")
+    private String img;
+
+    @LsonPath("cover_right_text")
+    private String time;
+
+    @LsonPath("cover_left_icon_1")
+    private int data1Icon;
+
+    @LsonPath("cover_left_text_1")
+    private String data1Text;
+
+    @LsonPath("cover_left_icon_2")
+    private int data2Icon;
+
+    @LsonPath("cover_left_text_2")
+    private String data2Text;
+
+    @LsonPath("rcmd_reason")
+    private String recommendReason;
+
+    @LsonPath("desc_button.text")
+    private String label;
+
+    public RecommendModel()
     {
-        video_aid = video.optString("param");
-        video_title = video.optString("title");
-        video_img = LruCacheUtil.getImageUrl(video.optString("cover"));
-        video_time = video.optString("cover_right_text");
-        video_data_1_icon = video.optInt("cover_left_icon_1");
-        video_data_1_text = video.optString("cover_left_text_1");
-        video_data_2_icon = video.optInt("cover_left_icon_2");
-        video_data_2_text = video.optString("cover_left_text_2");
-        video_recommend_reason = video.optString("rcmd_reason");
-        video_lable = video.has("desc_button") ? video.optJSONObject("desc_button").optString("text") : "";
     }
 
     public RecommendModel(int mode)

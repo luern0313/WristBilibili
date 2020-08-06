@@ -84,6 +84,7 @@ public class ArticleAdapter extends BaseAdapter
             case "av":
                 return 1;
             case "ss":
+            case "ep":
                 return 2;
             case "cv":
                 return 3;

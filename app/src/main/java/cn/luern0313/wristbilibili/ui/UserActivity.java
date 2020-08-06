@@ -32,6 +32,7 @@ import cn.luern0313.wristbilibili.fragment.user.UserDetailFragment;
 import cn.luern0313.wristbilibili.fragment.user.UserListPeopleFragment;
 import cn.luern0313.wristbilibili.fragment.user.UserVideoFragment;
 import cn.luern0313.wristbilibili.models.UserModel;
+import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
 /**
  * 被 luern0313 创建于 不知道什么时候.
@@ -128,7 +129,8 @@ public class UserActivity extends AppCompatActivity implements UserDetailFragmen
         AnimationDrawable loadingImgAnim = (AnimationDrawable) uiLoading.getDrawable();
         loadingImgAnim.start();
 
-        pagerAdapter = new UserFragmentPagerAdapter(getSupportFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+        pagerAdapter = new UserFragmentPagerAdapter(getSupportFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT,
+                                                    SharedPreferencesUtil.getString(SharedPreferencesUtil.mid, ""));
 
         uiViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener()
         {
@@ -294,9 +296,12 @@ public class UserActivity extends AppCompatActivity implements UserDetailFragmen
 
     class UserFragmentPagerAdapter extends FragmentPagerAdapter
     {
-        UserFragmentPagerAdapter(@NonNull FragmentManager fm, int behavior)
+        private String selfMid;
+
+        UserFragmentPagerAdapter(@NonNull FragmentManager fm, int behavior, String selfMid)
         {
             super(fm, behavior);
+            this.selfMid = selfMid;
         }
 
         @Override
@@ -323,7 +328,7 @@ public class UserActivity extends AppCompatActivity implements UserDetailFragmen
                 case "movie":
                     return UserBangumiFragment.newInstance(userModel.user_card_mid, 2);
                 case "favorite":
-                    return FavorBoxFragment.newInstance(userModel.user_card_mid);
+                    return FavorBoxFragment.newInstance(userModel.user_card_mid, userModel.user_card_mid.equals(selfMid));
                 case "follow":
                     return UserListPeopleFragment.newInstance(userModel.user_card_mid, 0);
                 case "fans":

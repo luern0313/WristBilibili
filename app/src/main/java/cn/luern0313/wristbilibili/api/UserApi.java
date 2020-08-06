@@ -1,12 +1,15 @@
 package cn.luern0313.wristbilibili.api;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
+import cn.luern0313.lson.LsonArrayUtil;
+import cn.luern0313.lson.LsonObjectUtil;
+import cn.luern0313.lson.LsonParser;
+import cn.luern0313.lson.LsonUtil;
 import cn.luern0313.wristbilibili.models.ListBangumiModel;
 import cn.luern0313.wristbilibili.models.ListVideoModel;
 import cn.luern0313.wristbilibili.models.UserListPeopleModel;
@@ -65,100 +68,65 @@ public class UserApi
 
     public ArrayList<ListVideoModel> getUserVideo(int page) throws IOException
     {
-        try
+        String url = "https://api.bilibili.com/x/space/arc/search";
+        String arg = "mid=" + mid + "&ps=30&tid=0&pn=" + page + "&keyword=&order=pubdate&jsonp=jsonp";
+        LsonObjectUtil result = LsonParser.parseString(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string());
+        ArrayList<ListVideoModel> videoModelArrayList = new ArrayList<>();
+        if(result.getAsInt("code", -1) == 0)
         {
-            String url = "https://api.bilibili.com/x/space/arc/search";
-            String arg = "mid=" + mid + "&ps=30&tid=0&pn=" + page + "&keyword=&order=pubdate&jsonp=jsonp";
-            JSONObject result = new JSONObject(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string());
-            ArrayList<ListVideoModel> v = new ArrayList<>();
-            if(result.optInt("code") == 0)
-            {
-                JSONArray videoJsonArray = result.getJSONObject("data").getJSONObject("list").getJSONArray("vlist");
-                for(int i = 0; i < videoJsonArray.length(); i++)
-                    v.add(new ListVideoModel(videoJsonArray.optJSONObject(i), 1));
-                return v;
-            }
+            LsonArrayUtil videoArray = result.getAsJsonObject("data").getAsJsonObject("list").getAsJsonArray("vlist");
+            for(int i = 0; i < videoArray.size(); i++)
+                videoModelArrayList.add(LsonUtil.fromJson(videoArray.getAsJsonObject(i), ListVideoModel.class));
         }
-        catch (JSONException | NullPointerException e)
-        {
-            e.printStackTrace();
-        }
-        return null;
+        return videoModelArrayList;
     }
 
     public ArrayList<ListBangumiModel> getUserBangumi(int page, int mode) throws IOException
     {
-        try
+        String url = "https://api.bilibili.com/x/space/bangumi/follow/list";
+        String arg = "type=" + mode + "&pn=" + page + "&ps=20&vmid=" + mid;
+        LsonObjectUtil result = LsonParser.parseString(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string());
+        ArrayList<ListBangumiModel> listBangumiModelArrayList = new ArrayList<>();
+        if(result.getAsInt("code", -1) == 0)
         {
-            String url = "https://api.bilibili.com/x/space/bangumi/follow/list";
-            String arg = "type=" + mode + "&pn=" + page + "&ps=20&vmid=" + mid;
-            JSONObject result = new JSONObject(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string());
-            ArrayList<ListBangumiModel> b = new ArrayList<>();
-            if(result.optInt("code") == 0)
-            {
-                JSONArray bangumiJsonArray = result.getJSONObject("data").getJSONArray("list");
-                for(int i = 0; i < bangumiJsonArray.length(); i++)
-                    b.add(new ListBangumiModel(bangumiJsonArray.optJSONObject(i)));
-                return b;
-            }
+            LsonArrayUtil bangumiJsonArray = result.getAsJsonObject("data").getAsJsonArray("list");
+            for(int i = 0; i < bangumiJsonArray.size(); i++)
+                listBangumiModelArrayList.add(LsonUtil.fromJson(bangumiJsonArray.getAsJsonObject(i), ListBangumiModel.class));
+            return listBangumiModelArrayList;
         }
-        catch (JSONException | NullPointerException e)
-        {
-            e.printStackTrace();
-        }
-        return null;
+        return listBangumiModelArrayList;
     }
 
     public ArrayList<UserListPeopleModel> getUserFollow(int page) throws IOException
     {
-        try
+        String url = "https://api.bilibili.com/x/relation/followings";
+        String arg = "vmid=" + mid + "&pn=" + page + "&ps=20&order=desc";
+        LsonObjectUtil result = LsonParser.parseString(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string());
+        ArrayList<UserListPeopleModel> peopleModelArrayList = new ArrayList<>();
+        if(result.getAsInt("code", -1) == 0)
         {
-            String url = "https://api.bilibili.com/x/relation/followings";
-            String arg = "vmid=" + mid + "&pn=" + page + "&ps=20&order=desc";
-            JSONObject result = new JSONObject(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string());
-            ArrayList<UserListPeopleModel> u = new ArrayList<>();
-            if(result.optInt("code") == 0)
-            {
-                JSONArray peopleJsonArray = result.getJSONObject("data").getJSONArray("list");
-                for (int i = 0; i < peopleJsonArray.length(); i++)
-                {
-                    JSONObject p = peopleJsonArray.optJSONObject(i);
-                    u.add(new UserListPeopleModel(p));
-                }
-                return u;
-            }
+            LsonArrayUtil peopleJsonArray = result.getAsJsonObject("data").getAsJsonArray("list");
+            for (int i = 0; i < peopleJsonArray.size(); i++)
+                peopleModelArrayList.add(LsonUtil.fromJson(peopleJsonArray.getAsJsonObject(i), UserListPeopleModel.class));
+            return peopleModelArrayList;
         }
-        catch (JSONException e)
-        {
-            e.printStackTrace();
-        }
-        return null;
+        return peopleModelArrayList;
     }
 
     public ArrayList<UserListPeopleModel> getUserFans(int page) throws IOException
     {
-        try
+        String url = "https://api.bilibili.com/x/relation/followers";
+        String arg = "vmid=" + mid + "&pn=" + page + "&ps=20&order=desc";
+        LsonObjectUtil result = LsonParser.parseString(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string());
+        ArrayList<UserListPeopleModel> peopleModelArrayList = new ArrayList<>();
+        if(result.getAsInt("code", -1) == 0)
         {
-            String url = "https://api.bilibili.com/x/relation/followers";
-            String arg = "vmid=" + mid + "&pn=" + page + "&ps=20&order=desc";
-            JSONObject result = new JSONObject(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string());
-            ArrayList<UserListPeopleModel> u = new ArrayList<>();
-            if(result.optInt("code") == 0)
-            {
-                JSONArray peopleJsonArray = result.getJSONObject("data").getJSONArray("list");
-                for (int i = 0; i < peopleJsonArray.length(); i++)
-                {
-                    JSONObject p = peopleJsonArray.optJSONObject(i);
-                    u.add(new UserListPeopleModel(p));
-                }
-                return u;
-            }
+            LsonArrayUtil peopleJsonArray = result.getAsJsonObject("data").getAsJsonArray("list");
+            for (int i = 0; i < peopleJsonArray.size(); i++)
+                peopleModelArrayList.add(LsonUtil.fromJson(peopleJsonArray.getAsJsonObject(i), UserListPeopleModel.class));
+            return peopleModelArrayList;
         }
-        catch (JSONException e)
-        {
-            e.printStackTrace();
-        }
-        return null;
+        return peopleModelArrayList;
     }
 
     public String follow() throws IOException

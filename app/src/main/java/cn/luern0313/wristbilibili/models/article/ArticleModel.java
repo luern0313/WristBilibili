@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import cn.luern0313.wristbilibili.api.ArticleApi;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
 import cn.luern0313.wristbilibili.util.LruCacheUtil;
 
@@ -155,6 +156,7 @@ public class ArticleModel implements Serializable
                         url = "http:" + url;
                     if(url.endsWith(".webp"))
                         url = url.substring(0, url.lastIndexOf("@"));
+                    url = LruCacheUtil.getImageUrl(url, ArticleApi.getArticleImageWidthSize());
                     article_article_img_url.add(url);
                     imgElement.attr("src", url);
                     imgElement.attr("data-src", url);

@@ -1,12 +1,13 @@
 package cn.luern0313.wristbilibili.api;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
+import cn.luern0313.lson.LsonArrayUtil;
+import cn.luern0313.lson.LsonObjectUtil;
+import cn.luern0313.lson.LsonParser;
+import cn.luern0313.lson.LsonUtil;
 import cn.luern0313.wristbilibili.models.AnimationTimelineModel;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
@@ -18,7 +19,6 @@ import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
 public class AnimationTimelineApi
 {
-    private JSONArray timelineJson;
     private ArrayList<String> webHeaders;
     public AnimationTimelineApi()
     {
@@ -31,30 +31,15 @@ public class AnimationTimelineApi
 
     public ArrayList<AnimationTimelineModel> getAnimTimelineList() throws IOException
     {
-        try
+        String url = "https://bangumi.bilibili.com/web_api/timeline_global";
+        LsonObjectUtil result = LsonParser.parseString(NetWorkUtil.get(url, webHeaders).body().string());
+        ArrayList<AnimationTimelineModel> animationTimelineModelArrayList = new ArrayList<>();
+        if(result.getAsInt("code", -1) == 0)
         {
-            String url = "https://bangumi.bilibili.com/web_api/timeline_global";
-            timelineJson = new JSONObject(NetWorkUtil.get(url, webHeaders).body().string()).getJSONArray("result");
-            int nowTime = (int) (System.currentTimeMillis() / 1000);
-            ArrayList<AnimationTimelineModel> anims = new ArrayList<>();
-            for(int i = 6; i >= 0; i--)
-            {
-                JSONArray dailyAnims = timelineJson.getJSONObject(i).getJSONArray("seasons");
-                String day = "";
-                if(timelineJson.getJSONObject(i).getInt("is_today") == 0) day = timelineJson.getJSONObject(i).getString("date") + " ";
-                for(int j = dailyAnims.length() - 1; j >= 0; j--)
-                {
-                    JSONObject anim = dailyAnims.getJSONObject(j);
-                    if(anim.getInt("pub_ts") <= nowTime && anim.getInt("is_published") == 1)
-                        anims.add(new AnimationTimelineModel(anim, day));
-                }
-            }
-            return anims;
+            LsonArrayUtil animArray = result.getAsJsonArray("result");
+            for (int i = 6; i >= 0; i--)
+                animationTimelineModelArrayList.add(LsonUtil.fromJson(animArray.getAsJsonObject(i), AnimationTimelineModel.class));
         }
-        catch (JSONException e)
-        {
-            e.printStackTrace();
-        }
-        return null;
+        return animationTimelineModelArrayList;
     }
 }

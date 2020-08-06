@@ -1,8 +1,8 @@
 package cn.luern0313.wristbilibili.models;
 
-import org.json.JSONObject;
-
-import cn.luern0313.wristbilibili.util.LruCacheUtil;
+import cn.luern0313.lson.annotation.LsonAddSuffix;
+import cn.luern0313.lson.annotation.LsonPath;
+import cn.luern0313.wristbilibili.util.json.ImageUrlHandle;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,27 +14,32 @@ import lombok.Setter;
 @Setter
 public class FavorBoxModel
 {
-    private int favorBoxMode;
-    private String favorBoxTitle;
-    private String favorBoxCount;
-    private boolean favorBoxSee;
-    private String favorBoxFid;
-    private String favorBoxId;
-    private String favorBoxImg;
-    public FavorBoxModel(JSONObject box)
-    {
-        favorBoxMode = 0;
-        favorBoxTitle = box.optString("name");
-        favorBoxCount = String.valueOf(box.optInt("count"));
-        favorBoxSee = box.optInt("state") % 2 == 0;
-        favorBoxFid = String.valueOf(box.opt("fav_box"));
-        favorBoxId = box.opt("fav_box") + "31";
-        favorBoxImg = box.has("videos") && box.optJSONArray("videos") != null ?
-                LruCacheUtil.getImageUrl(box.optJSONArray("videos").optJSONObject(0).optString("pic")) : "";
-    }
+    private int mode = 0;
+
+    @LsonPath("name")
+    private String title;
+
+    @LsonPath("count")
+    private String count;
+
+    @LsonPath("state")
+    private int see;
+
+    @LsonPath("fav_box")
+    private String fid;
+
+    @LsonAddSuffix("31")
+    @LsonPath("fav_box")
+    private String id;
+
+    @ImageUrlHandle
+    @LsonPath("videos[0].pic")
+    private String img;
+
+    public FavorBoxModel() { }
 
     public FavorBoxModel(int mode)
     {
-        favorBoxMode = mode;
+        this.mode = mode;
     }
 }

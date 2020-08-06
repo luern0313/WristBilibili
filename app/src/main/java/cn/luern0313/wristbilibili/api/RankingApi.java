@@ -1,17 +1,17 @@
 package cn.luern0313.wristbilibili.api;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
+import cn.luern0313.lson.LsonArrayUtil;
+import cn.luern0313.lson.LsonObjectUtil;
+import cn.luern0313.lson.LsonParser;
+import cn.luern0313.lson.LsonUtil;
 import cn.luern0313.wristbilibili.models.RankingModel;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
-import okhttp3.Response;
 
 /**
  * 被 luern0313 创建于 2020/1/12.
@@ -36,20 +36,15 @@ public class RankingApi
     public ArrayList<RankingModel> getRankingVideo(int pn) throws IOException
     {
         ArrayList<RankingModel> rankingVideoArrayList = new ArrayList<>();
-        try
+        String url = "http://app.bilibili.com/x/v2/rank/region";
+        String temp_per = "appkey=" + ConfInfoApi.getConf("appkey") + "&build=" + ConfInfoApi.getConf("build") + "&mobi_app=android&platform=android&pn=" + pn + "&ps=20&rid=0&ts=" + (int) (System.currentTimeMillis() / 1000);
+        String sign = ConfInfoApi.calc_sign(temp_per, ConfInfoApi.getConf("app_secret"));
+        LsonObjectUtil result = LsonParser.parseString(NetWorkUtil.get(url + "?" + temp_per + "&sign=" + sign, appHeaders).body().string());
+        if(result.getAsInt("code", -1) == 0)
         {
-            String url = "http://app.bilibili.com/x/v2/rank/region";
-            String temp_per = "appkey=" + ConfInfoApi.getConf("appkey") + "&build=" + ConfInfoApi.getConf("build") + "&mobi_app=android&platform=android&pn=" + pn + "&ps=20&rid=0&ts=" + (int) (System.currentTimeMillis() / 1000);
-            String sign = ConfInfoApi.calc_sign(temp_per, ConfInfoApi.getConf("app_secret"));
-            Response response = NetWorkUtil.get(url + "?" + temp_per + "&sign=" + sign, appHeaders);
-            JSONArray resultJSONArray = new JSONObject(response.body().string()).getJSONArray("data");
-            for(int i = 0; i < resultJSONArray.length(); i++)
-                rankingVideoArrayList.add(new RankingModel(resultJSONArray.getJSONObject(i)));
-            return rankingVideoArrayList;
-        }
-        catch (JSONException e)
-        {
-            e.printStackTrace();
+            LsonArrayUtil list = result.getAsJsonArray("data");
+            for (int i = 0; i < list.size(); i++)
+                rankingVideoArrayList.add(LsonUtil.fromJson(list.getAsJsonObject(i), RankingModel.class));
         }
         return rankingVideoArrayList;
     }
@@ -60,16 +55,16 @@ public class RankingApi
         {
             LinkedHashMap<Integer, String> pickUpMap = new LinkedHashMap<>();
             String url = "http://luern0313.cn:8080/bp/getHistoryPickUpVideo";
-            JSONObject result = new JSONObject(NetWorkUtil.get(url).body().string());
-            JSONArray jsonArray = result.optJSONArray("Data");
-            for(int i = 0; i < jsonArray.length(); i++)
+            LsonObjectUtil result = LsonParser.parseString(NetWorkUtil.get(url).body().string());
+            LsonArrayUtil list = result.getAsJsonArray("Data");
+            for(int i = 0; i < list.size(); i++)
             {
-                final JSONObject jsonObject = jsonArray.optJSONObject(i);
-                pickUpMap.put(Integer.valueOf(jsonObject.optString("Date")), jsonObject.optString("Aid"));
+                final LsonObjectUtil jsonObject = list.getAsJsonObject(i);
+                pickUpMap.put(Integer.valueOf(jsonObject.getAsString("Date")), jsonObject.getAsString("Aid"));
             }
             return pickUpMap;
         }
-        catch (JSONException | IOException e)
+        catch (IOException e)
         {
             e.printStackTrace();
         }

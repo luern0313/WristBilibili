@@ -145,7 +145,7 @@ public class RankingFragment extends Fragment
             @Override
             public void run()
             {
-                ((TextView) uiLoadingView.findViewById(R.id.wid_load_button)).setText("好像没有网络...\n检查下网络？");
+                ((TextView) uiLoadingView.findViewById(R.id.wid_load_button)).setText(ctx.getString(R.string.main_tip_no_more_web));
                 uiLoadingView.findViewById(R.id.wid_load_button).setVisibility(View.VISIBLE);
             }
         };
@@ -155,7 +155,7 @@ public class RankingFragment extends Fragment
             @Override
             public void run()
             {
-                ((TextView) uiLoadingView.findViewById(R.id.wid_load_text)).setText("  没有更多了...");
+                ((TextView) uiLoadingView.findViewById(R.id.wid_load_text)).setText(ctx.getString(R.string.main_tip_no_more_data));
             }
         };
 
@@ -372,14 +372,16 @@ public class RankingFragment extends Fragment
     {
         if(viewId == R.id.rk_video_lay)
         {
-            if(!rankingVideoArrayList.get(position).video_aid.equals(""))
-                startActivity(VideoActivity
-                                      .getActivityIntent(ctx, rankingVideoArrayList.get(position).video_aid, ""));
+            if(rankingVideoArrayList.get(position).getIdentification().equals("av"))
+            {
+                Intent intent = VideoActivity.getActivityIntent(ctx, rankingVideoArrayList.get(position).getAid(), "");
+                startActivity(intent);
+            }
         }
         else if(viewId == R.id.rk_video_video_up)
         {
             Intent intent = new Intent(ctx, UserActivity.class);
-            intent.putExtra("mid", rankingVideoArrayList.get(position).up_mid);
+            intent.putExtra("mid", rankingVideoArrayList.get(position).getMid());
             startActivity(intent);
         }
     }

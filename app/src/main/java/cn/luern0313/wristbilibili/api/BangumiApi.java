@@ -1,6 +1,6 @@
 package cn.luern0313.wristbilibili.api;
 
-import org.json.JSONArray;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -8,6 +8,10 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
+import cn.luern0313.lson.LsonArrayUtil;
+import cn.luern0313.lson.LsonObjectUtil;
+import cn.luern0313.lson.LsonParser;
+import cn.luern0313.lson.LsonUtil;
 import cn.luern0313.wristbilibili.models.ListBangumiModel;
 import cn.luern0313.wristbilibili.models.bangumi.BangumiModel;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
@@ -72,20 +76,16 @@ public class BangumiApi
 
     public ArrayList<ListBangumiModel> getBangumiRecommend() throws IOException
     {
-        try
+        String url = "https://api.bilibili.com/pgc/web/recommend/related/recommend?season_id=" + season_id;
+        LsonObjectUtil result = LsonParser.parseString(NetWorkUtil.get(url, webHeaders).body().string());
+        ArrayList<ListBangumiModel> bangumiRecommendModelArrayList = new ArrayList<>();
+        if(result.getAsInt("code", -1) == 0)
         {
-            String url = "https://api.bilibili.com/pgc/web/recommend/related/recommend?season_id=" + season_id;
-            JSONArray result = new JSONObject(NetWorkUtil.get(url, webHeaders).body().string()).getJSONObject("result").getJSONArray("season");
-            ArrayList<ListBangumiModel> bangumiRecommendModelArrayList = new ArrayList<>();
-            for(int i = 0; i< result.length(); i++)
-                bangumiRecommendModelArrayList.add(new ListBangumiModel(result.optJSONObject(i)));
-            return bangumiRecommendModelArrayList;
+            LsonArrayUtil seasonArray = result.getAsJsonObject("result").getAsJsonArray("season");
+            for(int i = 0; i < seasonArray.size(); i++)
+                bangumiRecommendModelArrayList.add(LsonUtil.fromJson(seasonArray.getAsJsonObject(i), ListBangumiModel.class));
         }
-        catch (JSONException | NullPointerException e)
-        {
-            e.printStackTrace();
-        }
-        return new ArrayList<>();
+        return bangumiRecommendModelArrayList;
     }
 
     public String followBangumi(boolean isFollow) throws IOException

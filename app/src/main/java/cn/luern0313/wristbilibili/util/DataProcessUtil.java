@@ -9,10 +9,13 @@ import android.util.Log;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.Random;
 
+import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.widget.LinkSpan;
 
 /**
@@ -132,8 +135,36 @@ public class DataProcessUtil
         catch (RuntimeException e)
         {
             e.printStackTrace();
+            return "";
         }
-        return "";
+    }
+
+    public static String getFriendlyTime(int timeStamp)
+    {
+        try
+        {
+            GregorianCalendar now = new GregorianCalendar();
+            GregorianCalendar target = new GregorianCalendar();
+            target.setTimeInMillis(timeStamp);
+            for (int i = 0; i < 3; i++)
+            {
+                if(now.get(Calendar.YEAR) == target.get(Calendar.YEAR) && now.get(Calendar.MONTH) == target.get(Calendar.MONTH) && now.get(Calendar.DAY_OF_MONTH) == target.get(Calendar.DAY_OF_MONTH))
+                {
+                    if(i == 0)
+                        return String.format(MyApplication.getContext().getString(R.string.time_0), getTime(timeStamp, "HH:mm"));
+                    else if(i == 1)
+                        return String.format(MyApplication.getContext().getString(R.string.time_1), getTime(timeStamp, "HH:mm"));
+                    else
+                        return String.format(MyApplication.getContext().getString(R.string.time_2), getTime(timeStamp, "HH:mm"));
+                }
+                target.add(Calendar.DAY_OF_MONTH, 1);
+            }
+        }
+        catch (RuntimeException e)
+        {
+            e.printStackTrace();
+        }
+        return getTime(timeStamp, "MM-dd HH:mm");
     }
 
     public static CharSequence getClickableHtml(String html, Html.ImageGetter imageGetter)

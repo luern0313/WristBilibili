@@ -1,8 +1,9 @@
 package cn.luern0313.wristbilibili.models;
 
-import org.json.JSONObject;
+import java.util.ArrayList;
 
-import cn.luern0313.wristbilibili.util.LruCacheUtil;
+import cn.luern0313.lson.annotation.LsonPath;
+import cn.luern0313.wristbilibili.util.json.ImageUrlHandle;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,19 +15,46 @@ import lombok.Setter;
 @Setter
 public class AnimationTimelineModel
 {
-    private String seasonId;
-    private String name;
-    private String coverUrl;
-    private String lastEpisode;
-    private int isFollow;
-    private String time;
-    public AnimationTimelineModel(JSONObject anim, String day)
+    @LsonPath("date")
+    private String date;
+
+    @LsonPath("is_today")
+    private int isToday;
+
+    @LsonPath("seasons")
+    private ArrayList<AnimationTimelineSeasonModel> seasonModelArrayList;
+
+    @Getter
+    @Setter
+    public class AnimationTimelineSeasonModel
     {
-        seasonId = String.valueOf(anim.optInt("season_id"));
-        name = anim.optString("title");
-        coverUrl = LruCacheUtil.getImageUrl(anim.optString("square_cover"));
-        lastEpisode = anim.optString("pub_index");
-        isFollow = (int) anim.opt("follow");
-        time = day + anim.optString("pub_time");
+        @LsonPath("season_id")
+        private String seasonId;
+
+        @LsonPath("title")
+        private String title;
+
+        @ImageUrlHandle
+        @LsonPath("square_cover")
+        private String coverUrl;
+
+        @LsonPath("pub_index")
+        private String lastEpisode;
+
+        @LsonPath("follow")
+        private int isFollow;
+
+        @LsonPath("pub_time")
+        private String time;
+
+        public String getDate()
+        {
+            return date;
+        }
+
+        public int getIsToday()
+        {
+            return isToday;
+        }
     }
 }

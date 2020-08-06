@@ -1,6 +1,7 @@
 package cn.luern0313.wristbilibili.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -115,7 +116,7 @@ public class RecommendFragment extends Fragment
             @Override
             public void run()
             {
-                ((TextView) uiLoadingView.findViewById(R.id.wid_load_button)).setText("好像没有网络...\n检查下网络？");
+                ((TextView) uiLoadingView.findViewById(R.id.wid_load_button)).setText(ctx.getString(R.string.main_tip_no_more_web));
                 uiLoadingView.findViewById(R.id.wid_load_button).setVisibility(View.VISIBLE);
             }
         };
@@ -125,7 +126,7 @@ public class RecommendFragment extends Fragment
             @Override
             public void run()
             {
-                ((TextView) uiLoadingView.findViewById(R.id.wid_load_text)).setText("  没有更多了...");
+                ((TextView) uiLoadingView.findViewById(R.id.wid_load_text)).setText(ctx.getString(R.string.main_tip_no_more_data));
             }
         };
 
@@ -193,9 +194,11 @@ public class RecommendFragment extends Fragment
     {
         if(viewId == R.id.rc_video)
         {
-            if(!recommendVideoArrayList.get(position).video_aid.equals(""))
-                startActivity(VideoActivity
-                                      .getActivityIntent(ctx, recommendVideoArrayList.get(position).video_aid, ""));
+            if(!recommendVideoArrayList.get(position).getAid().equals(""))
+            {
+                Intent intent = VideoActivity.getActivityIntent(ctx, recommendVideoArrayList.get(position).getAid(), "");
+                startActivity(intent);
+            }
         }
         else if(viewId == R.id.widget_recommend_update_lay)
         {

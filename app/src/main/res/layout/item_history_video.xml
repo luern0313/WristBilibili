@@ -4,10 +4,10 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:descendantFocusability="blocksDescendants"
-    android:paddingBottom="1dp"
     android:paddingLeft="18dp"
+    android:paddingTop="1dp"
     android:paddingRight="18dp"
-    android:paddingTop="1dp">
+    android:paddingBottom="1dp">
 
     <ImageView
         android:id="@+id/item_history_video_img"
@@ -25,8 +25,8 @@
         android:layout_height="3dp"
         android:layout_alignBottom="@+id/item_history_video_img"
         android:layout_marginBottom="-2dp"
-        android:progressDrawable="@drawable/layer_wl_progress"
         android:progress="60"
+        android:progressDrawable="@drawable/layer_wl_progress"
         android:visibility="visible" />
 
     <LinearLayout

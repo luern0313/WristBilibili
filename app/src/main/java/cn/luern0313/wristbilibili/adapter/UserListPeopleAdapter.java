@@ -80,13 +80,13 @@ public class UserListPeopleAdapter extends BaseAdapter
         }
 
         viewHolder.img.setImageResource(R.drawable.img_default_head);
-        viewHolder.name.setText(userListPeopleModel.people_name);
-        if(userListPeopleModel.vip == 2)
+        viewHolder.name.setText(userListPeopleModel.getName());
+        if(userListPeopleModel.getVip() == 2)
             viewHolder.name.setTextColor(listView.getResources().getColor(R.color.mainColor));
         else
             viewHolder.name.setTextColor(listView.getResources().getColor(R.color.gray_44));
-        String sign = userListPeopleModel.people_verify_name.equals("") ?
-                userListPeopleModel.people_sign : userListPeopleModel.people_verify_name;
+        String sign = userListPeopleModel.getVerifyName().equals("") ?
+                userListPeopleModel.getSign() : userListPeopleModel.getVerifyName();
         if(!sign.equals(""))
         {
             viewHolder.sign.setVisibility(View.VISIBLE);
@@ -94,8 +94,8 @@ public class UserListPeopleAdapter extends BaseAdapter
         }
         else
             viewHolder.sign.setVisibility(View.GONE);
-        viewHolder.time.setText((mode == 2 ? "关注于：" : "粉于：") + userListPeopleModel.people_mtime);
-        switch (userListPeopleModel.people_verify_type)
+        viewHolder.time.setText((mode == 2 ? "关注于：" : "粉于：") + userListPeopleModel.getMtime());
+        switch (userListPeopleModel.getVerifyType())
         {
             case "0":
                 convertView.findViewById(R.id.user_list_people_official_1).setVisibility(View.VISIBLE);
@@ -110,8 +110,8 @@ public class UserListPeopleAdapter extends BaseAdapter
                 convertView.findViewById(R.id.user_list_people_official_2).setVisibility(View.GONE);
                 break;
         }
-        viewHolder.img.setTag(userListPeopleModel.people_face);
-        BitmapDrawable f = setImageFormWeb(userListPeopleModel.people_face);
+        viewHolder.img.setTag(userListPeopleModel.getFace());
+        BitmapDrawable f = setImageFormWeb(userListPeopleModel.getFace());
         if(f != null) viewHolder.img.setImageDrawable(f);
 
         viewHolder.lay.setOnClickListener(onViewClick(position));

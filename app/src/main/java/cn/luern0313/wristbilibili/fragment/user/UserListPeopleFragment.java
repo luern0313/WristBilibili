@@ -81,7 +81,7 @@ public class UserListPeopleFragment extends Fragment
             public void onUserListPeopleAdapterClick(int viewId, int position)
             {
                 Intent intent = new Intent(ctx, UserActivity.class);
-                intent.putExtra("mid", userListPeopleModelArrayList.get(position).people_uid);
+                intent.putExtra("mid", userListPeopleModelArrayList.get(position).getUid());
                 startActivity(intent);
             }
         };

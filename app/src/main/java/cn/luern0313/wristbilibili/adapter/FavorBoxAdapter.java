@@ -101,23 +101,46 @@ public class FavorBoxAdapter extends BaseAdapter
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        viewHolder.img.setImageResource(R.drawable.img_default_vid);
-        viewHolder.countt.setText(box.getFavorBoxCount());
-        viewHolder.title.setText(box.getFavorBoxTitle());
-        viewHolder.see.setText(box.isFavorBoxSee() ? ctx.getString(R.string.favor_box_see_public) : ctx.getString(R.string.favor_box_see_private));
-        viewHolder.count.setText(String.format(ctx.getString(R.string.favor_box_count), box.getFavorBoxCount()));
+        if(box.getMode() == 0)
+        {
+            viewHolder.img.setVisibility(View.VISIBLE);
+            viewHolder.countt.setVisibility(View.VISIBLE);
+            viewHolder.count.setVisibility(View.VISIBLE);
+
+            viewHolder.img.setImageResource(R.drawable.img_default_vid);
+            viewHolder.countt.setText(box.getCount());
+            viewHolder.title.setText(box.getTitle());
+            viewHolder.see.setText(box.getSee() % 2 == 0 ? ctx.getString(R.string.favor_box_see_public) : ctx.getString(R.string.favor_box_see_private));
+            viewHolder.count.setText(String.format(ctx.getString(R.string.favor_box_count), box.getCount()));
+
+            if(box.getImg() != null && !box.getImg().equals(""))
+            {
+                viewHolder.img.setTag(box.getImg());
+                BitmapDrawable c = setImageFormWeb(box.getImg());
+                if(c != null) viewHolder.img.setImageDrawable(c);
+            }
+        }
+        else if(box.getMode() == 1)
+        {
+            //viewHolder.img.setVisibility(View.GONE);
+            viewHolder.countt.setVisibility(View.GONE);
+            viewHolder.count.setVisibility(View.GONE);
+
+            viewHolder.title.setText(ctx.getString(R.string.favor_box_article));
+            viewHolder.see.setText(ctx.getString(R.string.favor_box_see_private));
+        }
+        else if(box.getMode() == 2)
+        {
+            //viewHolder.img.setVisibility(View.GONE);
+            viewHolder.countt.setVisibility(View.GONE);
+            viewHolder.count.setVisibility(View.GONE);
+
+            viewHolder.title.setText(ctx.getString(R.string.favor_box_album));
+            viewHolder.see.setText(ctx.getString(R.string.favor_box_see_private));
+        }
+
         viewHolder.lay.setOnClickListener(onViewClick(position));
 
-        try
-        {
-            viewHolder.img.setTag(box.getFavorBoxImg());
-            BitmapDrawable c = setImageFormWeb(box.getFavorBoxImg());
-            if(c != null) viewHolder.img.setImageDrawable(c);
-        }
-        catch (Exception e)
-        {
-            viewHolder.img.setImageResource(R.drawable.img_default_vid);
-        }
         return convertView;
     }
 

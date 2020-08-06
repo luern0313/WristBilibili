@@ -67,7 +67,7 @@ public class RecommendAdapter extends BaseAdapter
     @Override
     public int getItemViewType(int position)
     {
-        return rcList.get(position).mode;
+        return rcList.get(position).getMode();
     }
 
     @Override
@@ -107,16 +107,16 @@ public class RecommendAdapter extends BaseAdapter
         if(type == 0)
         {
             viewHolder.video_img.setImageResource(R.drawable.img_default_vid);
-            viewHolder.video_time.setText(recommendVideo.video_time);
-            viewHolder.video_title.setText(recommendVideo.video_title);
-            viewHolder.video_play.setText(recommendVideo.video_data_1_text);
-            viewHolder.video_danmaku.setText(recommendVideo.video_data_2_text);
-            viewHolder.video_lable.setText(recommendVideo.video_lable);
-            if(!recommendVideo.video_recommend_reason.equals(""))
+            viewHolder.video_time.setText(recommendVideo.getTime());
+            viewHolder.video_title.setText(recommendVideo.getTitle());
+            viewHolder.video_play.setText(recommendVideo.getData1Text());
+            viewHolder.video_danmaku.setText(recommendVideo.getData2Text());
+            viewHolder.video_lable.setText(recommendVideo.getLabel());
+            if(recommendVideo.getRecommendReason() != null && !recommendVideo.getRecommendReason().equals(""))
             {
                 viewHolder.video_reason.setVisibility(View.VISIBLE);
                 viewHolder.video_lable.setVisibility(View.GONE);
-                viewHolder.video_reason.setText(recommendVideo.video_recommend_reason);
+                viewHolder.video_reason.setText(recommendVideo.getRecommendReason());
             }
             else
             {
@@ -133,8 +133,8 @@ public class RecommendAdapter extends BaseAdapter
 
             viewHolder.layout.setOnClickListener(onViewClick(position));
 
-            viewHolder.video_img.setTag(recommendVideo.video_img);
-            BitmapDrawable i = setImageFormWeb(recommendVideo.video_img);
+            viewHolder.video_img.setTag(recommendVideo.getImg());
+            BitmapDrawable i = setImageFormWeb(recommendVideo.getImg());
             if(i != null) viewHolder.video_img.setImageDrawable(i);
         }
         else

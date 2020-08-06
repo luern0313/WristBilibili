@@ -1,5 +1,6 @@
 package cn.luern0313.wristbilibili.adapter;
 
+import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,7 @@ import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.models.AnimationTimelineModel;
 import cn.luern0313.wristbilibili.util.ImageTaskUtil;
 import cn.luern0313.wristbilibili.util.LruCacheUtil;
+import cn.luern0313.wristbilibili.util.MyApplication;
 
 /**
  * 被 luern0313 创建于 2020/1/9.
@@ -23,6 +25,7 @@ import cn.luern0313.wristbilibili.util.LruCacheUtil;
 
 public class AnimationTimelineAdapter extends BaseAdapter
 {
+    private Context ctx;
     private LayoutInflater mInflater;
 
     private AnimationTimelineListener animationTimelineListener;
@@ -32,7 +35,8 @@ public class AnimationTimelineAdapter extends BaseAdapter
 
     public AnimationTimelineAdapter(LayoutInflater inflater, ArrayList<AnimationTimelineModel> arList, ListView listView, AnimationTimelineListener animationTimelineListener)
     {
-        mInflater = inflater;
+        this.ctx = MyApplication.getContext();
+        this.mInflater = inflater;
         this.arList = arList;
         this.listView = listView;
         this.animationTimelineListener = animationTimelineListener;
@@ -41,7 +45,10 @@ public class AnimationTimelineAdapter extends BaseAdapter
     @Override
     public int getCount()
     {
-        return arList.size();
+        int size = 0;
+        for (int i = 0; i < arList.size(); i++)
+            size += arList.get(i).getSeasonModelArrayList().size();
+        return size;
     }
 
     @Override
@@ -59,7 +66,15 @@ public class AnimationTimelineAdapter extends BaseAdapter
     @Override
     public View getView(int position, View convertView, ViewGroup viewGroup)
     {
-        AnimationTimelineModel anim = arList.get(position);
+        AnimationTimelineModel.AnimationTimelineSeasonModel animationTimelineSeasonModel = null;
+        int p = position;
+        for (int i = 0; i < arList.size(); i++)
+        {
+            if(p >= arList.get(i).getSeasonModelArrayList().size())
+                p -= arList.get(i).getSeasonModelArrayList().size();
+            else
+                animationTimelineSeasonModel = arList.get(i).getSeasonModelArrayList().get(p);
+        }
         ViewHolder viewHolder;
         if(convertView == null)
         {
@@ -78,16 +93,22 @@ public class AnimationTimelineAdapter extends BaseAdapter
             viewHolder = (ViewHolder) convertView.getTag();
         }
         viewHolder.lay.setOnClickListener(onViewClick(position));
-        viewHolder.name.setText(anim.getName());
-        viewHolder.last.setText("更新至" + anim.getLastEpisode());
+        viewHolder.name.setText(animationTimelineSeasonModel.getTitle());
+        viewHolder.last.setText(String.format(ctx.getString(R.string.animation_timeline_update), animationTimelineSeasonModel.getLastEpisode()));
         viewHolder.img.setImageResource(R.drawable.img_default_animation);
-        viewHolder.time.setText(anim.getTime());
 
-        if(anim.getIsFollow() == 1) viewHolder.isfollow.setVisibility(View.VISIBLE);
-        else viewHolder.isfollow.setVisibility(View.GONE);
+        if(animationTimelineSeasonModel.getIsToday() == 1)
+            viewHolder.time.setText(animationTimelineSeasonModel.getTime());
+        else
+            viewHolder.time.setText(String.format(ctx.getString(R.string.animation_timeline_date), animationTimelineSeasonModel.getDate(), animationTimelineSeasonModel.getTime()));
 
-        viewHolder.img.setTag(anim.getCoverUrl());
-        BitmapDrawable c = setImageFormWeb(anim.getCoverUrl());
+        if(animationTimelineSeasonModel.getIsFollow() == 1)
+            viewHolder.isfollow.setVisibility(View.VISIBLE);
+        else
+            viewHolder.isfollow.setVisibility(View.GONE);
+
+        viewHolder.img.setTag(animationTimelineSeasonModel.getCoverUrl());
+        BitmapDrawable c = setImageFormWeb(animationTimelineSeasonModel.getCoverUrl());
         if(c != null) viewHolder.img.setImageDrawable(c);
         return convertView;
     }

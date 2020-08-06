@@ -249,7 +249,7 @@ public class UserBangumiFragment extends Fragment
         if(viewId == R.id.item_list_bangumi_lay)
         {
             Intent intent = new Intent(ctx, BangumiActivity.class);
-            intent.putExtra("season_id", listBangumiModelArrayList.get(position).bangumi_season_id);
+            intent.putExtra("season_id", listBangumiModelArrayList.get(position).getSeasonId());
             startActivity(intent);
         }
     }

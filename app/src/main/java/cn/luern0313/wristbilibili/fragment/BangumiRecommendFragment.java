@@ -82,7 +82,7 @@ public class BangumiRecommendFragment extends Fragment
         if(viewId == R.id.item_list_bangumi_lay)
         {
             Intent intent = new Intent(ctx, BangumiActivity.class);
-            intent.putExtra("season_id", bangumiRecommendModelArrayList.get(position).bangumi_season_id);
+            intent.putExtra("season_id", bangumiRecommendModelArrayList.get(position).getSeasonId());
             startActivity(intent);
         }
     }

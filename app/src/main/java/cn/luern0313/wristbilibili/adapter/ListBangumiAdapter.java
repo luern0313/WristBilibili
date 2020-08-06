@@ -82,11 +82,11 @@ public class ListBangumiAdapter extends BaseAdapter
         }
 
         viewHolder.cover.setImageResource(R.drawable.img_default_vid);
-        viewHolder.title.setText(bangumiRecommendModel.bangumi_title);
-        viewHolder.play.setText(bangumiRecommendModel.bangumi_play);
-        viewHolder.follow.setText(bangumiRecommendModel.bangumi_follow);
-        viewHolder.newep.setText(bangumiRecommendModel.bangumi_new);
-        viewHolder.score.setText(bangumiRecommendModel.bangumi_score);
+        viewHolder.title.setText(bangumiRecommendModel.getTitle());
+        viewHolder.play.setText(bangumiRecommendModel.getPlay());
+        viewHolder.follow.setText(bangumiRecommendModel.getFollow());
+        viewHolder.newep.setText(bangumiRecommendModel.getNewEp());
+        viewHolder.score.setText(bangumiRecommendModel.getScore());
 
         Drawable playNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_number_play);
         Drawable likeNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_number_like);
@@ -97,8 +97,8 @@ public class ListBangumiAdapter extends BaseAdapter
 
         viewHolder.lay.setOnClickListener(onViewClick(position));
 
-        viewHolder.cover.setTag(bangumiRecommendModel.bangumi_cover);
-        BitmapDrawable c = setImageFormWeb(bangumiRecommendModel.bangumi_cover);
+        viewHolder.cover.setTag(bangumiRecommendModel.getCover());
+        BitmapDrawable c = setImageFormWeb(bangumiRecommendModel.getCover());
         if(c != null) viewHolder.cover.setImageDrawable(c);
         return convertView;
     }

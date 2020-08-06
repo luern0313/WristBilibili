@@ -1,12 +1,12 @@
 package cn.luern0313.wristbilibili.api;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.util.ArrayList;
 
+import cn.luern0313.lson.LsonArrayUtil;
+import cn.luern0313.lson.LsonObjectUtil;
+import cn.luern0313.lson.LsonParser;
+import cn.luern0313.lson.LsonUtil;
 import cn.luern0313.wristbilibili.models.ListVideoModel;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
@@ -28,24 +28,16 @@ public class HistoryApi
 
     public ArrayList<ListVideoModel> getHistory(int pn) throws IOException
     {
-        try
+        String url = "https://api.bilibili.com/x/v2/history";
+        String arg = "pn=" + pn + "&ps=30";
+        LsonObjectUtil result = LsonParser.parseString(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string());
+        ArrayList<ListVideoModel> videoModelArrayList = new ArrayList<>();
+        if(result.getAsInt("code", -1) == 0)
         {
-            String url = "https://api.bilibili.com/x/v2/history";
-            String arg = "pn=" + pn + "&ps=30";
-            JSONObject result = new JSONObject(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string());
-            ArrayList<ListVideoModel> videos = new ArrayList<>();
-            if(result.optInt("code") == 0)
-            {
-                JSONArray videoJSONArray = result.getJSONArray("data");
-                for(int i = 0; i < videoJSONArray.length(); i++)
-                    videos.add(new ListVideoModel(videoJSONArray.getJSONObject(i), 0));
-                return videos;
-            }
+            LsonArrayUtil videoJSONArray = result.getAsJsonArray("data");
+            for(int i = 0; i < videoJSONArray.size(); i++)
+                videoModelArrayList.add(LsonUtil.fromJson(videoJSONArray.getAsJsonObject(i), ListVideoModel.class));
         }
-        catch (JSONException e)
-        {
-            e.printStackTrace();
-        }
-        return null;
+        return videoModelArrayList;
     }
 }

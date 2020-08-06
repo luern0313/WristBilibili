@@ -1,5 +1,6 @@
 package cn.luern0313.wristbilibili.adapter;
 
+import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
@@ -19,6 +20,7 @@ import cn.luern0313.wristbilibili.models.RankingModel;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
 import cn.luern0313.wristbilibili.util.ImageTaskUtil;
 import cn.luern0313.wristbilibili.util.LruCacheUtil;
+import cn.luern0313.wristbilibili.util.MyApplication;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
@@ -27,6 +29,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class RankingAdapter extends BaseAdapter
 {
+    private Context ctx;
     private LayoutInflater mInflater;
 
     private RankingAdapterListener rankingAdapterListener;
@@ -36,7 +39,8 @@ public class RankingAdapter extends BaseAdapter
 
     public RankingAdapter(LayoutInflater inflater, ArrayList<RankingModel> rkList, ListView listView, RankingAdapterListener rankingAdapterListener)
     {
-        mInflater = inflater;
+        this.ctx = MyApplication.getContext();
+        this.mInflater = inflater;
         this.rkList = rkList;
         this.listView = listView;
         this.rankingAdapterListener = rankingAdapterListener;
@@ -94,12 +98,12 @@ public class RankingAdapter extends BaseAdapter
         viewHolder.video_play.setCompoundDrawables(playNumDrawable,null, null,null);
         viewHolder.video_danmaku.setCompoundDrawables(danmakuNumDrawable,null, null,null);
 
-        viewHolder.up_name.setText(rankingVideo.up_name);
+        viewHolder.up_name.setText(rankingVideo.getName());
         viewHolder.video_rank.setText(String.valueOf(position + 1));
-        viewHolder.video_title.setText(rankingVideo.video_title);
-        viewHolder.video_play.setText(getView(rankingVideo.video_play));
-        viewHolder.video_danmaku.setText(getView(rankingVideo.video_danmaku));
-        viewHolder.video_score.setText("综合得分：" + rankingVideo.video_score);
+        viewHolder.video_title.setText(rankingVideo.getTitle());
+        viewHolder.video_play.setText(getView(rankingVideo.getPlay()));
+        viewHolder.video_danmaku.setText(getView(rankingVideo.getDanmaku()));
+        viewHolder.video_score.setText(String.format(ctx.getString(R.string.ranking_score), rankingVideo.getScore()));
         viewHolder.up_head.setImageResource(R.drawable.img_default_head);
         viewHolder.video_img.setImageResource(R.drawable.img_default_vid);
 
@@ -126,12 +130,12 @@ public class RankingAdapter extends BaseAdapter
                 break;
         }
 
-        viewHolder.up_head.setTag(rankingVideo.up_face);
-        BitmapDrawable c = setImageFormWeb(rankingVideo.up_face);
+        viewHolder.up_head.setTag(rankingVideo.getFace());
+        BitmapDrawable c = setImageFormWeb(rankingVideo.getFace());
         if(c != null) viewHolder.up_head.setImageDrawable(c);
 
-        viewHolder.video_img.setTag(rankingVideo.video_pic);
-        BitmapDrawable i = setImageFormWeb(rankingVideo.video_pic);
+        viewHolder.video_img.setTag(rankingVideo.getPic());
+        BitmapDrawable i = setImageFormWeb(rankingVideo.getPic());
         if(i != null) viewHolder.video_img.setImageDrawable(i);
         return convertView;
     }
