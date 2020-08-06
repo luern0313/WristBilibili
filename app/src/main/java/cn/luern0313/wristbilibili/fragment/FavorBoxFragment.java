@@ -32,9 +32,11 @@ import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 public class FavorBoxFragment extends Fragment
 {
     private static final String ARG_FAVOR_BOX_MID = "argFavorBoxMid";
+    private static final String ARG_FAVOR_BOX_IS_SHOW_OTHER_BOX = "argIsShowOtherBox";
 
     private Context ctx;
     private String mid;
+    private boolean isShowOtherBox;
     private FavorBoxApi favorBoxApi;
     private ArrayList<FavorBoxModel> favorBoxArrayList;
     private FavorBoxAdapter.FavorBoxAdapterListener favorBoxAdapterListener;
@@ -46,15 +48,16 @@ public class FavorBoxFragment extends Fragment
     public static boolean isLogin;
 
     private Handler handler = new Handler();
-    private Runnable runnableUi, runnableNoWeb, runnableNodata;
+    private Runnable runnableUi, runnableNoWeb, runnableNoData;
 
     public FavorBoxFragment() {}
 
-    public static FavorBoxFragment newInstance(String mid)
+    public static FavorBoxFragment newInstance(String mid, boolean isShowOtherBox)
     {
         FavorBoxFragment fragment = new FavorBoxFragment();
         Bundle args = new Bundle();
         args.putString(ARG_FAVOR_BOX_MID, mid);
+        args.putBoolean(ARG_FAVOR_BOX_IS_SHOW_OTHER_BOX, isShowOtherBox);
         fragment.setArguments(args);
         return fragment;
     }
@@ -66,6 +69,7 @@ public class FavorBoxFragment extends Fragment
         if(getArguments() != null)
         {
             mid = getArguments().getString(ARG_FAVOR_BOX_MID);
+            isShowOtherBox = getArguments().getBoolean(ARG_FAVOR_BOX_IS_SHOW_OTHER_BOX);
         }
     }
 
@@ -73,7 +77,7 @@ public class FavorBoxFragment extends Fragment
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         ctx = getActivity();
-        rootLayout = inflater.inflate(R.layout.fragment_favor, container, false);
+        rootLayout = inflater.inflate(R.layout.fragment_favor_box, container, false);
 
         favListView = rootLayout.findViewById(R.id.fav_listview);
         waveSwipeRefreshLayout = rootLayout.findViewById(R.id.fav_swipe);
@@ -92,7 +96,7 @@ public class FavorBoxFragment extends Fragment
                         if(isLogin)
                         {
                             favListView.setVisibility(View.GONE);
-                            getFavorbox();
+                            getFavorBox();
                         }
                         else waveSwipeRefreshLayout.setRefreshing(false);
                     }
@@ -107,10 +111,23 @@ public class FavorBoxFragment extends Fragment
             {
                 if(viewId == R.id.favor_lay)
                 {
-                    Intent intent = new Intent(ctx, FavorvideoActivity.class);
-                    intent.putExtra("fid", favourboxArrayList.get(position).getFavorBoxFid());
-                    intent.putExtra("mid", mid);
-                    startActivity(intent);
+                    FavorBoxModel favorBoxModel = favorBoxArrayList.get(position);
+                    if(favorBoxModel.getMode() == 0)
+                    {
+                        Intent intent = new Intent(ctx, FavorVideoActivity.class);
+                        intent.putExtra("fid", favorBoxArrayList.get(position).getFid());
+                        intent.putExtra("mid", mid);
+                        startActivity(intent);
+                    }
+                    else if(favorBoxModel.getMode() == 1)
+                    {
+                        Intent intent = new Intent(ctx, FavorArticleActivity.class);
+                        startActivity(intent);
+                    }
+                    else if(favorBoxModel.getMode() == 2)
+                    {
+
+                    }
                 }
             }
         };
@@ -123,7 +140,7 @@ public class FavorBoxFragment extends Fragment
                 rootLayout.findViewById(R.id.fav_nologin).setVisibility(View.GONE);
                 rootLayout.findViewById(R.id.fav_noweb).setVisibility(View.GONE);
                 rootLayout.findViewById(R.id.fav_nonthing).setVisibility(View.GONE);
-                favListView.setAdapter(new FavorBoxAdapter(inflater, favourboxArrayList, favListView, favorBoxAdapterListener));
+                favListView.setAdapter(new FavorBoxAdapter(inflater, favorBoxArrayList, favListView, favorBoxAdapterListener));
                 favListView.setVisibility(View.VISIBLE);
                 waveSwipeRefreshLayout.setRefreshing(false);
             }
@@ -142,7 +159,7 @@ public class FavorBoxFragment extends Fragment
             }
         };
 
-        runnableNodata = new Runnable()
+        runnableNoData = new Runnable()
         {
             @Override
             public void run()
@@ -159,7 +176,7 @@ public class FavorBoxFragment extends Fragment
         if(isLogin)
         {
             waveSwipeRefreshLayout.setRefreshing(true);
-            getFavorbox();
+            getFavorBox();
         }
         else
         {
@@ -170,7 +187,7 @@ public class FavorBoxFragment extends Fragment
         return rootLayout;
     }
 
-    private void getFavorbox()
+    private void getFavorBox()
     {
         new Thread(new Runnable()
         {
@@ -179,16 +196,16 @@ public class FavorBoxFragment extends Fragment
             {
                 try
                 {
-                    favorBoxApi = new FavorBoxApi(mid);
-                    favourboxArrayList = favorBoxApi.getFavorbox();
-                    if(favourboxArrayList != null && favourboxArrayList.size() != 0)
+                    favorBoxApi = new FavorBoxApi(mid, isShowOtherBox);
+                    favorBoxArrayList = favorBoxApi.getFavorBox();
+                    if(favorBoxArrayList != null && favorBoxArrayList.size() != 0)
                         handler.post(runnableUi);
                     else
-                        handler.post(runnableNodata);
+                        handler.post(runnableNoData);
                 }
                 catch (NullPointerException e)
                 {
-                    handler.post(runnableNodata);
+                    handler.post(runnableNoData);
                     e.printStackTrace();
                 }
                 catch (IOException e)

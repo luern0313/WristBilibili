@@ -12,6 +12,19 @@
     <string name="open_source_other">--------------------------\n本应用使用了以下开源库，向这些开源库的作者致以敬意！\n--------------------------\nCircleImageView\nhdodenhof\nApache License 2.0\nhttps://github.com/hdodenhof/CircleImageView\n--------------------------\nExpandableTextView\nCarbs0126\nApache License 2.0\nhttps://github.com/Carbs0126/ExpandableTextView\n--------------------------\nWaveSwipeRefreshLayout\nrecruit-lifestyle\nApache License 2.0\nhttps://github.com/recruit-lifestyle/WaveSwipeRefreshLayout\n--------------------------\nsketch\npanpf\nApache License 2.0\nhttps://github.com/panpf/sketch\n--------------------------\nokhttp\nsquare\nApache License 2.0\nhttps://github.com/square/okhttp\n--------------------------\nFileDownloader\nlingochamp\nApache License 2.0\nhttps://github.com/lingochamp/FileDownloader\n--------------------------\nHtmlTextView\nSufficientlySecure\nApache License 2.0\nhttps://github.com/SufficientlySecure/html-textview\n--------------------------\nEventBus\ngreenrobot\nApache License 2.0\nhttps://github.com/greenrobot/EventBus\n--------------------------\nCircleProgressView\njenly1314\nMIT License\nhttps://github.com/jenly1314/CircleProgressView\n--------------------------\nLombok\nrzwitserloot\nMIT License\nhttps://github.com/rzwitserloot/lombok\n--------------------------\nfastjson\nalibaba\nApache License 2.0\nhttps://github.com/alibaba/fastjson\n--------------------------\n
     </string>
 
+    <string name="main_tip_no_data">什么都没找到…</string>
+    <string name="main_tip_no_web">好像没有网络…\n检查下网络？</string>
+    <string name="main_tip_no_login">你好像还没有登录…\n点上面的按钮试试吧</string>
+    <string name="main_tip_no_more_web">好像没有网络…\n检查下网络？</string>
+    <string name="main_tip_no_more_data">&#160;&#160;没有更多了…</string>
+    <string name="main_tip_no_more_data_loading">&#160;加载中…</string>
+    <string name="main_error_web">操作失败，请检查网络</string>
+    <string name="main_error_unknown">未知错误</string>
+    
+    <string name="time_0">今天 %s</string>
+    <string name="time_1">昨天 %s</string>
+    <string name="time_2">前天 %s</string>
+
     <string name="menu_dynamic">动态</string>
     <string name="menu_recommend">推荐</string>
     <string name="menu_ranking">排行榜</string>
@@ -43,6 +56,11 @@
     <string name="to_expand_hint">展开</string>
     <string name="to_shrink_hint">收起</string>
 
+    <string name="ranking_score">综合得分：%s</string>
+
+    <string name="animation_timeline_update">更新至%s</string>
+    <string name="animation_timeline_date">%s %s</string>
+
     <string name="reply_description_head">用户头像</string>
     <string name="reply_description_off_1">个人认证</string>
     <string name="reply_description_off_2">企业认证</string>
@@ -58,6 +76,18 @@
     <string name="favor_box_see_private">私有</string>
     <string name="favor_box_see_public">公开</string>
     <string name="favor_box_count">%s个视频</string>
+    <string name="favor_box_article">专栏收藏夹</string>
+    <string name="favor_box_album">相簿收藏夹</string>
+
+    <string name="favor_video_delete_message">你确定要取消收藏这个视频吗？</string>
+    <string name="favor_video_delete_cancel">取消</string>
+    <string name="favor_video_delete_ok">确定</string>
+    <string name="favor_video_delete_done">取消收藏完成</string>
+
+    <string name="favor_article_delete_message">你确定要取消收藏这篇专栏吗？</string>
+    <string name="favor_article_delete_cancel">取消</string>
+    <string name="favor_article_delete_ok">确定</string>
+    <string name="favor_article_delete_done">取消收藏完成</string>
 
     <string name="download_mode_1">正在下载</string>
     <string name="download_mode_2">下载完成</string>

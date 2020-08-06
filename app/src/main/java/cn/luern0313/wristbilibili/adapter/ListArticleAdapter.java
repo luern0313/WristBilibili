@@ -1,6 +1,7 @@
 package cn.luern0313.wristbilibili.adapter;
 
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.models.ListArticleModel;
+import cn.luern0313.wristbilibili.util.DataProcessUtil;
 import cn.luern0313.wristbilibili.util.ImageTaskUtil;
 import cn.luern0313.wristbilibili.util.LruCacheUtil;
 
@@ -71,6 +73,7 @@ public class ListArticleAdapter extends BaseAdapter
             viewHolder.img2 = convertView.findViewById(R.id.item_list_article_img_2);
             viewHolder.img3 = convertView.findViewById(R.id.item_list_article_img_3);
             viewHolder.title = convertView.findViewById(R.id.item_list_article_title);
+            viewHolder.desc = convertView.findViewById(R.id.item_list_article_desc);
             viewHolder.up = convertView.findViewById(R.id.item_list_article_up);
             viewHolder.view = convertView.findViewById(R.id.item_list_article_view);
             viewHolder.time = convertView.findViewById(R.id.item_list_article_time);
@@ -79,28 +82,48 @@ public class ListArticleAdapter extends BaseAdapter
         {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        /*Drawable upDrawable = convertView.getResources().getDrawable(R.drawable.icon_number_danmu);
-        Drawable playNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_number_view);
-        Drawable danmakuNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_article_danmu_num);
+        Drawable upDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_up);
+        Drawable playNumDrawable = convertView.getResources().getDrawable(
+                R.drawable.icon_number_view);
         upDrawable.setBounds(0, 0, DataProcessUtil.dip2px(10), DataProcessUtil.dip2px(10));
-        playNumDrawable.setBounds(0,0, DataProcessUtil.dip2px(10), DataProcessUtil.dip2px(10));
-        danmakuNumDrawable.setBounds(0,0, DataProcessUtil.dip2px(10), DataProcessUtil.dip2px(10));
-        viewHolder.up.setCompoundDrawables(upDrawable,null, null,null);
-        viewHolder.play.setCompoundDrawables(playNumDrawable,null, null,null);
-        viewHolder.danmaku.setCompoundDrawables(danmakuNumDrawable,null, null,null);
+        playNumDrawable.setBounds(0, 0, DataProcessUtil.dip2px(10), DataProcessUtil.dip2px(10));
+        viewHolder.up.setCompoundDrawables(upDrawable, null, null, null);
+        viewHolder.view.setCompoundDrawables(playNumDrawable, null, null, null);
 
-        viewHolder.img.setImageResource(R.drawable.img_default_vid);
-        viewHolder.title.setText(article.article_title);
-        viewHolder.up.setText(article.article_owner_name);
-        viewHolder.play.setText(article.article_play);
-        viewHolder.danmaku.setText(article.article_danmaku);
+        viewHolder.img1.setImageResource(R.drawable.img_default_vid);
+        viewHolder.img2.setImageResource(R.drawable.img_default_vid);
+        viewHolder.img3.setImageResource(R.drawable.img_default_vid);
+        viewHolder.title.setText(article.getTitle());
+        viewHolder.desc.setText(article.getDesc());
+        viewHolder.up.setText(article.getUp());
+        viewHolder.view.setText(article.getView());
+        viewHolder.time.setText(article.getTime());
 
         viewHolder.lay.setOnClickListener(onViewClick(position));
         viewHolder.lay.setOnLongClickListener(onViewLongClick(position));
 
-        viewHolder.img.setTag(article.article_cover);
-        BitmapDrawable c = setImageFormWeb(article.article_cover);
-        if(c != null) viewHolder.img.setImageDrawable(c);*/
+        viewHolder.img2.setVisibility(View.GONE);
+        viewHolder.img3.setVisibility(View.GONE);
+        if(article.getImg() != null && article.getImg().length >= 3)
+        {
+            viewHolder.img3.setVisibility(View.VISIBLE);
+            viewHolder.img3.setTag(article.getImg()[2]);
+            BitmapDrawable img3 = setImageFormWeb(article.getImg()[2]);
+            if(img3 != null) viewHolder.img3.setImageDrawable(img3);
+        }
+        if(article.getImg() != null && article.getImg().length >= 2)
+        {
+            viewHolder.img2.setVisibility(View.VISIBLE);
+            viewHolder.img2.setTag(article.getImg()[1]);
+            BitmapDrawable img2 = setImageFormWeb(article.getImg()[1]);
+            if(img2 != null) viewHolder.img2.setImageDrawable(img2);
+        }
+        if(article.getImg() != null && article.getImg().length >= 1)
+        {
+            viewHolder.img1.setTag(article.getImg()[0]);
+            BitmapDrawable img1 = setImageFormWeb(article.getImg()[0]);
+            if(img1 != null) viewHolder.img1.setImageDrawable(img1);
+        }
         return convertView;
     }
 
@@ -159,6 +182,7 @@ public class ListArticleAdapter extends BaseAdapter
     public interface ListArticleAdapterListener
     {
         void onListArticleAdapterClick(int viewId, int position);
+
         void onListArticleAdapterLongClick(int viewId, int position);
     }
 }

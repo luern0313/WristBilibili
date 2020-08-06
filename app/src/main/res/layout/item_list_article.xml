@@ -7,9 +7,9 @@
     android:background="?android:attr/selectableItemBackground"
     android:descendantFocusability="blocksDescendants"
     android:paddingLeft="18dp"
-    android:paddingTop="2dp"
+    android:paddingTop="4dp"
     android:paddingRight="18dp"
-    android:paddingBottom="2dp">
+    android:paddingBottom="4dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -22,8 +22,12 @@
             android:id="@+id/item_list_article_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="3"
+            android:text="B站已公布购买的5部四月新番！"
             android:textColor="@color/gray_22"
-            android:textSize="13sp" />
+            android:textSize="15sp"
+            android:textStyle="bold" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/item_list_article_img_lay"
@@ -59,7 +63,7 @@
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/img_default_vid"/>
+                        android:src="@drawable/img_default_vid" />
 
                     <ImageView
                         android:id="@+id/item_list_article_img_3"
@@ -80,29 +84,28 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="2"
-            android:paddingStart="4dp"
-            android:paddingEnd="4dp"
+            android:text="专栏基础功能科普：①文章往左划动可以快速到达UP主上一篇文章；②文章内粉红色字体可以点击传送到指定页面；③右下角点赞上面有一个圆圈，点击可以展开本系列里面的全部文章；④长按右下角点赞可以一键三连。B站已购买的新番聆听者 / LISTENERS  （购买日期：2020年03月20日）动物新世代 / BNA （购买日期：2020年03月19日）格莱普尼尔   （购买日期：2020年03月17日）邪神"
             android:textSize="11sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:divider="@drawable/shape_divider_4"
+            android:orientation="horizontal"
+            android:showDividers="middle">
 
             <TextView
                 android:id="@+id/item_list_article_up"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingStart="4dp"
-                android:paddingEnd="4dp"
+                android:text="1111"
                 android:textSize="10sp" />
 
             <TextView
                 android:id="@+id/item_list_article_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingStart="4dp"
-                android:paddingEnd="4dp"
+                android:text="1111"
                 android:textSize="10sp" />
 
             <TextView
@@ -110,9 +113,9 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:ellipsize="end"
                 android:gravity="end"
-                android:paddingStart="4dp"
-                android:paddingEnd="4dp"
+                android:lines="1"
                 android:textSize="10sp" />
 
         </LinearLayout>

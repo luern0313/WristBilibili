@@ -1,12 +1,13 @@
 package cn.luern0313.wristbilibili.api;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
+import cn.luern0313.lson.LsonArrayUtil;
+import cn.luern0313.lson.LsonObjectUtil;
+import cn.luern0313.lson.LsonParser;
+import cn.luern0313.lson.LsonUtil;
 import cn.luern0313.wristbilibili.models.FavorBoxModel;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
@@ -19,13 +20,15 @@ import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 public class FavorBoxApi
 {
     private String mid;
+    private boolean isShowOthersBox;
     private ArrayList<String> webHeaders;
 
-    private ArrayList<FavorBoxModel> favorBoxArrayList = new ArrayList<FavorBoxModel>();
+    private ArrayList<FavorBoxModel> favorBoxArrayList = new ArrayList<>();
 
-    public FavorBoxApi(String mid)
+    public FavorBoxApi(String mid, boolean isShowOthersBox)
     {
         this.mid = mid;
+        this.isShowOthersBox = isShowOthersBox;
         webHeaders = new ArrayList<String>(){{
             add("Cookie"); add(SharedPreferencesUtil.getString(SharedPreferencesUtil.cookies, ""));
             add("Referer"); add("https://www.bilibili.com/");
@@ -33,25 +36,22 @@ public class FavorBoxApi
         }};
     }
 
-    public ArrayList<FavorBoxModel> getFavorbox() throws IOException
+    public ArrayList<FavorBoxModel> getFavorBox() throws IOException
     {
-        try
+        String url = "http://space.bilibili.com/ajax/fav/getBoxList";
+        String arg = "mid=" + mid;
+        LsonObjectUtil result = LsonParser.parseString(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string());
+        if(result.getAsBoolean("status", false))
         {
-            String url = "http://space.bilibili.com/ajax/fav/getBoxList";
-            String arg = "mid=" + mid;
-            JSONObject result = new JSONObject(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string());
-            if(result.optInt("code") == 0)
-            {
-                JSONArray favorBoxJSONArray = result.getJSONObject("data").getJSONArray("list");
-                for(int i = 0; i < favorBoxJSONArray.length(); i++)
-                    favorBoxArrayList.add(new FavorBoxModel(favorBoxJSONArray.getJSONObject(i)));
-                return favorBoxArrayList;
-            }
+            LsonArrayUtil favorBoxJSONArray = result.getAsJsonObject("data").getAsJsonArray("list");
+            for(int i = 0; i < favorBoxJSONArray.size(); i++)
+                favorBoxArrayList.add(LsonUtil.fromJson(favorBoxJSONArray.getAsJsonObject(i), FavorBoxModel.class));
         }
-        catch (JSONException e)
+        if(isShowOthersBox)
         {
-            e.printStackTrace();
+            favorBoxArrayList.add(new FavorBoxModel(1));
+            favorBoxArrayList.add(new FavorBoxModel(2));
         }
-        return null;
+        return favorBoxArrayList;
     }
 }
