@@ -128,15 +128,21 @@ public class ListBangumiAdapter extends BaseAdapter
 
     private BitmapDrawable setImageFormWeb(String url)
     {
-        if(LruCacheUtil.getLruCache().get(url) != null)
-        {
-            return LruCacheUtil.getLruCache().get(url);
+        if(url == null) {
+            return null;
         }
         else
         {
-            ImageTaskUtil it = new ImageTaskUtil(listView);
-            it.execute(url);
-            return null;
+            BitmapDrawable cache = LruCacheUtil.getLruCache().get(url);
+            if (cache != null) {
+                return LruCacheUtil.getLruCache().get(url);
+            }
+            else
+            {
+                ImageTaskUtil it = new ImageTaskUtil(listView);
+                it.execute(url);
+                return null;
+            }
         }
     }
 

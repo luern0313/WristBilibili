@@ -227,7 +227,7 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
         {
             Uri uri = Uri.parse(articleCardModel.article_card_url);
             Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-            intent.setClassName("cn.luern0313.wristbilibili","cn.luern0313.wristbilibili.ui.UnsupportedLinkActivity");
+            intent.setClass(getContext(), UnsupportedLinkActivity.class);
             startActivity(intent);
         }
     }
