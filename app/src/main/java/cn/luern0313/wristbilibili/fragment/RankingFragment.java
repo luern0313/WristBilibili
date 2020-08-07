@@ -34,6 +34,7 @@ import cn.luern0313.wristbilibili.models.VideoModel;
 import cn.luern0313.wristbilibili.ui.TextActivity;
 import cn.luern0313.wristbilibili.ui.UserActivity;
 import cn.luern0313.wristbilibili.ui.VideoActivity;
+import cn.luern0313.wristbilibili.util.ColorUtil;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
 import cn.luern0313.wristbilibili.util.ImageDownloaderUtil;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
@@ -83,7 +84,8 @@ public class RankingFragment extends Fragment
         uiListView.addFooterView(uiLoadingView);
         uiWaveSwipeRefreshLayout = rootLayout.findViewById(R.id.rk_swipe);
         uiWaveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
-        uiWaveSwipeRefreshLayout.setWaveColor(Color.argb(255, 250, 114, 152));
+        uiWaveSwipeRefreshLayout.setWaveColor(ColorUtil.getColor(R.attr.colorPrimary, R.color.mainColor,
+                getContext()));
         uiWaveSwipeRefreshLayout.setOnRefreshListener(new WaveSwipeRefreshLayout.OnRefreshListener()
         {
             @Override

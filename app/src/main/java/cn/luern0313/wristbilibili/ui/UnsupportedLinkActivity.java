@@ -20,7 +20,7 @@ import cn.luern0313.wristbilibili.api.UnsupportedLinkApi;
 import cn.luern0313.wristbilibili.models.UnsupportedLinkModel;
 import cn.luern0313.wristbilibili.util.QRCodeUtil;
 
-public class UnsupportedLinkActivity extends AppCompatActivity
+public class UnsupportedLinkActivity extends BaseActivity
 {
     Context ctx;
     Intent intent;

@@ -29,7 +29,7 @@ import cn.luern0313.wristbilibili.fragment.DynamicFragment;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 import okhttp3.Response;
 
-public class LoginActivity extends AppCompatActivity
+public class LoginActivity extends BaseActivity
 {
     Context ctx;
 

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/item_history_video_lay"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -43,23 +44,24 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="123456"
-            android:textColor="@color/gray_44"
-            android:textSize="12sp" />
+            android:textColor="?attr/colorTitle"
+            android:textSize="12sp"
+            tools:text="标题" />
 
         <TextView
             android:id="@+id/item_history_video_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="123456"
-            android:textSize="10sp" />
+            android:textSize="10sp"
+            tools:text="时间" />
 
         <TextView
             android:id="@+id/item_history_video_up"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="123456"
-            android:textSize="10sp" />
+            android:textSize="10sp"
+            tools:text="UP主" />
 
     </LinearLayout>
 </RelativeLayout>

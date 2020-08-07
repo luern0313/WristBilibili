@@ -42,7 +42,7 @@ import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
  *
  * ok现在好多了
  */
-public class UserActivity extends AppCompatActivity implements UserDetailFragment.UserDetailFragmentListener
+public class UserActivity extends BaseActivity implements UserDetailFragment.UserDetailFragmentListener
 {
     Context ctx;
     Intent intent;

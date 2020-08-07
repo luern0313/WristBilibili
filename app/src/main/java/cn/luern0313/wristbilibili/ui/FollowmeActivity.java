@@ -30,7 +30,7 @@ import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
  * 关注我~
  */
 
-public class FollowmeActivity extends AppCompatActivity
+public class FollowmeActivity extends BaseActivity
 {
     Context ctx;
 

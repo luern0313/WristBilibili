@@ -12,7 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
-public class ReplyActivity extends AppCompatActivity
+public class ReplyActivity extends BaseActivity
 {
     Context ctx;
     Intent inIntent;

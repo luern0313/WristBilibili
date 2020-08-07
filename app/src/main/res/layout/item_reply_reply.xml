@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
@@ -59,7 +60,8 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="1"
-            android:textColor="@color/black" />
+            android:textColor="?attr/colorTitle"
+            tools:text="UP name" />
 
         <TextView
             android:id="@+id/item_reply_up"
@@ -92,14 +94,16 @@
             android:id="@+id/item_reply_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="10sp" />
+            android:textSize="10sp"
+            tools:text="12:00" />
 
         <TextView
             android:id="@+id/item_reply_floor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
-            android:textSize="10sp" />
+            android:textSize="10sp"
+            tools:text="2#" />
 
         <TextView
             android:id="@+id/item_reply_level"
@@ -110,7 +114,8 @@
             android:paddingStart="2dp"
             android:paddingEnd="2dp"
             android:textSize="8sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            tools:text="LV5" />
     </LinearLayout>
 
     <cn.luern0313.wristbilibili.widget.ExpandableTextView
@@ -142,7 +147,8 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="2"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            tools:text="Reply1" />
 
         <TextView
             android:id="@+id/item_reply_reply_show_2"
@@ -150,7 +156,8 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="2"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            tools:text="Reply2" />
 
         <TextView
             android:id="@+id/item_reply_reply_show_3"
@@ -158,13 +165,15 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="2"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            tools:text="Reply3" />
 
         <TextView
             android:id="@+id/item_reply_reply_show_show"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            tools:text="Show" />
 
     </LinearLayout>
 
@@ -183,7 +192,7 @@
         android:paddingTop="1px"
         android:paddingBottom="1px"
         android:text="@string/reply_like_up"
-        android:textColor="@color/gray_44"
+        android:textColor="?android:attr/textColorHint"
         android:textSize="11sp" />
 
     <LinearLayout

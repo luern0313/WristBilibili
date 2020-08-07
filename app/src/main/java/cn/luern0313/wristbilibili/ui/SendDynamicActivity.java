@@ -21,7 +21,7 @@ import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.util.ImageDownloaderUtil;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
-public class SendDynamicActivity extends AppCompatActivity
+public class SendDynamicActivity extends BaseActivity
 {
     Context ctx;
     Intent inIntent;

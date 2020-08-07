@@ -57,7 +57,7 @@
         android:id="@+id/fav_nonthing"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/activityBG"
+        android:background="?android:attr/colorBackground"
         android:clickable="true"
         android:focusable="true"
         android:gravity="center"

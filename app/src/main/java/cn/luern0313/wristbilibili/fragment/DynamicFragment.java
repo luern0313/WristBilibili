@@ -2,6 +2,7 @@ package cn.luern0313.wristbilibili.fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -31,6 +32,7 @@ import cn.luern0313.wristbilibili.ui.BangumiActivity;
 import cn.luern0313.wristbilibili.ui.SendDynamicActivity;
 import cn.luern0313.wristbilibili.ui.UnsupportedLinkActivity;
 import cn.luern0313.wristbilibili.ui.UserActivity;
+import cn.luern0313.wristbilibili.util.ColorUtil;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
@@ -213,7 +215,8 @@ public class DynamicFragment extends Fragment
 
         waveSwipeRefreshLayout = rootLayout.findViewById(R.id.dy_swipe);
         waveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
-        waveSwipeRefreshLayout.setWaveColor(Color.argb(255, 250, 114, 152));
+        waveSwipeRefreshLayout.setWaveColor(ColorUtil.getColor(R.attr.colorPrimary, R.color.mainColor,
+                getContext()));
         waveSwipeRefreshLayout.setOnRefreshListener(new WaveSwipeRefreshLayout.OnRefreshListener()
         {
             @Override

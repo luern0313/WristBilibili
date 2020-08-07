@@ -8,7 +8,7 @@ import android.widget.ImageView;
 
 import cn.luern0313.wristbilibili.R;
 
-public class AboutActivity extends AppCompatActivity
+public class AboutActivity extends BaseActivity
 {
     Context ctx;
 

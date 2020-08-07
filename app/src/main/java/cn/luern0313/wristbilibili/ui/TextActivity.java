@@ -9,7 +9,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import cn.luern0313.wristbilibili.R;
 
-public class TextActivity extends AppCompatActivity
+public class TextActivity extends BaseActivity
 {
     Context ctx;
     Intent intent;

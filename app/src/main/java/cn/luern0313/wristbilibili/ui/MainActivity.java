@@ -41,7 +41,7 @@ import cn.luern0313.wristbilibili.util.json.LsonAnnotationHandle;
  * fragment.....
  */
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends BaseActivity
 {
     Context ctx;
 

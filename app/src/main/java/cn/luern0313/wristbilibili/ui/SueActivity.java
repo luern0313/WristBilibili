@@ -17,7 +17,7 @@ import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.SendDynamicApi;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
-public class SueActivity extends AppCompatActivity
+public class SueActivity extends BaseActivity
 {
     Context ctx;
     SendDynamicApi sendDynamicApi;

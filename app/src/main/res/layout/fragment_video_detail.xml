@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -22,8 +23,9 @@
                 android:layout_marginStart="25dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="22dp"
-                android:textColor="@color/gray_44"
-                android:textStyle="bold" />
+                android:textColor="?attr/colorTitle"
+                android:textStyle="bold"
+                tools:text="标题" />
 
             <cn.luern0313.wristbilibili.widget.AutoLineLayout
                 android:layout_width="match_parent"
@@ -39,34 +41,39 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingEnd="4dp"
-                    android:textSize="11sp" />
+                    android:textSize="11sp"
+                    tools:text="25.5万" />
 
                 <TextView
                     android:id="@+id/vd_video_danamku"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingEnd="4dp"
-                    android:textSize="11sp" />
+                    android:textSize="11sp"
+                    tools:text="1356" />
 
                 <TextView
                     android:id="@+id/vd_video_aid"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingEnd="4dp"
-                    android:textSize="11sp" />
+                    android:textSize="11sp"
+                    tools:text="AV18648593" />
 
                 <TextView
                     android:id="@+id/vd_video_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingEnd="4dp"
-                    android:textSize="11sp" />
+                    android:textSize="11sp"
+                    tools:text="2018-01-24 22:27" />
 
                 <TextView
                     android:id="@+id/vd_video_bvid"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="11sp" />
+                    android:textSize="11sp"
+                    tools:text="BV1oW411Y7sm" />
 
             </cn.luern0313.wristbilibili.widget.AutoLineLayout>
 
@@ -109,7 +116,8 @@
                 android:layout_marginRight="21dp"
                 android:layout_marginBottom="6dp"
                 android:textSize="13sp"
-                app:etv_MaxLinesOnShrink="5" />
+                app:etv_MaxLinesOnShrink="5"
+                tools:text="作品類型: オリジナル曲、カバー曲\n原曲出处: https://www.youtube.com/watch?v=SpJ0Anejl9s\n調教: 春卷饭" />
 
             <LinearLayout
                 android:id="@+id/vd_video_part_layout"
@@ -647,8 +655,9 @@
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:maxLines="1"
-                        android:textColor="@color/gray_44"
-                        android:textStyle="bold" />
+                        android:textColor="?attr/colorTitle"
+                        android:textStyle="bold"
+                        tools:text="春卷饭harumakigohan" />
 
                     <TextView
                         android:id="@+id/vd_card_sen"
@@ -657,8 +666,9 @@
                         android:layout_marginTop="3dp"
                         android:ellipsize="end"
                         android:maxLines="1"
-                        android:textColor="@color/gray_44"
-                        android:textSize="11sp" />
+                        android:textColor="?attr/colorTitle"
+                        android:textSize="11sp"
+                        tools:text="粉丝：12.5万" />
                 </LinearLayout>
 
             </RelativeLayout>

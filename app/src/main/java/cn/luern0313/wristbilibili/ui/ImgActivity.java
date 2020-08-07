@@ -26,7 +26,7 @@ import cn.luern0313.wristbilibili.util.ImageTaskUtil;
 import cn.luern0313.wristbilibili.util.LruCacheUtil;
 import me.panpf.sketch.SketchImageView;
 
-public class ImgActivity extends AppCompatActivity
+public class ImgActivity extends BaseActivity
 {
     Context ctx;
     Intent intent;

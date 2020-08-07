@@ -8,7 +8,7 @@
         android:id="@+id/fme_title_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/mainColor"
+        android:background="?attr/colorPrimary"
         android:gravity="center_vertical"
         android:paddingBottom="4dp"
         android:paddingTop="10dp">
@@ -321,7 +321,7 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/fme_title_layout"
         android:layout_centerInParent="true"
-        android:background="@color/activityBG"
+        android:background="?android:attr/colorBackground"
         android:clickable="true"
         android:gravity="center_horizontal"
         android:orientation="vertical"

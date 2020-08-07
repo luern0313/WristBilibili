@@ -38,7 +38,7 @@ import cn.luern0313.wristbilibili.models.bangumi.BangumiModel;
 import cn.luern0313.wristbilibili.service.DownloadService;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
-public class BangumiActivity extends AppCompatActivity implements BangumiDetailFragment.BangumiDetailFragmentListener
+public class BangumiActivity extends BaseActivity implements BangumiDetailFragment.BangumiDetailFragmentListener
 {
     Context ctx;
     Intent intent;

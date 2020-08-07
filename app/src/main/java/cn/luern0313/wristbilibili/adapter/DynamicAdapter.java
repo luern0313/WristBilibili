@@ -18,11 +18,13 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import androidx.cardview.widget.CardView;
+import androidx.core.graphics.ColorUtils;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.models.DynamicModel;
 import cn.luern0313.wristbilibili.ui.ImgActivity;
+import cn.luern0313.wristbilibili.util.ColorUtil;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
 import cn.luern0313.wristbilibili.util.DynamicAlbumDecoration;
 import cn.luern0313.wristbilibili.util.ImageTaskUtil;
@@ -677,9 +679,11 @@ public class DynamicAdapter extends BaseAdapter
             }
 
             if(dm.getCardAuthorVipStatus() == 1 && dm.getCardAuthorVipType() == 2)
-                vh.dynamic_author_name.setTextColor(ctx.getResources().getColor(R.color.mainColor));
+                vh.dynamic_author_name.setTextColor(ColorUtil.getColor(R.attr.colorAccent,
+                        R.color.mainColor, vh.dynamic_author_name.getContext()));
             else
-                vh.dynamic_author_name.setTextColor(ctx.getResources().getColor(android.R.color.black));
+                vh.dynamic_author_name.setTextColor(ColorUtil.getColor(android.R.attr.textColor,
+                        R.color.black, vh.dynamic_author_name.getContext()));
 
             vh.dynamic_share_text.setText(dm.getCardShareNum());
             vh.dynamic_reply_text.setText(dm.getCardReplyNum());

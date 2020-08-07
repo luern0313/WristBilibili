@@ -8,7 +8,7 @@
         android:id="@+id/senddy_title_layout"
         android:layout_width="match_parent"
         android:layout_height="33dp"
-        android:background="@color/mainColor"
+        android:background="?attr/colorPrimary"
         android:gravity="center_vertical"
         android:paddingBottom="4dp"
         android:paddingTop="10dp">
@@ -57,11 +57,11 @@
                 android:id="@+id/senddy_share"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/gray_da"
-                android:paddingBottom="6dp"
+                android:background="?attr/colorLayerBack"
                 android:paddingLeft="24dp"
-                android:paddingRight="24dp"
                 android:paddingTop="6dp"
+                android:paddingRight="24dp"
+                android:paddingBottom="6dp"
                 android:visibility="gone">
 
                 <TextView
@@ -112,17 +112,21 @@
                 android:layout_marginTop="8dp"
                 android:orientation="horizontal">
 
-                <Button
+                <ImageButton
                     android:layout_width="42dp"
                     android:layout_height="42dp"
                     android:layout_marginRight="32dp"
-                    android:background="@drawable/icon_reply_voiceinput"
+                    android:src="@drawable/ic_reply_voiceinput"
+                    android:scaleType="fitCenter"
+                    android:background="@color/alpha"
                     android:onClick="senddy_clickVoiceInput" />
 
-                <Button
+                <ImageButton
                     android:layout_width="42dp"
                     android:layout_height="42dp"
-                    android:background="@drawable/icon_reply_send"
+                    android:src="@drawable/ic_reply_send"
+                    android:scaleType="fitCenter"
+                    android:background="@color/alpha"
                     android:onClick="senddy_clickSend" />
 
             </LinearLayout>

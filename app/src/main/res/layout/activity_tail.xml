@@ -8,7 +8,7 @@
         android:id="@+id/tail_title_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/mainColor"
+        android:background="?attr/colorPrimary"
         android:paddingBottom="4dp"
         android:paddingTop="10dp">
 
@@ -47,11 +47,12 @@
                 android:id="@+id/tail_switch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingBottom="6dp"
                 android:paddingLeft="44dp"
-                android:paddingRight="44dp"
                 android:paddingTop="8dp"
+                android:paddingRight="44dp"
+                android:paddingBottom="6dp"
                 android:text="小尾巴开关"
+                android:textColor="?android:attr/colorForeground"
                 android:textSize="14sp" />
 
 
@@ -59,26 +60,26 @@
                 android:id="@+id/tail_preetlay"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="?attr/colorLayerBack"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingLeft="22dp"
-                android:paddingRight="22dp"
                 android:paddingTop="4dp"
-                android:background="@color/gray_da">
+                android:paddingRight="22dp">
 
                 <TextView
                     android:id="@+id/tail_pretext"
                     android:layout_width="wrap_content"
                     android:layout_height="24dp"
                     android:paddingLeft="4dp"
-                    android:text="编辑小尾巴："/>
+                    android:text="编辑小尾巴：" />
 
                 <ImageView
                     android:id="@+id/tail_voice"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_alignParentRight="true"
-                    android:src="@drawable/icon_voiceinput_search" />
+                    android:src="@drawable/ic_voiceinput_search" />
 
                 <EditText
                     android:id="@+id/tail_preview"
@@ -86,8 +87,8 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/tail_pretext"
                     android:layout_marginTop="0dp"
-                    android:maxLength="70"
                     android:inputType="textMultiLine"
+                    android:maxLength="70"
                     android:paddingTop="0dp"
                     android:textSize="14dp" />
 

@@ -22,6 +22,7 @@ import cn.luern0313.wristbilibili.adapter.RecommendAdapter;
 import cn.luern0313.wristbilibili.api.RecommendApi;
 import cn.luern0313.wristbilibili.models.RecommendModel;
 import cn.luern0313.wristbilibili.ui.VideoActivity;
+import cn.luern0313.wristbilibili.util.ColorUtil;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
 /**
@@ -57,7 +58,8 @@ public class RecommendFragment extends Fragment
         uiListView.addFooterView(uiLoadingView);
         uiWaveSwipeRefreshLayout = rootLayout.findViewById(R.id.rc_swipe);
         uiWaveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
-        uiWaveSwipeRefreshLayout.setWaveColor(Color.argb(255, 250, 114, 152));
+        uiWaveSwipeRefreshLayout.setWaveColor(ColorUtil.getColor(R.attr.colorPrimary, R.color.mainColor,
+                getContext()));
         uiWaveSwipeRefreshLayout.setOnRefreshListener(new WaveSwipeRefreshLayout.OnRefreshListener()
         {
             @Override
