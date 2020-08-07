@@ -52,8 +52,7 @@ public class WatchlaterFragment extends Fragment
         wlListView = rootLayout.findViewById(R.id.wl_listview);
         waveSwipeRefreshLayout = rootLayout.findViewById(R.id.wl_swipe);
         waveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
-        waveSwipeRefreshLayout.setWaveColor(ColorUtil.getColor(R.attr.colorPrimary, R.color.mainColor,
-                getContext()));
+        waveSwipeRefreshLayout.setWaveColor(ColorUtil.getColor(R.attr.colorPrimary, getContext()));
         waveSwipeRefreshLayout.setOnRefreshListener(new WaveSwipeRefreshLayout.OnRefreshListener()
         {
             @Override

@@ -113,6 +113,7 @@
             android:background="@drawable/shape_lvbg_fme"
             android:paddingStart="2dp"
             android:paddingEnd="2dp"
+            android:textColor="?attr/colorAccent"
             android:textSize="8sp"
             android:textStyle="bold"
             tools:text="LV5" />

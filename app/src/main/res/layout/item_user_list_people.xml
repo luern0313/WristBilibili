@@ -45,7 +45,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
         android:layout_toEndOf="@+id/user_list_people_face"
-        android:textColor="@color/gray_44"
+        android:textColor="?attr/colorTitle"
         android:textStyle="bold" />
 
     <TextView
@@ -57,7 +57,7 @@
         android:layout_toEndOf="@+id/user_list_people_face"
         android:ellipsize="end"
         android:singleLine="true"
-        android:textColor="@color/gray_44"
+        android:textColor="?attr/colorTitle"
         android:textSize="11sp" />
 
     <TextView

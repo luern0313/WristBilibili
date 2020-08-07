@@ -6,6 +6,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import cn.luern0313.wristbilibili.util.ThemeUtil;
 
+/**
+ * 所有需要自动切换主题的Activity都要继承这个类
+ */
 public class BaseActivity extends AppCompatActivity
 {
     ThemeUtil.ThemeChangeListener listener;

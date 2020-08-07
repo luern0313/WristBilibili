@@ -3,17 +3,26 @@ package cn.luern0313.wristbilibili.ui;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.VectorDrawable;
+import android.media.Image;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.ColorInt;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.Arrays;
+
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.adapter.ThemeAdapter;
 import cn.luern0313.wristbilibili.util.ThemeUtil;
@@ -42,6 +51,28 @@ public class ThemeActivity extends AppCompatActivity
             public void onChangeTheme(ViewGroup group, int primary, int fore)
             {
                 changeTheme(group, primary, fore);
+                holder.checkView.setVisibility(ThemeUtil.getCurrentThemePos() == position ?
+                        View.VISIBLE : View.INVISIBLE);
+                holder.nameView.setText(ThemeUtil.themes[position].getName());
+                holder.colorView.setCardBackgroundColor(getResources().getColor(
+                        ThemeUtil.themes[position].getPreviewColor()));
+                final int finalPos = position;
+                holder.itemView.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        Context ctx = rv.getContext();
+                        ThemeUtil.changeCurrentTheme(ThemeUtil.themes[finalPos]);
+                        ThemeUtil.changeTheme(ctx, ThemeUtil.getCurrentTheme());
+                        primary = ColorUtil.getColor(R.attr.colorPrimary, ctx);
+                        back = ColorUtil.getColor(android.R.attr.colorBackground, ctx);
+                        fore = ColorUtil.getColor(android.R.attr.textColor, ctx);
+                        changeTheme((ViewGroup) findViewById(R.id.theme_root));
+                        animate(rv, "backgroundColor", ((ColorDrawable) rv.getBackground()).getColor(), back);
+                        notifyDataSetChanged();
+                    }
+                });
             }
         };
 
@@ -63,14 +94,14 @@ public class ThemeActivity extends AppCompatActivity
             {
                 changeTheme((ViewGroup) v, primary, fore);
             }
-            if(v.getId() == R.id.theme_title_layout)
-            {
+            if(v.getId() == R.id.theme_title_layout) {
                 animate(v, "backgroundColor", ((ColorDrawable) v.getBackground()).getColor(), primary);
-            }
-            else if(v.getId() == R.id.theme_item_name)
-            {
-                assert v instanceof TextView;
+            } else if (v.getId() == R.id.theme_item_name) {
+                //noinspection ConstantConditions
                 animate(v, "textColor", ((TextView) v).getTextColors().getDefaultColor(), fore);
+            } else if (v.getId() == R.id.theme_item_check) {
+                //noinspection ConstantConditions
+                ((ImageView) v).getDrawable().applyTheme(getTheme());
             }
         }
     }
@@ -79,7 +110,14 @@ public class ThemeActivity extends AppCompatActivity
     {
         ObjectAnimator animator = ObjectAnimator.ofArgb(view, name, from, to);
         animator.setInterpolator(new AccelerateDecelerateInterpolator());
-        animator.setDuration(1000);
+        animator.setDuration(500);
         animator.start();
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        AppCompatDelegate.setDefaultNightMode(ThemeUtil.getCurrentTheme().isDarkTheme() ? AppCompatDelegate.MODE_NIGHT_YES
+                : AppCompatDelegate.MODE_NIGHT_NO);
     }
 }

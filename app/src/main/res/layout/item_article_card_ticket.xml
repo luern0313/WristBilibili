@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingLeft="24dp"
@@ -11,6 +12,7 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="96dp"
+        app:cardBackgroundColor="?attr/colorLayerBack"
         app:cardCornerRadius="6dp"
         app:cardElevation="0dp">
 
@@ -46,8 +48,9 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:lines="2"
-                    android:textColor="@color/gray_44"
-                    android:textSize="13sp" />
+                    android:textColor="?attr/colorTitle"
+                    android:textSize="13sp"
+                    tools:text="123" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -63,7 +66,8 @@
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:maxLines="1"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        tools:text="12:00" />
 
                     <TextView
                         android:id="@+id/artcard_ticket_location"
@@ -71,7 +75,8 @@
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:maxLines="1"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        tools:text="China" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -87,7 +92,7 @@
                             android:paddingStart="3dp"
                             android:paddingEnd="3dp"
                             android:text="票务"
-                            android:textColor="@color/mainColor"
+                            android:textColor="?attr/colorAccent"
                             android:textSize="11sp" />
 
                         <TextView
@@ -95,8 +100,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="4dp"
-                            android:textColor="@color/mainColor"
-                            android:textSize="16sp" />
+                            android:textColor="?attr/colorAccent"
+                            android:textSize="16sp"
+                            tools:text="25￥" />
                     </LinearLayout>
                 </LinearLayout>
             </RelativeLayout>

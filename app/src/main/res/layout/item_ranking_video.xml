@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/rk_video_lay"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -21,7 +22,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:textSize="18sp"
-            android:textStyle="bold|italic" />
+            android:textStyle="bold|italic"
+            tools:text="4" />
 
         <LinearLayout
             android:id="@+id/rk_video_video_up"
@@ -44,7 +46,8 @@
                 android:layout_height="22dp"
                 android:layout_marginStart="3dp"
                 android:gravity="center_vertical"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                tools:text="UP主" />
 
         </LinearLayout>
 
@@ -74,8 +77,9 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:lines="2"
-                android:textColor="@color/gray_44"
-                android:textSize="12sp" />
+                android:textColor="?attr/colorTitle"
+                android:textSize="12sp"
+                tools:text="标题" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -88,7 +92,8 @@
                     android:layout_height="14dp"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:textSize="10sp" />
+                    android:textSize="10sp"
+                    tools:text="123万" />
 
                 <TextView
                     android:id="@+id/rk_video_video_danmaku"
@@ -97,7 +102,8 @@
                     android:layout_marginLeft="6dp"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:textSize="10sp" />
+                    android:textSize="10sp"
+                    tools:text="3123" />
             </LinearLayout>
 
             <TextView
@@ -107,7 +113,8 @@
                 android:layout_marginBottom="2dp"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:textSize="9sp" />
+                android:textSize="9sp"
+                tools:text="综合得分：" />
 
         </LinearLayout>
 

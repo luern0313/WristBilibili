@@ -58,8 +58,8 @@ public class RecommendFragment extends Fragment
         uiListView.addFooterView(uiLoadingView);
         uiWaveSwipeRefreshLayout = rootLayout.findViewById(R.id.rc_swipe);
         uiWaveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
-        uiWaveSwipeRefreshLayout.setWaveColor(ColorUtil.getColor(R.attr.colorPrimary, R.color.mainColor,
-                getContext()));
+        //noinspection ConstantConditions
+        uiWaveSwipeRefreshLayout.setWaveColor(ColorUtil.getColor(R.attr.colorPrimary, getContext()));
         uiWaveSwipeRefreshLayout.setOnRefreshListener(new WaveSwipeRefreshLayout.OnRefreshListener()
         {
             @Override

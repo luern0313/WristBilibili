@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingLeft="24dp"
@@ -12,6 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardCornerRadius="6dp"
+        app:cardBackgroundColor="?attr/colorLayerBack"
         app:cardElevation="0dp">
 
         <RelativeLayout
@@ -59,7 +61,8 @@
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:textColor="@color/white"
-                    android:textSize="11sp" />
+                    android:textSize="11sp"
+                    tools:text="12" />
 
                 <TextView
                     android:id="@+id/artcard_video_danmaku"
@@ -69,7 +72,8 @@
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:textColor="@color/white"
-                    android:textSize="11sp" />
+                    android:textSize="11sp"
+                    tools:text="34" />
 
                 <TextView
                     android:id="@+id/artcard_video_time"
@@ -80,7 +84,8 @@
                     android:gravity="end"
                     android:maxLines="1"
                     android:textColor="@color/white"
-                    android:textSize="11sp" />
+                    android:textSize="11sp"
+                    tools:text="12:00" />
             </LinearLayout>
 
             <LinearLayout
@@ -97,8 +102,9 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:maxLines="2"
-                    android:textColor="@color/gray_44"
-                    android:textSize="13sp" />
+                    android:textColor="?attr/colorTitle"
+                    android:textSize="13sp"
+                    tools:text="标题" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -114,7 +120,7 @@
                         android:paddingStart="3dp"
                         android:paddingEnd="3dp"
                         android:text="视频"
-                        android:textColor="@color/mainColor"
+                        android:textColor="?attr/colorAccent"
                         android:textSize="11sp" />
 
                     <TextView

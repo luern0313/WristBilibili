@@ -20,6 +20,7 @@ import cn.luern0313.wristbilibili.api.FavorBoxApi;
 import cn.luern0313.wristbilibili.models.FavorBoxModel;
 import cn.luern0313.wristbilibili.ui.FavorArticleActivity;
 import cn.luern0313.wristbilibili.ui.FavorVideoActivity;
+import cn.luern0313.wristbilibili.util.ColorUtil;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
@@ -82,7 +83,8 @@ public class FavorBoxFragment extends Fragment
         favListView = rootLayout.findViewById(R.id.fav_listview);
         waveSwipeRefreshLayout = rootLayout.findViewById(R.id.fav_swipe);
         waveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
-        waveSwipeRefreshLayout.setWaveColor(Color.argb(255, 250, 114, 152));
+        //noinspection ConstantConditions
+        waveSwipeRefreshLayout.setWaveColor(ColorUtil.getColor(R.attr.colorPrimary, getContext()));
         waveSwipeRefreshLayout.setOnRefreshListener(new WaveSwipeRefreshLayout.OnRefreshListener()
         {
             @Override
