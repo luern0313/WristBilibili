@@ -112,5 +112,11 @@
     <string name="bangumi_download_title">分集下载</string>
     <string name="bangumi_download_tip">选择要下载的分集</string>
     <string name="bangumi_download_notallow">抱歉，该%s只可在线观看</string>
+    <string name="theme_name_pink">少女粉</string>
+    <string name="theme_name_dark">黑暗模式</string>
+    <string name="theme_name_black">纯黑</string>
+    <string name="theme_name_blue">天依蓝</string>
+    <string name="theme_name_green">初音绿</string>
+    <string name="theme_name_red">网易红</string>
 
 </resources>
