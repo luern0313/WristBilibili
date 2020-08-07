@@ -16,7 +16,6 @@ import com.liulishuo.filedownloader.FileDownloader;
 import java.io.IOException;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import cn.luern0313.lson.LsonUtil;
@@ -128,7 +127,7 @@ public class MainActivity extends BaseActivity
 
         Intent intent = new Intent(ctx, ArticleActivity.class);
         intent.putExtra("article_id", "6938689");
-        startActivity(intent);
+        //startActivity(intent);
 
         serviceIntent = new Intent(this, DownloadService.class);
         startService(serviceIntent);

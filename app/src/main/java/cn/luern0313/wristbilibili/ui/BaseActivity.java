@@ -20,11 +20,14 @@ public class BaseActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onStart() {
+    protected void onStart()
+    {
         super.onStart();
-        listener = new ThemeUtil.ThemeChangeListener() {
+        listener = new ThemeUtil.ThemeChangeListener()
+        {
             @Override
-            public void onThemeChange() {
+            public void onThemeChange()
+            {
                 recreate();
             }
         };
@@ -32,22 +35,27 @@ public class BaseActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onStop() {
+    protected void onStop()
+    {
         super.onStop();
         ThemeUtil.removeThemeChangeListener(listener);
     }
 
     @Override
-    protected void onRestart() {
+    protected void onRestart()
+    {
         super.onRestart();
-        listener = new ThemeUtil.ThemeChangeListener() {
+        listener = new ThemeUtil.ThemeChangeListener()
+        {
             @Override
-            public void onThemeChange() {
+            public void onThemeChange()
+            {
                 recreate();
             }
         };
         ThemeUtil.addThemeChangeListener(listener);
-        if(!ThemeUtil.getCurrentTheme().equals(currentTheme)) {
+        if(!ThemeUtil.getCurrentTheme().equals(currentTheme))
+        {
             recreate();
         }
     }
