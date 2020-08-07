@@ -2,10 +2,11 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorAccent">@color/pink_light</item>
+        <item name="colorAccent">@color/mainColor</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorPrimary">@color/mainColor</item>
-        <item name="android:windowBackground">@color/activityBG</item>
+        <item name="android:windowBackground">?android:attr/colorBackground</item>
+        <item name="android:colorBackground">@color/activityBG</item>
         <item name="android:textColor">?android:attr/colorForeground</item>
         <item name="android:colorForeground">@color/gray_77</item>
         <item name="android:textColorHint">@color/gray_44</item>
@@ -13,37 +14,51 @@
         <item name="colorLayerBack">@color/gray_ee</item>
         <item name="colorMenuIconBack">@color/pink_light</item>
         <item name="colorAccentForeground">@color/white</item>
+        <item name="colorBigMember">@color/mainColor</item>
+        <item name="cardBackgroundColor">?attr/colorLayerBack</item>
     </style>
 
     <style name="BlueTheme" parent="AppTheme">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimaryBlue</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/mainColorBlue</item>
-        <item name="android:windowBackground">@color/activityBG</item>
         <item name="colorMenuIconBack">?attr/colorAccent</item>
     </style>
 
     <style name="GreenTheme" parent="AppTheme">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimaryGreen</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/mainColorGreen</item>
-        <item name="android:windowBackground">@color/activityBG</item>
+        <item name="colorMenuIconBack">?attr/colorAccent</item>
+    </style>
+
+    <style name="RedTheme" parent="AppTheme">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimaryRed</item>
+        <item name="colorAccent">@color/mainColorRed</item>
         <item name="colorMenuIconBack">?attr/colorAccent</item>
     </style>
 
     <style name="DarkTheme" parent="AppTheme">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
         <item name="colorPrimary">@color/colorPrimaryDarkNormal</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkDark</item>
         <item name="colorAccent">@color/mainColor</item>
-        <item name="android:windowBackground">@color/bgDark</item>
         <item name="android:colorBackground">@color/bgDark</item>
         <item name="android:colorForeground">@color/colorForeDark</item>
         <item name="android:textColorHint">@color/gray_77</item>
-        <item name="colorTitle">@color/gray_aa</item>
+        <item name="colorTitle">@color/white</item>
+        <item name="colorLayerBack">@color/gray_44</item>
+        <item name="colorMenuIconBack">?attr/colorPrimaryDark</item>
+    </style>
+
+    <style name="BlackTheme" parent="AppTheme">
+        <item name="colorPrimary">@color/colorPrimaryDarkNormal</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkNormal</item>
+        <item name="colorAccent">@color/mainColor</item>
+        <item name="android:colorBackground">@color/black</item>
+        <item name="android:colorForeground">@color/colorForeDark</item>
+        <item name="android:textColorHint">@color/gray_77</item>
+        <item name="colorTitle">@color/white</item>
         <item name="colorLayerBack">@color/gray_44</item>
         <item name="colorMenuIconBack">?attr/colorPrimaryDark</item>
     </style>

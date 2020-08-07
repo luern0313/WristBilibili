@@ -51,8 +51,8 @@ public class AnimationTimelineFragment extends Fragment
         arListView = rootLayout.findViewById(R.id.ar_listview);
         waveSwipeRefreshLayout = rootLayout.findViewById(R.id.ar_swipe);
         waveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
-        waveSwipeRefreshLayout.setWaveColor(ColorUtil.getColor(R.attr.colorPrimary, R.color.mainColor,
-                getContext()));
+        //noinspection ConstantConditions
+        waveSwipeRefreshLayout.setWaveColor(ColorUtil.getColor(R.attr.colorPrimary, getContext()));
         waveSwipeRefreshLayout.setOnRefreshListener(new WaveSwipeRefreshLayout.OnRefreshListener()
         {
             @Override

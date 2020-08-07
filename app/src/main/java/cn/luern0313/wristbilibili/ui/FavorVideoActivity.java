@@ -18,11 +18,11 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import androidx.appcompat.app.AppCompatActivity;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.adapter.ListVideoAdapter;
 import cn.luern0313.wristbilibili.api.FavorVideoApi;
 import cn.luern0313.wristbilibili.models.ListVideoModel;
+import cn.luern0313.wristbilibili.util.ColorUtil;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
 public class FavorVideoActivity extends BaseActivity
@@ -115,7 +115,7 @@ public class FavorVideoActivity extends BaseActivity
         favvListView = findViewById(R.id.favv_listview);
         waveSwipeRefreshLayout = findViewById(R.id.favv_swipe);
         waveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
-        waveSwipeRefreshLayout.setWaveColor(Color.argb(255, 250, 114, 152));
+        waveSwipeRefreshLayout.setWaveColor(ColorUtil.getColor(R.attr.colorPrimary, ctx));
         waveSwipeRefreshLayout.setOnRefreshListener(new WaveSwipeRefreshLayout.OnRefreshListener()
         {
             @Override

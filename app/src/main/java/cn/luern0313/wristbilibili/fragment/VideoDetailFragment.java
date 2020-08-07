@@ -35,6 +35,7 @@ import cn.luern0313.wristbilibili.models.VideoModel;
 import cn.luern0313.wristbilibili.ui.BangumiActivity;
 import cn.luern0313.wristbilibili.ui.UserActivity;
 import cn.luern0313.wristbilibili.ui.VideoActivity;
+import cn.luern0313.wristbilibili.util.ColorUtil;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
 
 public class VideoDetailFragment extends Fragment implements View.OnClickListener
@@ -152,7 +153,7 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
         ((TextView) rootLayout.findViewById(R.id.vd_card_name)).setText(videoModel.video_up_name);
         ((TextView) rootLayout.findViewById(R.id.vd_card_sen)).setText("粉丝：" + DataProcessUtil.getView(videoModel.video_up_fan_num));
         if(videoModel.video_up_vip == 2)
-            ((TextView) rootLayout.findViewById(R.id.vd_card_name)).setTextColor(getResources().getColor(R.color.mainColor));
+            ((TextView) rootLayout.findViewById(R.id.vd_card_name)).setTextColor(ColorUtil.getColor(R.attr.colorBigMember, getContext()));
         if(videoModel.video_up_official == 0)
             rootLayout.findViewById(R.id.vd_card_off_1).setVisibility(View.VISIBLE);
         else if(videoModel.video_up_official == 1)

@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -20,9 +21,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="23dp"
                 android:layout_marginRight="23dp"
-                android:layout_marginTop="8dp"
-                android:textColor="@color/gray_44"
-                android:textStyle="bold"/>
+                android:textColor="?attr/colorTitle"
+                android:textStyle="bold"
+                tools:text="颠倒的帕特玛" />
 
             <cn.luern0313.wristbilibili.widget.AutoLineLayout
                 android:id="@+id/bgm_detail_info"
@@ -43,28 +44,32 @@
                     android:layout_height="wrap_content"
                     android:paddingEnd="6dp"
                     android:textColor="@color/orange"
-                    android:textSize="12sp" />
+                    android:textSize="12sp"
+                    tools:text="9.7分" />
 
                 <TextView
                     android:id="@+id/bgm_detail_play"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingEnd="6dp"
-                    android:textSize="12sp" />
+                    android:textSize="12sp"
+                    tools:text="151.9万" />
 
                 <TextView
                     android:id="@+id/bgm_detail_like"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingEnd="6dp"
-                    android:textSize="12sp" />
+                    android:textSize="12sp"
+                    tools:text="18.7万" />
 
                 <TextView
                     android:id="@+id/bgm_detail_series"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingEnd="6dp"
-                    android:textSize="12sp" />
+                    android:textSize="12sp"
+                    tools:text="已完结，全一话" />
 
                 <TextView
                     android:id="@+id/bgm_detail_needvip"
@@ -143,7 +148,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
-                            android:text="@string/bangumi_control_cover"
+                            android:text="查看封面"
                             android:textSize="12sp" />
 
                     </LinearLayout>
@@ -172,7 +177,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
-                            android:text="@string/bangumi_control_download_allow"
+                            android:text="缓存"
                             android:textSize="12sp" />
 
                     </LinearLayout>
@@ -199,7 +204,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
-                            android:text="@string/bangumi_control_share"
+                            android:text="转发"
                             android:textSize="12sp" />
 
                     </LinearLayout>
@@ -214,7 +219,8 @@
                 android:layout_marginTop="4dp"
                 android:gravity="center_vertical"
                 android:orientation="vertical"
-                android:visibility="gone">
+                android:visibility="gone"
+                tools:visibility="visible">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -228,17 +234,18 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:lines="1"
                         android:ellipsize="end"
-                        android:textColor="@color/gray_44"
-                        android:textSize="13sp" />
+                        android:lines="1"
+                        android:textColor="?android:attr/textColorHint"
+                        android:textSize="13sp"
+                        tools:text="正片-共1话" />
 
                     <TextView
                         android:id="@+id/bgm_detail_video_part_more"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="查看全部>"
-                        android:textColor="@color/gray_44"
+                        android:textColor="?android:attr/textColorHint"
                         android:textSize="12sp" />
                 </LinearLayout>
 
@@ -247,11 +254,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:clipToPadding="false"
+                    android:divider="@color/alpha"
+                    android:dividerPadding="4dp"
                     android:paddingLeft="21dp"
                     android:paddingRight="21dp"
-                    android:scrollbars="none"
-                    android:divider="@color/alpha"
-                    android:dividerPadding="4dp" />
+                    android:scrollbars="none" />
 
             </LinearLayout>
 
@@ -262,7 +269,8 @@
                 android:layout_marginTop="4dp"
                 android:gravity="center_vertical"
                 android:orientation="vertical"
-                android:visibility="gone">
+                android:visibility="gone"
+                tools:visibility="visible">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -276,17 +284,18 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:lines="1"
                         android:ellipsize="end"
-                        android:textColor="@color/gray_44"
-                        android:textSize="13sp" />
+                        android:lines="1"
+                        android:textColor="?android:attr/textColorHint"
+                        android:textSize="13sp"
+                        tools:text="其他" />
 
                     <TextView
                         android:id="@+id/bgm_detail_video_other_more"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="查看全部>"
-                        android:textColor="@color/gray_44"
+                        android:textColor="?android:attr/textColorHint"
                         android:textSize="12sp" />
                 </LinearLayout>
 
@@ -295,11 +304,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:clipToPadding="false"
+                    android:divider="@color/alpha"
+                    android:dividerPadding="4dp"
                     android:paddingLeft="21dp"
                     android:paddingRight="21dp"
-                    android:scrollbars="none"
-                    android:divider="@color/alpha"
-                    android:dividerPadding="4dp" />
+                    android:scrollbars="none" />
 
             </LinearLayout>
 
@@ -312,7 +321,8 @@
                 android:paddingLeft="21dp"
                 android:paddingRight="21dp"
                 android:scrollbars="none"
-                android:visibility="gone">
+                android:visibility="gone"
+                tools:visibility="visible">
 
                 <LinearLayout
                     android:id="@+id/bgm_detail_video_season"

@@ -680,10 +680,10 @@ public class DynamicAdapter extends BaseAdapter
 
             if(dm.getCardAuthorVipStatus() == 1 && dm.getCardAuthorVipType() == 2)
                 vh.dynamic_author_name.setTextColor(ColorUtil.getColor(R.attr.colorAccent,
-                        R.color.mainColor, vh.dynamic_author_name.getContext()));
+                        vh.dynamic_author_name.getContext()));
             else
                 vh.dynamic_author_name.setTextColor(ColorUtil.getColor(android.R.attr.textColor,
-                        R.color.black, vh.dynamic_author_name.getContext()));
+                        vh.dynamic_author_name.getContext()));
 
             vh.dynamic_share_text.setText(dm.getCardShareNum());
             vh.dynamic_reply_text.setText(dm.getCardReplyNum());

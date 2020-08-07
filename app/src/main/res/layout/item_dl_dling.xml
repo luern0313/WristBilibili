@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/dling_lay"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -30,12 +31,13 @@
             android:id="@+id/dling_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
             android:ellipsize="end"
             android:maxLines="2"
-            android:textColor="@color/gray_44"
-            android:textSize="13sp" />
+            android:textColor="?attr/colorTitle"
+            android:textSize="13sp"
+            tools:text="Hello" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -48,8 +50,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textColor="@color/gray_44"
-                android:textSize="9sp" />
+                android:textColor="?attr/colorTitle"
+                android:textSize="9sp"
+                tools:text="25MiB" />
 
             <TextView
                 android:id="@+id/dling_speed"
@@ -57,8 +60,9 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:gravity="right"
-                android:textColor="@color/gray_44"
-                android:textSize="9sp" />
+                android:textColor="?attr/colorTitle"
+                android:textSize="9sp"
+                tools:text="1MiB/s" />
 
         </LinearLayout>
 
@@ -72,8 +76,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textColor="@color/gray_44"
-                android:textSize="9sp" />
+                android:textColor="?attr/colorTitle"
+                android:textSize="9sp"
+                tools:text="25%" />
 
             <TextView
                 android:id="@+id/dling_time"
@@ -81,8 +86,9 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:gravity="right"
-                android:textColor="@color/gray_44"
-                android:textSize="9sp" />
+                android:textColor="?attr/colorTitle"
+                android:textSize="9sp"
+                tools:text="1:20" />
 
         </LinearLayout>
 

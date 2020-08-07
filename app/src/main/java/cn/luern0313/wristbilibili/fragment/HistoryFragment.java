@@ -65,8 +65,8 @@ public class HistoryFragment extends Fragment
         uiListView.addFooterView(uiLoadingView);
         waveSwipeRefreshLayout = rootLayout.findViewById(R.id.history_swipe);
         waveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
-        waveSwipeRefreshLayout.setWaveColor(ColorUtil.getColor(R.attr.colorPrimary, R.color.mainColor,
-                getContext()));
+        //noinspection ConstantConditions
+        waveSwipeRefreshLayout.setWaveColor(ColorUtil.getColor(R.attr.colorPrimary, getContext()));
         waveSwipeRefreshLayout.setOnRefreshListener(new WaveSwipeRefreshLayout.OnRefreshListener()
         {
             @Override

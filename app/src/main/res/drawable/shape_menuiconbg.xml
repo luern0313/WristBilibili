@@ -3,6 +3,6 @@
     android:shape="oval">
 
     <solid
-        android:color="?attr/colorAccent"/>
+        android:color="?attr/colorMenuIconBack"/>
 
 </shape>

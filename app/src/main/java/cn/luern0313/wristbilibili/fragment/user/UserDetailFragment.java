@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.models.UserModel;
 import cn.luern0313.wristbilibili.ui.ImgActivity;
+import cn.luern0313.wristbilibili.util.ColorUtil;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
@@ -114,7 +115,8 @@ public class UserDetailFragment extends Fragment implements View.OnClickListener
         {
             rootLayout.findViewById(R.id.user_detail_vip).setVisibility(View.VISIBLE);
             ((TextView) rootLayout.findViewById(R.id.user_detail_vip)).setText("年度大会员");
-            ((TextView) rootLayout.findViewById(R.id.user_detail_name)).setTextColor(getResources().getColor(R.color.mainColor));
+            //noinspection ConstantConditions
+            ((TextView) rootLayout.findViewById(R.id.user_detail_name)).setTextColor(ColorUtil.getColor(R.attr.colorBigMember, getContext()));
         }
         else if(userModel.user_card_vip == 1)
         {

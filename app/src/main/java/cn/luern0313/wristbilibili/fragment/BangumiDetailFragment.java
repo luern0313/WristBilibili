@@ -2,6 +2,7 @@ package cn.luern0313.wristbilibili.fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -29,6 +30,7 @@ import cn.luern0313.wristbilibili.ui.BangumiActivity;
 import cn.luern0313.wristbilibili.ui.PlayerActivity;
 import cn.luern0313.wristbilibili.ui.SelectPartActivity;
 import cn.luern0313.wristbilibili.ui.TextActivity;
+import cn.luern0313.wristbilibili.util.ColorUtil;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
 
 /**
@@ -286,7 +288,7 @@ public class BangumiDetailFragment extends Fragment implements View.OnClickListe
         textView.setLines(1);
         textView.setEllipsize(TextUtils.TruncateAt.END);
         textView.setTextSize(14);
-        textView.setTextColor(getResources().getColor(seasonId.equals(season.bangumi_season_id) ? R.color.mainColor : R.color.gray_77));
+        textView.setTextColor(getResources().getColor(seasonId.equals(season.bangumi_season_id) ? ColorUtil.getColor(R.attr.colorPrimary, textView.getContext()) : R.color.gray_77));
         textView.setOnClickListener(seasonId.equals(season.bangumi_season_id) ? null : new View.OnClickListener()
         {
             @Override

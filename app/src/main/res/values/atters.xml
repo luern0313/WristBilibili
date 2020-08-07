@@ -24,4 +24,5 @@
     <attr format="color" name="colorLayerBack"/>
     <attr format="color" name="colorMenuIconBack"/>
     <attr format="color" name="colorAccentForeground"/>
+    <attr format="color" name="colorBigMember"/>
 </resources>
