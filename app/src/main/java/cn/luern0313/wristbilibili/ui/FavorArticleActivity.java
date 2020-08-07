@@ -4,13 +4,12 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.fragment.FavorArticleFragment;
 
-public class FavorArticleActivity extends AppCompatActivity
+public class FavorArticleActivity extends BaseActivity
 {
     Context ctx;
     LayoutInflater inflater;

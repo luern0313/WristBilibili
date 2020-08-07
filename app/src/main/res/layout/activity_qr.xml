@@ -45,7 +45,7 @@
             android:layout_below="@+id/qr_title_layout"
             android:gravity="center"
             android:text="  下一版本就更视频播放。。"
-            android:textColor="@color/mainColor"
+            android:textColor="?attr/colorAccent"
             android:textSize="12sp" />
 
         <ImageView
@@ -67,7 +67,7 @@
             android:layout_centerHorizontal="false"
             android:gravity="center"
             android:text="打开哔哩哔哩客户端 - 扫一扫"
-            android:textColor="@color/mainColor"
+            android:textColor="?attr/colorAccent"
             android:textSize="12sp" />
 
 

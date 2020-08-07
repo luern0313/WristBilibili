@@ -28,6 +28,7 @@ import cn.luern0313.wristbilibili.ui.ArticleActivity;
 import cn.luern0313.wristbilibili.ui.ImgActivity;
 import cn.luern0313.wristbilibili.ui.UserActivity;
 import cn.luern0313.wristbilibili.ui.UnsupportedLinkActivity;
+import cn.luern0313.wristbilibili.util.ColorUtil;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
 
 public class ArticleDetailFragment extends Fragment implements View.OnClickListener
@@ -108,7 +109,7 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
         ((TextView) layoutArticleHeader.findViewById(R.id.article_card_name)).setText(articleModel.article_up_name);
         ((TextView) layoutArticleHeader.findViewById(R.id.article_card_sen)).setText("粉丝：" + DataProcessUtil.getView(articleModel.article_up_fans_num));
         if(articleModel.article_up_vip == 2)
-            ((TextView) layoutArticleHeader.findViewById(R.id.article_card_name)).setTextColor(getResources().getColor(R.color.mainColor));
+            ((TextView) layoutArticleHeader.findViewById(R.id.article_card_name)).setTextColor(ColorUtil.getColor(R.attr.colorBigMember, getContext()));
         if(articleModel.article_up_official == 0)
             layoutArticleHeader.findViewById(R.id.article_card_off_1).setVisibility(View.VISIBLE);
         else if(articleModel.article_up_official == 1)

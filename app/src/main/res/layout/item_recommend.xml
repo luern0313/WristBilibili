@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/rc_video"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -25,14 +26,15 @@
         android:id="@+id/rc_video_time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/rc_video_img"
         android:layout_alignEnd="@+id/rc_video_img"
+        android:layout_alignBottom="@+id/rc_video_img"
         android:layout_alignParentBottom="false"
         android:background="@drawable/shape_bg_recommend_video_time"
         android:gravity="end"
         android:paddingRight="2dp"
         android:textColor="@color/white"
-        android:textSize="10sp" />
+        android:textSize="10sp"
+        tools:text="1:11" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -48,8 +50,9 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:lines="2"
-            android:textColor="@color/gray_44"
-            android:textSize="12sp" />
+            android:textColor="?attr/colorTitle"
+            android:textSize="12sp"
+            tools:text="标题" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -62,7 +65,8 @@
                 android:layout_height="14dp"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:textSize="10sp" />
+                android:textSize="10sp"
+                tools:text="1.3万" />
 
             <TextView
                 android:id="@+id/rc_video_video_danmaku"
@@ -71,7 +75,8 @@
                 android:layout_marginLeft="6dp"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:textSize="10sp" />
+                android:textSize="10sp"
+                tools:text="6819" />
         </LinearLayout>
 
         <TextView
@@ -89,7 +94,8 @@
             android:paddingStart="3dp"
             android:paddingTop="1dp"
             android:textColor="@color/white"
-            android:textSize="10sp" />
+            android:textSize="10sp"
+            tools:text="已关注" />
 
         <TextView
             android:id="@+id/rc_video_video_label"
@@ -100,7 +106,8 @@
             android:gravity="center_vertical"
             android:maxLines="1"
             android:textSize="10sp"
-            android:visibility="visible" />
+            android:visibility="visible"
+            tools:text="野生技术协会" />
 
     </LinearLayout>
 

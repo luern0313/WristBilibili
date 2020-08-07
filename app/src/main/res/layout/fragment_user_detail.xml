@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -48,7 +49,8 @@
             android:layout_toStartOf="@+id/user_detail_follow"
             android:ellipsize="end"
             android:maxLines="1"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            tools:text="某个不知名用户" />
 
         <TextView
             android:id="@+id/user_detail_follow"
@@ -72,7 +74,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/user_detail_name"
             android:layout_marginTop="2dp"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            tools:visibility="visible">
 
             <TextView
                 android:id="@+id/user_detail_lv"
@@ -83,15 +86,16 @@
                 android:paddingTop="1dp"
                 android:paddingRight="4dp"
                 android:paddingBottom="1dp"
-                android:textColor="@color/gray_44"
+                android:textColor="?attr/colorAccent"
                 android:textSize="9sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                tools:text="LV5" />
 
             <ImageView
                 android:id="@+id/user_detail_nameplate"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:layout_marginStart="4dp"/>
+                android:layout_marginStart="4dp" />
 
             <TextView
                 android:id="@+id/user_detail_vip"
@@ -105,7 +109,9 @@
                 android:paddingBottom="1dp"
                 android:textColor="@color/white"
                 android:textSize="10sp"
-                android:visibility="gone"/>
+                android:visibility="gone"
+                tools:text="带会员"
+                tools:visibility="visible" />
 
         </LinearLayout>
 
@@ -115,9 +121,11 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/user_detail_info"
             android:layout_marginTop="2dp"
-            android:textColor="@color/gray_44"
+            android:textColor="?attr/colorTitle"
             android:textSize="12sp"
-            android:visibility="gone" />
+            android:visibility="gone"
+            tools:text="某知名带组织"
+            tools:visibility="visible" />
 
         <TextView
             android:id="@+id/user_detail_sign"

@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.models.ReplyModel;
+import cn.luern0313.wristbilibili.util.ColorUtil;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
 import cn.luern0313.wristbilibili.util.ImageTaskUtil;
 import cn.luern0313.wristbilibili.util.LruCacheUtil;
@@ -273,12 +274,12 @@ public class ReplyAdapter extends BaseAdapter
             else viewHolder.reply_dislike.setImageResource(R.drawable.icon_dislike);
             if(replyModel.reply_owner_vip == 2)
             {
-                viewHolder.reply_name.setTextColor(listView.getResources().getColor(R.color.mainColor));
+                viewHolder.reply_name.setTextColor(ColorUtil.getColor(R.attr.colorBigMember, listView.getContext()));
                 viewHolder.reply_name.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
             }
             else
             {
-                viewHolder.reply_name.setTextColor(listView.getResources().getColor(R.color.black));
+                viewHolder.reply_name.setTextColor(ColorUtil.getColor(android.R.attr.textColor, listView.getContext()));
                 viewHolder.reply_name.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL));
             }
 

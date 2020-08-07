@@ -40,6 +40,7 @@
         android:descendantFocusability="blocksDescendants"
         android:focusable="true"
         android:foreground="?android:attr/selectableItemBackground"
+        app:cardBackgroundColor="?attr/colorLayerBack"
         app:cardCornerRadius="4dp"
         app:cardElevation="0dp">
 
@@ -71,7 +72,7 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:textColor="@android:color/black"
+                    android:textColor="?attr/colorTitle"
                     android:textSize="12sp" />
 
                 <TextView

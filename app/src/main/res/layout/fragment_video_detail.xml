@@ -129,7 +129,8 @@
                 android:focusable="true"
                 android:gravity="center_vertical"
                 android:orientation="vertical"
-                android:visibility="gone">
+                android:visibility="gone"
+                tools:visibility="visible">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -143,7 +144,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:textColor="@color/gray_44"
+                        android:textColor="?android:attr/textColorHint"
                         android:textSize="14sp" />
 
                     <TextView
@@ -151,7 +152,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="查看全部>"
-                        android:textColor="@color/gray_44"
+                        android:textColor="?android:attr/textColorHint"
                         android:textSize="12sp" />
                 </LinearLayout>
 
@@ -440,7 +441,7 @@
                                     android:visibility="gone"
                                     app:cpvCirclePadding="0dp"
                                     app:cpvNormalColor="#00000000"
-                                    app:cpvProgressColor="@color/mainColor"
+                                    app:cpvProgressColor="?attr/colorAccent"
                                     app:cpvShowLabel="false"
                                     app:cpvShowTick="false"
                                     app:cpvStrokeWidth="3dp" />
@@ -493,7 +494,7 @@
                                     android:visibility="gone"
                                     app:cpvCirclePadding="0dp"
                                     app:cpvNormalColor="#00000000"
-                                    app:cpvProgressColor="@color/mainColor"
+                                    app:cpvProgressColor="?attr/colorAccent"
                                     app:cpvShowLabel="false"
                                     app:cpvShowTick="false"
                                     app:cpvStrokeWidth="3dp" />
@@ -570,7 +571,7 @@
                     android:layout_toEndOf="@id/vd_season_img"
                     android:ellipsize="end"
                     android:maxLines="3"
-                    android:textColor="@color/gray_44"
+                    android:textColor="?android:attr/textColorHint"
                     android:textSize="13sp" />
 
                 <TextView

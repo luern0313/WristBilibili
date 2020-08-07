@@ -48,6 +48,7 @@
         android:layout_below="@id/dynamic_article_dynamic"
         android:layout_marginStart="18dp"
         android:layout_marginEnd="18dp"
+        app:cardBackgroundColor="?attr/colorLayerBack"
         app:cardElevation="0dp">
 
         <LinearLayout
@@ -65,7 +66,7 @@
                 android:layout_marginStart="4dp"
                 android:layout_marginEnd="4dp"
                 android:padding="1dp"
-                android:textColor="@color/gray_22"
+                android:textColor="?attr/colorTitle"
                 android:textSize="13sp" />
 
             <androidx.constraintlayout.widget.ConstraintLayout

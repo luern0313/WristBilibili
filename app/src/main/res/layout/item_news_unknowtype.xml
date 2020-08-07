@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="1dp"
             android:layout_toRightOf="@+id/liuk_head"
-            android:textColor="@color/black"
+            android:textColor="?attr/colorTitle"
             android:textStyle="bold"
             android:ellipsize="end"
             android:maxLines="1" />
@@ -53,7 +53,7 @@
             android:layout_height="match_parent"
             android:layout_below="@+id/liuk_head"
             android:layout_marginTop="5dp"
-            android:background="@color/gray_da"
+            android:background="?attr/colorLayerBack"
             android:padding="10dp">
 
             <ImageView

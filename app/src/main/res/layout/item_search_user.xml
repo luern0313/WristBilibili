@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/item_search_user_lay"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -46,9 +47,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
         android:layout_toEndOf="@+id/item_search_user_face"
-        android:textColor="@color/gray_44"
+        android:textColor="?attr/colorTitle"
         android:textSize="13sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        tools:text="用户名" />
 
     <TextView
         android:id="@+id/item_search_user_sign"
@@ -59,8 +61,9 @@
         android:layout_toEndOf="@+id/item_search_user_face"
         android:ellipsize="end"
         android:singleLine="true"
-        android:textColor="@color/gray_44"
-        android:textSize="11sp" />
+        android:textColor="?attr/colorTitle"
+        android:textSize="11sp"
+        tools:text="签名" />
 
     <TextView
         android:id="@+id/item_search_user_desc"
@@ -71,6 +74,7 @@
         android:layout_toEndOf="@+id/item_search_user_face"
         android:ellipsize="end"
         android:singleLine="true"
-        android:textSize="10sp" />
+        android:textSize="10sp"
+        tools:text="介绍" />
 
 </RelativeLayout>

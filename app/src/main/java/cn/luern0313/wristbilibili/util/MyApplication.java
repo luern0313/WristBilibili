@@ -17,7 +17,7 @@ public class MyApplication extends Application
     {
         super.onCreate();
         mContext = getApplicationContext();
-        AppCompatDelegate.setDefaultNightMode(ThemeUtil.getCurrentTheme().id == 1
+        AppCompatDelegate.setDefaultNightMode(ThemeUtil.getCurrentTheme().isDarkTheme()
                 ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
 
     }

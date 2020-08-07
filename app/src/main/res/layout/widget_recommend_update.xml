@@ -16,7 +16,7 @@
     <ImageView
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:src="@drawable/icon_return_top" />
+        android:src="@drawable/ic_return_top" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -24,7 +24,7 @@
         android:layout_marginStart="3dp"
         android:gravity="center_horizontal"
         android:text="刚刚看到这里，点击回顶部刷新"
-        android:textColor="@color/mainColor"
+        android:textColor="?attr/colorAccent"
         android:textSize="11sp" />
 
 </LinearLayout>

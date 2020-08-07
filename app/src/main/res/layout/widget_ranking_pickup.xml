@@ -100,7 +100,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:lines="2"
-            android:textColor="@color/gray_44"
+            android:textColor="?attr/colorTitle"
             android:textSize="13sp" />
 
         <LinearLayout

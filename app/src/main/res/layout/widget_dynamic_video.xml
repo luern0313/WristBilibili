@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -26,7 +27,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="2dp"
-            android:textSize="13sp" />
+            android:textSize="13sp"
+            tools:text="UP主名字" />
 
     </LinearLayout>
 
@@ -39,7 +41,8 @@
         android:layout_marginEnd="18dp"
         android:layout_marginBottom="2dp"
         android:textSize="13sp"
-        app:etv_MaxLinesOnShrink="6"/>
+        app:etv_MaxLinesOnShrink="6"
+        tools:text="说明文字" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/dynamic_video_img_lay"
@@ -74,7 +77,8 @@
         android:paddingEnd="4dp"
         android:paddingBottom="1dp"
         android:textColor="@color/white"
-        android:textSize="10sp" />
+        android:textSize="10sp"
+        tools:text="51:57" />
 
     <TextView
         android:id="@+id/dynamic_video_title"
@@ -83,7 +87,8 @@
         android:layout_below="@+id/dynamic_video_img_lay"
         android:layout_marginStart="18dp"
         android:layout_marginEnd="18dp"
-        android:textColor="@color/gray_22"
-        android:textSize="13sp" />
+        android:textColor="?attr/colorTitle"
+        android:textSize="13sp"
+        tools:text="标题" />
 
 </RelativeLayout>

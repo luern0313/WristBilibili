@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingLeft="24dp"
@@ -11,6 +12,7 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:cardBackgroundColor="?attr/colorLayerBack"
         app:cardCornerRadius="6dp"
         app:cardElevation="0dp">
 
@@ -19,8 +21,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="?android:attr/selectableItemBackground"
-            android:descendantFocusability="blocksDescendants"
             android:clickable="true"
+            android:descendantFocusability="blocksDescendants"
             android:focusable="true">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -59,7 +61,8 @@
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:textColor="@color/white"
-                    android:textSize="11sp" />
+                    android:textSize="11sp"
+                    tools:text="12" />
 
                 <TextView
                     android:id="@+id/artcard_article_reply"
@@ -69,7 +72,8 @@
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:textColor="@color/white"
-                    android:textSize="11sp" />
+                    android:textSize="11sp"
+                    tools:text="34" />
             </LinearLayout>
 
             <LinearLayout
@@ -86,8 +90,9 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:maxLines="2"
-                    android:textColor="@color/gray_44"
-                    android:textSize="13sp" />
+                    android:textColor="?attr/colorTitle"
+                    android:textSize="13sp"
+                    tools:text="标题" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -103,7 +108,7 @@
                         android:paddingStart="3dp"
                         android:paddingEnd="3dp"
                         android:text="专栏"
-                        android:textColor="@color/mainColor"
+                        android:textColor="?attr/colorAccent"
                         android:textSize="11sp" />
 
                     <TextView
@@ -112,7 +117,8 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/artcard_video_title"
                         android:layout_marginStart="4dp"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        tools:text="UP主" />
 
                 </LinearLayout>
             </LinearLayout>

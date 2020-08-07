@@ -11,13 +11,13 @@
     <ImageView
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:src="@drawable/icon_return_top"/>
+        android:src="@drawable/ic_return_top"/>
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/mainColor"
+        android:textColor="?attr/colorAccent"
         android:text="返回顶部"
         android:paddingEnd="10dp"/>
 
