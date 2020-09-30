@@ -14,7 +14,7 @@
             android:id="@+id/ul_title_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary"
+            android:background="?attr/colorTitleBackground"
             android:gravity="center_vertical"
             android:paddingBottom="4dp"
             android:paddingTop="10dp">
@@ -66,6 +66,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@style/Widget.AppCompat.Button.Colored"
+            android:textColor="?attr/colorButtonText"
             android:text="使用其他应用打开链接"
             android:onClick="clickUnsupported"/>
         

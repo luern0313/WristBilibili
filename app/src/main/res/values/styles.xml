@@ -3,40 +3,51 @@
     <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorAccent">@color/mainColor</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimaryDark">@color/mainColor</item>
         <item name="colorPrimary">@color/mainColor</item>
         <item name="android:windowBackground">?android:attr/colorBackground</item>
         <item name="android:colorBackground">@color/activityBG</item>
         <item name="android:textColor">?android:attr/colorForeground</item>
         <item name="android:colorForeground">@color/gray_77</item>
         <item name="android:textColorHint">@color/gray_44</item>
+
         <item name="colorTitle">@color/gray_44</item>
+        <item name="colorTitleBackground">@color/mainColor</item>
+        <item name="colorButtonText">@color/white</item>
+        <item name="colorMenuIconBack">#AAFFFFFF</item>
         <item name="colorLayerBack">@color/gray_ee</item>
-        <item name="colorMenuIconBack">@color/pink_light</item>
+        <item name="colorDynamicCardBack">@color/gray_44</item>
         <item name="colorAccentForeground">@color/white</item>
-        <item name="colorBigMember">@color/mainColor</item>
-        <item name="cardBackgroundColor">?attr/colorLayerBack</item>
+        <item name="colorVip">@color/mainColor</item>
+        <item name="colorHyperlinks">@color/colorHyperlinks</item>
+        <item name="colorBackgroundColor">@color/activityBG</item>
+        <item name="colorListDivider">@color/gray_d8</item>
+
+        <item name="android:listViewStyle">@style/AppListViewTheme</item>
     </style>
 
     <style name="BlueTheme" parent="AppTheme">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimaryBlue</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryBlue</item>
         <item name="colorAccent">@color/mainColorBlue</item>
-        <item name="colorMenuIconBack">?attr/colorAccent</item>
+        <item name="colorTitleBackground">@color/mainColorBlue</item>
     </style>
 
     <style name="GreenTheme" parent="AppTheme">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimaryGreen</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryGreen</item>
         <item name="colorAccent">@color/mainColorGreen</item>
-        <item name="colorMenuIconBack">?attr/colorAccent</item>
+        <item name="colorTitleBackground">@color/mainColorGreen</item>
     </style>
 
     <style name="RedTheme" parent="AppTheme">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimaryRed</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryRed</item>
         <item name="colorAccent">@color/mainColorRed</item>
-        <item name="colorMenuIconBack">?attr/colorAccent</item>
+        <item name="colorTitleBackground">@color/mainColorRed</item>
     </style>
 
     <style name="DarkTheme" parent="AppTheme">
@@ -47,20 +58,31 @@
         <item name="android:colorForeground">@color/colorForeDark</item>
         <item name="android:textColorHint">@color/gray_77</item>
         <item name="colorTitle">@color/white</item>
+        <item name="colorTitleBackground">@color/colorPrimaryDarkNormal</item>
         <item name="colorLayerBack">@color/gray_44</item>
         <item name="colorMenuIconBack">?attr/colorPrimaryDark</item>
+        <item name="colorBackgroundColor">@color/gray_44</item>
+        <item name="colorListDivider">@color/gray_77</item>
     </style>
 
     <style name="BlackTheme" parent="AppTheme">
-        <item name="colorPrimary">@color/colorPrimaryDarkNormal</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDarkNormal</item>
+        <item name="colorPrimary">@color/colorPrimaryBlackNormal</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryBlackDark</item>
         <item name="colorAccent">@color/mainColor</item>
         <item name="android:colorBackground">@color/black</item>
         <item name="android:colorForeground">@color/colorForeDark</item>
         <item name="android:textColorHint">@color/gray_77</item>
         <item name="colorTitle">@color/white</item>
-        <item name="colorLayerBack">@color/gray_44</item>
+        <item name="colorTitleBackground">@color/colorPrimaryBlackNormal</item>
+        <item name="colorLayerBack">@color/gray_33</item>
         <item name="colorMenuIconBack">?attr/colorPrimaryDark</item>
+        <item name="colorBackgroundColor">@color/gray_33</item>
+        <item name="colorListDivider">@color/gray_44</item>
+    </style>
+
+    <style name="AppListViewTheme" parent="android:Widget.Material.ListView">
+        <item name="android:divider">?attr/colorListDivider</item>
+        <item name="android:dividerHeight">0.5dp</item>
     </style>
 
 </resources>

@@ -3,10 +3,10 @@ package cn.luern0313.wristbilibili.api;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import cn.luern0313.lson.LsonArrayUtil;
-import cn.luern0313.lson.LsonObjectUtil;
-import cn.luern0313.lson.LsonParser;
 import cn.luern0313.lson.LsonUtil;
+import cn.luern0313.lson.element.LsonArray;
+import cn.luern0313.lson.element.LsonObject;
+import cn.luern0313.lson.json.LsonParser;
 import cn.luern0313.wristbilibili.models.ListVideoModel;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
@@ -30,11 +30,11 @@ public class HistoryApi
     {
         String url = "https://api.bilibili.com/x/v2/history";
         String arg = "pn=" + pn + "&ps=30";
-        LsonObjectUtil result = LsonParser.parseString(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string());
+        LsonObject result = LsonParser.parseAsObject(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string());
         ArrayList<ListVideoModel> videoModelArrayList = new ArrayList<>();
         if(result.getAsInt("code", -1) == 0)
         {
-            LsonArrayUtil videoJSONArray = result.getAsJsonArray("data");
+            LsonArray videoJSONArray = result.getAsJsonArray("data");
             for(int i = 0; i < videoJSONArray.size(); i++)
                 videoModelArrayList.add(LsonUtil.fromJson(videoJSONArray.getAsJsonObject(i), ListVideoModel.class));
         }

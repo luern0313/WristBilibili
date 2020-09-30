@@ -6,11 +6,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import cn.luern0313.lson.annotation.LsonAddPrefix;
-import cn.luern0313.lson.annotation.LsonAddSuffix;
-import cn.luern0313.lson.annotation.LsonDateFormat;
-import cn.luern0313.lson.annotation.LsonPath;
-import cn.luern0313.lson.annotation.LsonReplaceAll;
+import cn.luern0313.lson.annotation.field.LsonAddPrefix;
+import cn.luern0313.lson.annotation.field.LsonAddSuffix;
+import cn.luern0313.lson.annotation.field.LsonDateFormat;
+import cn.luern0313.lson.annotation.field.LsonPath;
+import cn.luern0313.lson.annotation.field.LsonReplaceAll;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
 import cn.luern0313.wristbilibili.util.LruCacheUtil;
 import cn.luern0313.wristbilibili.util.json.ImageUrlHandle;

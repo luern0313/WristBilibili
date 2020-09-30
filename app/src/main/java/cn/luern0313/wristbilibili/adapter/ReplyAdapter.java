@@ -241,9 +241,9 @@ public class ReplyAdapter extends BaseAdapter
                 if(replyModel.reply_reply_num > Math.min(replyModel.reply_reply_show.size(), 3))
                 {
                     if(!replyModel.reply_is_up_reply) viewHolder.reply_reply_show_show.setText(
-                            Html.fromHtml("<font color=\"#3f51b5\">共" + DataProcessUtil.getView(replyModel.reply_reply_num) + "条回复 ></font>"));
+                            Html.fromHtml("<font color=\"#188ad0\">共" + DataProcessUtil.getView(replyModel.reply_reply_num) + "条回复 ></font>"));
                     else viewHolder.reply_reply_show_show.setText(Html.fromHtml(
-                            "UP主等人<font color=\"#3f51b5\">共" + DataProcessUtil.getView(replyModel.reply_reply_num) + "条回复 ></font>"));
+                            "UP主等人<font color=\"#188ad0\">共" + DataProcessUtil.getView(replyModel.reply_reply_num) + "条回复 ></font>"));
                     viewHolder.reply_reply_show_show.setVisibility(View.VISIBLE);
                 }
                 else
@@ -274,7 +274,7 @@ public class ReplyAdapter extends BaseAdapter
             else viewHolder.reply_dislike.setImageResource(R.drawable.icon_dislike);
             if(replyModel.reply_owner_vip == 2)
             {
-                viewHolder.reply_name.setTextColor(ColorUtil.getColor(R.attr.colorBigMember, listView.getContext()));
+                viewHolder.reply_name.setTextColor(ColorUtil.getColor(R.attr.colorVip, listView.getContext()));
                 viewHolder.reply_name.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
             }
             else

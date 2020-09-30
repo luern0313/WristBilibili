@@ -8,7 +8,7 @@
         android:id="@+id/tail_title_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
+        android:background="?attr/colorTitleBackground"
         android:paddingBottom="4dp"
         android:paddingTop="10dp">
 
@@ -26,8 +26,8 @@
             android:id="@+id/tail_title_extraicon"
             android:layout_width="12dp"
             android:layout_height="19dp"
-            android:layout_marginLeft="2dp"
-            android:layout_toLeftOf="@+id/tail_title_title"
+            android:layout_marginStart="2dp"
+            android:layout_toStartOf="@+id/tail_title_title"
             android:rotation="90"
             android:src="@drawable/icon_extra" />
 

@@ -116,7 +116,7 @@ public class UserDetailFragment extends Fragment implements View.OnClickListener
             rootLayout.findViewById(R.id.user_detail_vip).setVisibility(View.VISIBLE);
             ((TextView) rootLayout.findViewById(R.id.user_detail_vip)).setText("年度大会员");
             //noinspection ConstantConditions
-            ((TextView) rootLayout.findViewById(R.id.user_detail_name)).setTextColor(ColorUtil.getColor(R.attr.colorBigMember, getContext()));
+            ((TextView) rootLayout.findViewById(R.id.user_detail_name)).setTextColor(ColorUtil.getColor(R.attr.colorVip, getContext()));
         }
         else if(userModel.user_card_vip == 1)
         {
@@ -146,12 +146,12 @@ public class UserDetailFragment extends Fragment implements View.OnClickListener
         if(userModel.user_user_follow)
         {
             ((TextView) rootLayout.findViewById(R.id.user_detail_follow)).setText("已关注");
-            rootLayout.findViewById(R.id.user_detail_follow).setBackgroundResource(R.drawable.shape_anre_followbgyes);
+            rootLayout.findViewById(R.id.user_detail_follow).setBackgroundResource(R.drawable.shape_bg_anre_followbgyes);
         }
         else
         {
             ((TextView) rootLayout.findViewById(R.id.user_detail_follow)).setText("+关注");
-            rootLayout.findViewById(R.id.user_detail_follow).setBackgroundResource(R.drawable.shape_anre_followbg);
+            rootLayout.findViewById(R.id.user_detail_follow).setBackgroundResource(R.drawable.shape_bg_anre_followbg);
         }
         if(userModel.user_card_mid.equals(SharedPreferencesUtil.getString(SharedPreferencesUtil.mid, "")))
             rootLayout.findViewById(R.id.user_detail_follow).setVisibility(View.GONE);

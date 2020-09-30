@@ -9,10 +9,10 @@
         android:id="@+id/fme_title_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
+        android:background="?attr/colorTitleBackground"
         android:gravity="center_vertical"
-        android:paddingBottom="4dp"
-        android:paddingTop="10dp">
+        android:paddingTop="10dp"
+        android:paddingBottom="4dp">
 
         <TextView
             android:id="@+id/fme_title_title"
@@ -26,8 +26,8 @@
             android:id="@+id/fme_title_extraicon"
             android:layout_width="12dp"
             android:layout_height="19dp"
-            android:layout_marginLeft="2dp"
-            android:layout_toLeftOf="@+id/fme_title_title"
+            android:layout_marginStart="2dp"
+            android:layout_toStartOf="@+id/fme_title_title"
             android:rotation="90"
             android:src="@drawable/icon_extra" />
 
@@ -40,7 +40,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingBottom="26dp">
 
@@ -56,13 +56,14 @@
                 android:id="@+id/fme_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="7dp"
                 android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
                 android:layout_marginTop="7dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="7dp"
                 android:clickable="true"
                 android:descendantFocusability="blocksDescendants"
-                app:cardBackgroundColor="?attr/colorLayerBack"
+                android:focusable="true"
+                app:cardBackgroundColor="?attr/colorBackgroundColor"
                 app:cardCornerRadius="4dp"
                 app:cardElevation="6dp">
 
@@ -82,7 +83,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="6dp"
-                        android:layout_toRightOf="@+id/fme_card_head"
+                        android:layout_toEndOf="@+id/fme_card_head"
                         android:text="luern0313"
                         android:textColor="?attr/colorAccent"
                         android:textStyle="bold" />
@@ -92,13 +93,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/fme_card_name"
-                        android:layout_marginLeft="6dp"
-                        android:layout_toRightOf="@+id/fme_card_head"
+                        android:layout_marginStart="6dp"
+                        android:layout_toEndOf="@+id/fme_card_head"
                         android:background="@drawable/shape_lvbg_fme"
-                        android:paddingBottom="1dp"
                         android:paddingLeft="4dp"
-                        android:paddingRight="4dp"
                         android:paddingTop="1dp"
+                        android:paddingRight="4dp"
+                        android:paddingBottom="1dp"
                         android:text="LV6"
                         android:textColor="?attr/colorAccent"
                         android:textSize="8sp" />
@@ -108,9 +109,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/fme_card_name"
-                        android:layout_marginLeft="4dp"
+                        android:layout_marginStart="4dp"
                         android:layout_marginTop="-1dp"
-                        android:layout_toRightOf="@+id/fme_card_lv"
+                        android:layout_toEndOf="@+id/fme_card_lv"
                         android:text=""
                         android:textColor="?attr/colorTitle"
                         android:textSize="10sp"
@@ -120,14 +121,14 @@
                         android:id="@+id/fme_card_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
-                        android:layout_marginRight="5dp"
-                        android:background="@drawable/shape_anre_followbg"
-                        android:paddingBottom="4dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@drawable/shape_bg_anre_followbg"
                         android:paddingLeft="6dp"
-                        android:paddingRight="6dp"
                         android:paddingTop="4dp"
+                        android:paddingRight="6dp"
+                        android:paddingBottom="4dp"
                         android:text="+关注"
                         android:textColor="@color/white"
                         android:textSize="13sp" />
@@ -147,13 +148,13 @@
                 android:id="@+id/fme_video"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
                 android:layout_marginTop="7dp"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
+                android:layout_marginBottom="4dp"
                 android:background="?android:attr/selectableItemBackground"
                 android:clickable="true"
-                android:descendantFocusability="blocksDescendants">
+                android:descendantFocusability="blocksDescendants"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp">
 
                 <ImageView
                     android:id="@+id/fme_video_img"
@@ -168,8 +169,8 @@
                     android:id="@+id/fme_video_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="4dp"
-                    android:layout_toRightOf="@id/fme_video_img"
+                    android:layout_marginStart="4dp"
+                    android:layout_toEndOf="@id/fme_video_img"
                     android:ellipsize="end"
                     android:maxLines="3"
                     android:text="请稍后..."
@@ -183,10 +184,10 @@
                 android:background="@color/tipBG"
                 android:gravity="center_horizontal"
                 android:orientation="vertical"
-                android:paddingBottom="4dp"
                 android:paddingLeft="20dp"
-                android:paddingRight="20dp"
                 android:paddingTop="4dp"
+                android:paddingRight="20dp"
+                android:paddingBottom="4dp"
                 android:visibility="gone">
 
                 <TextView
@@ -205,11 +206,11 @@
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginTop="4dp"
-                    android:background="@drawable/shape_anre_followbg"
-                    android:paddingBottom="5dp"
+                    android:background="@drawable/shape_bg_anre_followbg"
                     android:paddingLeft="8dp"
-                    android:paddingRight="8dp"
                     android:paddingTop="5dp"
+                    android:paddingRight="8dp"
+                    android:paddingBottom="5dp"
                     android:text="+1 票"
                     android:textColor="@color/white"
                     android:textSize="12sp" />
@@ -221,16 +222,16 @@
                 android:id="@+id/fme_star"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="2dp"
                 android:layout_marginTop="2dp"
+                android:layout_marginBottom="2dp"
                 android:background="?android:attr/selectableItemBackground"
                 android:clickable="true"
                 android:focusable="true"
                 android:orientation="vertical"
-                android:paddingBottom="2dp"
                 android:paddingLeft="20dp"
-                android:paddingRight="20dp"
                 android:paddingTop="2dp"
+                android:paddingRight="20dp"
+                android:paddingBottom="2dp"
                 android:visibility="gone">
 
                 <ImageView
@@ -269,8 +270,8 @@
                     android:descendantFocusability="blocksDescendants"
                     android:gravity="center_horizontal"
                     android:orientation="vertical"
-                    android:paddingBottom="4dp"
-                    android:paddingTop="4dp">
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp">
 
                     <ImageView
                         android:id="@+id/fme_like_img"
@@ -296,8 +297,8 @@
                     android:descendantFocusability="blocksDescendants"
                     android:gravity="center_horizontal"
                     android:orientation="vertical"
-                    android:paddingBottom="4dp"
-                    android:paddingTop="4dp">
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp">
 
                     <ImageView
                         android:id="@+id/fme_coin_img"

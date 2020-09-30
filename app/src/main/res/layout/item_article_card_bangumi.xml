@@ -12,7 +12,7 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="74dp"
-        app:cardBackgroundColor="?attr/colorLayerBack"
+        app:cardBackgroundColor="?attr/colorBackgroundColor"
         app:cardCornerRadius="6dp"
         app:cardElevation="0dp">
 
@@ -98,11 +98,13 @@
                     android:layout_below="@id/artcard_bangumi_infolay"
                     android:layout_marginTop="3dp"
                     android:background="@drawable/shape_bg_article_card_identity"
-                    android:paddingStart="3dp"
-                    android:paddingEnd="3dp"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
+                    android:paddingTop="1dp"
+                    android:paddingBottom="1dp"
                     android:text="番剧"
                     android:textColor="?attr/colorAccent"
-                    android:textSize="11sp" />
+                    android:textSize="10sp" />
 
             </RelativeLayout>
         </RelativeLayout>

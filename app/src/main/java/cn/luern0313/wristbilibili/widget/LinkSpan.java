@@ -34,7 +34,7 @@ public class LinkSpan extends ClickableSpan
     @Override
     public void updateDrawState(TextPaint ds)
     {
-        ds.setColor(MyApplication.getContext().getResources().getColor(R.color.colorPrimary));
+        ds.setColor(MyApplication.getContext().getResources().getColor(R.color.colorHyperlinks));
         ds.setUnderlineText(false);
     }
 }

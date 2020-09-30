@@ -6,10 +6,10 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import cn.luern0313.lson.LsonArrayUtil;
-import cn.luern0313.lson.LsonObjectUtil;
-import cn.luern0313.lson.LsonParser;
 import cn.luern0313.lson.LsonUtil;
+import cn.luern0313.lson.element.LsonArray;
+import cn.luern0313.lson.element.LsonObject;
+import cn.luern0313.lson.json.LsonParser;
 import cn.luern0313.wristbilibili.models.ListBangumiModel;
 import cn.luern0313.wristbilibili.models.ListVideoModel;
 import cn.luern0313.wristbilibili.models.UserListPeopleModel;
@@ -70,11 +70,11 @@ public class UserApi
     {
         String url = "https://api.bilibili.com/x/space/arc/search";
         String arg = "mid=" + mid + "&ps=30&tid=0&pn=" + page + "&keyword=&order=pubdate&jsonp=jsonp";
-        LsonObjectUtil result = LsonParser.parseString(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string());
+        LsonObject result = LsonParser.parseAsObject(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string());
         ArrayList<ListVideoModel> videoModelArrayList = new ArrayList<>();
         if(result.getAsInt("code", -1) == 0)
         {
-            LsonArrayUtil videoArray = result.getAsJsonObject("data").getAsJsonObject("list").getAsJsonArray("vlist");
+            LsonArray videoArray = result.getAsJsonObject("data").getAsJsonObject("list").getAsJsonArray("vlist");
             for(int i = 0; i < videoArray.size(); i++)
                 videoModelArrayList.add(LsonUtil.fromJson(videoArray.getAsJsonObject(i), ListVideoModel.class));
         }
@@ -85,11 +85,11 @@ public class UserApi
     {
         String url = "https://api.bilibili.com/x/space/bangumi/follow/list";
         String arg = "type=" + mode + "&pn=" + page + "&ps=20&vmid=" + mid;
-        LsonObjectUtil result = LsonParser.parseString(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string());
+        LsonObject result = LsonParser.parseAsObject(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string());
         ArrayList<ListBangumiModel> listBangumiModelArrayList = new ArrayList<>();
         if(result.getAsInt("code", -1) == 0)
         {
-            LsonArrayUtil bangumiJsonArray = result.getAsJsonObject("data").getAsJsonArray("list");
+            LsonArray bangumiJsonArray = result.getAsJsonObject("data").getAsJsonArray("list");
             for(int i = 0; i < bangumiJsonArray.size(); i++)
                 listBangumiModelArrayList.add(LsonUtil.fromJson(bangumiJsonArray.getAsJsonObject(i), ListBangumiModel.class));
             return listBangumiModelArrayList;
@@ -101,11 +101,11 @@ public class UserApi
     {
         String url = "https://api.bilibili.com/x/relation/followings";
         String arg = "vmid=" + mid + "&pn=" + page + "&ps=20&order=desc";
-        LsonObjectUtil result = LsonParser.parseString(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string());
+        LsonObject result = LsonParser.parseAsObject(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string());
         ArrayList<UserListPeopleModel> peopleModelArrayList = new ArrayList<>();
         if(result.getAsInt("code", -1) == 0)
         {
-            LsonArrayUtil peopleJsonArray = result.getAsJsonObject("data").getAsJsonArray("list");
+            LsonArray peopleJsonArray = result.getAsJsonObject("data").getAsJsonArray("list");
             for (int i = 0; i < peopleJsonArray.size(); i++)
                 peopleModelArrayList.add(LsonUtil.fromJson(peopleJsonArray.getAsJsonObject(i), UserListPeopleModel.class));
             return peopleModelArrayList;
@@ -117,11 +117,11 @@ public class UserApi
     {
         String url = "https://api.bilibili.com/x/relation/followers";
         String arg = "vmid=" + mid + "&pn=" + page + "&ps=20&order=desc";
-        LsonObjectUtil result = LsonParser.parseString(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string());
+        LsonObject result = LsonParser.parseAsObject(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string());
         ArrayList<UserListPeopleModel> peopleModelArrayList = new ArrayList<>();
         if(result.getAsInt("code", -1) == 0)
         {
-            LsonArrayUtil peopleJsonArray = result.getAsJsonObject("data").getAsJsonArray("list");
+            LsonArray peopleJsonArray = result.getAsJsonObject("data").getAsJsonArray("list");
             for (int i = 0; i < peopleJsonArray.size(); i++)
                 peopleModelArrayList.add(LsonUtil.fromJson(peopleJsonArray.getAsJsonObject(i), UserListPeopleModel.class));
             return peopleModelArrayList;

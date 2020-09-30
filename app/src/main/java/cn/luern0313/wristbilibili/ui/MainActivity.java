@@ -125,9 +125,9 @@ public class MainActivity extends BaseActivity
 
         //startActivity(VideoActivity.getActivityIntent(ctx, "78732000", ""));
 
-        Intent intent = new Intent(ctx, ArticleActivity.class);
-        intent.putExtra("article_id", "6938689");
-        //startActivity(intent);
+        Intent intent = new Intent(ctx, UserActivity.class);
+        intent.putExtra("mid", "399460614");
+        startActivity(intent);
 
         serviceIntent = new Intent(this, DownloadService.class);
         startService(serviceIntent);

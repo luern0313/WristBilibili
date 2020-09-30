@@ -18,7 +18,6 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import androidx.cardview.widget.CardView;
-import androidx.core.graphics.ColorUtils;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import cn.luern0313.wristbilibili.R;
@@ -130,6 +129,15 @@ public class DynamicAdapter extends BaseAdapter
     {
         ViewHolder viewHolder;
         ViewHolder vh = new ViewHolder();
+        if(dynamicModel instanceof DynamicModel.DynamicUnknownModel)
+        {
+            View view = mInflater.inflate(R.layout.widget_dynamic_unknown, null);
+            ((LinearLayout) convertView.findViewById(viewId)).removeAllViewsInLayout();
+            ((LinearLayout) convertView.findViewById(viewId)).addView(view);
+            viewHolder = vh.new ViewHolderUnknown(convertView, dynamicModel.getCardType());
+            convertView.setTag(viewHolder);
+            return viewHolder;
+        }
         switch (dynamicModel.getCardType())
         {
             case 1:
@@ -231,7 +239,7 @@ public class DynamicAdapter extends BaseAdapter
 
     public void handlerView(ViewHolder vh, DynamicModel dm, int position, boolean isShared, boolean isExpand)
     {
-        if(dm.getCardType() == 1)
+        if(dm.getCardType() == 1 && !(dm instanceof DynamicModel.DynamicUnknownModel))
         {
             final ViewHolder.ViewHolderShare viewHolder = (ViewHolder.ViewHolderShare) vh;
             final DynamicModel.DynamicShareModel dynamicModel = (DynamicModel.DynamicShareModel) dm;
@@ -267,7 +275,7 @@ public class DynamicAdapter extends BaseAdapter
 
             viewHolder.share_share.setOnClickListener(onViewClick(position, isShared));
         }
-        else if(dm.getCardType() == 2)
+        else if(dm.getCardType() == 2 && !(dm instanceof DynamicModel.DynamicUnknownModel))
         {
             final ViewHolder.ViewHolderAlbum viewHolder = (ViewHolder.ViewHolderAlbum) vh;
             final DynamicModel.DynamicAlbumModel dynamicModel = (DynamicModel.DynamicAlbumModel) dm;
@@ -328,7 +336,7 @@ public class DynamicAdapter extends BaseAdapter
 
             viewHolder.album_author.setOnClickListener(onViewClick(position, isShared));
         }
-        else if(dm.getCardType() == 4)
+        else if(dm.getCardType() == 4 && !(dm instanceof DynamicModel.DynamicUnknownModel))
         {
             ViewHolder.ViewHolderText viewHolder = (ViewHolder.ViewHolderText) vh;
             final DynamicModel.DynamicTextModel dynamicModel = (DynamicModel.DynamicTextModel) dm;
@@ -370,7 +378,7 @@ public class DynamicAdapter extends BaseAdapter
 
             viewHolder.text_author.setOnClickListener(onViewClick(position, isShared));
         }
-        else if(dm.getCardType() == 8)
+        else if(dm.getCardType() == 8 && !(dm instanceof DynamicModel.DynamicUnknownModel))
         {
             ViewHolder.ViewHolderVideo viewHolder = (ViewHolder.ViewHolderVideo) vh;
             final DynamicModel.DynamicVideoModel dynamicModel = (DynamicModel.DynamicVideoModel) dm;
@@ -432,7 +440,7 @@ public class DynamicAdapter extends BaseAdapter
 
             viewHolder.video_author_lay.setOnClickListener(onViewClick(position, isShared));
         }
-        else if(dm.getCardType() == 64)
+        else if(dm.getCardType() == 64 && !(dm instanceof DynamicModel.DynamicUnknownModel))
         {
             ViewHolder.ViewHolderArticle viewHolder = (ViewHolder.ViewHolderArticle) vh;
             final DynamicModel.DynamicArticleModel dynamicModel = (DynamicModel.DynamicArticleModel) dm;
@@ -494,7 +502,7 @@ public class DynamicAdapter extends BaseAdapter
 
             viewHolder.article_author_lay.setOnClickListener(onViewClick(position, isShared));
         }
-        else if(dm.getCardType() == 512 || dm.getCardType() == 4098 || dm.getCardType() == 4099 || dm.getCardType() == 4101)
+        else if((dm.getCardType() == 512 || dm.getCardType() == 4098 || dm.getCardType() == 4099 || dm.getCardType() == 4101) && !(dm instanceof DynamicModel.DynamicUnknownModel))
         {
             ViewHolder.ViewHolderBangumi viewHolder = (ViewHolder.ViewHolderBangumi) vh;
             DynamicModel.DynamicBangumiModel dynamicModel = (DynamicModel.DynamicBangumiModel) dm;
@@ -515,7 +523,7 @@ public class DynamicAdapter extends BaseAdapter
             BitmapDrawable a = setImageFormWeb(dynamicModel.getBangumiImg());
             if(a != null) viewHolder.bangumi_img.setImageDrawable(a);
         }
-        else if(dm.getCardType() == 2048)
+        else if(dm.getCardType() == 2048 && !(dm instanceof DynamicModel.DynamicUnknownModel))
         {
             ViewHolder.ViewHolderUrl viewHolder = (ViewHolder.ViewHolderUrl) vh;
             final DynamicModel.DynamicUrlModel dynamicModel = (DynamicModel.DynamicUrlModel) dm;
@@ -572,7 +580,7 @@ public class DynamicAdapter extends BaseAdapter
             viewHolder.url_author.setOnClickListener(onViewClick(position, isShared));
             viewHolder.url_url.setOnClickListener(onViewClick(position, isShared));
         }
-        else if(dm.getCardType() == 4200)
+        else if(dm.getCardType() == 4200 && !(dm instanceof DynamicModel.DynamicUnknownModel))
         {
             ViewHolder.ViewHolderLive viewHolder = (ViewHolder.ViewHolderLive) vh;
             DynamicModel.DynamicLiveModel dynamicModel = (DynamicModel.DynamicLiveModel) dm;
@@ -618,7 +626,7 @@ public class DynamicAdapter extends BaseAdapter
 
             viewHolder.live_author_lay.setOnClickListener(onViewClick(position, isShared));
         }
-        else if(dm.getCardType() == 4300)
+        else if(dm.getCardType() == 4300 && !(dm instanceof DynamicModel.DynamicUnknownModel))
         {
             ViewHolder.ViewHolderFavor viewHolder = (ViewHolder.ViewHolderFavor) vh;
             DynamicModel.DynamicFavorModel dynamicModel = (DynamicModel.DynamicFavorModel) dm;
@@ -679,11 +687,9 @@ public class DynamicAdapter extends BaseAdapter
             }
 
             if(dm.getCardAuthorVipStatus() == 1 && dm.getCardAuthorVipType() == 2)
-                vh.dynamic_author_name.setTextColor(ColorUtil.getColor(R.attr.colorAccent,
-                        vh.dynamic_author_name.getContext()));
+                vh.dynamic_author_name.setTextColor(ColorUtil.getColor(R.attr.colorVip, vh.dynamic_author_name.getContext()));
             else
-                vh.dynamic_author_name.setTextColor(ColorUtil.getColor(android.R.attr.textColor,
-                        vh.dynamic_author_name.getContext()));
+                vh.dynamic_author_name.setTextColor(ColorUtil.getColor(android.R.attr.textColor, vh.dynamic_author_name.getContext()));
 
             vh.dynamic_share_text.setText(dm.getCardShareNum());
             vh.dynamic_reply_text.setText(dm.getCardReplyNum());

@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:right="4dp"
-        android:bottom="4dp">
+    <item>
         <shape android:shape="rectangle">
-            <solid android:color="?attr/colorAccent" />
-            <corners android:radius="2dp" />
+            <solid android:color="?attr/colorBackgroundColor" />
         </shape>
     </item>
+    <item android:drawable="?attr/selectableItemBackground" />
 </layer-list>

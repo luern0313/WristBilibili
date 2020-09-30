@@ -20,9 +20,16 @@
         </attr>
     </declare-styleable>
 
-    <attr format="color" name="colorTitle"/>
-    <attr format="color" name="colorLayerBack"/>
-    <attr format="color" name="colorMenuIconBack"/>
-    <attr format="color" name="colorAccentForeground"/>
-    <attr format="color" name="colorBigMember"/>
+    <attr name="colorTitle" format="color" />
+    <attr name="colorTitleBackground" format="color" />
+    <attr name="colorButtonText" format="color" />
+    <attr name="colorLayerBack" format="color" />
+    <attr name="colorDynamicCardBack" format="color" />
+    <attr name="colorMenuIconBack" format="color" />
+    <attr name="colorAccentForeground" format="color" />
+    <attr name="colorVip" format="color" />
+    <attr name="colorHyperlinks" format="color" />
+    <attr name="colorBackgroundColor" format="color" />
+    <attr name="colorListDivider" format="color" />
+    <attr name="colorCardViewStroke" format="color" />
 </resources>

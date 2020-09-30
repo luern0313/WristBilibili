@@ -11,30 +11,59 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import cn.luern0313.lson.annotation.field.LsonPath;
+import cn.luern0313.lson.annotation.method.LsonCallMethod;
 import cn.luern0313.wristbilibili.api.ArticleApi;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
 import cn.luern0313.wristbilibili.util.LruCacheUtil;
+import cn.luern0313.wristbilibili.util.json.ImageUrlHandle;
 
 /**
  * 被 luern0313 创建于 2020/2/20.
  */
+
 public class ArticleModel implements Serializable
 {
     public String article_id;
+
+    @LsonPath("title")
     public String article_title;
+
+    @LsonPath("stats.view")
     public int article_view;
+
+    @LsonPath("stats.like")
     public int article_like;
+
+    @LsonPath("stats.coin")
     public int article_coin;
+
+    @LsonPath("stats.favorite")
     public int article_fav;
+
+    @LsonPath("origin_image_urls")
     public String[] article_cover;
+
     public String article_channel;
     public String article_time;
 
+    @LsonPath("author.name")
     public String article_up_name;
+
+    @ImageUrlHandle
+    @LsonPath("author.face")
     public String article_up_face;
+
+    @LsonPath("author.mid")
     public String article_up_mid;
+
+    @LsonPath("author.official_verify.type")
     public int article_up_official; // -1 0 1
+
+    @LsonPath("author.vip.vipType")
     public int article_up_vip; // 2
+
+    @LsonPath("author.fans")
     public int article_up_fans_num;
 
     public boolean article_user_follow_up;
@@ -42,9 +71,16 @@ public class ArticleModel implements Serializable
     public int article_user_coin;
     public boolean article_user_fav;
 
-    public String article_article;
+    public final String article_article;
     public ArrayList<String> article_article_img_url = new ArrayList<>();
     public ArrayList<ArticleCardModel> article_article_card_model_list = new ArrayList<>();
+
+    @LsonCallMethod()
+    private void aaa()
+    {
+
+    }
+
     public ArticleModel(String id, JSONObject article, JSONObject more, Document element, JSONObject card)
     {
         article_id = id;

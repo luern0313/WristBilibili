@@ -5,10 +5,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
-import cn.luern0313.lson.LsonArrayUtil;
-import cn.luern0313.lson.LsonObjectUtil;
-import cn.luern0313.lson.LsonParser;
 import cn.luern0313.lson.LsonUtil;
+import cn.luern0313.lson.element.LsonArray;
+import cn.luern0313.lson.element.LsonObject;
+import cn.luern0313.lson.json.LsonParser;
 import cn.luern0313.wristbilibili.models.RankingModel;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
@@ -39,10 +39,10 @@ public class RankingApi
         String url = "http://app.bilibili.com/x/v2/rank/region";
         String temp_per = "appkey=" + ConfInfoApi.getConf("appkey") + "&build=" + ConfInfoApi.getConf("build") + "&mobi_app=android&platform=android&pn=" + pn + "&ps=20&rid=0&ts=" + (int) (System.currentTimeMillis() / 1000);
         String sign = ConfInfoApi.calc_sign(temp_per, ConfInfoApi.getConf("app_secret"));
-        LsonObjectUtil result = LsonParser.parseString(NetWorkUtil.get(url + "?" + temp_per + "&sign=" + sign, appHeaders).body().string());
+        LsonObject result = LsonParser.parseAsObject(NetWorkUtil.get(url + "?" + temp_per + "&sign=" + sign, appHeaders).body().string());
         if(result.getAsInt("code", -1) == 0)
         {
-            LsonArrayUtil list = result.getAsJsonArray("data");
+            LsonArray list = result.getAsJsonArray("data");
             for (int i = 0; i < list.size(); i++)
                 rankingVideoArrayList.add(LsonUtil.fromJson(list.getAsJsonObject(i), RankingModel.class));
         }
@@ -55,11 +55,11 @@ public class RankingApi
         {
             LinkedHashMap<Integer, String> pickUpMap = new LinkedHashMap<>();
             String url = "http://luern0313.cn:8080/bp/getHistoryPickUpVideo";
-            LsonObjectUtil result = LsonParser.parseString(NetWorkUtil.get(url).body().string());
-            LsonArrayUtil list = result.getAsJsonArray("Data");
+            LsonObject result = LsonParser.parseAsObject(NetWorkUtil.get(url).body().string());
+            LsonArray list = result.getAsJsonArray("Data");
             for(int i = 0; i < list.size(); i++)
             {
-                final LsonObjectUtil jsonObject = list.getAsJsonObject(i);
+                final LsonObject jsonObject = list.getAsJsonObject(i);
                 pickUpMap.put(Integer.valueOf(jsonObject.getAsString("Date")), jsonObject.getAsString("Aid"));
             }
             return pickUpMap;

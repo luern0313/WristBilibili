@@ -37,14 +37,14 @@
 
     <string name="dynamic_album_author">\@%s</string>
     <string name="dynamic_text_author">\@%s</string>
-    <string name="dynamic_video_author"><![CDATA[<font color="#3f51b5">%s</font>的投稿]]></string>
+    <string name="dynamic_video_author"><![CDATA[<font color="#188ad0">%s</font>的投稿]]></string>
     <string name="dynamic_video_desc">%s&#160;&#160;&#160;%s播放&#160;&#160;%s弹幕</string>
-    <string name="dynamic_article_author"><![CDATA[<font color="#3f51b5">%s</font>的专栏]]></string>
+    <string name="dynamic_article_author"><![CDATA[<font color="#188ad0">%s</font>的专栏]]></string>
     <string name="dynamic_article_view">阅读：%s</string>
     <string name="dynamic_bangumi_desc">%s播放&#160;&#160;%s弹幕</string>
     <string name="dynamic_url_author">\@%s</string>
-    <string name="dynamic_live_author"><![CDATA[<font color="#3f51b5">%s</font>的直播间]]></string>
-    <string name="dynamic_favor_author"><![CDATA[<font color="#3f51b5">%s</font>的收藏夹]]></string>
+    <string name="dynamic_live_author"><![CDATA[<font color="#188ad0">%s</font>的直播间]]></string>
+    <string name="dynamic_favor_author"><![CDATA[<font color="#188ad0">%s</font>的收藏夹]]></string>
     <string name="dynamic_live_status_1">直播中</string>
     <string name="dynamic_live_status_2">未开播</string>
     <string name="dynamic_favor_desc">%d个内容</string>

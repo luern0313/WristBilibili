@@ -19,6 +19,8 @@ import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
  * 不过好在不用动脑子（滑稽）
  * 辛苦b站程序们，动态有至少十几种
  * 我只做了五种23333
+ * ——————————————————————————
+ * 已经重新制作了
  */
 
 public class DynamicApi
@@ -180,22 +182,5 @@ public class DynamicApi
             e.printStackTrace();
         }
         return "未知错误，点赞失败。。";
-    }
-
-    public String sendReply(String oid, String type, String text) throws IOException
-    {
-        try
-        {
-            String url = "https://api.bilibili.com/x/v2/reply/add";
-            String arg = "oid=" + oid + "&type=" + type + "&message=" + text + "&plat=1&jsonp=jsonp&csrf=" + csrf;
-            JSONObject result = new JSONObject(NetWorkUtil.post(url, arg, webHeaders).body().string());
-            if(result.getInt("code") == 0)
-                return "";
-        }
-        catch (JSONException e)
-        {
-            e.printStackTrace();
-        }
-        return "未知错误，评论失败。。";
     }
 }

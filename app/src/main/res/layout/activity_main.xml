@@ -13,7 +13,7 @@
         android:id="@+id/main_title"
         android:layout_width="match_parent"
         android:layout_height="33dp"
-        android:background="?attr/colorPrimary"
+        android:background="?attr/colorTitleBackground"
         android:gravity="center_vertical"
         android:onClick="buttonTitle"
         android:paddingBottom="4dp"
@@ -31,8 +31,8 @@
             android:id="@+id/main_title_extraicon"
             android:layout_width="12dp"
             android:layout_height="19dp"
-            android:layout_marginLeft="2dp"
-            android:layout_toRightOf="@id/main_title_title"
+            android:layout_marginStart="2dp"
+            android:layout_toEndOf="@id/main_title_title"
             android:src="@drawable/icon_extra" />
     </RelativeLayout>
 

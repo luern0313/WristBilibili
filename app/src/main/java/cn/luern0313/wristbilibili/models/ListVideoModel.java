@@ -1,6 +1,6 @@
 package cn.luern0313.wristbilibili.models;
 
-import cn.luern0313.lson.annotation.LsonPath;
+import cn.luern0313.lson.annotation.field.LsonPath;
 import cn.luern0313.wristbilibili.util.json.ImageUrlHandle;
 import cn.luern0313.wristbilibili.util.json.UrlHandle;
 import cn.luern0313.wristbilibili.util.json.ViewFormat;

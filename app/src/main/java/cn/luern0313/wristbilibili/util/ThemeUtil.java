@@ -7,21 +7,20 @@ import java.util.ArrayList;
 import androidx.annotation.ColorRes;
 import androidx.annotation.StringRes;
 import androidx.annotation.StyleRes;
-import androidx.appcompat.app.AppCompatDelegate;
-
-import java.util.ArrayList;
-
 import cn.luern0313.wristbilibili.R;
 
-public class ThemeUtil {
-    public static class Theme {
+public class ThemeUtil
+{
+    public static class Theme
+    {
         private final @StringRes int name;
         private final @ColorRes int previewColor;
         private final @StyleRes int style;
         private final int id;
         private final boolean isDarkTheme;
 
-        private Theme(@StringRes int name, int previewColor, int style, boolean isDarkTheme, int id) {
+        private Theme(@StringRes int name, int previewColor, int style, boolean isDarkTheme, int id)
+        {
             this.name = name;
             this.previewColor = previewColor;
             this.style = style;
@@ -29,7 +28,8 @@ public class ThemeUtil {
             this.id = id;
         }
 
-        public @StringRes int getName() {
+        public @StringRes int getName()
+        {
             return name;
         }
 
@@ -60,7 +60,8 @@ public class ThemeUtil {
             return id;
         }
 
-        public boolean isDarkTheme() {
+        public boolean isDarkTheme()
+        {
             return isDarkTheme;
         }
     }
@@ -82,8 +83,7 @@ public class ThemeUtil {
         new Theme(R.string.theme_name_red, R.color.mainColorRed, R.style.RedTheme, false, 4)
     };
 
-    private static final ArrayList<ThemeChangeListener> listenerList =
-            new ArrayList<>();
+    private static final ArrayList<ThemeChangeListener> listenerList = new ArrayList<>();
 
     public static void addThemeChangeListener(ThemeChangeListener listener)
     {

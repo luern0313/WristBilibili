@@ -35,6 +35,8 @@ public class LruCacheUtil
     {
         if(url == null || url.equals(""))
             return url;
+        if(!url.startsWith("http://") && !url.startsWith("https://"))
+            url = "http://" + url;
         url = url.replaceFirst("@(?:\\d+?[a-z]+?_)*\\d+?[a-z]+?\\.[a-z]+$", "");
         url += "@" + width + "w_1e_1c." + url.split("\\.")[url.split("\\.").length - 1];
         return url;

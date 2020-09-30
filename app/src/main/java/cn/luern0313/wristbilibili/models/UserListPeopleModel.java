@@ -2,8 +2,8 @@ package cn.luern0313.wristbilibili.models;
 
 import java.io.Serializable;
 
-import cn.luern0313.lson.annotation.LsonDateFormat;
-import cn.luern0313.lson.annotation.LsonPath;
+import cn.luern0313.lson.annotation.field.LsonDateFormat;
+import cn.luern0313.lson.annotation.field.LsonPath;
 import cn.luern0313.wristbilibili.util.json.ImageUrlHandle;
 import lombok.Getter;
 import lombok.Setter;
@@ -39,6 +39,6 @@ public class UserListPeopleModel implements Serializable
     @LsonPath("official_verify.desc")
     private String verifyName;
 
-    @LsonPath("vip.viptype")
+    @LsonPath("vip.vipType")
     private int vip;
 }

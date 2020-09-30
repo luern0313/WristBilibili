@@ -57,7 +57,7 @@ public class SearchHtmlTagHandlerUtil implements Html.TagHandler
     public void endFont(String tag, Editable output, XMLReader xmlReader)
     {
         stopIndex = output.length();
-        output.setSpan(new ForegroundColorSpan(ctx.getResources().getColor(R.color.mainColor)), startIndex, stopIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        output.setSpan(new ForegroundColorSpan(ColorUtil.getColor(R.attr.colorAccent, ctx)), startIndex, stopIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
 
     private void processAttributes(final XMLReader xmlReader)

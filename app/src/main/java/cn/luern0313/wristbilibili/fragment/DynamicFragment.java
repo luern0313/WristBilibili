@@ -2,7 +2,6 @@ package cn.luern0313.wristbilibili.fragment;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -443,9 +442,12 @@ public class DynamicFragment extends Fragment
         }
         else if(viewId == R.id.dynamic_share_share)
         {
-            Intent intent = new Intent(ctx, UnsupportedLinkActivity.class);
-            intent.putExtra("url", ((DynamicModel.DynamicShareModel) dynamicModel).getShareOriginCard().getCardUrl());
-            startActivity(intent);
+            if(!(((DynamicModel.DynamicShareModel) dynamicModel).getShareOriginCard() instanceof DynamicModel.DynamicUnknownModel))
+            {
+                Intent intent = new Intent(ctx, UnsupportedLinkActivity.class);
+                intent.putExtra("url", ((DynamicModel.DynamicShareModel) dynamicModel).getShareOriginCard().getCardUrl());
+                startActivity(intent);
+            }
         }
         else if(viewId == R.id.dynamic_album_author)
         {

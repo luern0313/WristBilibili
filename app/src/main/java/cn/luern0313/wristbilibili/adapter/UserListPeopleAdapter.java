@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.models.UserListPeopleModel;
+import cn.luern0313.wristbilibili.util.ColorUtil;
 import cn.luern0313.wristbilibili.util.ImageTaskUtil;
 import cn.luern0313.wristbilibili.util.LruCacheUtil;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -82,9 +83,9 @@ public class UserListPeopleAdapter extends BaseAdapter
         viewHolder.img.setImageResource(R.drawable.img_default_head);
         viewHolder.name.setText(userListPeopleModel.getName());
         if(userListPeopleModel.getVip() == 2)
-            viewHolder.name.setTextColor(listView.getResources().getColor(R.color.mainColor));
+            viewHolder.name.setTextColor(ColorUtil.getColor(R.attr.colorVip, listView.getContext()));
         else
-            viewHolder.name.setTextColor(listView.getResources().getColor(R.color.gray_44));
+            viewHolder.name.setTextColor(ColorUtil.getColor(R.attr.colorTitle, listView.getContext()));
         String sign = userListPeopleModel.getVerifyName().equals("") ?
                 userListPeopleModel.getSign() : userListPeopleModel.getVerifyName();
         if(!sign.equals(""))

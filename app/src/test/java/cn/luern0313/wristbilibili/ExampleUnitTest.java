@@ -1,18 +1,27 @@
 package cn.luern0313.wristbilibili;
 
+
 import org.junit.Test;
 
-import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.ArrayList;
+import java.util.Date;
 
 import cn.luern0313.lson.LsonDefinedAnnotation;
-import cn.luern0313.lson.LsonParser;
 import cn.luern0313.lson.LsonUtil;
-import cn.luern0313.lson.annotation.LsonPath;
+import cn.luern0313.lson.TypeReference;
+import cn.luern0313.lson.annotation.field.LsonAddPrefix;
+import cn.luern0313.lson.annotation.field.LsonAddSuffix;
+import cn.luern0313.lson.annotation.field.LsonDateFormat;
+import cn.luern0313.lson.annotation.field.LsonNumberFormat;
+import cn.luern0313.lson.annotation.field.LsonPath;
+import cn.luern0313.lson.annotation.field.LsonReplaceAll;
+import cn.luern0313.lson.annotation.method.LsonCallMethod;
+import cn.luern0313.lson.element.LsonObject;
+import cn.luern0313.lson.json.LsonParser;
 import lombok.SneakyThrows;
 import lombok.ToString;
 
@@ -23,42 +32,122 @@ import lombok.ToString;
  */
 public class ExampleUnitTest
 {
+    String json = "{\"dataMap\":{\"dataKey3\":{\"canRead\":true},\"dataKey4\":{\"canRead\":true},\"dataKey1\":{\"canRead\":true},\"dataKey2\":{\"canRead\":true}},\"store\":{\"book\":[{\"category\":\"reference\",\"author\":\"Nigel Rees\",\"title\":\"Sayings of the Century\",\"price\":true},{\"category\":\"fiction\",\"author\":\"Evelyn Waugh\",\"title\":\"Sword of Honour\",\"price\":12.99},{\"category\":\"fiction\",\"author\":\"Herman Melville\",\"title\":\"Mo by Dick\",\"isbn\":\"0-553-21311-3\",\"price\":8.99},{\"category\":\"fiction\",\"author\":\"J. R. R. Tolkien\",\"title\":\"The Lord of the Rings\",\"isbn\":\"0-395-19395-8\",\"price\":22.99}],\"bicycle\":{\"color\":\"red\",\"price\":12.99}}}";
+    String json2 = "{\"code_value\":0,\"message\":\"success\",\"data\":{\"user_id\":9,\"timestamp\":1599665659,\"name\":\"luern0313\",\"lv\":6,\"coin\":5463.15,\"video\":[{\"video_id\":1,\"title\":\"1\",\"author\":{\"name\":\"luern0313\",\"uid\":9},\"img\":\"http://1.png\",\"state\":{\"like\":2.0,\"coin\":6}},{\"video_id\":2,\"title\":\"2\",\"author\":{\"name\":\"luern0313\",\"uid\":9},\"img\":\"http://2.png\",\"state\":{\"like\":23,\"coin\":66}},{\"video_id\":3,\"title\":\"3\",\"author\":{\"name\":\"luern0313\",\"uid\":9},\"img\":\"http://3.png\",\"state\":{\"like\":233,\"coin\":666}}],\"medal\":[[0,0,0,0],[0,0,1,4],[5,0,6,0]]}}";
+    String json3 = "{\"a\":\"1\"}";
+
     @SneakyThrows
     @Test
     public void test()
     {
-        String json = "{\"a\": [\"111\", \"222\"]}";
-        LsonUtil.setLsonAnnotationListener(new E());
-        A a = LsonUtil.fromJson(LsonParser.parseString(json), A.class);
+        LsonUtil.setLsonAnnotationListener((value, annotation, field) -> {
+            System.out.println("45615");
+            return value;
+        });
+
+        LsonObject lsonObject = LsonParser.parseAsObject(json2);
+        BaseModel<UserModel<UserModel.UserVideoModel>> aaa = LsonUtil.fromJson(lsonObject, new TypeReference<BaseModel<UserModel<UserModel.UserVideoModel>>>(){});
         System.out.println();
-        System.out.println(a.a.get(0));
-        System.out.println(a.a.get(1));
+        System.out.println(aaa);
+        System.out.println();
+
     }
 
-    class E implements LsonUtil.LsonAnnotationListener
+    @ToString
+    private static class BaseModel<T>
     {
-        @Override
-        public Object handleAnnotation(Object value, Annotation annotation)
+        @LsonPath()
+        String codeValue;
+
+        @LsonPath()
+        String message;
+
+        @LsonPath("data")
+        LsonObject data;
+
+        @LsonCallMethod(timing = {LsonCallMethod.CallMethodTiming.BEFORE_DESERIALIZATION, LsonCallMethod.CallMethodTiming.AFTER_DESERIALIZATION})
+        private void aaaa()
         {
-            System.out.println((String) value);
-            return "7777";
+            System.out.println("1 " + message);
         }
     }
 
     @ToString
-    public static class A
+    private static class UserModel<T>
     {
-        @Q("A")
-        @LsonPath("a")
-        private ArrayList<String> a;
+        @LsonPath()
+        int userId;
+
+        @LsonPath()
+        StringBuilder name;
+
+        @LsonAddPrefix("LV")
+        @LsonPath()
+        String lv;
+
+        @LsonDateFormat(value = "yyyy-MM-dd HH:mm", mode = LsonDateFormat.LsonDateFormatMode.SECOND)
+        @LsonPath("timestamp")
+        String date;
+
+        @LsonPath("timestamp")
+        Date date1;
+
+        @LsonPath("timestamp")
+        java.sql.Date date2;
+
+        @LsonNumberFormat(digit = 0, mode = LsonNumberFormat.NumberFormatMode.DOWN)
+        @LsonAddPrefix("硬妹币: ")
+        @LsonReplaceAll(regex = "硬", replacement = "软")
+        @LsonAddSuffix("个")
+        @LsonPath()
+        String coin;
+
+        @LsonPath("video")
+        ArrayList<T> videos;
+
+        @LsonPath("medal")
+        ArrayList<ArrayList<Integer>> medals;
+
+        @LsonCallMethod(timing = {LsonCallMethod.CallMethodTiming.BEFORE_DESERIALIZATION, LsonCallMethod.CallMethodTiming.AFTER_DESERIALIZATION})
+        private void aaaa()
+        {
+            System.out.println("2 " + name);
+        }
+
+        @ToString
+        private static class UserVideoModel
+        {
+            @LsonPath()
+            String videoId;
+
+            @LsonPath()
+            String title;
+
+            @LsonNumberFormat(digit = 0, mode = LsonNumberFormat.NumberFormatMode.DOWN)
+            @LsonAddSuffix("个")
+            @LsonPath("state.like")
+            String like;
+
+            @LsonNumberFormat(digit = 0, mode = LsonNumberFormat.NumberFormatMode.DOWN)
+            @LsonPath("state.coin")
+            String coin;
+
+            @LsonPath("img")
+            String img;
+
+            @LsonCallMethod(timing = {LsonCallMethod.CallMethodTiming.BEFORE_DESERIALIZATION, LsonCallMethod.CallMethodTiming.AFTER_DESERIALIZATION})
+            private void aaaa()
+            {
+                System.out.println("3 " + title);
+            }
+        }
     }
 
     @Target(ElementType.FIELD)
     @Retention(RetentionPolicy.RUNTIME)
-    @LsonDefinedAnnotation
-    public @interface Q
+    @LsonDefinedAnnotation()
+    public @interface ZheLiShiYiGeZiDingYiZhuJie
     {
-        String value();
-    }
 
+    }
 }

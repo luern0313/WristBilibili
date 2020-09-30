@@ -1,13 +1,15 @@
 package cn.luern0313.wristbilibili.api;
 
 
+import android.util.Log;
+
 import java.io.IOException;
 import java.util.ArrayList;
 
-import cn.luern0313.lson.LsonArrayUtil;
-import cn.luern0313.lson.LsonObjectUtil;
-import cn.luern0313.lson.LsonParser;
 import cn.luern0313.lson.LsonUtil;
+import cn.luern0313.lson.element.LsonArray;
+import cn.luern0313.lson.element.LsonObject;
+import cn.luern0313.lson.json.LsonParser;
 import cn.luern0313.wristbilibili.models.FavorBoxModel;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
@@ -40,10 +42,12 @@ public class FavorBoxApi
     {
         String url = "http://space.bilibili.com/ajax/fav/getBoxList";
         String arg = "mid=" + mid;
-        LsonObjectUtil result = LsonParser.parseString(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string());
+        String a = NetWorkUtil.get(url + "?" + arg, webHeaders).body().string();
+        Log.w("bilibili", a);
+        LsonObject result = LsonParser.parseAsObject(a);
         if(result.getAsBoolean("status", false))
         {
-            LsonArrayUtil favorBoxJSONArray = result.getAsJsonObject("data").getAsJsonArray("list");
+            LsonArray favorBoxJSONArray = result.getAsJsonObject("data").getAsJsonArray("list");
             for(int i = 0; i < favorBoxJSONArray.size(); i++)
                 favorBoxArrayList.add(LsonUtil.fromJson(favorBoxJSONArray.getAsJsonObject(i), FavorBoxModel.class));
         }

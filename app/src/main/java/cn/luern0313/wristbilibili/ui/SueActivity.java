@@ -39,7 +39,7 @@ public class SueActivity extends BaseActivity
         uiLoading = findViewById(R.id.dt_loading);
         uiNologin = findViewById(R.id.dt_nologin);
         sendDynamicApi = new SendDynamicApi();
-        uiText.setText(Html.fromHtml("<font color=\"#3F51B5\">#腕上哔哩# #用手表上b站# </font>" + sendDynamicApi.getNextShareText()));
+        uiText.setText(Html.fromHtml("<font color=\"#188ad0\">#腕上哔哩# #用手表上b站# </font>" + sendDynamicApi.getNextShareText()));
 
         if(!SharedPreferencesUtil.contains(SharedPreferencesUtil.cookies))
             uiNologin.setVisibility(View.VISIBLE);
@@ -65,7 +65,7 @@ public class SueActivity extends BaseActivity
 
     public void clickRe(View view)
     {
-        uiText.setText(Html.fromHtml("<font color=\"#3F51B5\">#腕上哔哩# #用手表上b站# </font>" + sendDynamicApi.getNextShareText()));
+        uiText.setText(Html.fromHtml("<font color=\"#188ad0\">#腕上哔哩# #用手表上b站# </font>" + sendDynamicApi.getNextShareText()));
     }
 
     public void clickSend(View view)

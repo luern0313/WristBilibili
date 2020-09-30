@@ -1,13 +1,12 @@
 package cn.luern0313.wristbilibili.api;
 
-
 import java.io.IOException;
 import java.util.ArrayList;
 
-import cn.luern0313.lson.LsonArrayUtil;
-import cn.luern0313.lson.LsonObjectUtil;
-import cn.luern0313.lson.LsonParser;
 import cn.luern0313.lson.LsonUtil;
+import cn.luern0313.lson.element.LsonArray;
+import cn.luern0313.lson.element.LsonObject;
+import cn.luern0313.lson.json.LsonParser;
 import cn.luern0313.wristbilibili.models.AnimationTimelineModel;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
@@ -32,11 +31,11 @@ public class AnimationTimelineApi
     public ArrayList<AnimationTimelineModel> getAnimTimelineList() throws IOException
     {
         String url = "https://bangumi.bilibili.com/web_api/timeline_global";
-        LsonObjectUtil result = LsonParser.parseString(NetWorkUtil.get(url, webHeaders).body().string());
+        LsonObject result = LsonParser.parseAsObject(NetWorkUtil.get(url, webHeaders).body().string());
         ArrayList<AnimationTimelineModel> animationTimelineModelArrayList = new ArrayList<>();
         if(result.getAsInt("code", -1) == 0)
         {
-            LsonArrayUtil animArray = result.getAsJsonArray("result");
+            LsonArray animArray = result.getAsJsonArray("result");
             for (int i = 6; i >= 0; i--)
                 animationTimelineModelArrayList.add(LsonUtil.fromJson(animArray.getAsJsonObject(i), AnimationTimelineModel.class));
         }

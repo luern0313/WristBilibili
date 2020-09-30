@@ -12,6 +12,7 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="96dp"
+        app:cardBackgroundColor="?attr/colorBackgroundColor"
         app:cardCornerRadius="6dp"
         app:cardElevation="0dp">
 
@@ -20,8 +21,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="?android:attr/selectableItemBackground"
-            android:descendantFocusability="blocksDescendants"
             android:clickable="true"
+            android:descendantFocusability="blocksDescendants"
             android:focusable="true"
             android:gravity="center_vertical">
 
@@ -79,11 +80,13 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="@drawable/shape_bg_article_card_identity"
-                            android:paddingStart="3dp"
-                            android:paddingEnd="3dp"
+                            android:paddingStart="4dp"
+                            android:paddingTop="1dp"
+                            android:paddingEnd="4dp"
+                            android:paddingBottom="1dp"
                             android:text="商品"
                             android:textColor="?attr/colorAccent"
-                            android:textSize="11sp" />
+                            android:textSize="10sp" />
 
                         <TextView
                             android:id="@+id/artcard_shop_price"

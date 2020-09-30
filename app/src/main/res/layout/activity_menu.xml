@@ -66,7 +66,7 @@
                 android:paddingRight="4dp"
                 android:paddingTop="1dp"
                 android:text="LV0"
-                android:textColor="@color/pink_light"
+                android:textColor="@color/alpha_ee"
                 android:textSize="8sp"
                 android:textStyle="bold" />
 
@@ -79,7 +79,7 @@
                 android:layout_marginTop="9dp"
                 android:layout_toEndOf="@+id/menu_userlv"
                 android:text="硬币 : 0"
-                android:textColor="@color/pink_light"
+                android:textColor="@color/alpha_ee"
                 android:textSize="10sp" />
 
         </RelativeLayout>

@@ -38,7 +38,7 @@
         android:layout_below="@+id/dynamic_favor_author"
         android:layout_marginStart="18dp"
         android:layout_marginEnd="18dp"
-        app:cardBackgroundColor="?attr/colorLayerBack"
+        app:cardBackgroundColor="?attr/colorBackgroundColor"
         app:cardElevation="0dp">
 
         <RelativeLayout

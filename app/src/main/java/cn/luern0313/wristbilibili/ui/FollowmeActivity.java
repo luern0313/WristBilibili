@@ -16,7 +16,6 @@ import android.widget.Toast;
 import java.io.IOException;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.UserApi;
@@ -151,7 +150,7 @@ public class FollowmeActivity extends BaseActivity
             public void onClick(View v)
             {
                 cardViewText.setText("已关注");
-                cardViewText.setBackgroundResource(R.drawable.shape_anre_followbgyes);
+                cardViewText.setBackgroundResource(R.drawable.shape_bg_anre_followbgyes);
                 new Thread(new Runnable()
                 {
                     @Override
@@ -189,7 +188,7 @@ public class FollowmeActivity extends BaseActivity
             public void onClick(View v)
             {
                 uiVote.setText("感谢投票~");
-                uiVote.setBackgroundResource(R.drawable.shape_anre_followbgyes);
+                uiVote.setBackgroundResource(R.drawable.shape_bg_anre_followbgyes);
                 new Thread(new Runnable()
                 {
                     @Override

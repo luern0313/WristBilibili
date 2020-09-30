@@ -2,7 +2,7 @@ package cn.luern0313.wristbilibili.models;
 
 import java.util.ArrayList;
 
-import cn.luern0313.lson.annotation.LsonPath;
+import cn.luern0313.lson.annotation.field.LsonPath;
 import cn.luern0313.wristbilibili.util.json.ImageUrlHandle;
 import lombok.Getter;
 import lombok.Setter;

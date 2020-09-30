@@ -2,7 +2,6 @@ package cn.luern0313.wristbilibili.fragment;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -205,6 +204,7 @@ public class BangumiDetailFragment extends Fragment implements View.OnClickListe
         if(bangumiModel.bangumi_user_is_follow)
         {
             ((ImageView) rootLayout.findViewById(R.id.bgm_detail_bt_follow)).setImageResource(R.drawable.icon_vdd_do_follow_yes);
+            ((ImageView) rootLayout.findViewById(R.id.bgm_detail_bt_follow)).setColorFilter(ColorUtil.getColor(R.attr.colorAccent, ctx));
             ((TextView) rootLayout.findViewById(R.id.bgm_detail_bt_follow_text)).setText("已" + bangumiModel.bangumi_type_follow);
         }
         else

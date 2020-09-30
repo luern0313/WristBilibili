@@ -41,7 +41,7 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="4dp"
             android:layout_toLeftOf="@+id/rk_pu_date_pk"
-            android:background="@drawable/shape_anre_followbg"
+            android:background="@drawable/shape_bg_anre_followbg"
             android:padding="2dp"
             android:text="点这里 >"
             android:textColor="@color/white"

@@ -14,7 +14,7 @@
         android:ellipsize="end"
         android:focusable="true"
         android:maxLines="1"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/colorHyperlinks"
         android:textSize="13sp" />
 
     <cn.luern0313.wristbilibili.widget.ExpandableTextView
@@ -40,7 +40,7 @@
         android:descendantFocusability="blocksDescendants"
         android:focusable="true"
         android:foreground="?android:attr/selectableItemBackground"
-        app:cardBackgroundColor="?attr/colorLayerBack"
+        app:cardBackgroundColor="?attr/colorBackgroundColor"
         app:cardCornerRadius="4dp"
         app:cardElevation="0dp">
 

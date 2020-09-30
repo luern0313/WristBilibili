@@ -6,6 +6,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import java.io.IOException;
 
@@ -66,14 +67,16 @@ public class ImageTaskUtil extends AsyncTask<String, Void, BitmapDrawable>
     @Override
     protected void onPostExecute(BitmapDrawable result)
     {
-        ImageView iv;
+        ImageView iv = null;
         if(!isImgActivity)
            iv = view.findViewWithTag(imageUrl);
         else
-            iv = view.findViewWithTag(imageUrl).findViewById(R.id.vp_imageView);
-        if(iv != null && result != null)
         {
-            iv.setImageDrawable(result);
+            LinearLayout linearLayout = view.findViewWithTag(imageUrl);
+            if(linearLayout != null && result != null)
+                iv = linearLayout.findViewById(R.id.vp_imageView);
         }
+        if(iv != null && result != null)
+            iv.setImageDrawable(result);
     }
 }

@@ -48,7 +48,8 @@ public class ImageDownloaderUtil
      * @param options 需要传入已经BitmapFactory.decodeStream(is, null, options);
      * @return 返回压缩的比率，最小为1
      */
-    public static int getInSampleSize(BitmapFactory.Options options, int width) {
+    public static int getInSampleSize(BitmapFactory.Options options, int width)
+    {
         int inSampleSize = 1;
         float realHeight = options.outHeight * 1.0f / options.outWidth * width;
 

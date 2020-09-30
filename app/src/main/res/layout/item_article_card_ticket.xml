@@ -12,7 +12,7 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="96dp"
-        app:cardBackgroundColor="?attr/colorLayerBack"
+        app:cardBackgroundColor="?attr/colorBackgroundColor"
         app:cardCornerRadius="6dp"
         app:cardElevation="0dp">
 
@@ -89,11 +89,13 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="@drawable/shape_bg_article_card_identity"
-                            android:paddingStart="3dp"
-                            android:paddingEnd="3dp"
+                            android:paddingStart="4dp"
+                            android:paddingEnd="4dp"
+                            android:paddingTop="1dp"
+                            android:paddingBottom="1dp"
                             android:text="票务"
                             android:textColor="?attr/colorAccent"
-                            android:textSize="11sp" />
+                            android:textSize="10sp" />
 
                         <TextView
                             android:id="@+id/artcard_ticket_price"

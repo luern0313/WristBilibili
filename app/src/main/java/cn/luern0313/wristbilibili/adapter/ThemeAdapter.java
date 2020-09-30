@@ -2,6 +2,7 @@ package cn.luern0313.wristbilibili.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,14 +24,16 @@ public class ThemeAdapter extends RecyclerView.Adapter<ThemeAdapter.ThemeViewHol
 {
     private Context ctx;
     private LayoutInflater layoutInflater;
+    private RecyclerView recyclerView;
 
     private ThemeAdapterListener themeAdapterListener;
 
-    public ThemeAdapter(Context ctx, LayoutInflater layoutInflater, ThemeAdapterListener themeAdapterListener)
+    public ThemeAdapter(Context ctx, LayoutInflater layoutInflater, ThemeAdapterListener themeAdapterListener, RecyclerView recyclerView)
     {
         this.ctx = ctx;
         this.layoutInflater = layoutInflater;
         this.themeAdapterListener = themeAdapterListener;
+        this.recyclerView = recyclerView;
     }
 
     @NonNull
@@ -44,27 +47,22 @@ public class ThemeAdapter extends RecyclerView.Adapter<ThemeAdapter.ThemeViewHol
     public void onBindViewHolder(@NonNull final ThemeViewHolder holder, int position)
     {
         holder.checkView.setVisibility(ThemeUtil.getCurrentThemePos() == position ? View.VISIBLE : View.INVISIBLE);
-        holder.nameView.setText(ThemeUtil.themes[position].name);
-        holder.colorView.setCardBackgroundColor(ctx.getResources().getColor(ThemeUtil.themes[position].previewColor));
+        holder.nameView.setText(ThemeUtil.themes[position].getName());
+        holder.colorView.setCardBackgroundColor(ctx.getResources().getColor(ThemeUtil.themes[position].getPreviewColor()));
         final int finalPos = position;
+
         holder.itemView.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                @ColorInt int prevBack = ColorUtil.getColor(android.R.attr.colorBackground, R.color.activityBG, ctx);
                 ThemeUtil.changeCurrentTheme(ThemeUtil.themes[finalPos]);
                 ThemeUtil.changeTheme(ctx, ThemeUtil.getCurrentTheme());
-                @ColorInt int[] colors = ColorUtil.getColors(
-                        new int[]{R.attr.colorPrimary, android.R.attr.colorBackground, android.R.attr.textColor},
-                        new int[]{ctx.getResources().getColor(R.color.colorPrimary),
-                                ctx.getResources().getColor(R.color.activityBG),
-                                ctx.getResources().getColor(R.color.gray_77)}, ctx);
-                int primary = colors[0];
-                int back = colors[1];
-                int fore = colors[2];
-                themeAdapterListener.onAnimate(((Activity) ctx).findViewById(R.id.theme_list), "backgroundColor", prevBack, back);
+                int primary = ColorUtil.getColor(R.attr.colorPrimary, ctx);
+                int back = ColorUtil.getColor(android.R.attr.colorBackground, ctx);
+                int fore = ColorUtil.getColor(android.R.attr.textColor, ctx);
                 themeAdapterListener.onChangeTheme((ViewGroup) ((Activity) ctx).findViewById(R.id.theme_root), primary, fore);
+                themeAdapterListener.onAnimate(recyclerView, "backgroundColor", ((ColorDrawable) recyclerView.getBackground()).getColor(), back);
                 notifyDataSetChanged();
             }
         });

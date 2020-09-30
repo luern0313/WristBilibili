@@ -67,7 +67,7 @@ public class SendDynamicActivity extends BaseActivity
             uiShareTitle = findViewById(R.id.senddy_share_title);
 
             if(!up.equals(""))
-                uiShareUp.setText(Html.fromHtml("转发自 <font color=#3f51b5>@" + up + "</font>："));
+                uiShareUp.setText(Html.fromHtml("转发自 <font color=#188ad0>@" + up + "</font>："));
             else
                 uiShareUp.setVisibility(View.GONE);
             uiShareTitle.setText(title);

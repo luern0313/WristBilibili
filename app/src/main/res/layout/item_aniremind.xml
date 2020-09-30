@@ -43,7 +43,7 @@
         android:layout_below="@+id/anre_name"
         android:layout_marginTop="2dp"
         android:layout_toRightOf="@+id/anre_imgc"
-        android:background="@drawable/shape_anre_followbg"
+        android:background="@drawable/shape_bg_anre_followbg"
         android:paddingBottom="1dp"
         android:paddingEnd="3dp"
         android:paddingStart="3dp"

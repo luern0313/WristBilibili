@@ -13,10 +13,10 @@
             android:id="@+id/join_title_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary"
+            android:background="?attr/colorTitleBackground"
             android:gravity="center_vertical"
-            android:paddingBottom="4dp"
-            android:paddingTop="10dp">
+            android:paddingTop="10dp"
+            android:paddingBottom="4dp">
 
             <TextView
                 android:id="@+id/join_title_text"
@@ -31,19 +31,47 @@
                 android:id="@+id/join_title_extraicon"
                 android:layout_width="12dp"
                 android:layout_height="19dp"
-                android:layout_marginLeft="2dp"
-                android:layout_toLeftOf="@+id/theme_title_text"
+                android:layout_marginStart="2dp"
+                android:layout_toStartOf="@+id/join_title_text"
                 android:rotation="90"
                 android:src="@drawable/icon_extra" />
 
         </RelativeLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/layer_bg_joinqq_report"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingStart="26dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="26dp"
+            android:paddingBottom="10dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="反馈BUG" />
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:rotation="270"
+                android:src="@drawable/icon_extra_grey" />
+
+        </LinearLayout>
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="22dp"
-            android:layout_marginRight="22dp"
             android:layout_marginTop="6dp"
+            android:layout_marginRight="22dp"
             android:gravity="center_horizontal"
             android:text="如果您发现了产品的bug，或对产品有任何建议\n(或者只是单纯想来吹水)\n欢迎加入我们的QQ群！\n一群群号：680497357（群满）"
             android:textSize="12sp" />
@@ -58,8 +86,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="22dp"
-            android:layout_marginRight="22dp"
             android:layout_marginTop="6dp"
+            android:layout_marginRight="22dp"
             android:gravity="center_horizontal"
             android:text="二群群号：302277714（群满）"
             android:textSize="12sp" />
@@ -74,8 +102,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="22dp"
-            android:layout_marginRight="22dp"
             android:layout_marginTop="6dp"
+            android:layout_marginRight="22dp"
             android:gravity="center_horizontal"
             android:text="三群群号：1026083781（群满）"
             android:textSize="12sp" />
@@ -90,8 +118,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="22dp"
-            android:layout_marginRight="22dp"
             android:layout_marginTop="6dp"
+            android:layout_marginRight="22dp"
             android:gravity="center_horizontal"
             android:text="四群群号：819202278"
             android:textSize="12sp" />

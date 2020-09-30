@@ -5,10 +5,10 @@ import android.content.Context;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import cn.luern0313.lson.LsonArrayUtil;
-import cn.luern0313.lson.LsonObjectUtil;
-import cn.luern0313.lson.LsonParser;
 import cn.luern0313.lson.LsonUtil;
+import cn.luern0313.lson.element.LsonArray;
+import cn.luern0313.lson.element.LsonObject;
+import cn.luern0313.lson.json.LsonParser;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.models.ListArticleModel;
 import cn.luern0313.wristbilibili.util.MyApplication;
@@ -40,11 +40,11 @@ public class FavorArticleApi
     {
         String url = "https://api.bilibili.com/x/article/favorites/list/all";
         String arg = "ps=16&pn=" + page;
-        LsonObjectUtil result = LsonParser.parseString(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string());
+        LsonObject result = LsonParser.parseAsObject(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string());
         ArrayList<ListArticleModel> arrayList = new ArrayList<>();
         if(result.getAsInt("code", -1) == 0)
         {
-            LsonArrayUtil v = result.getAsJsonObject("data").getAsJsonArray("favorites");
+            LsonArray v = result.getAsJsonObject("data").getAsJsonArray("favorites");
             for(int i = 0; i < v.size(); i++)
                 arrayList.add(LsonUtil.fromJson(v.getAsJsonObject(i), ListArticleModel.class));
             return arrayList;
@@ -56,7 +56,7 @@ public class FavorArticleApi
     {
         String url = "https://api.bilibili.com/x/article/favorites/del";
         String per = "id=" + id + "&csrf=" + csrf;
-        LsonObjectUtil result = LsonParser.parseString(NetWorkUtil.post(url, per, webHeaders).body().string());
+        LsonObject result = LsonParser.parseAsObject(NetWorkUtil.post(url, per, webHeaders).body().string());
         if(result.getAsInt("code", -1) == 0)
             return "";
         return ctx.getString(R.string.main_error_unknown);
