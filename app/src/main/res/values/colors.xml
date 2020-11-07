@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#fa7298</color>
+    <color name="colorPrimary">#FA7298</color>
     <color name="colorPrimaryGreen">#26BFB5</color>
     <color name="colorPrimaryBlue">#2F98CC</color>
-    <color name="colorPrimaryRed">#fe3a3b</color>
+    <color name="colorPrimaryRed">#FE3A3B</color>
 
-    <color name="colorPrimaryDark">#188ad0</color>
-    <color name="colorHyperlinks">#188ad0</color>
+    <color name="colorPrimaryDark">#188AD0</color>
+    <color name="colorHyperlinks">#188AD0</color>
 
-    <color name="colorAccent">#fa7298</color>
-    <color name="mainColor">#fa7298</color>
+    <color name="colorAccent">#FA7298</color>
+    <color name="mainColor">#FA7298</color>
     <color name="mainColorBlue">#2F98CC</color>
     <color name="mainColorGreen">#26BFB5</color>
-    <color name="mainColorRed">#fe3a3b</color>
+    <color name="mainColorRed">#FE3A3B</color>
 
     <color name="colorPrimaryDarkNormal">#444444</color>
     <color name="colorPrimaryDarkDark">#222222</color>
@@ -34,17 +34,17 @@
     <color name="gray_22">#222222</color>
     <color name="black">#000000</color>
     <color name="alpha">#00000000</color>
-    <color name="alpha_activity">#00fafafa</color>
+    <color name="alpha_activity">#00FAFAFA</color>
 
     <color name="alpha_ee">#EEFFFFFF</color>
 
-    <color name="pink_light">#fdd4e0</color>
+    <color name="pink_light">#FDD4E0</color>
     <color name="orange">#FB9E60</color>
     <color name="yellow">#E78B1E</color>
-    <color name="yellow_gray">#fff1d4</color>
+    <color name="yellow_gray">#FFF1D4</color>
     <color name="shareText">#126845</color>
 
-    <color name="activityBG">#fffafafa</color>
+    <color name="activityBG">#FFFAFAFA</color>
 
     <color name="tipBG">#88000000</color>
 
