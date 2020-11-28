@@ -60,7 +60,7 @@ public class SearchFragment extends Fragment
     private Runnable runnableAddlist, runnableNoWebH, runnableNoresult, runnableNomore;
 
     private String[] hotWordArray;
-    private ArrayList<SearchModel> searchResult;
+    private ArrayList<SearchModel.SearchBaseModel> searchResult;
     private HotWordAdapter hotwordAdapter;
 
     private boolean isLoading = true;
@@ -342,7 +342,7 @@ public class SearchFragment extends Fragment
             {
                 try
                 {
-                    ArrayList<SearchModel> arrayList = searchApi.getSearchResult();
+                    ArrayList<SearchModel.SearchBaseModel> arrayList = searchApi.getSearchResult();
                     if(arrayList.size() != 0)
                     {
                         searchResult.addAll(arrayList);
@@ -365,20 +365,20 @@ public class SearchFragment extends Fragment
 
     void onViewClick(int id, int position)
     {
-        SearchModel searchModel = searchResult.get(position);
-        if(searchModel.search_mode == 0)
+        SearchModel.SearchBaseModel searchModel = searchResult.get(position);
+        if(searchModel.getSearchMode() == 0)
         {
             Intent intent = new Intent(ctx, BangumiActivity.class);
             intent.putExtra("season_id", ((SearchModel.SearchBangumiModel) searchModel).search_bangumi_season_id);
             startActivity(intent);
         }
-        else if(searchModel.search_mode == 1)
+        else if(searchModel.getSearchMode() == 1)
         {
             Intent intent = new Intent(ctx, UserActivity.class);
             intent.putExtra("mid", ((SearchModel.SearchUserModel) searchModel).search_user_mid);
             startActivity(intent);
         }
-        else if(searchModel.search_mode == 2)
+        else if(searchModel.getSearchMode() == 2)
             startActivity(VideoActivity.getActivityIntent(ctx, ((SearchModel.SearchVideoModel) searchModel).search_video_aid, ""));
     }
 

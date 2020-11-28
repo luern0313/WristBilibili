@@ -33,9 +33,9 @@ public class SearchAdapter extends BaseAdapter
     private SearchAdapterListener searchAdapterListener;
     private SearchHtmlTagHandlerUtil htmlTagHandlerUtil;
 
-    private ArrayList<SearchModel> searchArrayList;
+    private ArrayList<SearchModel.SearchBaseModel> searchArrayList;
 
-    public SearchAdapter(LayoutInflater inflater, ArrayList<SearchModel> searchArrayList, ListView listView, SearchAdapterListener searchAdapterListener, SearchHtmlTagHandlerUtil htmlTagHandlerUtil)
+    public SearchAdapter(LayoutInflater inflater, ArrayList<SearchModel.SearchBaseModel> searchArrayList, ListView listView, SearchAdapterListener searchAdapterListener, SearchHtmlTagHandlerUtil htmlTagHandlerUtil)
     {
         mInflater = inflater;
         this.searchArrayList = searchArrayList;
@@ -71,7 +71,7 @@ public class SearchAdapter extends BaseAdapter
     @Override
     public int getItemViewType(int position)
     {
-        return searchArrayList.get(position).search_mode;
+        return searchArrayList.get(position).getSearchMode();
     }
 
     @Override

@@ -1,18 +1,10 @@
 package cn.luern0313.wristbilibili.models;
 
-import org.json.JSONObject;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
 import cn.luern0313.lson.annotation.field.LsonAddPrefix;
 import cn.luern0313.lson.annotation.field.LsonAddSuffix;
 import cn.luern0313.lson.annotation.field.LsonDateFormat;
 import cn.luern0313.lson.annotation.field.LsonPath;
 import cn.luern0313.lson.annotation.field.LsonReplaceAll;
-import cn.luern0313.wristbilibili.util.DataProcessUtil;
-import cn.luern0313.wristbilibili.util.LruCacheUtil;
 import cn.luern0313.wristbilibili.util.json.ImageUrlHandle;
 import cn.luern0313.wristbilibili.util.json.ViewFormat;
 
@@ -22,9 +14,12 @@ import cn.luern0313.wristbilibili.util.json.ViewFormat;
 
 public class SearchModel
 {
-    public int search_mode;
+    public interface SearchBaseModel
+    {
+        int getSearchMode();
+    }
 
-    public class SearchBangumiModel extends SearchModel
+    public static class SearchBangumiModel implements SearchBaseModel
     {
         @LsonReplaceAll(regex = {"<em class=\"keyword\">", "</em>"}, replacement = {"<keyword>", "</keyword>"})
         @LsonAddPrefix("<body>")
@@ -53,27 +48,14 @@ public class SearchModel
         @LsonPath("areas")
         public String search_bangumi_area;
 
-        public SearchBangumiModel(JSONObject bangumi)
+        @Override
+        public int getSearchMode()
         {
-            search_mode = 0;
-            search_bangumi_title = bangumi.optString("title").replaceAll("<em class=\"keyword\">", "<keyword>");
-            search_bangumi_title = search_bangumi_title.replaceAll("</em>", "</keyword>");
-            search_bangumi_title = "<body>" + search_bangumi_title + "</body>";
-            search_bangumi_cover = LruCacheUtil.getImageUrl("http:" + bangumi.optString("cover"));
-            search_bangumi_season_id = String.valueOf(bangumi.optInt("season_id"));
-            search_bangumi_episode_count = bangumi.optInt("ep_size");
-
-            JSONObject bangumi_score = bangumi.optJSONObject("media_score") != null ? bangumi.optJSONObject("media_score") : new JSONObject();
-            search_bangumi_score = bangumi_score.has("score") ? String.valueOf(bangumi_score.optDouble("score", -1)) : "";
-
-            SimpleDateFormat format = new SimpleDateFormat("yyyy", Locale.getDefault());
-            search_bangumi_time = format.format(new Date(bangumi.optInt("pubtime") * 1000L));
-
-            search_bangumi_area = bangumi.optString("areas");
+            return 0;
         }
     }
 
-    public class SearchUserModel extends SearchModel
+    public static class SearchUserModel implements SearchBaseModel
     {
         @LsonPath("uname")
         public String search_user_name;
@@ -102,24 +84,14 @@ public class SearchModel
         @LsonPath("videos")
         public String search_user_videos;
 
-        public SearchUserModel(JSONObject user)
+        @Override
+        public int getSearchMode()
         {
-            search_mode = 1;
-            search_user_name = user.optString("uname");
-            search_user_face = LruCacheUtil.getImageUrl("http:" + user.optString("upic"));
-            search_user_mid = String.valueOf(user.optInt("mid"));
-            search_user_sign = user.optString("usign");
-
-            JSONObject user_official = user.has("official_verify") ? user.optJSONObject("official_verify") : new JSONObject();
-            search_user_official_type = user_official.optInt("type");
-            search_user_official_desc = user_official.optString("desc");
-
-            search_user_fans = DataProcessUtil.getView(user.optInt("fans"));
-            search_user_videos = String.valueOf(user.optInt("videos"));
+            return 1;
         }
     }
 
-    public class SearchVideoModel extends SearchModel
+    public static class SearchVideoModel implements SearchBaseModel
     {
         @LsonReplaceAll(regex = {"<em class=\"keyword\">", "</em>"}, replacement = {"<keyword>", "</keyword>"})
         @LsonAddPrefix("<body>")
@@ -149,18 +121,10 @@ public class SearchModel
         @LsonPath("duration")
         public String search_video_duration;
 
-        public SearchVideoModel(JSONObject video)
+        @Override
+        public int getSearchMode()
         {
-            search_mode = 2;
-            search_video_title = video.optString("title").replaceAll("<em class=\"keyword\">", "<keyword>");
-            search_video_title = search_video_title.replaceAll("</em>", "</keyword>");
-            search_video_title = "<body>" + search_video_title + "</body>";
-            search_video_aid = String.valueOf(video.optInt("aid"));
-            search_video_cover = LruCacheUtil.getImageUrl("http:" + video.optString("pic"));
-            search_video_play = DataProcessUtil.getView(video.optInt("play"));
-            search_video_danmaku = DataProcessUtil.getView(video.optInt("video_review"));
-            search_video_up_name = video.optString("author");
-            search_video_duration = video.optString("duration");
+            return 2;
         }
     }
 }

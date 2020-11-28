@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
+import cn.luern0313.lson.LsonUtil;
+import cn.luern0313.lson.element.LsonArray;
+import cn.luern0313.lson.element.LsonObject;
 import cn.luern0313.wristbilibili.models.SearchModel;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
@@ -63,7 +66,7 @@ public class SearchApi
         return null;
     }
 
-    public ArrayList<SearchModel> getSearchResult() throws IOException
+    public ArrayList<SearchModel.SearchBaseModel> getSearchResult() throws IOException
     {
         page++;
         try
@@ -71,26 +74,25 @@ public class SearchApi
             String url = "https://api.bilibili.com/x/web-interface/search/all/v2";
             String per = "context=&page=" + page + "&order=&keyword=" + URLEncoder.encode(keyword, "UTF-8") + "&duration=&tids_1=&tids_2=&__refresh__=true&highlight=1&single_column=0";
             String result = NetWorkUtil.get(url + "?" + per, webHeaders).body().string();
-            JSONArray resultArray = new JSONObject(result).getJSONObject("data").getJSONArray("result");
-            ArrayList<SearchModel> searchResult = new ArrayList<>();
-            SearchModel searchModel = new SearchModel();
-            for(int i = 0; i < resultArray.length(); i++)
+            LsonArray resultArray = LsonUtil.parseAsObject(result).getAsJsonObject("data").getAsJsonArray("result");
+            ArrayList<SearchModel.SearchBaseModel> searchResult = new ArrayList<>();
+            for(int i = 0; i < resultArray.size(); i++)
             {
-                JSONObject all_search = resultArray.optJSONObject(i);
-                JSONArray search = all_search.optJSONArray("data");
-                if((all_search.optString("result_type").equals("media_bangumi") || all_search.optString("result_type").equals("media_ft")) && page == 1)
-                    for(int j = 0; j < search.length(); j++)
-                        searchResult.add(searchModel.new SearchBangumiModel(search.optJSONObject(j)));
-                else if(all_search.optString("result_type").equals("bili_user") && page == 1)
-                    for(int j = 0; j < search.length(); j++)
-                        searchResult.add(searchModel.new SearchUserModel(search.optJSONObject(j)));
-                else if(all_search.optString("result_type").equals("video"))
-                    for(int j = 0; j < search.length(); j++)
-                        searchResult.add(searchModel.new SearchVideoModel(search.optJSONObject(j)));
+                LsonObject all_search = resultArray.getAsJsonObject(i);
+                LsonArray search = all_search.getAsJsonArray("data");
+                if((all_search.getAsString("result_type").equals("media_bangumi") || all_search.getAsString("result_type").equals("media_ft")) && page == 1)
+                    for(int j = 0; j < search.size(); j++)
+                        searchResult.add(LsonUtil.fromJson(search.getAsJsonObject(j), SearchModel.SearchBangumiModel.class));
+                else if(all_search.getAsString("result_type").equals("bili_user") && page == 1)
+                    for(int j = 0; j < search.size(); j++)
+                        searchResult.add(LsonUtil.fromJson(search.getAsJsonObject(j), SearchModel.SearchUserModel.class));
+                else if(all_search.getAsString("result_type").equals("video"))
+                    for(int j = 0; j < search.size(); j++)
+                        searchResult.add(LsonUtil.fromJson(search.getAsJsonObject(j), SearchModel.SearchVideoModel.class));
             }
             return searchResult;
         }
-        catch (JSONException e)
+        catch (RuntimeException e)
         {
             e.printStackTrace();
             page--;
