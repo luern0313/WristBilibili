@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import cn.luern0313.lson.LsonUtil;
 import cn.luern0313.lson.element.LsonArray;
 import cn.luern0313.lson.element.LsonObject;
-import cn.luern0313.lson.json.LsonParser;
 import cn.luern0313.wristbilibili.models.FavorBoxModel;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
@@ -44,7 +43,7 @@ public class FavorBoxApi
         String arg = "mid=" + mid;
         String a = NetWorkUtil.get(url + "?" + arg, webHeaders).body().string();
         Log.w("bilibili", a);
-        LsonObject result = LsonParser.parseAsObject(a);
+        LsonObject result = LsonUtil.parseAsObject(a);
         if(result.getAsBoolean("status", false))
         {
             LsonArray favorBoxJSONArray = result.getAsJsonObject("data").getAsJsonArray("list");

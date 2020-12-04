@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import cn.luern0313.lson.LsonUtil;
 import cn.luern0313.lson.element.LsonArray;
 import cn.luern0313.lson.element.LsonObject;
-import cn.luern0313.lson.json.LsonParser;
 import cn.luern0313.wristbilibili.models.ListBangumiModel;
 import cn.luern0313.wristbilibili.models.ListVideoModel;
 import cn.luern0313.wristbilibili.models.UserListPeopleModel;
@@ -47,30 +46,22 @@ public class UserApi
 
     public UserModel getUserInfo() throws IOException
     {
-        try
-        {
-            String url = "http://app.bilibili.com/x/v2/space";
-            String temp_per = "access_key=" + access_key + "&appkey=" + ConfInfoApi.getConf("appkey") + "&build=" +
-                    ConfInfoApi.getConf("build") + "&mobi_app=" + ConfInfoApi.getConf("mobi_app") + "&platform=" +
-                    ConfInfoApi.getConf("platform") + "&ps=20&ts=" + (int) (System.currentTimeMillis() / 1000) + "&vmid=" + mid;
-            String sign = ConfInfoApi.calc_sign(temp_per, ConfInfoApi.getConf("app_secret"));
-            JSONObject result = new JSONObject(NetWorkUtil.get(url + "?" + temp_per + "&sign=" + sign, webHeaders).body().string());
-            if(result.optInt("code") == 0)
-                userModel = new UserModel(result.optJSONObject("data"));
-            return userModel;
-        }
-        catch (JSONException e)
-        {
-            e.printStackTrace();
-        }
-        return null;
+        String url = "http://app.bilibili.com/x/v2/space";
+        String temp_per = "access_key=" + access_key + "&appkey=" + ConfInfoApi.getConf("appkey") + "&build=" +
+                ConfInfoApi.getConf("build") + "&mobi_app=" + ConfInfoApi.getConf("mobi_app") + "&platform=" +
+                ConfInfoApi.getConf("platform") + "&ps=20&ts=" + (int) (System.currentTimeMillis() / 1000) + "&vmid=" + mid;
+        String sign = ConfInfoApi.calc_sign(temp_per, ConfInfoApi.getConf("app_secret"));
+        LsonObject result = LsonUtil.parseAsObject(NetWorkUtil.get(url + "?" + temp_per + "&sign=" + sign, webHeaders).body().string());
+        if(result.getAsInt("code") == 0)
+            userModel = LsonUtil.fromJson(result.getAsJsonObject("data"), UserModel.class);
+        return userModel;
     }
 
     public ArrayList<ListVideoModel> getUserVideo(int page) throws IOException
     {
         String url = "https://api.bilibili.com/x/space/arc/search";
         String arg = "mid=" + mid + "&ps=30&tid=0&pn=" + page + "&keyword=&order=pubdate&jsonp=jsonp";
-        LsonObject result = LsonParser.parseAsObject(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string());
+        LsonObject result = LsonUtil.parseAsObject(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string());
         ArrayList<ListVideoModel> videoModelArrayList = new ArrayList<>();
         if(result.getAsInt("code", -1) == 0)
         {
@@ -85,7 +76,7 @@ public class UserApi
     {
         String url = "https://api.bilibili.com/x/space/bangumi/follow/list";
         String arg = "type=" + mode + "&pn=" + page + "&ps=20&vmid=" + mid;
-        LsonObject result = LsonParser.parseAsObject(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string());
+        LsonObject result = LsonUtil.parseAsObject(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string());
         ArrayList<ListBangumiModel> listBangumiModelArrayList = new ArrayList<>();
         if(result.getAsInt("code", -1) == 0)
         {
@@ -101,7 +92,7 @@ public class UserApi
     {
         String url = "https://api.bilibili.com/x/relation/followings";
         String arg = "vmid=" + mid + "&pn=" + page + "&ps=20&order=desc";
-        LsonObject result = LsonParser.parseAsObject(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string());
+        LsonObject result = LsonUtil.parseAsObject(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string());
         ArrayList<UserListPeopleModel> peopleModelArrayList = new ArrayList<>();
         if(result.getAsInt("code", -1) == 0)
         {
@@ -113,11 +104,11 @@ public class UserApi
         return peopleModelArrayList;
     }
 
-    public ArrayList<UserListPeopleModel> getUserFans(int page) throws IOException
+    public ArrayList<UserListPeopleModel> getUserFans(int page) throws IOException, NullPointerException
     {
         String url = "https://api.bilibili.com/x/relation/followers";
         String arg = "vmid=" + mid + "&pn=" + page + "&ps=20&order=desc";
-        LsonObject result = LsonParser.parseAsObject(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string());
+        LsonObject result = LsonUtil.parseAsObject(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string());
         ArrayList<UserListPeopleModel> peopleModelArrayList = new ArrayList<>();
         if(result.getAsInt("code", -1) == 0)
         {

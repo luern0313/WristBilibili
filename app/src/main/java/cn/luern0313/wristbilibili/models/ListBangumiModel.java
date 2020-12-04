@@ -27,7 +27,7 @@ public class ListBangumiModel implements Serializable
     private String cover;
 
     @ViewFormat
-    @LsonPath("stat.play")
+    @LsonPath("stat.view")
     private String play;
 
     @ViewFormat

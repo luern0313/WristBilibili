@@ -31,13 +31,13 @@ public class UserListPeopleFragment extends Fragment
     private String mid;
     private int mode;
     private UserApi userApi;
-    private ArrayList<UserListPeopleModel> userListPeopleModelArrayList = new ArrayList<>();
+    private final ArrayList<UserListPeopleModel> userListPeopleModelArrayList = new ArrayList<>();
     private int page = 1;
 
     private UserListPeopleAdapter userListPeopleAdapter;
     private UserListPeopleAdapter.UserListPeopleAdapterListener userListPeopleAdapterListener;
 
-    private Handler handler = new Handler();
+    private final Handler handler = new Handler();
     private Runnable runnableUi, runnableNoWeb, runnableNothing, runnableMore, runnableMoreNoWeb, runnableMoreNothing;
 
     private View layoutLoadingMore;
@@ -75,91 +75,47 @@ public class UserListPeopleFragment extends Fragment
         rootLayout = inflater.inflate(R.layout.fragment_user_list_people, container, false);
 
         userApi = new UserApi(mid);
-        userListPeopleAdapterListener = new UserListPeopleAdapter.UserListPeopleAdapterListener()
-        {
-            @Override
-            public void onUserListPeopleAdapterClick(int viewId, int position)
-            {
-                Intent intent = new Intent(ctx, UserActivity.class);
-                intent.putExtra("mid", userListPeopleModelArrayList.get(position).getUid());
-                startActivity(intent);
-            }
+        userListPeopleAdapterListener = (viewId, position) -> {
+            Intent intent = new Intent(ctx, UserActivity.class);
+            intent.putExtra("mid", userListPeopleModelArrayList.get(position).getUid());
+            startActivity(intent);
         };
 
         layoutLoadingMore = inflater.inflate(R.layout.widget_loading, null);
         uiListView = rootLayout.findViewById(R.id.user_list_people_listview);
         uiListView.addFooterView(layoutLoadingMore);
 
-        runnableUi = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                isLoading = false;
-                rootLayout.findViewById(R.id.user_list_people_no_web).setVisibility(View.GONE);
-                rootLayout.findViewById(R.id.user_list_people_nothing).setVisibility(View.GONE);
-                userListPeopleAdapter = new UserListPeopleAdapter(inflater, userListPeopleModelArrayList, mode, uiListView, userListPeopleAdapterListener);
-                uiListView.setAdapter(userListPeopleAdapter);
-            }
+        runnableUi = () -> {
+            isLoading = false;
+            rootLayout.findViewById(R.id.user_list_people_no_web).setVisibility(View.GONE);
+            rootLayout.findViewById(R.id.user_list_people_nothing).setVisibility(View.GONE);
+            userListPeopleAdapter = new UserListPeopleAdapter(inflater, userListPeopleModelArrayList, mode, uiListView, userListPeopleAdapterListener);
+            uiListView.setAdapter(userListPeopleAdapter);
         };
 
-        runnableNoWeb = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                rootLayout.findViewById(R.id.user_list_people_no_web).setVisibility(View.VISIBLE);
-                rootLayout.findViewById(R.id.user_list_people_nothing).setVisibility(View.GONE);
-            }
+        runnableNoWeb = () -> {
+            rootLayout.findViewById(R.id.user_list_people_no_web).setVisibility(View.VISIBLE);
+            rootLayout.findViewById(R.id.user_list_people_nothing).setVisibility(View.GONE);
         };
 
-        runnableNothing = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                rootLayout.findViewById(R.id.user_list_people_no_web).setVisibility(View.GONE);
-                rootLayout.findViewById(R.id.user_list_people_nothing).setVisibility(View.VISIBLE);
-            }
+        runnableNothing = () -> {
+            rootLayout.findViewById(R.id.user_list_people_no_web).setVisibility(View.GONE);
+            rootLayout.findViewById(R.id.user_list_people_nothing).setVisibility(View.VISIBLE);
         };
 
-        runnableMore = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                userListPeopleAdapter.notifyDataSetChanged();
-            }
+        runnableMore = () -> userListPeopleAdapter.notifyDataSetChanged();
+
+        runnableMoreNoWeb = () -> {
+            ((TextView) layoutLoadingMore.findViewById(R.id.wid_load_text)).setText("好像没有网络...\n检查下网络？");
+            layoutLoadingMore.findViewById(R.id.wid_load_button).setVisibility(View.VISIBLE);
         };
 
-        runnableMoreNoWeb = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                ((TextView) layoutLoadingMore.findViewById(R.id.wid_load_text)).setText("好像没有网络...\n检查下网络？");
-                layoutLoadingMore.findViewById(R.id.wid_load_button).setVisibility(View.VISIBLE);
-            }
-        };
+        runnableMoreNothing = () -> ((TextView) layoutLoadingMore.findViewById(R.id.wid_load_text)).setText("  没有更多了...");
 
-        runnableMoreNothing = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                ((TextView) layoutLoadingMore.findViewById(R.id.wid_load_text)).setText("  没有更多了...");
-            }
-        };
-
-        layoutLoadingMore.findViewById(R.id.wid_load_button).setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                ((TextView) layoutLoadingMore.findViewById(R.id.wid_load_button)).setText("  加载中...");
-                layoutLoadingMore.findViewById(R.id.wid_load_button).setVisibility(View.GONE);
-                getMoreListPeople();
-            }
+        layoutLoadingMore.findViewById(R.id.wid_load_button).setOnClickListener(v -> {
+            ((TextView) layoutLoadingMore.findViewById(R.id.wid_load_button)).setText("  加载中...");
+            layoutLoadingMore.findViewById(R.id.wid_load_button).setVisibility(View.GONE);
+            getMoreListPeople();
         });
 
         uiListView.setOnScrollListener(new AbsListView.OnScrollListener()
@@ -180,33 +136,28 @@ public class UserListPeopleFragment extends Fragment
             }
         });
 
-        new Thread(new Runnable()
-        {
-            @Override
-            public void run()
+        new Thread(() -> {
+            try
             {
-                try
-                {
-                    ArrayList<UserListPeopleModel> p;
-                    if(mode == 0)
-                        p = userApi.getUserFollow(page);
-                    else
-                        p = userApi.getUserFans(page);
-                    isLoading = false;
+                ArrayList<UserListPeopleModel> p;
+                if(mode == 0)
+                    p = userApi.getUserFollow(page);
+                else
+                    p = userApi.getUserFans(page);
+                isLoading = false;
 
-                    if(p != null && p.size() != 0)
-                    {
-                        userListPeopleModelArrayList.addAll(p);
-                        handler.post(runnableUi);
-                    }
-                    else
-                        handler.post(runnableNothing);
-                }
-                catch (IOException e)
+                if(p != null && p.size() != 0)
                 {
-                    e.printStackTrace();
-                    handler.post(runnableNoWeb);
+                    userListPeopleModelArrayList.addAll(p);
+                    handler.post(runnableUi);
                 }
+                else
+                    handler.post(runnableNothing);
+            }
+            catch (RuntimeException | IOException e)
+            {
+                e.printStackTrace();
+                handler.post(runnableNoWeb);
             }
         }).start();
 
@@ -215,34 +166,29 @@ public class UserListPeopleFragment extends Fragment
 
     private void getMoreListPeople()
     {
-        new Thread(new Runnable()
-        {
-            @Override
-            public void run()
+        new Thread(() -> {
+            try
             {
-                try
-                {
-                    page++;
-                    ArrayList<UserListPeopleModel> p;
-                    if(mode == 0)
-                        p = userApi.getUserFollow(page);
-                    else
-                        p = userApi.getUserFans(page);
-                    isLoading = false;
+                page++;
+                ArrayList<UserListPeopleModel> p;
+                if(mode == 0)
+                    p = userApi.getUserFollow(page);
+                else
+                    p = userApi.getUserFans(page);
+                isLoading = false;
 
-                    if(p != null && p.size() != 0)
-                    {
-                        userListPeopleModelArrayList.addAll(p);
-                        handler.post(runnableMore);
-                    }
-                    else
-                        handler.post(runnableMoreNothing);
-                }
-                catch (IOException e)
+                if(p != null && p.size() != 0)
                 {
-                    e.printStackTrace();
-                    handler.post(runnableMoreNoWeb);
+                    userListPeopleModelArrayList.addAll(p);
+                    handler.post(runnableMore);
                 }
+                else
+                    handler.post(runnableMoreNothing);
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+                handler.post(runnableMoreNoWeb);
             }
         }).start();
     }

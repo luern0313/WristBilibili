@@ -62,24 +62,19 @@ public class UserDetailFragment extends Fragment implements View.OnClickListener
         ctx = getActivity();
         rootLayout = inflater.inflate(R.layout.fragment_user_detail, container, false);
 
-        Glide.with(ctx).load(userModel.user_card_face).skipMemoryCache(true)
-                .diskCacheStrategy(DiskCacheStrategy.NONE).into((ImageView) rootLayout.findViewById(R.id.user_detail_head));
-        if(userModel.user_card_nameplate_img != null && !userModel.user_card_nameplate_img.equals(""))
-            Glide.with(ctx).load(userModel.user_card_nameplate_img).skipMemoryCache(true)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE).into((ImageView) rootLayout.findViewById(R.id.user_detail_nameplate));
+        Glide.with(ctx).load(userModel.getCardFace()).skipMemoryCache(true)
+             .diskCacheStrategy(DiskCacheStrategy.NONE).into((ImageView) rootLayout.findViewById(R.id.user_detail_head));
+        if(userModel.getCardNameplateImg() != null && !userModel.getCardNameplateImg().equals(""))
+            Glide.with(ctx).load(userModel.getCardNameplateImg()).skipMemoryCache(true)
+                 .diskCacheStrategy(DiskCacheStrategy.NONE).into((ImageView) rootLayout.findViewById(R.id.user_detail_nameplate));
         else
             rootLayout.findViewById(R.id.user_detail_nameplate).setVisibility(View.GONE);
 
         rootLayout.findViewById(R.id.user_detail_follow).setOnClickListener(this);
-        rootLayout.findViewById(R.id.user_detail_head).setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                Intent intent = new Intent(ctx, ImgActivity.class);
-                intent.putExtra("imgUrl", new String[]{userModel.user_card_face});
-                startActivity(intent);
-            }
+        rootLayout.findViewById(R.id.user_detail_head).setOnClickListener(v -> {
+            Intent intent = new Intent(ctx, ImgActivity.class);
+            intent.putExtra("imgUrl", new String[]{userModel.getCardFace()});
+            startActivity(intent);
         });
 
         rootLayout.findViewById(R.id.user_detail_video).setOnClickListener(this);
@@ -94,66 +89,65 @@ public class UserDetailFragment extends Fragment implements View.OnClickListener
 
     private void initView()
     {
-        ((TextView) rootLayout.findViewById(R.id.user_detail_name)).setText(userModel.user_card_name);
-        ((TextView) rootLayout.findViewById(R.id.user_detail_lv)).setText("LV" + userModel.user_card_lv);
-        ((TextView) rootLayout.findViewById(R.id.user_detail_video)).setText("投稿：" + DataProcessUtil.getView(userModel.user_video_num));
+        ((TextView) rootLayout.findViewById(R.id.user_detail_name)).setText(userModel.getCardName());
+        ((TextView) rootLayout.findViewById(R.id.user_detail_lv)).setText(String.format(getString(R.string.user_card_lv), userModel.getCardLv()));
+        ((TextView) rootLayout.findViewById(R.id.user_detail_video)).setText(String.format(getString(R.string.user_card_video_num), DataProcessUtil.getView(userModel.getVideoNum())));
 
-        if(userModel.user_favor_num != 0)
+        if(userModel.getFavorNum() != 0)
         {
             rootLayout.findViewById(R.id.user_detail_favor).setVisibility(View.VISIBLE);
-            ((TextView) rootLayout.findViewById(R.id.user_detail_favor)).setText("收藏：" + DataProcessUtil.getView(userModel.user_favor_num));
+            ((TextView) rootLayout.findViewById(R.id.user_detail_favor)).setText(String.format(getString(R.string.user_card_favor_num), DataProcessUtil.getView(userModel.getFavorNum())));
         }
-        if(userModel.user_bangumi_num != 0)
+        if(userModel.getBangumiNum() != 0)
         {
             rootLayout.findViewById(R.id.user_detail_bangumi).setVisibility(View.VISIBLE);
-            ((TextView) rootLayout.findViewById(R.id.user_detail_bangumi)).setText("追番：" + DataProcessUtil.getView(userModel.user_bangumi_num));
+            ((TextView) rootLayout.findViewById(R.id.user_detail_bangumi)).setText(String.format(getString(R.string.user_card_bangumi_num), DataProcessUtil.getView(userModel.getBangumiNum())));
         }
-        ((TextView) rootLayout.findViewById(R.id.user_detail_howfollow)).setText("关注：" + DataProcessUtil.getView(userModel.user_card_follow_num));
-        ((TextView) rootLayout.findViewById(R.id.user_detail_howfans)).setText("粉丝：" + DataProcessUtil.getView(userModel.user_card_fans_num));
+        ((TextView) rootLayout.findViewById(R.id.user_detail_howfollow)).setText(String.format(getString(R.string.user_card_follow_num), DataProcessUtil.getView(userModel.getCardFollowNum())));
+        ((TextView) rootLayout.findViewById(R.id.user_detail_howfans)).setText(String.format(getString(R.string.user_card_fans_num), DataProcessUtil.getView(userModel.getCardFansNum())));
 
-        if(userModel.user_card_vip == 2)
+        if(userModel.getCardVip() == 2)
         {
             rootLayout.findViewById(R.id.user_detail_vip).setVisibility(View.VISIBLE);
-            ((TextView) rootLayout.findViewById(R.id.user_detail_vip)).setText("年度大会员");
-            //noinspection ConstantConditions
+            ((TextView) rootLayout.findViewById(R.id.user_detail_vip)).setText(getString(R.string.vip_annual));
             ((TextView) rootLayout.findViewById(R.id.user_detail_name)).setTextColor(ColorUtil.getColor(R.attr.colorVip, getContext()));
         }
-        else if(userModel.user_card_vip == 1)
+        else if(userModel.getCardVip() == 1)
         {
             rootLayout.findViewById(R.id.user_detail_vip).setVisibility(View.VISIBLE);
-            ((TextView) rootLayout.findViewById(R.id.user_detail_vip)).setText("大会员");
+            ((TextView) rootLayout.findViewById(R.id.user_detail_vip)).setText(getString(R.string.vip_normal));
         }
 
-        if(userModel.user_card_official_type == 0)
+        if(userModel.getCardOfficialType() == 0)
         {
             rootLayout.findViewById(R.id.user_detail_official_1).setVisibility(View.VISIBLE);
             rootLayout.findViewById(R.id.user_detail_official).setVisibility(View.VISIBLE);
-            ((TextView) rootLayout.findViewById(R.id.user_detail_official)).setText(userModel.user_card_official_verify);
+            ((TextView) rootLayout.findViewById(R.id.user_detail_official)).setText(userModel.getCardOfficialVerify());
         }
-        else if(userModel.user_card_official_type == 1)
+        else if(userModel.getCardOfficialType() == 1)
         {
             rootLayout.findViewById(R.id.user_detail_official_2).setVisibility(View.VISIBLE);
             rootLayout.findViewById(R.id.user_detail_official).setVisibility(View.VISIBLE);
-            ((TextView) rootLayout.findViewById(R.id.user_detail_official)).setText(userModel.user_card_official_verify);
+            ((TextView) rootLayout.findViewById(R.id.user_detail_official)).setText(userModel.getCardOfficialVerify());
         }
 
-        if(userModel.user_card_sign != null && !userModel.user_card_sign.equals(""))
+        if(userModel.getCardSign() != null && !userModel.getCardSign().equals(""))
         {
             rootLayout.findViewById(R.id.user_detail_sign).setVisibility(View.VISIBLE);
-            ((TextView) rootLayout.findViewById(R.id.user_detail_sign)).setText(userModel.user_card_sign);
+            ((TextView) rootLayout.findViewById(R.id.user_detail_sign)).setText(userModel.getCardSign());
         }
 
-        if(userModel.user_user_follow)
+        if(userModel.isUserFollow())
         {
-            ((TextView) rootLayout.findViewById(R.id.user_detail_follow)).setText("已关注");
+            ((TextView) rootLayout.findViewById(R.id.user_detail_follow)).setText(getString(R.string.user_follow_cancel));
             rootLayout.findViewById(R.id.user_detail_follow).setBackgroundResource(R.drawable.shape_bg_anre_followbgyes);
         }
         else
         {
-            ((TextView) rootLayout.findViewById(R.id.user_detail_follow)).setText("+关注");
+            ((TextView) rootLayout.findViewById(R.id.user_detail_follow)).setText(getString(R.string.user_follow_follow));
             rootLayout.findViewById(R.id.user_detail_follow).setBackgroundResource(R.drawable.shape_bg_anre_followbg);
         }
-        if(userModel.user_card_mid.equals(SharedPreferencesUtil.getString(SharedPreferencesUtil.mid, "")))
+        if(userModel.getCardMid().equals(SharedPreferencesUtil.getString(SharedPreferencesUtil.mid, "")))
             rootLayout.findViewById(R.id.user_detail_follow).setVisibility(View.GONE);
     }
 

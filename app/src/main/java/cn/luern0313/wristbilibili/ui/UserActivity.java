@@ -18,7 +18,6 @@ import org.greenrobot.eventbus.EventBus;
 import java.io.IOException;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -73,55 +72,40 @@ public class UserActivity extends BaseActivity implements UserDetailFragment.Use
         uiViewPager = findViewById(R.id.user_viewpager);
         uiLoading = findViewById(R.id.ou_loading_img);
 
-        runnableUi = new Runnable()
-        {
-            @Override
-            public void run()
+        runnableUi = () -> {
+            uiViewPager.setOffscreenPageLimit(userModel.getTab().size() - 1);
+            findViewById(R.id.user_loading).setVisibility(View.GONE);
+            findViewById(R.id.user_nothing).setVisibility(View.GONE);
+            findViewById(R.id.user_noweb).setVisibility(View.GONE);
+
+            for (int i = 1; i < userModel.getTab().size(); i++)
+                ((ViewFlipper) findViewById(R.id.user_title_title)).addView(getTitleTextView(userModel.getTab().get(i).get(1)));
+            uiViewPager.setAdapter(pagerAdapter);
+        };
+
+        runnableNoWeb = () -> {
+            try
             {
-                uiViewPager.setOffscreenPageLimit(userModel.user_tab.size() - 1);
                 findViewById(R.id.user_loading).setVisibility(View.GONE);
                 findViewById(R.id.user_nothing).setVisibility(View.GONE);
+                findViewById(R.id.user_noweb).setVisibility(View.VISIBLE);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        };
+
+        runnableNothing = () -> {
+            try
+            {
+                findViewById(R.id.user_loading).setVisibility(View.GONE);
+                findViewById(R.id.user_nothing).setVisibility(View.VISIBLE);
                 findViewById(R.id.user_noweb).setVisibility(View.GONE);
-
-                for (int i = 1; i < userModel.user_tab.size(); i++)
-                    ((ViewFlipper) findViewById(R.id.user_title_title)).addView(getTitleTextView(userModel.user_tab.get(i).get(1)));
-                uiViewPager.setAdapter(pagerAdapter);
             }
-        };
-
-        runnableNoWeb = new Runnable()
-        {
-            @Override
-            public void run()
+            catch (Exception e)
             {
-                try
-                {
-                    findViewById(R.id.user_loading).setVisibility(View.GONE);
-                    findViewById(R.id.user_nothing).setVisibility(View.GONE);
-                    findViewById(R.id.user_noweb).setVisibility(View.VISIBLE);
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
-            }
-        };
-
-        runnableNothing = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                try
-                {
-                    findViewById(R.id.user_loading).setVisibility(View.GONE);
-                    findViewById(R.id.user_nothing).setVisibility(View.VISIBLE);
-                    findViewById(R.id.user_noweb).setVisibility(View.GONE);
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
+                e.printStackTrace();
             }
         };
 
@@ -165,24 +149,19 @@ public class UserActivity extends BaseActivity implements UserDetailFragment.Use
             }
         });
 
-        new Thread(new Runnable()
-        {
-            @Override
-            public void run()
+        new Thread(() -> {
+            try
             {
-                try
-                {
-                    userModel = userApi.getUserInfo();
-                    if(userModel != null)
-                        handler.post(runnableUi);
-                    else
-                        handler.post(runnableNothing);
-                }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
-                    handler.post(runnableNoWeb);
-                }
+                userModel = userApi.getUserInfo();
+                if(userModel != null)
+                    handler.post(runnableUi);
+                else
+                    handler.post(runnableNothing);
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+                handler.post(runnableNoWeb);
             }
         }).start();
     }
@@ -200,57 +179,52 @@ public class UserActivity extends BaseActivity implements UserDetailFragment.Use
     {
         if(viewId == R.id.user_detail_follow)
         {
-            new Thread(new Runnable()
-            {
-                @Override
-                public void run()
+            new Thread(() -> {
+                try
                 {
-                    try
+                    if(!userModel.isUserFollow())
                     {
-                        if(!userModel.user_user_follow)
+                        String result = userApi.follow();
+                        if(result.equals(""))
                         {
-                            String result = userApi.follow();
-                            if(result.equals(""))
-                            {
-                                userModel.user_card_fans_num++;
-                                userModel.user_user_follow = true;
-                                Looper.prepare();
-                                Toast.makeText(ctx, "关注成功！", Toast.LENGTH_SHORT).show();
-                            }
-                            else
-                            {
-                                Looper.prepare();
-                                Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
-                            }
+                            userModel.setCardFansNum(userModel.getCardFansNum() + 1);
+                            userModel.setUserFollow(true);
+                            Looper.prepare();
+                            Toast.makeText(ctx, getString(R.string.user_follow_follow_toast), Toast.LENGTH_SHORT).show();
                         }
                         else
                         {
-                            String result = userApi.unfollow();
-                            if(result.equals(""))
-                            {
-                                userModel.user_card_fans_num--;
-                                userModel.user_user_follow = false;
-                                Looper.prepare();
-                                Toast.makeText(ctx, "取消关注成功", Toast.LENGTH_SHORT).show();
-                            }
-                            else
-                            {
-                                Looper.prepare();
-                                Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
-                            }
+                            Looper.prepare();
+                            Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
                         }
                     }
-                    catch (IOException e)
+                    else
                     {
-                        Looper.prepare();
-                        Toast.makeText(ctx, "未知错误", Toast.LENGTH_SHORT).show();
-                        e.printStackTrace();
+                        String result = userApi.unfollow();
+                        if(result.equals(""))
+                        {
+                            userModel.setCardFansNum(userModel.getCardFansNum() - 1);
+                            userModel.setUserFollow(false);
+                            Looper.prepare();
+                            Toast.makeText(ctx, getString(R.string.user_follow_cancel_toast), Toast.LENGTH_SHORT).show();
+                        }
+                        else
+                        {
+                            Looper.prepare();
+                            Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
+                        }
                     }
-                    finally
-                    {
-                        EventBus.getDefault().post(userModel);
-                        Looper.loop();
-                    }
+                }
+                catch (IOException e)
+                {
+                    Looper.prepare();
+                    Toast.makeText(ctx, getString(R.string.main_error_unknown), Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
+                }
+                finally
+                {
+                    EventBus.getDefault().post(userModel);
+                    Looper.loop();
                 }
             }).start();
         }
@@ -288,15 +262,15 @@ public class UserActivity extends BaseActivity implements UserDetailFragment.Use
 
     private int getPositionFormTab(String tabName)
     {
-        for(int i = 0; i < userModel.user_tab.size(); i++)
-            if(userModel.user_tab.get(i).get(0).equals(tabName))
+        for(int i = 0; i < userModel.getTab().size(); i++)
+            if(userModel.getTab().get(i).get(0).equals(tabName))
                 return i;
         return -1;
     }
 
     class UserFragmentPagerAdapter extends FragmentPagerAdapter
     {
-        private String selfMid;
+        private final String selfMid;
 
         UserFragmentPagerAdapter(@NonNull FragmentManager fm, int behavior, String selfMid)
         {
@@ -307,32 +281,32 @@ public class UserActivity extends BaseActivity implements UserDetailFragment.Use
         @Override
         public int getCount()
         {
-            return userModel.user_tab.size();
+            return userModel.getTab().size();
         }
 
         @NonNull
         @Override
         public Fragment getItem(int position)
         {
-            String n = userModel.user_tab.get(position).get(0);
+            String n = userModel.getTab().get(position).get(0);
             switch (n)
             {
                 case "home":
                     return UserDetailFragment.newInstance(userModel);
                 case "dynamic":
-                    return DynamicFragment.newInstance(false, userModel.user_card_mid);
+                    return DynamicFragment.newInstance(false, userModel.getCardMid());
                 case "contribute":
-                    return UserVideoFragment.newInstance(userModel.user_card_mid);
+                    return UserVideoFragment.newInstance(userModel.getCardMid());
                 case "bangumi":
-                    return UserBangumiFragment.newInstance(userModel.user_card_mid, 1);
+                    return UserBangumiFragment.newInstance(userModel.getCardMid(), 1);
                 case "movie":
-                    return UserBangumiFragment.newInstance(userModel.user_card_mid, 2);
+                    return UserBangumiFragment.newInstance(userModel.getCardMid(), 2);
                 case "favorite":
-                    return FavorBoxFragment.newInstance(userModel.user_card_mid, userModel.user_card_mid.equals(selfMid));
+                    return FavorBoxFragment.newInstance(userModel.getCardMid(), userModel.getCardMid().equals(selfMid));
                 case "follow":
-                    return UserListPeopleFragment.newInstance(userModel.user_card_mid, 0);
+                    return UserListPeopleFragment.newInstance(userModel.getCardMid(), 0);
                 case "fans":
-                    return UserListPeopleFragment.newInstance(userModel.user_card_mid, 1);
+                    return UserListPeopleFragment.newInstance(userModel.getCardMid(), 1);
             }
             return null;
         }

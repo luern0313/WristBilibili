@@ -465,7 +465,7 @@ public class DynamicModel implements Serializable
             int length = ctrlJSON.optInt("length");
             if(ctrlJSON.optInt("type") == 1)
             {
-                String tag = "<a href=\"bilibili://space/" + data +"\">" + text.substring(location, location + length) + "</a>";
+                String tag = "<a href=\"bilibili://space/" + data +"\">" + text.substring(location, Math.min(location + length, text.length() -1)) + "</a>";
                 StringBuilder stringBuilder = new StringBuilder(text);
                 stringBuilder.replace(location, location + length, tag);
                 text = stringBuilder.toString();

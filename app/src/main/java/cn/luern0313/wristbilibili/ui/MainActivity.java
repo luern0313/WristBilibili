@@ -18,7 +18,6 @@ import java.io.IOException;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import cn.luern0313.lson.LsonUtil;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.StatisticsApi;
 import cn.luern0313.wristbilibili.fragment.AnimationTimelineFragment;
@@ -33,7 +32,6 @@ import cn.luern0313.wristbilibili.fragment.SettingFragment;
 import cn.luern0313.wristbilibili.fragment.WatchlaterFragment;
 import cn.luern0313.wristbilibili.service.DownloadService;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
-import cn.luern0313.wristbilibili.util.json.LsonAnnotationHandle;
 
 /**
  * Created by liupe on 2018/10/25.
@@ -70,7 +68,6 @@ public class MainActivity extends BaseActivity
         titleImg = findViewById(R.id.main_title_extraicon);
 
         FileDownloader.setup(this);
-        LsonUtil.setLsonAnnotationListener(new LsonAnnotationHandle());
 
         //新版本更新
         try
@@ -102,19 +99,14 @@ public class MainActivity extends BaseActivity
 
         if(SharedPreferencesUtil.contains(SharedPreferencesUtil.mid) && (!SharedPreferencesUtil.getString(SharedPreferencesUtil.mid, "").equals("")))
         {
-            new Thread(new Runnable()
-            {
-                @Override
-                public void run()
+            new Thread(() -> {
+                try
                 {
-                    try
-                    {
-                        StatisticsApi.Statistics(SharedPreferencesUtil.getString(SharedPreferencesUtil.mid, "no login"));
-                    }
-                    catch (IOException e)
-                    {
-                        e.printStackTrace();
-                    }
+                    StatisticsApi.Statistics(SharedPreferencesUtil.getString(SharedPreferencesUtil.mid, "no login"));
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
                 }
             }).start();
         }

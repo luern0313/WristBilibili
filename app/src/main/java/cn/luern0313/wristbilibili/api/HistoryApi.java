@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import cn.luern0313.lson.LsonUtil;
 import cn.luern0313.lson.element.LsonArray;
 import cn.luern0313.lson.element.LsonObject;
-import cn.luern0313.lson.json.LsonParser;
 import cn.luern0313.wristbilibili.models.ListVideoModel;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
@@ -30,7 +29,7 @@ public class HistoryApi
     {
         String url = "https://api.bilibili.com/x/v2/history";
         String arg = "pn=" + pn + "&ps=30";
-        LsonObject result = LsonParser.parseAsObject(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string());
+        LsonObject result = LsonUtil.parseAsObject(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string());
         ArrayList<ListVideoModel> videoModelArrayList = new ArrayList<>();
         if(result.getAsInt("code", -1) == 0)
         {

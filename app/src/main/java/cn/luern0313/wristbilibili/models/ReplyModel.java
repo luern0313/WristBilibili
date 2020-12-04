@@ -50,7 +50,7 @@ public class ReplyModel implements Serializable
     public boolean reply_is_up_reply;
     public boolean reply_user_like;
     public boolean reply_user_dislike;
-    public HashMap<String, Integer> reply_emote_size = new HashMap<String, Integer>();
+    public HashMap<String, Integer> reply_emote_size = new HashMap<>();
 
     public ReplyModel(JSONObject replyJson, boolean isUpper, String upUid)
     {

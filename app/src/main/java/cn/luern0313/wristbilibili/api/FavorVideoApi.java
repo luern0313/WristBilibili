@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import cn.luern0313.lson.LsonUtil;
 import cn.luern0313.lson.element.LsonArray;
 import cn.luern0313.lson.element.LsonObject;
-import cn.luern0313.lson.json.LsonParser;
 import cn.luern0313.wristbilibili.models.ListVideoModel;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
@@ -42,7 +41,7 @@ public class FavorVideoApi
     {
         String url = "http://api.bilibili.com/x/space/fav/arc";
         String arg = "vmid=" + mid + "&ps=30&fid=" + fid + "&tid=0&keyword=&pn=" + page + "&order=fav_time";
-        LsonObject result = LsonParser.parseAsObject(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string());
+        LsonObject result = LsonUtil.parseAsObject(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string());
         ArrayList<ListVideoModel> arrayList = new ArrayList<>();
         if(result.getAsInt("code", -1) == 0)
         {

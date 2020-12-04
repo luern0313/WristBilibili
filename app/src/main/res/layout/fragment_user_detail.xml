@@ -134,7 +134,9 @@
             android:layout_below="@+id/user_detail_official"
             android:layout_marginBottom="4dp"
             android:textSize="12sp"
-            android:visibility="gone" />
+            android:visibility="gone"
+            tools:text="哼哼哼啊啊啊啊啊啊啊"
+            tools:visibility="visible"/>
 
         <cn.luern0313.wristbilibili.widget.AutoLineLayout
             android:layout_width="match_parent"

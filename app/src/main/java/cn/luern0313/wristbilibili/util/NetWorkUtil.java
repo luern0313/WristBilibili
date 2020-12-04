@@ -38,10 +38,7 @@ public class NetWorkUtil
         for(int i = 0; i < headers.size(); i+=2)
             requestBuilder = requestBuilder.addHeader(headers.get(i), headers.get(i+1));
         Request request = requestBuilder.build();
-        Response response = client.newCall(request).execute();
-        if(response.isSuccessful())
-            return response;
-        return null;
+        return client.newCall(request).execute();
     }
 
     public static Response post(String url, String data, ArrayList<String> headers) throws IOException
@@ -61,7 +58,7 @@ public class NetWorkUtil
     {
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];
-        int len = 0;
+        int len;
         while ((len = inStream.read(buffer)) != -1)
         {
             outStream.write(buffer, 0, len);

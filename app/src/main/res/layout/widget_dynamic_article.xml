@@ -40,7 +40,7 @@
         android:layout_marginEnd="19dp"
         android:layout_marginBottom="2dp"
         android:textSize="13sp"
-        app:etv_MaxLinesOnShrink="6"/>
+        app:etv_MaxLinesOnShrink="6" />
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -65,6 +65,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:layout_marginEnd="4dp"
+                android:ellipsize="end"
+                android:maxLines="2"
                 android:padding="1dp"
                 android:textColor="?attr/colorTitle"
                 android:textSize="13sp" />

@@ -35,6 +35,17 @@
     <string name="menu_history">历史记录</string>
     <string name="menu_setting">设置</string>
 
+    <string name="user_card_lv">LV%d</string>
+    <string name="user_follow_follow">+关注</string>
+    <string name="user_follow_follow_toast">关注成功！</string>
+    <string name="user_follow_cancel">已关注</string>
+    <string name="user_follow_cancel_toast">取消关注成功</string>
+    <string name="user_card_video_num">投稿：%s</string>
+    <string name="user_card_favor_num">收藏：%s</string>
+    <string name="user_card_bangumi_num">追番：%s</string>
+    <string name="user_card_follow_num">关注：%s</string>
+    <string name="user_card_fans_num">粉丝：%s</string>
+
     <string name="dynamic_album_author">\@%s</string>
     <string name="dynamic_text_author">\@%s</string>
     <string name="dynamic_video_author"><![CDATA[<font color="#188ad0">%s</font>的投稿]]></string>
@@ -112,6 +123,10 @@
     <string name="bangumi_download_title">分集下载</string>
     <string name="bangumi_download_tip">选择要下载的分集</string>
     <string name="bangumi_download_notallow">抱歉，该%s只可在线观看</string>
+    
+    <string name="vip_annual">年度大会员</string>
+    <string name="vip_normal">大会员</string>
+
     <string name="theme_name_pink">少女粉</string>
     <string name="theme_name_dark">黑暗模式</string>
     <string name="theme_name_black">纯黑</string>
