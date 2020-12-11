@@ -3,7 +3,7 @@ package cn.luern0313.wristbilibili.models;
 import java.io.Serializable;
 
 import cn.luern0313.lson.annotation.field.LsonPath;
-import cn.luern0313.wristbilibili.util.json.ImageUrlHandle;
+import cn.luern0313.wristbilibili.util.json.ImageUrlFormat;
 import cn.luern0313.wristbilibili.util.json.ViewFormat;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,7 +22,7 @@ public class ListBangumiModel implements Serializable
     @LsonPath("season_id")
     private String seasonId;
 
-    @ImageUrlHandle
+    @ImageUrlFormat
     @LsonPath("new_ep.cover")
     private String cover;
 

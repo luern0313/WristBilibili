@@ -1,8 +1,8 @@
 package cn.luern0313.wristbilibili.models;
 
 import cn.luern0313.lson.annotation.field.LsonPath;
-import cn.luern0313.wristbilibili.util.json.ImageUrlHandle;
-import cn.luern0313.wristbilibili.util.json.UrlHandle;
+import cn.luern0313.wristbilibili.util.json.ImageUrlFormat;
+import cn.luern0313.wristbilibili.util.json.UrlFormat;
 import cn.luern0313.wristbilibili.util.json.ViewFormat;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,8 +24,8 @@ public class ListVideoModel
     @LsonPath("title")
     private String videoTitle;
 
-    @UrlHandle
-    @ImageUrlHandle
+    @UrlFormat
+    @ImageUrlFormat
     @LsonPath("pic")
     private String videoCover;
 

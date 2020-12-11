@@ -2,7 +2,7 @@ package cn.luern0313.wristbilibili.models;
 
 import cn.luern0313.lson.annotation.field.LsonDateFormat;
 import cn.luern0313.lson.annotation.field.LsonPath;
-import cn.luern0313.wristbilibili.util.json.ImageUrlHandle;
+import cn.luern0313.wristbilibili.util.json.ImageUrlFormat;
 import cn.luern0313.wristbilibili.util.json.ViewFormat;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,7 +21,7 @@ public class ListArticleModel
     @LsonPath("title")
     private String title;
 
-    @ImageUrlHandle
+    @ImageUrlFormat
     @LsonPath("image_urls")
     private String[] img;
 

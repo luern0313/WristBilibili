@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import cn.luern0313.lson.annotation.field.LsonDateFormat;
 import cn.luern0313.lson.annotation.field.LsonPath;
-import cn.luern0313.wristbilibili.util.json.ImageUrlHandle;
+import cn.luern0313.wristbilibili.util.json.ImageUrlFormat;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,7 +22,7 @@ public class UserListPeopleModel implements Serializable
     @LsonPath("uname")
     private String name;
 
-    @ImageUrlHandle
+    @ImageUrlFormat
     @LsonPath("face")
     private String face;
 

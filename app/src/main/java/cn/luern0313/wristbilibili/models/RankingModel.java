@@ -1,7 +1,7 @@
 package cn.luern0313.wristbilibili.models;
 
 import cn.luern0313.lson.annotation.field.LsonPath;
-import cn.luern0313.wristbilibili.util.json.ImageUrlHandle;
+import cn.luern0313.wristbilibili.util.json.ImageUrlFormat;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,7 +22,7 @@ public class RankingModel
     @LsonPath("title")
     private String title;
 
-    @ImageUrlHandle
+    @ImageUrlFormat
     @LsonPath("cover")
     private String pic;
 
@@ -41,7 +41,7 @@ public class RankingModel
     @LsonPath("name")
     private String name;
 
-    @ImageUrlHandle
+    @ImageUrlFormat
     @LsonPath("face")
     private String face;
 }

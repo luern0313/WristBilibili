@@ -9,7 +9,7 @@ import cn.luern0313.lson.annotation.field.LsonPath;
 import cn.luern0313.lson.element.LsonArray;
 import cn.luern0313.lson.element.LsonObject;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
-import cn.luern0313.wristbilibili.util.json.UrlHandle;
+import cn.luern0313.wristbilibili.util.json.UrlFormat;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -27,7 +27,7 @@ public class UserModel implements Serializable
     @LsonPath("card.name")
     private String cardName;
 
-    @UrlHandle
+    @UrlFormat
     @LsonPath("card.face")
     private String cardFace;
 
@@ -46,7 +46,7 @@ public class UserModel implements Serializable
     @LsonPath("card.official_verify.title")
     private String cardOfficialVerify;
 
-    @UrlHandle
+    @UrlFormat
     @LsonPath("card.nameplate.image_small")
     private String cardNameplateImg;
 

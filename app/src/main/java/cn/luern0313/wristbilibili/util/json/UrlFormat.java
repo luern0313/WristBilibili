@@ -7,28 +7,24 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import cn.luern0313.lson.annotation.LsonDefinedAnnotation;
-import cn.luern0313.wristbilibili.util.LruCacheUtil;
+import cn.luern0313.wristbilibili.util.DataProcessUtil;
+
 
 /**
  * 被 luern0313 创建于 2020/7/31.
  */
 
-@LsonDefinedAnnotation(config = ImageUrlHandle.ImageUrlHandleConfig.class, acceptableDeserializationType = LsonDefinedAnnotation.AcceptableType.STRING, acceptableSerializationType = LsonDefinedAnnotation.AcceptableType.STRING)
+@LsonDefinedAnnotation(config = UrlFormat.UrlHandleConfig.class, acceptableDeserializationType = LsonDefinedAnnotation.AcceptableType.STRING, acceptableSerializationType = LsonDefinedAnnotation.AcceptableType.STRING)
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ImageUrlHandle
+public @interface UrlFormat
 {
-    int value() default -1;
-
-    class ImageUrlHandleConfig implements LsonDefinedAnnotation.LsonDefinedAnnotationConfig
+    class UrlHandleConfig implements LsonDefinedAnnotation.LsonDefinedAnnotationConfig
     {
         @Override
         public Object deserialization(Object value, Annotation annotation, Object object)
         {
-            if(((ImageUrlHandle) annotation).value() == -1)
-                return LruCacheUtil.getImageUrl(value.toString());
-            else
-                return LruCacheUtil.getImageUrl(value.toString(), ((ImageUrlHandle) annotation).value());
+            return DataProcessUtil.handleUrl(value.toString());
         }
 
         @Override

@@ -2,7 +2,7 @@ package cn.luern0313.wristbilibili.models;
 
 import cn.luern0313.lson.annotation.field.LsonAddSuffix;
 import cn.luern0313.lson.annotation.field.LsonPath;
-import cn.luern0313.wristbilibili.util.json.ImageUrlHandle;
+import cn.luern0313.wristbilibili.util.json.ImageUrlFormat;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -32,7 +32,7 @@ public class FavorBoxModel
     @LsonPath("fav_box")
     private String id;
 
-    @ImageUrlHandle
+    @ImageUrlFormat
     @LsonPath("videos[0].pic")
     private String img;
 

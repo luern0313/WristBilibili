@@ -1,7 +1,7 @@
 package cn.luern0313.wristbilibili.models;
 
 import cn.luern0313.lson.annotation.field.LsonPath;
-import cn.luern0313.wristbilibili.util.json.ImageUrlHandle;
+import cn.luern0313.wristbilibili.util.json.ImageUrlFormat;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,7 +21,7 @@ public class RecommendModel
     @LsonPath("title")
     private String title;
 
-    @ImageUrlHandle
+    @ImageUrlFormat
     @LsonPath("cover")
     private String img;
 
