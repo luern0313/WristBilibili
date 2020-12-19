@@ -20,7 +20,6 @@ import org.greenrobot.eventbus.EventBus;
 import java.io.IOException;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.PagerAdapter;
@@ -134,7 +133,7 @@ public class ArticleActivity extends BaseActivity implements ArticleDetailFragme
             {
                 try
                 {
-                    findViewById(R.id.art_novideo).setVisibility(View.VISIBLE);
+                    ArticleActivity.this.findViewById(R.id.art_novideo).setVisibility(View.VISIBLE);
                 }
                 catch (Exception e)
                 {
@@ -148,7 +147,7 @@ public class ArticleActivity extends BaseActivity implements ArticleDetailFragme
             @Override
             public void run()
             {
-                findViewById(R.id.article_article_loading).setVisibility(View.GONE);
+                ArticleActivity.this.findViewById(R.id.article_article_loading).setVisibility(View.GONE);
             }
         };
 
@@ -167,7 +166,7 @@ public class ArticleActivity extends BaseActivity implements ArticleDetailFragme
                 if(position == 0)
                     return ArticleDetailFragment.newInstance(articleModel);
                 else if(position == 1)
-                    return ReplyFragment.newInstance(articleModel.article_id, "12", null, -1);
+                    return ReplyFragment.newInstance(articleModel.getId(), "12", null, -1);
                 return null;
             }
         };
@@ -238,7 +237,7 @@ public class ArticleActivity extends BaseActivity implements ArticleDetailFragme
         if(viewId == R.id.article_article_bt_cover)
         {
             Intent intent = new Intent(ctx, ImgActivity.class);
-            intent.putExtra("imgUrl", articleModel.article_cover);
+            intent.putExtra("imgUrl", articleModel.getCover());
             startActivity(intent);
         }
         else if(viewId == R.id.article_article_bt_like)
@@ -250,13 +249,13 @@ public class ArticleActivity extends BaseActivity implements ArticleDetailFragme
                 {
                     try
                     {
-                        if(articleModel.article_user_like)
+                        if(articleModel.isUserLike())
                         {
                             String result = articleApi.likeArticle(2);
                             if(result.equals(""))
                             {
-                                articleModel.article_like--;
-                                articleModel.article_user_like = false;
+                                articleModel.setLike(articleModel.getLike() - 1);
+                                articleModel.setUserLike(false);
                                 Looper.prepare();
                                 Toast.makeText(ctx, "已取消喜欢...", Toast.LENGTH_SHORT).show();
                             }
@@ -271,8 +270,8 @@ public class ArticleActivity extends BaseActivity implements ArticleDetailFragme
                             String result = articleApi.likeArticle(1);
                             if(result.equals(""))
                             {
-                                articleModel.article_like++;
-                                articleModel.article_user_like = true;
+                                articleModel.setLike(articleModel.getLike() + 1);
+                                articleModel.setUserLike(true);
                                 Looper.prepare();
                                 Toast.makeText(ctx, "已喜欢专栏！", Toast.LENGTH_SHORT).show();
                             }
@@ -287,7 +286,7 @@ public class ArticleActivity extends BaseActivity implements ArticleDetailFragme
                     {
                         e.printStackTrace();
                         Looper.prepare();
-                        Toast.makeText(ctx, "操作失败，请检查你的网络..", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ctx, ArticleActivity.this.getString(R.string.main_error_web), Toast.LENGTH_SHORT).show();
                     }
                     finally
                     {
@@ -306,13 +305,13 @@ public class ArticleActivity extends BaseActivity implements ArticleDetailFragme
                 {
                     try
                     {
-                        if(articleModel.article_user_coin == 0)
+                        if(articleModel.getUserCoin() == 0)
                         {
                             String result = articleApi.coinArticle();
                             if(result.equals(""))
                             {
-                                articleModel.article_coin++;
-                                articleModel.article_user_coin = 1;
+                                articleModel.setCoin(articleModel.getCoin() + 1);
+                                articleModel.setUserCoin(1);
                                 Looper.prepare();
                                 Toast.makeText(ctx, "你投了一个硬币！", Toast.LENGTH_SHORT).show();
                             }
@@ -332,7 +331,7 @@ public class ArticleActivity extends BaseActivity implements ArticleDetailFragme
                     {
                         e.printStackTrace();
                         Looper.prepare();
-                        Toast.makeText(ctx, "操作失败，请检查你的网络..", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ctx, ArticleActivity.this.getString(R.string.main_error_web), Toast.LENGTH_SHORT).show();
                     }
                     finally
                     {
@@ -351,13 +350,13 @@ public class ArticleActivity extends BaseActivity implements ArticleDetailFragme
                 {
                     try
                     {
-                        if(articleModel.article_user_fav)
+                        if(articleModel.isUserFavor())
                         {
                             String result = articleApi.favArticle(2);
                             if(result.equals(""))
                             {
-                                articleModel.article_fav--;
-                                articleModel.article_user_fav = false;
+                                articleModel.setFavor(articleModel.getFavor() - 1);
+                                articleModel.setUserFavor(false);
                                 Looper.prepare();
                                 Toast.makeText(ctx, "已取消收藏...", Toast.LENGTH_SHORT).show();
                             }
@@ -372,8 +371,8 @@ public class ArticleActivity extends BaseActivity implements ArticleDetailFragme
                             String result = articleApi.favArticle(1);
                             if(result.equals(""))
                             {
-                                articleModel.article_fav++;
-                                articleModel.article_user_fav = true;
+                                articleModel.setFavor(articleModel.getFavor() + 1);
+                                articleModel.setUserFavor(true);
                                 Looper.prepare();
                                 Toast.makeText(ctx, "已收藏专栏！", Toast.LENGTH_SHORT).show();
                             }
@@ -388,7 +387,7 @@ public class ArticleActivity extends BaseActivity implements ArticleDetailFragme
                     {
                         e.printStackTrace();
                         Looper.prepare();
-                        Toast.makeText(ctx, "操作失败，请检查你的网络..", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ctx, ArticleActivity.this.getString(R.string.main_error_web), Toast.LENGTH_SHORT).show();
                     }
                     finally
                     {
@@ -402,9 +401,9 @@ public class ArticleActivity extends BaseActivity implements ArticleDetailFragme
         {
             Intent intent = new Intent(ctx, SendDynamicActivity.class);
             intent.putExtra("is_share", true);
-            intent.putExtra("share_up", articleModel.article_up_name);
-            intent.putExtra("share_title", articleModel.article_title);
-            intent.putExtra("share_img", articleModel.article_cover[0]);
+            intent.putExtra("share_up", articleModel.getUpName());
+            intent.putExtra("share_title", articleModel.getTitle());
+            intent.putExtra("share_img", articleModel.getCover()[0]);
             startActivityForResult(intent, RESULT_DETAIL_SHARE);
         }
         else if(viewId == R.id.article_card_follow)
@@ -419,7 +418,7 @@ public class ArticleActivity extends BaseActivity implements ArticleDetailFragme
                         String result = articleApi.followUp();
                         if(result.equals(""))
                         {
-                            articleModel.article_up_fans_num++;
+                            articleModel.setUpFansNum(articleModel.getUpFansNum() + 1);
                             Looper.prepare();
                             Toast.makeText(ctx, "已关注UP主", Toast.LENGTH_SHORT).show();
                         }
@@ -433,7 +432,7 @@ public class ArticleActivity extends BaseActivity implements ArticleDetailFragme
                     {
                         e.printStackTrace();
                         Looper.prepare();
-                        Toast.makeText(ctx, "操作失败，请检查你的网络..", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ctx, ArticleActivity.this.getString(R.string.main_error_web), Toast.LENGTH_SHORT).show();
                     }
                     finally
                     {
@@ -477,7 +476,7 @@ public class ArticleActivity extends BaseActivity implements ArticleDetailFragme
                     {
                         e.printStackTrace();
                         Looper.prepare();
-                        Toast.makeText(ctx, "分享视频失败。。请检查网络？", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ctx, ArticleActivity.this.getString(R.string.main_error_web), Toast.LENGTH_SHORT).show();
                         Looper.loop();
                     }
                 }

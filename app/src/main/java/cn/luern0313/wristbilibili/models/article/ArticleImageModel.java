@@ -16,6 +16,7 @@ public class ArticleImageModel implements Serializable
     public int article_image_width;
     public int article_image_height;
     public boolean article_image_is_img;
+
     public ArticleImageModel(Attributes attributes)
     {
         article_image_src = LruCacheUtil.getImageUrl(attributes.getIgnoreCase("data-src"), ArticleApi.getArticleImageWidthSize());

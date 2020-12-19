@@ -99,20 +99,20 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
         layoutArticleHeader = inflater.inflate(R.layout.widget_article_header, null);
         layoutArticleFooter = inflater.inflate(R.layout.widget_article_return_top, null);
 
-        ((TextView) layoutArticleHeader.findViewById(R.id.article_article_title)).setText(articleModel.article_title);
-        ((TextView) layoutArticleHeader.findViewById(R.id.article_article_channel)).setText(articleModel.article_channel);
-        ((TextView) layoutArticleHeader.findViewById(R.id.article_article_view)).setText(DataProcessUtil.getView(articleModel.article_view) + "观看");
-        ((TextView) layoutArticleHeader.findViewById(R.id.article_article_time)).setText(articleModel.article_time);
-        ((TextView) layoutArticleHeader.findViewById(R.id.article_article_id)).setText("CV" + articleModel.article_id);
+        ((TextView) layoutArticleHeader.findViewById(R.id.article_article_title)).setText(articleModel.getTitle());
+        ((TextView) layoutArticleHeader.findViewById(R.id.article_article_channel)).setText(articleModel.getChannel());
+        ((TextView) layoutArticleHeader.findViewById(R.id.article_article_view)).setText(String.format(getString(R.string.article_view), DataProcessUtil.getView(articleModel.getView())));
+        ((TextView) layoutArticleHeader.findViewById(R.id.article_article_time)).setText(articleModel.getTime());
+        ((TextView) layoutArticleHeader.findViewById(R.id.article_article_id)).setText(String.format(getString(R.string.article_id), articleModel.getId()));
 
-        Glide.with(ctx).load(articleModel.article_up_face).into((ImageView) layoutArticleHeader.findViewById(R.id.article_card_head));
-        ((TextView) layoutArticleHeader.findViewById(R.id.article_card_name)).setText(articleModel.article_up_name);
-        ((TextView) layoutArticleHeader.findViewById(R.id.article_card_sen)).setText("粉丝：" + DataProcessUtil.getView(articleModel.article_up_fans_num));
-        if(articleModel.article_up_vip == 2)
-            ((TextView) layoutArticleHeader.findViewById(R.id.article_card_name)).setTextColor(ColorUtil.getColor(R.attr.colorVip, getContext()));
-        if(articleModel.article_up_official == 0)
+        Glide.with(ctx).load(articleModel.getUpFace()).into((ImageView) layoutArticleHeader.findViewById(R.id.article_card_head));
+        ((TextView) layoutArticleHeader.findViewById(R.id.article_card_name)).setText(articleModel.getUpName());
+        ((TextView) layoutArticleHeader.findViewById(R.id.article_card_sen)).setText(String.format(getString(R.string.article_fans), DataProcessUtil.getView(articleModel.getUpFansNum())));
+        if(articleModel.getUpVip() == 2)
+            ((TextView) layoutArticleHeader.findViewById(R.id.article_card_name)).setTextColor(ColorUtil.getColor(R.attr.colorVip, ctx));
+        if(articleModel.getUpOfficial() == 0)
             layoutArticleHeader.findViewById(R.id.article_card_off_1).setVisibility(View.VISIBLE);
-        else if(articleModel.article_up_official == 1)
+        else if(articleModel.getUpOfficial() == 1)
             layoutArticleHeader.findViewById(R.id.article_card_off_2).setVisibility(View.VISIBLE);
 
         layoutArticleHeader.findViewById(R.id.article_card_follow).setOnClickListener(new View.OnClickListener()
@@ -132,7 +132,7 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
         layoutArticleHeader.findViewById(R.id.article_article_bt_fav).setOnClickListener(this);
         layoutArticleHeader.findViewById(R.id.article_article_bt_share).setOnClickListener(this);
 
-        articleAdapter = new ArticleAdapter(inflater, img_width, articleModel.article_article_card_model_list, uiArticleListView, articleListener);
+        articleAdapter = new ArticleAdapter(inflater, img_width, articleModel.getArticleCardModelList(), uiArticleListView, articleListener);
         uiArticleListView.addHeaderView(layoutArticleHeader);
         uiArticleListView.addFooterView(layoutArticleFooter);
         uiArticleListView.setAdapter(articleAdapter);
@@ -154,16 +154,17 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
             }
         });
 
-        layoutArticleHeader.findViewById(R.id.article_card_lay).setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                Intent intent = new Intent(ctx, UserActivity.class);
-                intent.putExtra("mid", articleModel.article_up_mid);
-                startActivity(intent);
-            }
-        });
+        layoutArticleHeader.findViewById(R.id.article_card_lay).setOnClickListener(
+                new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        Intent intent = new Intent(ctx, UserActivity.class);
+                        intent.putExtra("mid", articleModel.getUpMid());
+                        ArticleDetailFragment.this.startActivity(intent);
+                    }
+                });
 
         return rootLayout;
     }
@@ -171,53 +172,53 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
     private void setArticleIcon()
     {
         rootLayout.findViewById(R.id.article_article_loading).setVisibility(View.GONE);
-        if(articleModel.article_user_like)
+        if(articleModel.isUserLike())
             ((ImageView) layoutArticleHeader.findViewById(R.id.article_article_bt_like_img)).setImageResource(R.drawable.icon_vdd_do_like_yes);
         else
             ((ImageView) layoutArticleHeader.findViewById(R.id.article_article_bt_like_img)).setImageResource(R.drawable.icon_vdd_do_like_no);
 
-        if(articleModel.article_user_coin == 1)
+        if(articleModel.getUserCoin() == 1)
             ((ImageView) layoutArticleHeader.findViewById(R.id.article_article_bt_coin_img)).setImageResource(R.drawable.icon_vdd_do_coin_yes);
         else
             ((ImageView) layoutArticleHeader.findViewById(R.id.article_article_bt_coin_img)).setImageResource(R.drawable.icon_vdd_do_coin_no);
 
-        if(articleModel.article_user_fav)
+        if(articleModel.isUserFavor())
             ((ImageView) layoutArticleHeader.findViewById(R.id.article_article_bt_fav_img)).setImageResource(R.drawable.icon_vdd_do_fav_yes);
         else
             ((ImageView) layoutArticleHeader.findViewById(R.id.article_article_bt_fav_img)).setImageResource(R.drawable.icon_vdd_do_fav_no);
 
-        if(articleModel.article_like == 0)
+        if(articleModel.getLike() == 0)
             ((TextView) layoutArticleHeader.findViewById(R.id.article_article_bt_like_text)).setText("点赞");
         else
-            ((TextView) layoutArticleHeader.findViewById(R.id.article_article_bt_like_text)).setText(DataProcessUtil.getView(articleModel.article_like));
+            ((TextView) layoutArticleHeader.findViewById(R.id.article_article_bt_like_text)).setText(DataProcessUtil.getView(articleModel.getLike()));
 
-        if(articleModel.article_coin == 0)
+        if(articleModel.getCoin() == 0)
             ((TextView) layoutArticleHeader.findViewById(R.id.article_article_bt_coin_text)).setText("投币");
         else
-            ((TextView) layoutArticleHeader.findViewById(R.id.article_article_bt_coin_text)).setText(DataProcessUtil.getView(articleModel.article_coin));
+            ((TextView) layoutArticleHeader.findViewById(R.id.article_article_bt_coin_text)).setText(DataProcessUtil.getView(articleModel.getCoin()));
 
-        if(articleModel.article_fav == 0)
+        if(articleModel.getFavor() == 0)
             ((TextView) layoutArticleHeader.findViewById(R.id.article_article_bt_fav_text)).setText("收藏");
         else
-            ((TextView) layoutArticleHeader.findViewById(R.id.article_article_bt_fav_text)).setText(DataProcessUtil.getView(articleModel.article_fav));
+            ((TextView) layoutArticleHeader.findViewById(R.id.article_article_bt_fav_text)).setText(DataProcessUtil.getView(articleModel.getFavor()));
 
-        if(articleModel.article_user_follow_up)
+        if(articleModel.isUserFollowUp())
             layoutArticleHeader.findViewById(R.id.article_card_follow).setVisibility(View.GONE);
     }
 
     private void onArticleViewClick(int viewId, int position)
     {
-        ArticleCardModel articleCardModel = articleModel.article_article_card_model_list.get(position);
-        if(articleCardModel.article_card_identity.equals("te"))
+        ArticleCardModel.ArticleCardBaseModel articleCardModel = articleModel.getArticleCardModelList().get(position);
+        if(articleCardModel.getCardIdentity().equals("te"))
         {
-            if(((ArticleCardModel.ArticleTextModel) articleCardModel).article_text_articleImageModel != null)
+            if(((ArticleCardModel.ArticleCardTextModel) articleCardModel).getTextArticleImageModel() != null)
             {
-                int p = DataProcessUtil.getPositionInArrayList(articleModel.article_article_img_url,
-                        ((ArticleCardModel.ArticleTextModel) articleCardModel).article_text_articleImageModel.article_image_src);
+                int p = DataProcessUtil.getPositionInArrayList(articleModel.getArticleImgUrl(),
+                        ((ArticleCardModel.ArticleCardTextModel) articleCardModel).getTextArticleImageModel().article_image_src);
                 if(p != -1)
                 {
                     Intent intent = new Intent(ctx, ImgActivity.class);
-                    intent.putExtra("imgUrl", articleModel.article_article_img_url.toArray(new String[0]));
+                    intent.putExtra("imgUrl", articleModel.getArticleImgUrl().toArray(new String[0]));
                     intent.putExtra("position", p);
                     startActivity(intent);
                 }
@@ -225,7 +226,7 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
         }
         else
         {
-            Uri uri = Uri.parse(articleCardModel.article_card_url);
+            Uri uri = Uri.parse(articleCardModel.getCardUrl());
             Intent intent = new Intent(Intent.ACTION_VIEW, uri);
             intent.setClass(getContext(), UnsupportedLinkActivity.class);
             startActivity(intent);

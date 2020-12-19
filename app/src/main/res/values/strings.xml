@@ -123,6 +123,14 @@
     <string name="bangumi_download_title">分集下载</string>
     <string name="bangumi_download_tip">选择要下载的分集</string>
     <string name="bangumi_download_notallow">抱歉，该%s只可在线观看</string>
+
+    <string name="article_id">CV%s</string>
+    <string name="article_view">%s观看</string>
+    <string name="article_fans">粉丝：%s</string>
+    <string name="article_card_ticket_location">%1$s %2$s</string>
+    <string name="article_card_live_status_off">未开播</string>
+    <string name="article_card_live_status_on">直播中</string>
+    <string name="article_card_live_online_default">--</string>
     
     <string name="vip_annual">年度大会员</string>
     <string name="vip_normal">大会员</string>

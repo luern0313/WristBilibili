@@ -1,8 +1,5 @@
 package cn.luern0313.wristbilibili.models.article;
 
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -11,108 +8,93 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import cn.luern0313.lson.LsonUtil;
+import cn.luern0313.lson.annotation.field.LsonBooleanFormatAsNumber;
 import cn.luern0313.lson.annotation.field.LsonPath;
-import cn.luern0313.lson.annotation.method.LsonCallMethod;
+import cn.luern0313.lson.element.LsonObject;
 import cn.luern0313.wristbilibili.api.ArticleApi;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
 import cn.luern0313.wristbilibili.util.LruCacheUtil;
-import cn.luern0313.wristbilibili.util.json.ImageUrlHandle;
+import cn.luern0313.wristbilibili.util.json.ImageUrlFormat;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 被 luern0313 创建于 2020/2/20.
  */
 
+@Getter
+@Setter
 public class ArticleModel implements Serializable
 {
-    public String article_id;
+    private String id;
 
-    @LsonPath("title")
-    public String article_title;
+    @LsonPath("article.title")
+    private String title;
 
-    @LsonPath("stats.view")
-    public int article_view;
+    @LsonPath("article.stats.view")
+    private int view;
 
-    @LsonPath("stats.like")
-    public int article_like;
+    @LsonPath("article.stats.like")
+    private int like;
 
-    @LsonPath("stats.coin")
-    public int article_coin;
+    @LsonPath("article.stats.coin")
+    private int coin;
 
-    @LsonPath("stats.favorite")
-    public int article_fav;
+    @LsonPath("article.stats.favorite")
+    private int favor;
 
-    @LsonPath("origin_image_urls")
-    public String[] article_cover;
+    @ImageUrlFormat
+    @LsonPath("article.origin_image_urls")
+    private String[] cover;
 
-    public String article_channel;
-    public String article_time;
+    private String channel;
+    private String time;
 
-    @LsonPath("author.name")
-    public String article_up_name;
+    @LsonPath("more.author.name")
+    private String upName;
 
-    @ImageUrlHandle
-    @LsonPath("author.face")
-    public String article_up_face;
+    @ImageUrlFormat
+    @LsonPath("more.author.face")
+    private String upFace;
 
-    @LsonPath("author.mid")
-    public String article_up_mid;
+    @LsonPath("more.author.mid")
+    private String upMid;
 
-    @LsonPath("author.official_verify.type")
-    public int article_up_official; // -1 0 1
+    @LsonPath("more.official_verify.type")
+    private int upOfficial; // -1 0 1
 
-    @LsonPath("author.vip.vipType")
-    public int article_up_vip; // 2
+    @LsonPath("more.author.vip.vipType")
+    private int upVip; // 2
 
-    @LsonPath("author.fans")
-    public int article_up_fans_num;
+    @LsonPath("more.author.fans")
+    private int upFansNum;
 
-    public boolean article_user_follow_up;
-    public boolean article_user_like;
-    public int article_user_coin;
-    public boolean article_user_fav;
+    @LsonPath("more.attention")
+    private boolean userFollowUp;
 
-    public final String article_article;
-    public ArrayList<String> article_article_img_url = new ArrayList<>();
-    public ArrayList<ArticleCardModel> article_article_card_model_list = new ArrayList<>();
+    @LsonBooleanFormatAsNumber(equal = 1)
+    @LsonPath("article.like")
+    private boolean userLike;
 
-    @LsonCallMethod()
-    private void aaa()
+    @LsonPath("article.coin")
+    private int userCoin;
+
+    @LsonPath("article.favorite")
+    private boolean userFavor;
+
+    private String article;
+    private ArrayList<String> articleImgUrl = new ArrayList<>();
+    private ArrayList<ArticleCardModel.ArticleCardBaseModel> articleCardModelList = new ArrayList<>();
+
+    public ArticleModel(String id, Document element, LsonObject card)
     {
+        this.id = id;
 
-    }
-
-    public ArticleModel(String id, JSONObject article, JSONObject more, Document element, JSONObject card)
-    {
-        article_id = id;
-        article_title = article.optString("title");
-        JSONObject stat = article.has("stats") ? article.optJSONObject("stats") : new JSONObject();
-        article_view = stat.optInt("view");
-        article_like = stat.optInt("like");
-        article_coin = stat.optInt("coin");
-        article_fav = stat.optInt("favorite");
-        JSONArray cover = article.optJSONArray("origin_image_urls");
-        article_cover = new String[cover.length()];
-        for(int i = 0; i < cover.length(); i++)
-            article_cover[i] = LruCacheUtil.getImageUrl(cover.optString(i));
         Elements info = element.getElementsByClass("info").first().children();
-        article_channel = info.get(0).text();
-        article_channel = article_channel.substring(0, article_channel.length() - 2);
-        article_time = DataProcessUtil.getTime(Integer.parseInt(info.get(1).attr("data-ts")), "yyyy-MM-dd HH:mm");
-
-        JSONObject up = more.has("author") ? more.optJSONObject("author") : new JSONObject();
-        JSONObject up_off = up.has("official_verify") ? up.optJSONObject("official_verify") : new JSONObject();
-        JSONObject up_vip = up.has("vip") ? up.optJSONObject("vip") : new JSONObject();
-        article_up_name = up.optString("name");
-        article_up_face = LruCacheUtil.getImageUrl(up.optString("face"));
-        article_up_mid = up.optString("mid");
-        article_up_fans_num = up.optInt("fans");
-        article_up_official = up_off.optInt("type");
-        article_up_vip = up_vip.optInt("vipType");
-
-        article_user_follow_up = more.optBoolean("attention", false);
-        article_user_like = article.optInt("like") == 1;
-        article_user_coin = article.optInt("coin");
-        article_user_fav = article.optBoolean("favorite");
+        channel = info.get(0).text();
+        channel = channel.substring(0, channel.length() - 2);
+        time = DataProcessUtil.getTime(Integer.parseInt(info.get(1).attr("data-ts")), "yyyy-MM-dd HH:mm");
 
         Element article_element = element.getElementsByClass("article-holder").first();
 
@@ -149,7 +131,6 @@ public class ArticleModel implements Serializable
                 figeles.get(j).wrap("<center></center>");
 
         Elements arts = article_element.children();
-        ArticleCardModel articleCardModel = new ArticleCardModel();
         for(Element art : arts)
         {
             if(art.tagName().equals("figure") && art.className().equals("img-box") && art.child(0).tagName().equals("img") && art.child(0).hasAttr("aid"))
@@ -160,24 +141,24 @@ public class ArticleModel implements Serializable
                 for(String tagid : tagids)
                 {
                     if(type.indexOf("video") == 0)
-                        article_article_card_model_list.add(articleCardModel.new ArticleVideoCardModel("av" + tagid, card.optJSONObject("av" + tagid)));
+                        articleCardModelList.add(LsonUtil.fromJson(card.getAsJsonObject("av" + tagid), ArticleCardModel.ArticleCardVideoCardModel.class, "av" + tagid));
                     else if(type.indexOf("article") == 0)
-                        article_article_card_model_list.add(articleCardModel.new ArticleArticleCardModel("cv" + tagid, card.optJSONObject("cv" + tagid)));
+                        articleCardModelList.add(LsonUtil.fromJson(card.getAsJsonObject("cv" + tagid), ArticleCardModel.ArticleArticleCardCardModel.class, "cv" + tagid));
                     else if(type.indexOf("fanju") == 0)
-                        article_article_card_model_list.add(articleCardModel.new ArticleBangumiCardModel(tagid, card.optJSONObject(tagid)));
+                        articleCardModelList.add(LsonUtil.fromJson(card.getAsJsonObject(tagid), ArticleCardModel.ArticleCardBangumiCardModel.class, tagid));
                     else if(type.indexOf("music") == 0)
-                        article_article_card_model_list.add(articleCardModel.new ArticleMusicCardModel(tagid, card.optJSONObject(tagid)));
+                        articleCardModelList.add(LsonUtil.fromJson(card.getAsJsonObject(tagid), ArticleCardModel.ArticleCardMusicCardModel.class, tagid));
                     else if(type.indexOf("shop") == 0)
                     {
                         if(tagid.indexOf("pw") == 0)
-                            article_article_card_model_list.add(articleCardModel.new ArticleTicketCardModel(tagid, card.optJSONObject(tagid)));
-                        else if(tagid.indexOf("sp") == 0)
-                            article_article_card_model_list.add(articleCardModel.new ArticleShopCardModel(tagid, card.optJSONObject(tagid)));
+                            articleCardModelList.add(LsonUtil.fromJson(card.getAsJsonObject(tagid), ArticleCardModel.ArticleCardTicketCardModel.class, tagid));
+                        if(tagid.indexOf("sp") == 0)
+                            articleCardModelList.add(LsonUtil.fromJson(card.getAsJsonObject(tagid), ArticleCardModel.ArticleCardShopCardModel.class, tagid));
                     }
                     else if(type.indexOf("caricature") == 0)
-                        article_article_card_model_list.add(articleCardModel.new ArticleContainerCardModel("mc" + tagid, card.optJSONObject("mc" + tagid)));
+                        articleCardModelList.add(LsonUtil.fromJson(card.getAsJsonObject("mc" + tagid), ArticleCardModel.ArticleCardContainerCardModel.class, "mc" + tagid));
                     else if(type.indexOf("live") == 0)
-                        article_article_card_model_list.add(articleCardModel.new ArticleLiveCardModel("lv" + tagid, card.optJSONObject("lv" + tagid)));
+                        articleCardModelList.add(LsonUtil.fromJson(card.getAsJsonObject("lv" + tagid), ArticleCardModel.ArticleCardLiveCardModel.class, "lv" + tagid));
                 }
             }
             else
@@ -193,17 +174,17 @@ public class ArticleModel implements Serializable
                     if(url.endsWith(".webp"))
                         url = url.substring(0, url.lastIndexOf("@"));
                     url = LruCacheUtil.getImageUrl(url, ArticleApi.getArticleImageWidthSize());
-                    article_article_img_url.add(url);
+                    articleImgUrl.add(url);
                     imgElement.attr("src", url);
                     imgElement.attr("data-src", url);
                 }
-                article_article_card_model_list.add(articleCardModel.new ArticleTextModel(art));
+                articleCardModelList.add(new ArticleCardModel.ArticleCardTextModel(art));
             }
         }
-        article_article = article_element.outerHtml();
+        article = article_element.outerHtml();
     }
 
-    private HashMap<String, String> colorMap = new HashMap<String, String>()
+    private static final HashMap<String, String> colorMap = new HashMap<String, String>()
     {{
         put("color-blue-01", "#56c1fe");
         put("color-lblue-01", "#73fdea");

@@ -1,5 +1,6 @@
 package cn.luern0313.wristbilibili.adapter;
 
+import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
@@ -14,35 +15,36 @@ import android.widget.TextView;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.sufficientlysecure.htmltextview.HtmlTextView;
-import org.sufficientlysecure.htmltextview.OnClickATagListener;
 
 import java.util.ArrayList;
 
-import androidx.annotation.Nullable;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.models.article.ArticleCardModel;
 import cn.luern0313.wristbilibili.util.ArticleHtmlImageHandlerUtil;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
 import cn.luern0313.wristbilibili.util.ImageTaskUtil;
 import cn.luern0313.wristbilibili.util.LruCacheUtil;
+import cn.luern0313.wristbilibili.util.MyApplication;
 
 /**
  * 被 luern0313 创建于 2020/2/25.
  */
 public class ArticleAdapter extends BaseAdapter
 {
-    private LayoutInflater mInflater;
+    private final Context ctx;
+    private final LayoutInflater mInflater;
 
-    private ArticleAdapterListener articleListener;
+    private final ArticleAdapterListener articleListener;
 
-    private ArrayList<ArticleCardModel> articleCardModelArrayList;
-    private ListView listView;
+    private final ArrayList<ArticleCardModel.ArticleCardBaseModel> articleCardModelArrayList;
+    private final ListView listView;
 
-    private int img_width;
+    private final int img_width;
 
-    public ArticleAdapter(LayoutInflater inflater, int img_width, ArrayList<ArticleCardModel> articleCardModelArrayList, ListView listView, ArticleAdapterListener articleListener)
+    public ArticleAdapter(LayoutInflater inflater, int img_width, ArrayList<ArticleCardModel.ArticleCardBaseModel> articleCardModelArrayList, ListView listView, ArticleAdapterListener articleListener)
     {
-        mInflater = inflater;
+        this.ctx = MyApplication.getContext();
+        this.mInflater = inflater;
         this.img_width = img_width;
         this.articleCardModelArrayList = articleCardModelArrayList;
         this.listView = listView;
@@ -76,8 +78,8 @@ public class ArticleAdapter extends BaseAdapter
     @Override
     public int getItemViewType(int position)
     {
-        ArticleCardModel articleCardModel = articleCardModelArrayList.get(position);
-        switch (articleCardModel.article_card_identity.substring(0, 2))
+        ArticleCardModel.ArticleCardBaseModel articleCardModel = articleCardModelArrayList.get(position);
+        switch (articleCardModel.getCardIdentity().substring(0, 2))
         {
             case "te":
                 return 0;
@@ -237,28 +239,21 @@ public class ArticleAdapter extends BaseAdapter
 
         if(type == 0)
         {
-            ArticleCardModel.ArticleTextModel articleTextModel = (ArticleCardModel.ArticleTextModel) articleCardModelArrayList.get(position);
-            Document e = Jsoup.parseBodyFragment(articleTextModel.article_text_element);
-            if(e.text().equals("") && articleTextModel.article_text_articleImageModel == null)
+            ArticleCardModel.ArticleCardTextModel articleTextModel = (ArticleCardModel.ArticleCardTextModel) articleCardModelArrayList.get(position);
+            Document e = Jsoup.parseBodyFragment(articleTextModel.getTextElement());
+            if(e.text().equals("") && articleTextModel.getTextArticleImageModel() == null)
                 articleTextViewHolder.text_text.setVisibility(View.GONE);
             else
             {
-                articleTextViewHolder.text_text.setHtml(articleTextModel.article_text_element, new ArticleHtmlImageHandlerUtil(listView.getContext(), articleTextViewHolder.text_text, img_width, articleTextModel.article_text_articleImageModel));
-                articleTextViewHolder.text_text.setOnClickATagListener(new OnClickATagListener()
-                {
-                    @Override
-                    public void onClick(View widget, @Nullable String href)
-                    {
-                        articleListener.onLinkClick(href);
-                    }
-                });
+                articleTextViewHolder.text_text.setHtml(articleTextModel.getTextElement(), new ArticleHtmlImageHandlerUtil(listView.getContext(), articleTextViewHolder.text_text, img_width, articleTextModel.getTextArticleImageModel()));
+                articleTextViewHolder.text_text.setOnClickATagListener((widget, href) -> articleListener.onLinkClick(href));
                 articleTextViewHolder.text_text.setVisibility(View.VISIBLE);
                 articleTextViewHolder.text_text.setOnClickListener(onViewClick(position));
             }
         }
         else if(type == 1)
         {
-            ArticleCardModel.ArticleVideoCardModel articleVideoCardModel = (ArticleCardModel.ArticleVideoCardModel) articleCardModelArrayList.get(position);
+            ArticleCardModel.ArticleCardVideoCardModel articleVideoCardModel = (ArticleCardModel.ArticleCardVideoCardModel) articleCardModelArrayList.get(position);
 
             Drawable upDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_up);
             Drawable playNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_number_play_white);
@@ -270,22 +265,22 @@ public class ArticleAdapter extends BaseAdapter
             articleVideoCardViewHolder.video_play.setCompoundDrawables(playNumDrawable,null, null,null);
             articleVideoCardViewHolder.video_danmaku.setCompoundDrawables(danmakuNumDrawable,null, null,null);
 
-            articleVideoCardViewHolder.video_title.setText(articleVideoCardModel.article_video_card_title);
+            articleVideoCardViewHolder.video_title.setText(articleVideoCardModel.getVideoCardTitle());
             articleVideoCardViewHolder.video_cover.setImageResource(R.drawable.img_default_vid);
-            articleVideoCardViewHolder.video_play.setText(articleVideoCardModel.article_video_card_play);
-            articleVideoCardViewHolder.video_danmaku.setText(articleVideoCardModel.article_video_card_danmaku);
-            articleVideoCardViewHolder.video_time.setText(articleVideoCardModel.article_video_card_time);
-            articleVideoCardViewHolder.video_up_name.setText(articleVideoCardModel.article_video_card_up_name);
+            articleVideoCardViewHolder.video_play.setText(articleVideoCardModel.getArticle_video_card_play());
+            articleVideoCardViewHolder.video_danmaku.setText(articleVideoCardModel.getArticle_video_card_danmaku());
+            articleVideoCardViewHolder.video_time.setText(articleVideoCardModel.getArticle_video_card_time());
+            articleVideoCardViewHolder.video_up_name.setText(articleVideoCardModel.getArticle_video_card_up_name());
 
             articleVideoCardViewHolder.video_lay.setOnClickListener(onViewClick(position));
 
-            articleVideoCardViewHolder.video_cover.setTag(articleVideoCardModel.article_video_card_cover);
-            BitmapDrawable c = setImageFormWeb(articleVideoCardModel.article_video_card_cover);
+            articleVideoCardViewHolder.video_cover.setTag(articleVideoCardModel.getArticle_video_card_cover());
+            BitmapDrawable c = setImageFormWeb(articleVideoCardModel.getArticle_video_card_cover());
             if(c != null) articleVideoCardViewHolder.video_cover.setImageDrawable(c);
         }
         else if(type == 2)
         {
-            ArticleCardModel.ArticleBangumiCardModel articleBangumiCardModel = (ArticleCardModel.ArticleBangumiCardModel) articleCardModelArrayList.get(position);
+            ArticleCardModel.ArticleCardBangumiCardModel articleBangumiCardModel = (ArticleCardModel.ArticleCardBangumiCardModel) articleCardModelArrayList.get(position);
 
             Drawable playNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_number_play);
             Drawable followNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_number_like);
@@ -294,22 +289,22 @@ public class ArticleAdapter extends BaseAdapter
             articleBangumiCardViewHolder.bangumi_play.setCompoundDrawables(playNumDrawable,null, null,null);
             articleBangumiCardViewHolder.bangumi_follow.setCompoundDrawables(followNumDrawable,null, null,null);
 
-            articleBangumiCardViewHolder.bangumi_title.setText(articleBangumiCardModel.article_bangumi_card_title);
+            articleBangumiCardViewHolder.bangumi_title.setText(articleBangumiCardModel.getBangumiCardTitle());
             articleBangumiCardViewHolder.bangumi_cover.setImageResource(R.drawable.img_default_animation);
-            articleBangumiCardViewHolder.bangumi_play.setText(articleBangumiCardModel.article_bangumi_card_play);
-            articleBangumiCardViewHolder.bangumi_follow.setText(articleBangumiCardModel.article_bangumi_card_follow);
-            articleBangumiCardViewHolder.bangumi_type.setText(articleBangumiCardModel.article_bangumi_card_type_name);
-            articleBangumiCardViewHolder.bangumi_score.setText(articleBangumiCardModel.article_bangumi_card_score);
+            articleBangumiCardViewHolder.bangumi_play.setText(articleBangumiCardModel.getBangumiCardPlay());
+            articleBangumiCardViewHolder.bangumi_follow.setText(articleBangumiCardModel.getBangumiCardFollow());
+            articleBangumiCardViewHolder.bangumi_type.setText(articleBangumiCardModel.getBangumiCardTypeName());
+            articleBangumiCardViewHolder.bangumi_score.setText(articleBangumiCardModel.getBangumiCardScore());
 
             articleBangumiCardViewHolder.bangumi_lay.setOnClickListener(onViewClick(position));
 
-            articleBangumiCardViewHolder.bangumi_cover.setTag(articleBangumiCardModel.article_bangumi_card_cover);
-            BitmapDrawable c = setImageFormWeb(articleBangumiCardModel.article_bangumi_card_cover);
+            articleBangumiCardViewHolder.bangumi_cover.setTag(articleBangumiCardModel.getBangumiCardCover());
+            BitmapDrawable c = setImageFormWeb(articleBangumiCardModel.getBangumiCardCover());
             if(c != null) articleBangumiCardViewHolder.bangumi_cover.setImageDrawable(c);
         }
         else if(type == 3)
         {
-            ArticleCardModel.ArticleArticleCardModel articleArticleCardModel = (ArticleCardModel.ArticleArticleCardModel) articleCardModelArrayList.get(position);
+            ArticleCardModel.ArticleArticleCardCardModel articleArticleCardModel = (ArticleCardModel.ArticleArticleCardCardModel) articleCardModelArrayList.get(position);
 
             Drawable upDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_up);
             Drawable playNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_number_play_white);
@@ -321,93 +316,93 @@ public class ArticleAdapter extends BaseAdapter
             articleArticleCardViewHolder.article_view.setCompoundDrawables(playNumDrawable,null, null,null);
             articleArticleCardViewHolder.article_reply.setCompoundDrawables(replyNumDrawable,null, null,null);
 
-            articleArticleCardViewHolder.article_title.setText(articleArticleCardModel.article_article_card_title);
+            articleArticleCardViewHolder.article_title.setText(articleArticleCardModel.getArticleCardTitle());
             articleArticleCardViewHolder.article_cover.setImageResource(R.drawable.img_default_vid);
-            articleArticleCardViewHolder.article_view.setText(articleArticleCardModel.article_article_card_view);
-            articleArticleCardViewHolder.article_reply.setText(articleArticleCardModel.article_article_card_reply);
-            articleArticleCardViewHolder.article_up_name.setText(articleArticleCardModel.article_article_card_up_name);
+            articleArticleCardViewHolder.article_view.setText(articleArticleCardModel.getArticleCardView());
+            articleArticleCardViewHolder.article_reply.setText(articleArticleCardModel.getArticleCardReply());
+            articleArticleCardViewHolder.article_up_name.setText(articleArticleCardModel.getArticleCardUpName());
 
             articleArticleCardViewHolder.article_lay.setOnClickListener(onViewClick(position));
 
-            articleArticleCardViewHolder.article_cover.setTag(articleArticleCardModel.article_article_card_cover);
-            BitmapDrawable c = setImageFormWeb(articleArticleCardModel.article_article_card_cover);
+            articleArticleCardViewHolder.article_cover.setTag(articleArticleCardModel.getArticleCardCover());
+            BitmapDrawable c = setImageFormWeb(articleArticleCardModel.getArticleCardCover());
             if(c != null) articleArticleCardViewHolder.article_cover.setImageDrawable(c);
         }
         else if(type == 4)
         {
-            ArticleCardModel.ArticleMusicCardModel articleMusicCardModel = (ArticleCardModel.ArticleMusicCardModel) articleCardModelArrayList.get(position);
+            ArticleCardModel.ArticleCardMusicCardModel articleMusicCardModel = (ArticleCardModel.ArticleCardMusicCardModel) articleCardModelArrayList.get(position);
 
             Drawable upDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_up);
             Drawable playNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_number_play);
-            Drawable danmakuNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_number_danmu);
+            Drawable replyNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_number_reply);
             upDrawable.setBounds(0,0, DataProcessUtil.dip2px(12), DataProcessUtil.dip2px(12));
             playNumDrawable.setBounds(0,0, DataProcessUtil.dip2px(12), DataProcessUtil.dip2px(12));
-            danmakuNumDrawable.setBounds(0,0, DataProcessUtil.dip2px(12), DataProcessUtil.dip2px(12));
+            replyNumDrawable.setBounds(0,0, DataProcessUtil.dip2px(12), DataProcessUtil.dip2px(12));
             articleMusicCardViewHolder.music_up_name.setCompoundDrawables(upDrawable,null, null,null);
             articleMusicCardViewHolder.music_play.setCompoundDrawables(playNumDrawable,null, null,null);
-            articleMusicCardViewHolder.music_reply.setCompoundDrawables(danmakuNumDrawable,null, null,null);
+            articleMusicCardViewHolder.music_reply.setCompoundDrawables(replyNumDrawable,null, null,null);
 
-            articleMusicCardViewHolder.music_title.setText(articleMusicCardModel.article_music_card_title);
+            articleMusicCardViewHolder.music_title.setText(articleMusicCardModel.getMusicCardTitle());
             articleMusicCardViewHolder.music_cover.setImageResource(R.drawable.img_default_animation);
-            articleMusicCardViewHolder.music_play.setText(articleMusicCardModel.article_music_card_play);
-            articleMusicCardViewHolder.music_reply.setText(articleMusicCardModel.article_music_card_reply);
-            articleMusicCardViewHolder.music_up_name.setText(articleMusicCardModel.article_music_card_up_name);
+            articleMusicCardViewHolder.music_play.setText(articleMusicCardModel.getMusicCardPlay());
+            articleMusicCardViewHolder.music_reply.setText(articleMusicCardModel.getMusicCardReply());
+            articleMusicCardViewHolder.music_up_name.setText(articleMusicCardModel.getMusicCardUpName());
 
             articleMusicCardViewHolder.music_lay.setOnClickListener(onViewClick(position));
 
-            articleMusicCardViewHolder.music_cover.setTag(articleMusicCardModel.article_music_card_cover);
-            BitmapDrawable c = setImageFormWeb(articleMusicCardModel.article_music_card_cover);
+            articleMusicCardViewHolder.music_cover.setTag(articleMusicCardModel.getMusicCardCover());
+            BitmapDrawable c = setImageFormWeb(articleMusicCardModel.getMusicCardCover());
             if(c != null) articleMusicCardViewHolder.music_cover.setImageDrawable(c);
         }
         else if(type == 5)
         {
-            ArticleCardModel.ArticleTicketCardModel articleTicketCardModel = (ArticleCardModel.ArticleTicketCardModel) articleCardModelArrayList.get(position);
+            ArticleCardModel.ArticleCardTicketCardModel articleTicketCardModel = (ArticleCardModel.ArticleCardTicketCardModel) articleCardModelArrayList.get(position);
 
-            articleTicketCardViewHolder.ticket_title.setText(articleTicketCardModel.article_ticket_card_title);
+            articleTicketCardViewHolder.ticket_title.setText(articleTicketCardModel.getTicketCardTitle());
             articleTicketCardViewHolder.ticket_cover.setImageResource(R.drawable.img_default_animation);
-            articleTicketCardViewHolder.ticket_time.setText(articleTicketCardModel.article_ticket_card_time);
-            articleTicketCardViewHolder.ticket_location.setText(articleTicketCardModel.article_ticket_card_location);
-            articleTicketCardViewHolder.ticket_price.setText(articleTicketCardModel.article_ticket_card_price);
+            articleTicketCardViewHolder.ticket_time.setText(articleTicketCardModel.getTicketCardTime());
+            articleTicketCardViewHolder.ticket_location.setText(String.format(ctx.getString(R.string.article_card_ticket_location), articleTicketCardModel.getTicketCardLocationCity(), articleTicketCardModel.getTicketCardLocationVenue()));
+            articleTicketCardViewHolder.ticket_price.setText(articleTicketCardModel.getTicketCardPrice());
 
             articleTicketCardViewHolder.ticket_lay.setOnClickListener(onViewClick(position));
 
-            articleTicketCardViewHolder.ticket_cover.setTag(articleTicketCardModel.article_ticket_card_cover);
-            BitmapDrawable c = setImageFormWeb(articleTicketCardModel.article_ticket_card_cover);
+            articleTicketCardViewHolder.ticket_cover.setTag(articleTicketCardModel.getTicketCardCover());
+            BitmapDrawable c = setImageFormWeb(articleTicketCardModel.getTicketCardCover());
             if(c != null) articleTicketCardViewHolder.ticket_cover.setImageDrawable(c);
         }
         else if(type == 6)
         {
-            ArticleCardModel.ArticleShopCardModel articleShopCardModel = (ArticleCardModel.ArticleShopCardModel) articleCardModelArrayList.get(position);
+            ArticleCardModel.ArticleCardShopCardModel articleShopCardModel = (ArticleCardModel.ArticleCardShopCardModel) articleCardModelArrayList.get(position);
 
-            articleShopCardViewHolder.shop_title.setText(articleShopCardModel.article_shop_card_title);
+            articleShopCardViewHolder.shop_title.setText(articleShopCardModel.getShopCardTitle());
             articleShopCardViewHolder.shop_cover.setImageResource(R.drawable.img_default_animation);
-            articleShopCardViewHolder.shop_detail.setText(articleShopCardModel.article_shop_card_detail);
-            articleShopCardViewHolder.shop_price.setText(articleShopCardModel.article_shop_card_price);
+            articleShopCardViewHolder.shop_detail.setText(articleShopCardModel.getShopCardDetail());
+            articleShopCardViewHolder.shop_price.setText(articleShopCardModel.getShopCardPrice());
 
             articleShopCardViewHolder.shop_lay.setOnClickListener(onViewClick(position));
 
-            articleShopCardViewHolder.shop_cover.setTag(articleShopCardModel.article_shop_card_cover);
-            BitmapDrawable c = setImageFormWeb(articleShopCardModel.article_shop_card_cover);
+            articleShopCardViewHolder.shop_cover.setTag(articleShopCardModel.getShopCardCover());
+            BitmapDrawable c = setImageFormWeb(articleShopCardModel.getShopCardCover());
             if(c != null) articleShopCardViewHolder.shop_cover.setImageDrawable(c);
         }
         else if(type == 7)
         {
-            ArticleCardModel.ArticleContainerCardModel articleContainerCardModel = (ArticleCardModel.ArticleContainerCardModel) articleCardModelArrayList.get(position);
+            ArticleCardModel.ArticleCardContainerCardModel articleContainerCardModel = (ArticleCardModel.ArticleCardContainerCardModel) articleCardModelArrayList.get(position);
 
-            articleContainerCardViewHolder.container_title.setText(articleContainerCardModel.article_container_card_title);
+            articleContainerCardViewHolder.container_title.setText(articleContainerCardModel.getContainerCardTitle());
             articleContainerCardViewHolder.container_cover.setImageResource(R.drawable.img_default_animation);
-            articleContainerCardViewHolder.container_detail.setText(articleContainerCardModel.article_container_card_detail);
-            articleContainerCardViewHolder.container_author.setText(articleContainerCardModel.article_container_card_author);
+            articleContainerCardViewHolder.container_detail.setText(articleContainerCardModel.getContainerCardDetail());
+            articleContainerCardViewHolder.container_author.setText(articleContainerCardModel.getContainerCardAuthor());
 
             articleContainerCardViewHolder.container_lay.setOnClickListener(onViewClick(position));
 
-            articleContainerCardViewHolder.container_cover.setTag(articleContainerCardModel.article_container_card_cover);
-            BitmapDrawable c = setImageFormWeb(articleContainerCardModel.article_container_card_cover);
+            articleContainerCardViewHolder.container_cover.setTag(articleContainerCardModel.getContainerCardCover());
+            BitmapDrawable c = setImageFormWeb(articleContainerCardModel.getContainerCardCover());
             if(c != null) articleContainerCardViewHolder.container_cover.setImageDrawable(c);
         }
         else if(type == 8)
         {
-            ArticleCardModel.ArticleLiveCardModel articleLiveCardModel = (ArticleCardModel.ArticleLiveCardModel) articleCardModelArrayList.get(position);
+            ArticleCardModel.ArticleCardLiveCardModel articleLiveCardModel = (ArticleCardModel.ArticleCardLiveCardModel) articleCardModelArrayList.get(position);
 
             Drawable upDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_up);
             Drawable viewerDrawable = convertView.getResources().getDrawable(R.drawable.icon_number_viewer_white);
@@ -416,40 +411,40 @@ public class ArticleAdapter extends BaseAdapter
             articleLiveCardViewHolder.live_up_name.setCompoundDrawables(upDrawable,null, null,null);
             articleLiveCardViewHolder.live_online.setCompoundDrawables(viewerDrawable,null, null,null);
 
-            if(articleLiveCardModel.article_live_card_status == 0)
+            if(articleLiveCardModel.liveCardStatus == 0)
             {
-                articleLiveCardViewHolder.live_status.setText("未开播");
+                articleLiveCardViewHolder.live_status.setText(ctx.getString(R.string.article_card_live_status_off));
                 articleLiveCardViewHolder.live_status.setBackgroundResource(R.drawable.shape_bg_article_card_live_notlive);
-                articleLiveCardViewHolder.live_online.setText("--");
+                articleLiveCardViewHolder.live_online.setText(ctx.getString(R.string.article_card_live_online_default));
             }
             else
             {
-                articleLiveCardViewHolder.live_status.setText("直播中");
+                articleLiveCardViewHolder.live_status.setText(ctx.getString(R.string.article_card_live_status_on));
                 articleLiveCardViewHolder.live_status.setBackgroundResource(R.drawable.shape_bg_article_card_live_living);
-                articleLiveCardViewHolder.live_online.setText(articleLiveCardModel.article_live_card_online);
+                articleLiveCardViewHolder.live_online.setText(articleLiveCardModel.liveCardOnline);
             }
 
-            articleLiveCardViewHolder.live_title.setText(articleLiveCardModel.article_live_card_title);
+            articleLiveCardViewHolder.live_title.setText(articleLiveCardModel.liveCardTitle);
             articleLiveCardViewHolder.live_cover.setImageResource(R.drawable.img_default_vid);
-            articleLiveCardViewHolder.live_area.setText(articleLiveCardModel.article_live_card_area);
-            articleLiveCardViewHolder.live_up_name.setText(articleLiveCardModel.article_live_card_up_name);
+            articleLiveCardViewHolder.live_area.setText(articleLiveCardModel.liveCardArea);
+            articleLiveCardViewHolder.live_up_name.setText(articleLiveCardModel.liveCardUpName);
 
             articleLiveCardViewHolder.live_lay.setOnClickListener(onViewClick(position));
 
-            articleLiveCardViewHolder.live_cover.setTag(articleLiveCardModel.article_live_card_cover);
-            BitmapDrawable c = setImageFormWeb(articleLiveCardModel.article_live_card_cover);
+            articleLiveCardViewHolder.live_cover.setTag(articleLiveCardModel.liveCardCover);
+            BitmapDrawable c = setImageFormWeb(articleLiveCardModel.liveCardCover);
             if(c != null) articleLiveCardViewHolder.live_cover.setImageDrawable(c);
         }
         
         return convertView;
     }
 
-    class ArticleTextViewHolder
+    static class ArticleTextViewHolder
     {
         HtmlTextView text_text;
     }
 
-    class ArticleVideoCardViewHolder
+    static class ArticleVideoCardViewHolder
     {
         RelativeLayout video_lay;
         TextView video_title;
@@ -460,7 +455,7 @@ public class ArticleAdapter extends BaseAdapter
         TextView video_up_name;
     }
 
-    class ArticleBangumiCardViewHolder
+    static class ArticleBangumiCardViewHolder
     {
         RelativeLayout bangumi_lay;
         TextView bangumi_title;
@@ -471,7 +466,7 @@ public class ArticleAdapter extends BaseAdapter
         TextView bangumi_score;
     }
 
-    class ArticleArticleCardViewHolder
+    static class ArticleArticleCardViewHolder
     {
         RelativeLayout article_lay;
         TextView article_title;
@@ -481,7 +476,7 @@ public class ArticleAdapter extends BaseAdapter
         TextView article_up_name;
     }
 
-    class ArticleMusicCardViewHolder
+    static class ArticleMusicCardViewHolder
     {
         RelativeLayout music_lay;
         TextView music_title;
@@ -491,7 +486,7 @@ public class ArticleAdapter extends BaseAdapter
         TextView music_up_name;
     }
 
-    class ArticleTicketCardViewHolder
+    static class ArticleTicketCardViewHolder
     {
         RelativeLayout ticket_lay;
         TextView ticket_title;
@@ -501,7 +496,7 @@ public class ArticleAdapter extends BaseAdapter
         TextView ticket_price;
     }
 
-    class ArticleShopCardViewHolder
+    static class ArticleShopCardViewHolder
     {
         RelativeLayout shop_lay;
         TextView shop_title;
@@ -510,7 +505,7 @@ public class ArticleAdapter extends BaseAdapter
         TextView shop_price;
     }
 
-    class ArticleContainerCardViewHolder
+    static class ArticleContainerCardViewHolder
     {
         RelativeLayout container_lay;
         TextView container_title;
@@ -519,7 +514,7 @@ public class ArticleAdapter extends BaseAdapter
         TextView container_author;
     }
 
-    class ArticleLiveCardViewHolder
+    static class ArticleLiveCardViewHolder
     {
         RelativeLayout live_lay;
         TextView live_title;
@@ -532,14 +527,7 @@ public class ArticleAdapter extends BaseAdapter
 
     private View.OnClickListener onViewClick(final int position)
     {
-        return new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                articleListener.onCardClick(v.getId(), position);
-            }
-        };
+        return v -> articleListener.onCardClick(v.getId(), position);
     }
 
     private BitmapDrawable setImageFormWeb(String url)

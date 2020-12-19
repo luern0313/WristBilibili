@@ -1,236 +1,350 @@
 package cn.luern0313.wristbilibili.models.article;
 
-import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 
-import cn.luern0313.wristbilibili.util.DataProcessUtil;
-import cn.luern0313.wristbilibili.util.LruCacheUtil;
+import cn.luern0313.lson.annotation.field.LsonAddPrefix;
+import cn.luern0313.lson.annotation.field.LsonDateFormat;
+import cn.luern0313.lson.annotation.field.LsonNumberOperations;
+import cn.luern0313.lson.annotation.field.LsonPath;
+import cn.luern0313.lson.annotation.method.LsonCallMethod;
+import cn.luern0313.wristbilibili.util.json.ImageUrlFormat;
+import cn.luern0313.wristbilibili.util.json.TimeFormat;
+import cn.luern0313.wristbilibili.util.json.ViewFormat;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 被 luern0313 创建于 2020/2/28.
  */
-public class ArticleCardModel implements Serializable
+public class ArticleCardModel
 {
-    public String article_card_identity;
-    public String article_card_url;
-
-    public class ArticleTextModel extends ArticleCardModel implements Serializable
+    @Getter
+    @Setter
+    public abstract static class ArticleCardBaseModel
     {
-        public String article_text_element;
-        public ArticleImageModel article_text_articleImageModel;
-        ArticleTextModel(Element element)
-        {
-            article_card_identity = "te";
-            article_card_url = "";
+        private String cardIdentity;
+        private String cardUrl;
+    }
 
-            article_text_element = element.outerHtml();
+    @Getter
+    @Setter
+    public static class ArticleCardTextModel extends ArticleCardBaseModel implements Serializable
+    {
+        private String textElement;
+        private ArticleImageModel textArticleImageModel;
+        ArticleCardTextModel(Element element)
+        {
+            setCardIdentity("te");
+            setCardUrl("");
+
+            textElement = element.outerHtml();
             Element imgElement = element.select("figure[class=img-box] > img").first();
             if(imgElement != null)
-                article_text_articleImageModel = new ArticleImageModel(imgElement.attributes());
+                textArticleImageModel = new ArticleImageModel(imgElement.attributes());
         }
     }
 
-    public class ArticleVideoCardModel extends ArticleCardModel implements Serializable
+    @Getter
+    @Setter
+    public static class ArticleCardVideoCardModel extends ArticleCardBaseModel implements Serializable
     {
-        public String article_video_card_id;
-        public String article_video_card_title;
-        public String article_video_card_cover;
-        public String article_video_card_time;
-        public String article_video_card_play;
-        public String article_video_card_danmaku;
-        public String article_video_card_up_name;
+        @LsonPath("bvid")
+        private String videoCardId;
 
-        ArticleVideoCardModel(String identity, JSONObject videoCard)
+        @LsonPath("title")
+        private String videoCardTitle;
+
+        @ImageUrlFormat
+        @LsonPath("pic")
+        private String article_video_card_cover;
+
+        @TimeFormat
+        @LsonPath("duration")
+        private String article_video_card_time;
+
+        @ViewFormat
+        @LsonPath("stat.view")
+        private String article_video_card_play;
+
+        @ViewFormat
+        @LsonPath("stat.danmaku")
+        private String article_video_card_danmaku;
+
+        @LsonPath("owner.name")
+        private String article_video_card_up_name;
+
+        @LsonCallMethod(timing = LsonCallMethod.CallMethodTiming.AFTER_DESERIALIZATION)
+        void initCardUrl()
         {
-            article_card_identity = identity;
-            article_card_url = "bilibili://video/" + videoCard.optString("bvid");
+            setCardUrl("bilibili://video/" + videoCardId);
+        }
 
-            article_video_card_id = String.valueOf(videoCard.optString("bvid"));
-            article_video_card_title = videoCard.optString("title");
-            article_video_card_cover = LruCacheUtil.getImageUrl(videoCard.optString("pic"));
-            article_video_card_time = DataProcessUtil.getMinFromSec(videoCard.optInt("duration"));
-
-            JSONObject stat = videoCard.has("stat") ? videoCard.optJSONObject("stat") : new JSONObject();
-            article_video_card_play = DataProcessUtil.getView(stat.optInt("view"));
-            article_video_card_danmaku = DataProcessUtil.getView(stat.optInt("danmaku"));
-
-            JSONObject up = videoCard.has("owner") ? videoCard.optJSONObject("owner") : new JSONObject();
-            article_video_card_up_name = up.optString("name");
+        public ArticleCardVideoCardModel(String identity)
+        {
+            setCardIdentity(identity);
         }
     }
 
-    public class ArticleBangumiCardModel extends ArticleCardModel implements Serializable
+    @Getter
+    @Setter
+    public static class ArticleCardBangumiCardModel extends ArticleCardBaseModel implements Serializable
     {
-        public String article_bangumi_card_id;
-        public String article_bangumi_card_title;
-        public String article_bangumi_card_cover;
-        public String article_bangumi_card_play;
-        public String article_bangumi_card_follow;
-        public String article_bangumi_card_type_name;
-        public String article_bangumi_card_score;
+        @LsonPath("season_id")
+        private String bangumiCardId;
 
-        ArticleBangumiCardModel(String identity, JSONObject bangumiCard)
+        @LsonPath("title")
+        private String bangumiCardTitle;
+
+        @ImageUrlFormat
+        @LsonPath("cover")
+        private String bangumiCardCover;
+
+        @ViewFormat
+        @LsonPath("play_count")
+        private String bangumiCardPlay;
+
+        @ViewFormat
+        @LsonPath("follow_count")
+        private String bangumiCardFollow;
+
+        @LsonPath("season_type_name")
+        private String bangumiCardTypeName;
+
+        @LsonPath("rating.score")
+        private String bangumiCardScore;
+
+        @LsonCallMethod(timing = LsonCallMethod.CallMethodTiming.AFTER_DESERIALIZATION)
+        private void initCardUrl()
         {
-            article_card_identity = identity;
-            article_card_url = "bilibili://bangumi/season/" + bangumiCard.optInt("season_id");
+            setCardUrl("bilibili://bangumi/season/" + bangumiCardId);
+        }
 
-            article_bangumi_card_id = String.valueOf(bangumiCard.optInt("season_id"));
-            article_bangumi_card_title = bangumiCard.optString("title");
-            article_bangumi_card_cover = LruCacheUtil.getImageUrl(bangumiCard.optString("cover"));
-            article_bangumi_card_play = DataProcessUtil.getView(bangumiCard.optInt("play_count"));
-            article_bangumi_card_follow = DataProcessUtil.getView(bangumiCard.optInt("follow_count"));
-            article_bangumi_card_type_name = bangumiCard.optString("season_type_name");
-            JSONObject score = bangumiCard.has("rating") ? bangumiCard.optJSONObject("rating") : new JSONObject();
-            article_bangumi_card_score = String.valueOf(score.optDouble("score"));
+        public ArticleCardBangumiCardModel(String identity)
+        {
+            setCardIdentity(identity);
         }
     }
 
-    public class ArticleArticleCardModel extends ArticleCardModel implements Serializable
+    @Getter
+    @Setter
+    public static class ArticleArticleCardCardModel extends ArticleCardBaseModel implements Serializable
     {
-        public String article_article_card_id;
-        public String article_article_card_title;
-        public String article_article_card_cover;
-        public String article_article_card_view;
-        public String article_article_card_reply;
-        public String article_article_card_up_name;
+        @LsonPath("id")
+        private String articleCardId;
 
-        ArticleArticleCardModel(String identity, JSONObject articleCard)
+        @LsonPath("title")
+        private String articleCardTitle;
+
+        @ImageUrlFormat
+        @LsonPath("image_urls[0]")
+        private String articleCardCover;
+
+        @ViewFormat
+        @LsonPath("stats.view")
+        private String articleCardView;
+
+        @ViewFormat
+        @LsonPath("stats.reply")
+        private String articleCardReply;
+
+        @LsonPath("author.name")
+        private String articleCardUpName;
+
+        @LsonCallMethod(timing = LsonCallMethod.CallMethodTiming.AFTER_DESERIALIZATION)
+        private void initCardUrl()
         {
-            article_card_identity = identity;
-            article_card_url = "bilibili://article/" + articleCard.optInt("id");
+            setCardUrl("bilibili://article/" + articleCardId);
+        }
 
-            article_article_card_id = String.valueOf(articleCard.optInt("id"));
-            article_article_card_title = articleCard.optString("title");
-            article_article_card_cover = articleCard.has("image_urls") ?
-                    LruCacheUtil.getImageUrl(articleCard.optJSONArray("image_urls").optString(0)) : "";
-
-            JSONObject stat = articleCard.has("stats") ? articleCard.optJSONObject("stats") : new JSONObject();
-            article_article_card_view = DataProcessUtil.getView(stat.optInt("view"));
-            article_article_card_reply = DataProcessUtil.getView(stat.optInt("reply"));
-
-            article_article_card_up_name = articleCard.has("author") ?
-                    articleCard.optJSONObject("author").optString("name") : "";
+        public ArticleArticleCardCardModel(String identity)
+        {
+            setCardIdentity(identity);
         }
     }
 
-    public class ArticleMusicCardModel extends ArticleCardModel implements Serializable
+    @Getter
+    @Setter
+    public static class ArticleCardMusicCardModel extends ArticleCardBaseModel implements Serializable
     {
-        public String article_music_card_id;
-        public String article_music_card_title;
-        public String article_music_card_cover;
-        public String article_music_card_play;
-        public String article_music_card_reply;
-        public String article_music_card_up_name;
+        @LsonPath("song_id")
+        private String musicCardId;
 
-        ArticleMusicCardModel(String identity, JSONObject musicCard)
+        @LsonPath("title")
+        private String musicCardTitle;
+
+        @ImageUrlFormat
+        @LsonPath("cover_url")
+        private String musicCardCover;
+
+        @ViewFormat
+        @LsonPath("play_num")
+        private String musicCardPlay;
+
+        @ViewFormat
+        @LsonPath("reply_num")
+        private String musicCardReply;
+
+        @LsonPath("up_name")
+        private String musicCardUpName;
+
+        @LsonCallMethod(timing = LsonCallMethod.CallMethodTiming.AFTER_DESERIALIZATION)
+        private void initCardUrl()
         {
-            article_card_identity = identity;
-            article_card_url = "bilibili://music/detail/" + musicCard.optInt("song_id");
+            setCardUrl("bilibili://music/detail/" + musicCardId);
+        }
 
-            article_music_card_id = String.valueOf(musicCard.optInt("song_id"));
-            article_music_card_title = musicCard.optString("title");
-            article_music_card_cover = LruCacheUtil.getImageUrl(musicCard.optString("cover_url"));
-            article_music_card_play = DataProcessUtil.getView(musicCard.optInt("play_num"));
-            article_music_card_reply = DataProcessUtil.getView(musicCard.optInt("reply_num"));
-            article_music_card_up_name = musicCard.optString("up_name");
+        public ArticleCardMusicCardModel(String identity)
+        {
+            setCardIdentity(identity);
         }
     }
 
-    public class ArticleTicketCardModel extends ArticleCardModel implements Serializable
+    @Getter
+    @Setter
+    public static class ArticleCardTicketCardModel extends ArticleCardBaseModel implements Serializable
     {
-        public String article_ticket_card_id;
-        public String article_ticket_card_title;
-        public String article_ticket_card_cover;
-        public String article_ticket_card_time;
-        public String article_ticket_card_location;
-        public String article_ticket_card_price;
+        @LsonPath("id")
+        private String ticketCardId;
 
-        ArticleTicketCardModel(String identity, JSONObject ticketCard)
+        @LsonPath("name")
+        private String ticketCardTitle;
+
+        @LsonAddPrefix("http:")
+        @ImageUrlFormat
+        @LsonPath("performance_image")
+        private String ticketCardCover;
+
+        @LsonDateFormat("yyyy/MM/dd")
+        @LsonPath("start_time")
+        private String ticketCardTime;
+
+        @LsonPath("city_name")
+        private String ticketCardLocationCity;
+
+        @LsonPath("venue_name")
+        private String ticketCardLocationVenue;
+
+        @LsonAddPrefix("¥")
+        @LsonPath("price_low")
+        private String ticketCardPrice;
+
+        @LsonCallMethod(timing = LsonCallMethod.CallMethodTiming.AFTER_DESERIALIZATION)
+        private void initCardUrl()
         {
-            article_card_identity = identity;
-            article_card_url = "bilibili://show/" + ticketCard.optInt("id");
+            setCardUrl("bilibili://show/" + ticketCardId);
+        }
 
-            article_ticket_card_id = String.valueOf(ticketCard.optInt("id"));
-            article_ticket_card_title = ticketCard.optString("name");
-            article_ticket_card_cover = LruCacheUtil.getImageUrl("http:" + ticketCard.optString("performance_image"));
-
-            SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
-            article_ticket_card_time = format.format(new Date(ticketCard.optInt("start_time") * 1000L));
-
-            article_ticket_card_location = ticketCard.optString("city_name") + " " + ticketCard.optString("venue_name");
-            article_ticket_card_price = "¥" + ticketCard.optInt("price_low");
+        public ArticleCardTicketCardModel(String identity)
+        {
+            setCardIdentity(identity);
         }
     }
 
-    public class ArticleShopCardModel extends ArticleCardModel implements Serializable
+    @Getter
+    @Setter
+    public static class ArticleCardShopCardModel extends ArticleCardBaseModel implements Serializable
     {
-        public String article_shop_card_id;
-        public String article_shop_card_title;
-        public String article_shop_card_cover;
-        public String article_shop_card_detail;
-        public String article_shop_card_price;
-        ArticleShopCardModel(String identity, JSONObject shopCard)
-        {
-            article_card_identity = identity;
-            article_card_url = "bilibili://mall/" + shopCard.optInt("itemsId");
+        @LsonPath("itemsId")
+        private String shopCardId;
 
-            article_shop_card_id = String.valueOf(shopCard.optInt("itemsId"));
-            article_shop_card_title = shopCard.optString("name");
-            article_shop_card_cover = shopCard.has("img") ?
-                    LruCacheUtil.getImageUrl("http:" + shopCard.optJSONArray("img").optString(0)) : "";
-            article_shop_card_detail = shopCard.optString("brief");
-            article_shop_card_price = "￥" + shopCard.optInt("price") / 100.0;
+        @LsonPath("name")
+        private String shopCardTitle;
+
+        @LsonAddPrefix("http:")
+        @ImageUrlFormat
+        @LsonPath("img[0]")
+        private String shopCardCover;
+
+        @LsonPath("brief")
+        private String shopCardDetail;
+
+        @LsonNumberOperations(operator = LsonNumberOperations.Operator.DIVISION, number = 100)
+        @LsonAddPrefix("￥")
+        @LsonPath(value = "price", annotationsOrder = {LsonNumberOperations.class, LsonAddPrefix.class})
+        private String shopCardPrice;
+
+        @LsonCallMethod(timing = LsonCallMethod.CallMethodTiming.AFTER_DESERIALIZATION)
+        private void initCardUrl()
+        {
+            setCardUrl("bilibili://mall/" + shopCardId);
+        }
+
+        public ArticleCardShopCardModel(String identity)
+        {
+            setCardIdentity(identity);
         }
     }
 
-    public class ArticleContainerCardModel extends ArticleCardModel implements Serializable
+    @Getter
+    @Setter
+    public static class ArticleCardContainerCardModel extends ArticleCardBaseModel implements Serializable
     {
-        public String article_container_card_id;
-        public String article_container_card_title;
-        public String article_container_card_cover;
-        public String article_container_card_detail;
-        public String article_container_card_author;
+        @LsonPath("id")
+        private String containerCardId;
 
-        ArticleContainerCardModel(String identity, JSONObject containerCard)
+        @LsonPath("title")
+        private String containerCardTitle;
+
+        @ImageUrlFormat
+        @LsonPath("vertical_cover")
+        private String containerCardCover;
+
+        @LsonPath("evaluate")
+        private String containerCardDetail;
+
+        @LsonPath("author[0]")
+        private String containerCardAuthor;
+
+        @LsonCallMethod(timing = LsonCallMethod.CallMethodTiming.AFTER_DESERIALIZATION)
+        private void initCardUrl()
         {
-            article_card_identity = identity;
-            article_card_url = "bilibili://manga/" + containerCard.optInt("id");
+            setCardUrl("bilibili://manga/" + containerCardId);
+        }
 
-            article_container_card_id = String.valueOf(containerCard.optInt("id"));
-            article_container_card_title = containerCard.optString("title");
-            article_container_card_cover = LruCacheUtil.getImageUrl(containerCard.optString("vertical_cover"));
-            article_container_card_detail = containerCard.optString("evaluate");
-            article_container_card_author = containerCard.has("author") ?
-                    containerCard.optJSONArray("author").optString(0) : "";
+        public ArticleCardContainerCardModel(String identity)
+        {
+            setCardIdentity(identity);
         }
     }
 
-    public class ArticleLiveCardModel extends ArticleCardModel implements Serializable
+    @Getter
+    @Setter
+    public static class ArticleCardLiveCardModel extends ArticleCardBaseModel implements Serializable
     {
-        public String article_live_card_id;
-        public String article_live_card_title;
-        public String article_live_card_cover;
-        public String article_live_card_area;
-        public int article_live_card_status;
-        public String article_live_card_online;
-        public String article_live_card_up_name;
-        ArticleLiveCardModel(String identity, JSONObject liveCard)
-        {
-            article_card_identity = identity;
-            article_card_url = "bilibili://live/" + liveCard.optInt("room_id");
+        @LsonPath("room_id")
+        public String liveCardId;
 
-            article_live_card_id = String.valueOf(liveCard.optInt("room_id"));
-            article_live_card_title = liveCard.optString("title");
-            article_live_card_cover = LruCacheUtil.getImageUrl(liveCard.optString("cover"));
-            article_live_card_area = liveCard.optString("area_v2_name");
-            article_live_card_status = liveCard.optInt("live_status");
-            article_live_card_online = String.valueOf(liveCard.optInt("online"));
-            article_live_card_up_name = liveCard.optString("uname");
+        @LsonPath("title")
+        public String liveCardTitle;
+
+        @ImageUrlFormat
+        @LsonPath("cover")
+        public String liveCardCover;
+
+        @LsonPath("area_v2_name")
+        public String liveCardArea;
+
+        @LsonPath("live_status")
+        public int liveCardStatus;
+
+        @ViewFormat
+        @LsonPath("online")
+        public String liveCardOnline;
+
+        @LsonPath("uname")
+        public String liveCardUpName;
+
+        @LsonCallMethod(timing = LsonCallMethod.CallMethodTiming.AFTER_DESERIALIZATION)
+        private void initCardUrl()
+        {
+            setCardUrl("bilibili://live/" + liveCardId);
+        }
+
+        public ArticleCardLiveCardModel(String identity)
+        {
+            setCardIdentity(identity);
         }
     }
 }
