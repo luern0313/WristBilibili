@@ -113,8 +113,7 @@
     <string name="bangumi_title_detail">%s详情</string>
     <string name="bangumi_title_reply">单%s评论</string>
     <string name="bangumi_detail_more">查看详情 ></string>
-    <string name="bangumi_control_follow_follow">追番</string>
-    <string name="bangumi_control_follow_unfollow">已追番</string>
+    <string name="bangumi_control_follow_unfollow">已%s</string>
     <string name="bangumi_control_cover">查看封面</string>
     <string name="bangumi_control_download_allow">缓存</string>
     <string name="bangumi_control_download_notallow">版权受限</string>

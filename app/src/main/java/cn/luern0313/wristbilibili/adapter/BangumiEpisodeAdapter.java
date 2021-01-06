@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import cn.luern0313.wristbilibili.R;
-import cn.luern0313.wristbilibili.models.bangumi.BangumiModel;
+import cn.luern0313.wristbilibili.models.BangumiModel;
 
 /**
  * 被 luern0313 创建于 2020/1/30.
@@ -19,10 +19,10 @@ import cn.luern0313.wristbilibili.models.bangumi.BangumiModel;
 
 public class BangumiEpisodeAdapter extends RecyclerView.Adapter<BangumiEpisodeAdapter.ViewHolder>
 {
-    private OnItemClickListener itemClickLitener;
-    private ArrayList<BangumiModel.BangumiEpisodeModel> bangumiEpisodeArrayList;
-    private BangumiModel bangumiModel;
-    private int mode;
+    private OnItemClickListener itemClickListener;
+    private final ArrayList<BangumiModel.BangumiEpisodeModel> bangumiEpisodeArrayList;
+    private final BangumiModel bangumiModel;
+    private final int mode;
 
     public BangumiEpisodeAdapter(ArrayList<BangumiModel.BangumiEpisodeModel> bangumiEpisodeArrayList, BangumiModel bangumiModel, int mode)
     {
@@ -43,22 +43,12 @@ public class BangumiEpisodeAdapter extends RecyclerView.Adapter<BangumiEpisodeAd
     public void onBindViewHolder(ViewHolder holder, final int position)
     {
         BangumiModel.BangumiEpisodeModel bangumiEpisodeModel = bangumiEpisodeArrayList.get(position);
-        holder.text.setText(mode == 1 ? "第" + (bangumiEpisodeModel.position + 1) + bangumiModel.bangumi_type_ep + "\n" +
-                bangumiEpisodeModel.bangumi_episode_title_long : (bangumiEpisodeModel.bangumi_episode_title_long.equals("") ?
-                bangumiEpisodeModel.bangumi_episode_title : bangumiEpisodeModel.bangumi_episode_title_long));
-        holder.vip.setVisibility(bangumiEpisodeModel.bangumi_episode_vip.equals("") ? View.GONE : View.VISIBLE);
-        holder.lay.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                itemClickLitener.onItemClick(v, position);
-            }
-        });
+        holder.text.setText(BangumiModel.getTitle(mode, bangumiModel, bangumiEpisodeModel, "\n"));
+        holder.vip.setVisibility(bangumiEpisodeModel.getEpisodeVip().equals("") ? View.GONE : View.VISIBLE);
+        holder.lay.setOnClickListener(v -> itemClickListener.onItemClick(v, position));
 
-        if(bangumiModel.bangumi_user_progress_mode == mode && bangumiModel.bangumi_user_progress_position == position)
+        if(bangumiModel.getUserProgressMode() == mode && bangumiModel.getUserProgressPosition() == position)
             holder.lay.setBackgroundResource(R.drawable.selector_bg_bangumi_episode_now);
-
         else
             holder.lay.setBackgroundResource(R.drawable.selector_bg_bangumi_episode);
     }
@@ -71,7 +61,7 @@ public class BangumiEpisodeAdapter extends RecyclerView.Adapter<BangumiEpisodeAd
 
     public void setOnItemClickListener(OnItemClickListener mOnItemClickListener)
     {
-        this.itemClickLitener = mOnItemClickListener;
+        this.itemClickListener = mOnItemClickListener;
     }
 
     public interface OnItemClickListener

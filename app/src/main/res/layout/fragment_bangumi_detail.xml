@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    tools:ignore="RtlSymmetry,SmallSp,ContentDescription">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -20,6 +20,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="23dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginRight="23dp"
                 android:textColor="?attr/colorTitle"
                 android:textStyle="bold"
@@ -29,14 +30,14 @@
                 android:id="@+id/bgm_detail_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="23dp"
-                android:paddingRight="23dp"
+                android:background="?android:attr/selectableItemBackground"
                 android:clickable="true"
                 android:focusable="true"
                 android:orientation="horizontal"
-                android:paddingBottom="4dp"
+                android:paddingLeft="23dp"
                 android:paddingTop="4dp"
-                android:background="?android:attr/selectableItemBackground">
+                android:paddingRight="23dp"
+                android:paddingBottom="4dp">
 
                 <TextView
                     android:id="@+id/bgm_detail_score"
@@ -104,8 +105,8 @@
                         android:layout_marginEnd="2dp"
                         android:background="?android:attr/selectableItemBackground"
                         android:clickable="true"
-                        android:focusable="true"
                         android:descendantFocusability="blocksDescendants"
+                        android:focusable="true"
                         android:gravity="center_horizontal"
                         android:orientation="vertical"
                         android:padding="3dp">
@@ -121,7 +122,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
-                            android:text="@string/bangumi_control_follow_follow"
                             android:textSize="12sp" />
 
                     </LinearLayout>
@@ -133,8 +133,8 @@
                         android:layout_marginEnd="2dp"
                         android:background="?android:attr/selectableItemBackground"
                         android:clickable="true"
-                        android:focusable="true"
                         android:descendantFocusability="blocksDescendants"
+                        android:focusable="true"
                         android:gravity="center_horizontal"
                         android:orientation="vertical"
                         android:padding="3dp">
@@ -160,8 +160,8 @@
                         android:layout_marginEnd="2dp"
                         android:background="?android:attr/selectableItemBackground"
                         android:clickable="true"
-                        android:focusable="true"
                         android:descendantFocusability="blocksDescendants"
+                        android:focusable="true"
                         android:gravity="center_horizontal"
                         android:orientation="vertical"
                         android:padding="3dp">
@@ -189,8 +189,8 @@
                         android:layout_marginEnd="20dp"
                         android:background="?android:attr/selectableItemBackground"
                         android:clickable="true"
-                        android:focusable="true"
                         android:descendantFocusability="blocksDescendants"
+                        android:focusable="true"
                         android:gravity="center_horizontal"
                         android:orientation="vertical"
                         android:padding="3dp">
