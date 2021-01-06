@@ -107,7 +107,7 @@ public class WatchlaterAdapter extends BaseAdapter
         return convertView;
     }
 
-    class ViewHolder
+    private static class ViewHolder
     {
         TextView title;
         ImageView img;
@@ -118,10 +118,8 @@ public class WatchlaterAdapter extends BaseAdapter
 
     private BitmapDrawable setImageFormWeb(String url)
     {
-        if(mImageCache.get(url) != null)
-        {
+        if(url != null && mImageCache.get(url) != null)
             return mImageCache.get(url);
-        }
         else
         {
             ImageTaskUtil it = new ImageTaskUtil(listView);

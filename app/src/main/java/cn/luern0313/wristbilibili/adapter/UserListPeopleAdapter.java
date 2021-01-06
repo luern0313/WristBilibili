@@ -23,13 +23,13 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 public class UserListPeopleAdapter extends BaseAdapter
 {
-    private LayoutInflater mInflater;
+    private final LayoutInflater mInflater;
 
-    private UserListPeopleAdapterListener userListPeopleAdapterListener;
-    private int mode;
+    private final UserListPeopleAdapterListener userListPeopleAdapterListener;
+    private final int mode;
 
-    private ArrayList<UserListPeopleModel> userListPeopleModelArrayList;
-    private ListView listView;
+    private final ArrayList<UserListPeopleModel> userListPeopleModelArrayList;
+    private final ListView listView;
 
     public UserListPeopleAdapter(LayoutInflater inflater, ArrayList<UserListPeopleModel> userListPeopleModelArrayList, int mode, ListView listView, UserListPeopleAdapterListener userListPeopleAdapterListener)
     {
@@ -120,7 +120,7 @@ public class UserListPeopleAdapter extends BaseAdapter
         return convertView;
     }
 
-    class ViewHolder
+    private static class ViewHolder
     {
         RelativeLayout lay;
         CircleImageView img;
@@ -131,22 +131,13 @@ public class UserListPeopleAdapter extends BaseAdapter
 
     private View.OnClickListener onViewClick(final int position)
     {
-        return new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                userListPeopleAdapterListener.onUserListPeopleAdapterClick(v.getId(), position);
-            }
-        };
+        return v -> userListPeopleAdapterListener.onUserListPeopleAdapterClick(v.getId(), position);
     }
 
     private BitmapDrawable setImageFormWeb(String url)
     {
-        if(LruCacheUtil.getLruCache().get(url) != null)
-        {
+        if(url != null && LruCacheUtil.getLruCache().get(url) != null)
             return LruCacheUtil.getLruCache().get(url);
-        }
         else
         {
             ImageTaskUtil it = new ImageTaskUtil(listView);

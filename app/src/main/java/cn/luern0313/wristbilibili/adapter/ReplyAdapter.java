@@ -295,45 +295,24 @@ public class ReplyAdapter extends BaseAdapter
         }
         else if(type == 1 || type == 2)
         {
-            convertView.findViewById(R.id.item_reply_sort_change).setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View v)
-                {
-                    replyAdapterListener.onSortModeChange();
-                }
-            });
+            convertView.findViewById(R.id.item_reply_sort_change).setOnClickListener(v -> replyAdapterListener.onSortModeChange());
         }
         else if(type == 3)
         {
             if(isHasRoot)
-                ((TextView) convertView.findViewById(R.id.reply_toolbar_sendreply)).setText("发送回复");
-            ((TextView) convertView.findViewById(R.id.reply_toolbar_total)).setText("共" + DataProcessUtil.getView(replyCount) + "条" + (isHasRoot ? "回复" : "评论"));
-            convertView.findViewById(R.id.reply_toolbar_sendreply).setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View v)
-                {
-                    replyAdapterListener.onClick(v.getId(), -1, 1);
-                }
-            });
+                ((TextView) convertView.findViewById(R.id.reply_toolbar_sendreply)).setText(ctx.getString(R.string.reply_toolbar_send));
+            ((TextView) convertView.findViewById(R.id.reply_toolbar_total)).setText(String.format(ctx.getString(isHasRoot ? R.string.reply_toolbar_total_reply : R.string.reply_toolbar_total_comment), DataProcessUtil.getView(replyCount)));
+            convertView.findViewById(R.id.reply_toolbar_sendreply).setOnClickListener(v -> replyAdapterListener.onClick(v.getId(), -1, 1));
         }
         return convertView;
     }
 
     private View.OnClickListener onViewClick(final int position)
     {
-        return new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                replyAdapterListener.onClick(v.getId(), position, 0);
-            }
-        };
+        return v -> replyAdapterListener.onClick(v.getId(), position, 0);
     }
 
-    class ViewHolder
+    private static class ViewHolder
     {
         ImageView reply_img;
         ImageView reply_off_1;
@@ -361,10 +340,8 @@ public class ReplyAdapter extends BaseAdapter
 
     private BitmapDrawable setImageFormWeb(String url)
     {
-        if(LruCacheUtil.getLruCache().get(url) != null)
-        {
+        if(url != null && LruCacheUtil.getLruCache().get(url) != null)
             return LruCacheUtil.getLruCache().get(url);
-        }
         else
         {
             ImageTaskUtil it = new ImageTaskUtil(listView);

@@ -532,10 +532,8 @@ public class ArticleAdapter extends BaseAdapter
 
     private BitmapDrawable setImageFormWeb(String url)
     {
-        if(LruCacheUtil.getLruCache().get(url) != null)
-        {
+        if(url != null && LruCacheUtil.getLruCache().get(url) != null)
             return LruCacheUtil.getLruCache().get(url);
-        }
         else
         {
             ImageTaskUtil it = new ImageTaskUtil(listView);

@@ -104,7 +104,7 @@ public class ListVideoAdapter extends BaseAdapter
         return convertView;
     }
 
-    class ViewHolder
+    private static class ViewHolder
     {
         RelativeLayout lay;
         ImageView img;
@@ -116,35 +116,21 @@ public class ListVideoAdapter extends BaseAdapter
 
     private View.OnClickListener onViewClick(final int position)
     {
-        return new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                listVideoAdapterListener.onListVideoAdapterClick(v.getId(), position);
-            }
-        };
+        return v -> listVideoAdapterListener.onListVideoAdapterClick(v.getId(), position);
     }
 
     private View.OnLongClickListener onViewLongClick(final int position)
     {
-        return new View.OnLongClickListener()
-        {
-            @Override
-            public boolean onLongClick(View v)
-            {
-                listVideoAdapterListener.onListVideoAdapterLongClick(v.getId(), position);
-                return true;
-            }
+        return v -> {
+            listVideoAdapterListener.onListVideoAdapterLongClick(v.getId(), position);
+            return true;
         };
     }
 
     private BitmapDrawable setImageFormWeb(String url)
     {
-        if(LruCacheUtil.getLruCache().get(url) != null)
-        {
+        if(url != null && LruCacheUtil.getLruCache().get(url) != null)
             return LruCacheUtil.getLruCache().get(url);
-        }
         else
         {
             ImageTaskUtil it = new ImageTaskUtil(listView);

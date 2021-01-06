@@ -142,17 +142,10 @@ public class RankingAdapter extends BaseAdapter
 
     private View.OnClickListener onViewClick(final int position)
     {
-        return new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                rankingAdapterListener.onClick(v.getId(), position);
-            }
-        };
+        return v -> rankingAdapterListener.onClick(v.getId(), position);
     }
 
-    class ViewHolder
+    private static class ViewHolder
     {
         LinearLayout layout;
         RelativeLayout relativeLayout;
@@ -175,10 +168,8 @@ public class RankingAdapter extends BaseAdapter
 
     private BitmapDrawable setImageFormWeb(String url)
     {
-        if(LruCacheUtil.getLruCache().get(url) != null)
-        {
+        if(url != null && LruCacheUtil.getLruCache().get(url) != null)
             return LruCacheUtil.getLruCache().get(url);
-        }
         else
         {
             ImageTaskUtil it = new ImageTaskUtil(listView);

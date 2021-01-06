@@ -54,14 +54,7 @@ public class DynamicAlbumImgAdapter extends RecyclerView.Adapter<DynamicAlbumImg
     public void onBindViewHolder(@NonNull final DynamicAlbumImgAdapter.ViewHolder holder, final int position)
     {
         holder.imageView.setImageResource(R.drawable.img_default_animation);
-        holder.imageView.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                dynamicAlbumImgAdapterListener.onClick(position);
-            }
-        });
+        holder.imageView.setOnClickListener(v -> dynamicAlbumImgAdapterListener.onClick(position));
 
         holder.imageView.setTag(urlArrayList.get(position));
         BitmapDrawable b = setImageFormWeb(urlArrayList.get(position));
@@ -77,9 +70,7 @@ public class DynamicAlbumImgAdapter extends RecyclerView.Adapter<DynamicAlbumImg
     private BitmapDrawable setImageFormWeb(String url)
     {
         if(url != null && LruCacheUtil.getLruCache().get(url) != null)
-        {
             return LruCacheUtil.getLruCache().get(url);
-        }
         else
         {
             ImageTaskUtil it = new ImageTaskUtil(recyclerView);

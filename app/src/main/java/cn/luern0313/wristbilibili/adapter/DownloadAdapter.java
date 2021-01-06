@@ -228,7 +228,7 @@ public class DownloadAdapter extends BaseAdapter
         return convertView;
     }
 
-    class ViewHolder
+    private static class ViewHolder
     {
         RelativeLayout lay;
         ImageView img;

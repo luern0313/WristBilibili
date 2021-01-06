@@ -39,14 +39,14 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class DynamicAdapter extends BaseAdapter
 {
-    private Context ctx;
-    private LayoutInflater mInflater;
+    private final Context ctx;
+    private final LayoutInflater mInflater;
 
-    private DynamicAdapterListener dynamicAdapterListener;
+    private final DynamicAdapterListener dynamicAdapterListener;
 
-    private ArrayList<DynamicModel> dynamicModelArrayList;
-    private View view;
-    private int dynamicWidth;
+    private final ArrayList<DynamicModel> dynamicModelArrayList;
+    private final View view;
+    private final int dynamicWidth;
 
     public DynamicAdapter(LayoutInflater inflater, ArrayList<DynamicModel> dynamicModelArrayList, View view, int dynamicWidth, DynamicAdapterListener dynamicAdapterListener)
     {
@@ -134,7 +134,7 @@ public class DynamicAdapter extends BaseAdapter
             View view = mInflater.inflate(R.layout.widget_dynamic_unknown, null);
             ((LinearLayout) convertView.findViewById(viewId)).removeAllViewsInLayout();
             ((LinearLayout) convertView.findViewById(viewId)).addView(view);
-            viewHolder = vh.new ViewHolderUnknown(convertView, dynamicModel.getCardType());
+            viewHolder = new ViewHolder.ViewHolderUnknown(convertView, dynamicModel.getCardType());
             convertView.setTag(viewHolder);
             return viewHolder;
         }
@@ -145,7 +145,7 @@ public class DynamicAdapter extends BaseAdapter
                 View view = mInflater.inflate(R.layout.widget_dynamic_share, null);
                 ((LinearLayout) convertView.findViewById(viewId)).removeAllViewsInLayout();
                 ((LinearLayout) convertView.findViewById(viewId)).addView(view);
-                viewHolder = vh.new ViewHolderShare(convertView, dynamicModel.getCardType());
+                viewHolder = new ViewHolder.ViewHolderShare(convertView, dynamicModel.getCardType());
                 convertView.setTag(viewHolder);
                 break;
             }
@@ -154,7 +154,7 @@ public class DynamicAdapter extends BaseAdapter
                 View view = mInflater.inflate(R.layout.widget_dynamic_album, null);
                 ((LinearLayout) convertView.findViewById(viewId)).removeAllViewsInLayout();
                 ((LinearLayout) convertView.findViewById(viewId)).addView(view);
-                viewHolder = vh.new ViewHolderAlbum(convertView, dynamicModel.getCardType());
+                viewHolder = new ViewHolder.ViewHolderAlbum(convertView, dynamicModel.getCardType());
                 convertView.setTag(viewHolder);
                 break;
             }
@@ -163,7 +163,7 @@ public class DynamicAdapter extends BaseAdapter
                 View view = mInflater.inflate(R.layout.widget_dynamic_text, null);
                 ((LinearLayout) convertView.findViewById(viewId)).removeAllViewsInLayout();
                 ((LinearLayout) convertView.findViewById(viewId)).addView(view);
-                viewHolder = vh.new ViewHolderText(convertView, dynamicModel.getCardType());
+                viewHolder = new ViewHolder.ViewHolderText(convertView, dynamicModel.getCardType());
                 convertView.setTag(viewHolder);
                 break;
             }
@@ -172,7 +172,7 @@ public class DynamicAdapter extends BaseAdapter
                 View view = mInflater.inflate(R.layout.widget_dynamic_video, null);
                 ((LinearLayout) convertView.findViewById(viewId)).removeAllViewsInLayout();
                 ((LinearLayout) convertView.findViewById(viewId)).addView(view);
-                viewHolder = vh.new ViewHolderVideo(convertView, dynamicModel.getCardType());
+                viewHolder = new ViewHolder.ViewHolderVideo(convertView, dynamicModel.getCardType());
                 convertView.setTag(viewHolder);
                 break;
             }
@@ -181,7 +181,7 @@ public class DynamicAdapter extends BaseAdapter
                 View view = mInflater.inflate(R.layout.widget_dynamic_article, null);
                 ((LinearLayout) convertView.findViewById(viewId)).removeAllViewsInLayout();
                 ((LinearLayout) convertView.findViewById(viewId)).addView(view);
-                viewHolder = vh.new ViewHolderArticle(convertView, dynamicModel.getCardType());
+                viewHolder = new ViewHolder.ViewHolderArticle(convertView, dynamicModel.getCardType());
                 convertView.setTag(viewHolder);
                 break;
             }
@@ -193,7 +193,7 @@ public class DynamicAdapter extends BaseAdapter
                 View view = mInflater.inflate(R.layout.widget_dynamic_bangumi, null);
                 ((LinearLayout) convertView.findViewById(viewId)).removeAllViewsInLayout();
                 ((LinearLayout) convertView.findViewById(viewId)).addView(view);
-                viewHolder = vh.new ViewHolderBangumi(convertView, dynamicModel.getCardType());
+                viewHolder = new ViewHolder.ViewHolderBangumi(convertView, dynamicModel.getCardType());
                 convertView.setTag(viewHolder);
                 break;
             }
@@ -202,7 +202,7 @@ public class DynamicAdapter extends BaseAdapter
                 View view = mInflater.inflate(R.layout.widget_dynamic_url, null);
                 ((LinearLayout) convertView.findViewById(viewId)).removeAllViewsInLayout();
                 ((LinearLayout) convertView.findViewById(viewId)).addView(view);
-                viewHolder = vh.new ViewHolderUrl(convertView, dynamicModel.getCardType());
+                viewHolder = new ViewHolder.ViewHolderUrl(convertView, dynamicModel.getCardType());
                 convertView.setTag(viewHolder);
                 break;
             }
@@ -211,7 +211,7 @@ public class DynamicAdapter extends BaseAdapter
                 View view = mInflater.inflate(R.layout.widget_dynamic_live, null);
                 ((LinearLayout) convertView.findViewById(viewId)).removeAllViewsInLayout();
                 ((LinearLayout) convertView.findViewById(viewId)).addView(view);
-                viewHolder = vh.new ViewHolderLive(convertView, dynamicModel.getCardType());
+                viewHolder = new ViewHolder.ViewHolderLive(convertView, dynamicModel.getCardType());
                 convertView.setTag(viewHolder);
                 break;
             }
@@ -220,7 +220,7 @@ public class DynamicAdapter extends BaseAdapter
                 View view = mInflater.inflate(R.layout.widget_dynamic_favor, null);
                 ((LinearLayout) convertView.findViewById(viewId)).removeAllViewsInLayout();
                 ((LinearLayout) convertView.findViewById(viewId)).addView(view);
-                viewHolder = vh.new ViewHolderFavor(convertView, dynamicModel.getCardType());
+                viewHolder = new ViewHolder.ViewHolderFavor(convertView, dynamicModel.getCardType());
                 convertView.setTag(viewHolder);
                 break;
             }
@@ -229,7 +229,7 @@ public class DynamicAdapter extends BaseAdapter
                 View view = mInflater.inflate(R.layout.widget_dynamic_unknown, null);
                 ((LinearLayout) convertView.findViewById(viewId)).removeAllViewsInLayout();
                 ((LinearLayout) convertView.findViewById(viewId)).addView(view);
-                viewHolder = vh.new ViewHolderUnknown(convertView, dynamicModel.getCardType());
+                viewHolder = new ViewHolder.ViewHolderUnknown(convertView, dynamicModel.getCardType());
                 convertView.setTag(viewHolder);
                 break;
             }
@@ -315,17 +315,12 @@ public class DynamicAdapter extends BaseAdapter
             viewHolder.album_text.setClickable(false);
             viewHolder.album_text.setLongClickable(false);
 
-            DynamicAlbumImgAdapter.DynamicAlbumImgAdapterListener dynamicAlbumImgAdapterListener = new DynamicAlbumImgAdapter.DynamicAlbumImgAdapterListener()
-            {
-                @Override
-                public void onClick(int position)
-                {
-                    Intent intent = new Intent(ctx, ImgActivity.class);
-                    intent.putExtra("imgUrl", dynamicModel.getAlbumImg().toArray(new String[]{}));
-                    intent.putExtra("position", position);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    ctx.startActivity(intent);
-                }
+            DynamicAlbumImgAdapter.DynamicAlbumImgAdapterListener dynamicAlbumImgAdapterListener = position1 -> {
+                Intent intent = new Intent(ctx, ImgActivity.class);
+                intent.putExtra("imgUrl", dynamicModel.getAlbumImg().toArray(new String[]{}));
+                intent.putExtra("position", position1);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                ctx.startActivity(intent);
             };
             LinearLayoutManager layoutManager = new LinearLayoutManager(ctx);
             layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -715,9 +710,7 @@ public class DynamicAdapter extends BaseAdapter
     private BitmapDrawable setImageFormWeb(String url)
     {
         if(url != null && LruCacheUtil.getLruCache().get(url) != null)
-        {
             return LruCacheUtil.getLruCache().get(url);
-        }
         else
         {
             ImageTaskUtil it = new ImageTaskUtil(view);
@@ -728,17 +721,10 @@ public class DynamicAdapter extends BaseAdapter
 
     private View.OnClickListener onViewClick(final int position, final boolean isShared)
     {
-        return new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                dynamicAdapterListener.onClick(v.getId(), position, isShared);
-            }
-        };
+        return v -> dynamicAdapterListener.onClick(v.getId(), position, isShared);
     }
 
-    public class ViewHolder
+    public static class ViewHolder
     {
         int type;
         RelativeLayout dynamic_lay;
@@ -778,7 +764,7 @@ public class DynamicAdapter extends BaseAdapter
             dynamic_like_text = view.findViewById(R.id.item_dynamic_like);
         }
 
-        class ViewHolderShare extends ViewHolder
+        private static class ViewHolderShare extends ViewHolder
         {
             ExpandableTextView share_dynamic;
             LinearLayout share_share;
@@ -790,7 +776,7 @@ public class DynamicAdapter extends BaseAdapter
             }
         }
 
-        class ViewHolderText extends ViewHolder
+        private static class ViewHolderText extends ViewHolder
         {
             TextView text_author;
             ExpandableTextView text_text;
@@ -802,7 +788,7 @@ public class DynamicAdapter extends BaseAdapter
             }
         }
 
-        class ViewHolderAlbum extends ViewHolder
+        private static class ViewHolderAlbum extends ViewHolder
         {
             TextView album_author;
             ExpandableTextView album_text;
@@ -816,7 +802,7 @@ public class DynamicAdapter extends BaseAdapter
             }
         }
 
-        class ViewHolderVideo extends ViewHolder
+        private static class ViewHolderVideo extends ViewHolder
         {
             LinearLayout video_author_lay;
             CircleImageView video_author_img;
@@ -838,7 +824,7 @@ public class DynamicAdapter extends BaseAdapter
             }
         }
 
-        class ViewHolderArticle extends ViewHolder
+        private static class ViewHolderArticle extends ViewHolder
         {
             LinearLayout article_author_lay;
             CircleImageView article_author_img;
@@ -862,7 +848,7 @@ public class DynamicAdapter extends BaseAdapter
             }
         }
 
-        class ViewHolderBangumi extends ViewHolder
+        private static class ViewHolderBangumi extends ViewHolder
         {
             TextView bangumi_author;
             ImageView bangumi_img;
@@ -878,7 +864,7 @@ public class DynamicAdapter extends BaseAdapter
             }
         }
 
-        class ViewHolderUrl extends ViewHolder
+        private static class ViewHolderUrl extends ViewHolder
         {
             TextView url_author;
             ExpandableTextView url_dynamic;
@@ -898,7 +884,7 @@ public class DynamicAdapter extends BaseAdapter
             }
         }
 
-        class ViewHolderLive extends ViewHolder
+        private static class ViewHolderLive extends ViewHolder
         {
             LinearLayout live_author_lay;
             CircleImageView live_author_img;
@@ -922,7 +908,7 @@ public class DynamicAdapter extends BaseAdapter
             }
         }
 
-        class ViewHolderFavor extends ViewHolder
+        private static class ViewHolderFavor extends ViewHolder
         {
             LinearLayout favor_author_lay;
             CircleImageView favor_author_img;
@@ -942,7 +928,7 @@ public class DynamicAdapter extends BaseAdapter
             }
         }
 
-        class ViewHolderUnknown extends ViewHolder
+        private static class ViewHolderUnknown extends ViewHolder
         {
             TextView unknown_tips;
             ViewHolderUnknown(View view, int type)

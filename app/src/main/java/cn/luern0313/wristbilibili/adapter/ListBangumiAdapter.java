@@ -103,7 +103,7 @@ public class ListBangumiAdapter extends BaseAdapter
         return convertView;
     }
 
-    class ViewHolder
+    private static class ViewHolder
     {
         RelativeLayout lay;
         ImageView cover;
@@ -116,21 +116,13 @@ public class ListBangumiAdapter extends BaseAdapter
 
     private View.OnClickListener onViewClick(final int position)
     {
-        return new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                listBangumiAdapterListener.onListBangumiAdapterClick(v.getId(), position);
-            }
-        };
+        return v -> listBangumiAdapterListener.onListBangumiAdapterClick(v.getId(), position);
     }
 
     private BitmapDrawable setImageFormWeb(String url)
     {
-        if(url == null) {
+        if(url == null)
             return null;
-        }
         else
         {
             BitmapDrawable cache = LruCacheUtil.getLruCache().get(url);

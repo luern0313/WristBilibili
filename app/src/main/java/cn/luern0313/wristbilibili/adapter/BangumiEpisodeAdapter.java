@@ -79,7 +79,7 @@ public class BangumiEpisodeAdapter extends RecyclerView.Adapter<BangumiEpisodeAd
         void onItemClick(View view, int position);
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder
+    public static class ViewHolder extends RecyclerView.ViewHolder
     {
         RelativeLayout lay;
         TextView text;

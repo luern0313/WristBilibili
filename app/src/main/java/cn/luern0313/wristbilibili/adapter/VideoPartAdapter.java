@@ -63,7 +63,7 @@ public class VideoPartAdapter extends RecyclerView.Adapter<VideoPartAdapter.View
         this.videoPartListener = videoPartListener;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder
+    public static class ViewHolder extends RecyclerView.ViewHolder
     {
         RelativeLayout lay;
         TextView text;

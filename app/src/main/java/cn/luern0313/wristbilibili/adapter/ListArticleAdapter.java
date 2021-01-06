@@ -127,7 +127,7 @@ public class ListArticleAdapter extends BaseAdapter
         return convertView;
     }
 
-    class ViewHolder
+    private static class ViewHolder
     {
         RelativeLayout lay;
         ImageView img1;
@@ -142,35 +142,21 @@ public class ListArticleAdapter extends BaseAdapter
 
     private View.OnClickListener onViewClick(final int position)
     {
-        return new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                listArticleAdapterListener.onListArticleAdapterClick(v.getId(), position);
-            }
-        };
+        return v -> listArticleAdapterListener.onListArticleAdapterClick(v.getId(), position);
     }
 
     private View.OnLongClickListener onViewLongClick(final int position)
     {
-        return new View.OnLongClickListener()
-        {
-            @Override
-            public boolean onLongClick(View v)
-            {
-                listArticleAdapterListener.onListArticleAdapterLongClick(v.getId(), position);
-                return true;
-            }
+        return v -> {
+            listArticleAdapterListener.onListArticleAdapterLongClick(v.getId(), position);
+            return true;
         };
     }
 
     private BitmapDrawable setImageFormWeb(String url)
     {
-        if(LruCacheUtil.getLruCache().get(url) != null)
-        {
+        if(url != null && LruCacheUtil.getLruCache().get(url) != null)
             return LruCacheUtil.getLruCache().get(url);
-        }
         else
         {
             ImageTaskUtil it = new ImageTaskUtil(listView);

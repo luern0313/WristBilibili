@@ -144,7 +144,7 @@ public class FavorBoxAdapter extends BaseAdapter
         return convertView;
     }
 
-    class ViewHolder
+    private static class ViewHolder
     {
         RelativeLayout lay;
         ImageView img;
@@ -156,10 +156,8 @@ public class FavorBoxAdapter extends BaseAdapter
 
     private BitmapDrawable setImageFormWeb(String url)
     {
-        if(mImageCache.get(url) != null)
-        {
+        if(url != null && mImageCache.get(url) != null)
             return mImageCache.get(url);
-        }
         else
         {
             ImageTaskUtil it = new ImageTaskUtil(listView);
@@ -170,14 +168,7 @@ public class FavorBoxAdapter extends BaseAdapter
 
     private View.OnClickListener onViewClick(final int position)
     {
-        return new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                favorBoxAdapterListener.onClick(v.getId(), position);
-            }
-        };
+        return v -> favorBoxAdapterListener.onClick(v.getId(), position);
     }
 
     public interface FavorBoxAdapterListener

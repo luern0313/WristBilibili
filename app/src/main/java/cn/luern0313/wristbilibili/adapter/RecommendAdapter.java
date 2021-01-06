@@ -62,7 +62,7 @@ public class RecommendAdapter extends BaseAdapter
     public int getViewTypeCount()
     {
         return 2;
-    };
+    }
 
     @Override
     public int getItemViewType(int position)
@@ -146,17 +146,10 @@ public class RecommendAdapter extends BaseAdapter
 
     private View.OnClickListener onViewClick(final int position)
     {
-        return new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                recommendAdapterListener.onClick(v.getId(), position);
-            }
-        };
+        return v -> recommendAdapterListener.onClick(v.getId(), position);
     }
 
-    class ViewHolder
+    private static class ViewHolder
     {
         RelativeLayout layout;
         ImageView video_img;
@@ -170,10 +163,8 @@ public class RecommendAdapter extends BaseAdapter
 
     private BitmapDrawable setImageFormWeb(String url)
     {
-        if(LruCacheUtil.getLruCache().get(url) != null)
-        {
+        if(url != null && LruCacheUtil.getLruCache().get(url) != null)
             return LruCacheUtil.getLruCache().get(url);
-        }
         else
         {
             ImageTaskUtil it = new ImageTaskUtil(listView);
