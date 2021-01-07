@@ -71,9 +71,16 @@
     <string name="animation_timeline_update">更新至%s</string>
     <string name="animation_timeline_date">%s %s</string>
 
+    <string name="reply_toolbar_send">发送回复</string>
+    <string name="reply_toolbar_total_reply">共%s条回复</string>
+    <string name="reply_toolbar_total_comment">共%s条评论</string>
+    
     <string name="reply_description_head">用户头像</string>
     <string name="reply_description_off_1">个人认证</string>
     <string name="reply_description_off_2">企业认证</string>
+    <string name="reply_sore_sign_hot">热门评论</string>
+    <string name="reply_sore_sign_time">最新评论</string>
+    <string name="reply_sore_change">切换</string>
     <string name="reply_description_report">举报</string>
     <string name="reply_description_reply">评论</string>
     <string name="reply_description_dislike">点踩</string>

@@ -1,14 +1,15 @@
 package cn.luern0313.wristbilibili.api;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import cn.luern0313.lson.LsonUtil;
+import cn.luern0313.lson.element.LsonArray;
+import cn.luern0313.lson.element.LsonObject;
+import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.models.ReplyModel;
+import cn.luern0313.wristbilibili.util.MyApplication;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
@@ -20,15 +21,15 @@ import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
 public class ReplyApi
 {
-    private String csrf;
-    private String oid;
-    private String type;
+    private final String csrf;
+    private final String oid;
+    private final String type;
 
     public ArrayList<ReplyModel> replyArrayList = new ArrayList<>();
     public int replyCount;
     public boolean replyIsShowFloor;
     public boolean replyIsEnd;
-    private ArrayList<String> webHeaders;
+    private final ArrayList<String> webHeaders;
 
     public static HashMap<Integer, String> typeMap = new HashMap<Integer, String>()
     {{
@@ -53,7 +54,7 @@ public class ReplyApi
         this.csrf = SharedPreferencesUtil.getString(SharedPreferencesUtil.csrf, "");
         this.oid = oid;
         this.type = type;
-        webHeaders = new ArrayList<String>(){{
+        this.webHeaders = new ArrayList<String>(){{
             add("Cookie"); add(SharedPreferencesUtil.getString(SharedPreferencesUtil.cookies, ""));
             add("Referer"); add("https://www.bilibili.com/");
             add("User-Agent"); add(ConfInfoApi.USER_AGENT_WEB);
@@ -67,78 +68,65 @@ public class ReplyApi
 
     public int getReply(int page, String sort, int limit, ReplyModel root) throws IOException
     {
-        try
+        String url = "https://api.bilibili.com/x/v2" + (root == null ? "" : "/reply") + "/reply?pn=" + page + "&type=" + type + "&oid=" + oid + "&sort=" + sort + (root == null ? "" : ("&root=" + root.getId()));
+        LsonObject result = LsonUtil.parseAsObject(NetWorkUtil.get(url, webHeaders).body().string());
+        if(result.getInt("code") == 0)
         {
-            String url = "https://api.bilibili.com/x/v2" + (root == null ? "" : "/reply") + "/reply?pn=" + page + "&type=" + type + "&oid=" + oid + "&sort=" + sort + (root == null ? "" : ("&root=" + root.reply_id));
-            JSONObject result = new JSONObject(NetWorkUtil.get(url, webHeaders).body().string());
-            if(result.optInt("code") == 0)
+            LsonObject replyJson = result.getJsonObject("data");
+            replyIsShowFloor = !replyJson.has("config") || replyJson.getJsonObject("config").getInt("showfloor") == 1;
+            LsonObject replyCountJson = replyJson.getJsonObject("page");
+            replyCount = replyCountJson.has("acount") ? replyCountJson.getInt("acount") : replyCountJson.getInt("count");
+            LsonObject upper = replyJson.getJsonObject("upper");
+
+            LsonArray replyJsonArray = replyJson.getJsonArray("replies");
+            if(page == 1)
             {
-                JSONObject replyJson = result.optJSONObject("data");
-                replyIsShowFloor = !replyJson.has("config") || replyJson.optJSONObject("config").optInt("showfloor") == 1;
-                JSONObject replyCountJson = replyJson.has("page") ? replyJson.optJSONObject("page") : new JSONObject();
-                replyCount = replyCountJson.has("acount") ? replyCountJson.optInt("acount") : replyCountJson.optInt("count");
-                JSONObject upper = replyJson.has("upper") ? replyJson.optJSONObject("upper") : new JSONObject();
+                replyArrayList.clear();
+                replyIsEnd = false;
+                if(root != null) replyArrayList.add(root);
 
-                JSONArray replyJsonArray = replyJson.optJSONArray("replies") != null ? replyJson.optJSONArray("replies") : new JSONArray();
-                if(page == 1)
+                replyArrayList.add(new ReplyModel(3));
+                replyArrayList.add(new ReplyModel(sort.equals("2") ? 1 : 2));
+                if(upper.has("top") && !upper.isNull("top") && sort.equals("2"))
                 {
-                    replyArrayList.clear();
-                    replyIsEnd = false;
-                    if(root != null) replyArrayList.add(root);
-                    replyArrayList.add(new ReplyModel(3));
-                    replyArrayList.add(new ReplyModel(sort.equals("2") ? 1 : 2));
-                    if(upper.has("top") && upper.optJSONObject("top") != null && sort.equals("2"))
-                        replyArrayList.add(new ReplyModel(upper.optJSONObject("top"), true, String.valueOf(upper.optInt("mid"))));
+                    ReplyModel replyModel = new ReplyModel(upper.getJsonObject("top"), true, String.valueOf(upper.getInt("mid")));
+                    replyArrayList.add(LsonUtil.packFromJson(upper.getJsonObject("top"), replyModel));
                 }
-                int l = limit != 0 ? Math.min(limit, replyJsonArray.length()) : replyJsonArray.length();
-                for (int i = 0; i < l; i++)
-                    replyArrayList.add(new ReplyModel(replyJsonArray.getJSONObject(i), false, String.valueOf(upper.optInt("mid"))));
-
-                if(replyCountJson.optInt("num") * replyCountJson.optInt("size") >= replyCountJson.optInt("count"))
-                    replyIsEnd = true;
-
-                return l;
             }
-        }
-        catch (JSONException e)
-        {
-            e.printStackTrace();
+            int l = limit != 0 ? Math.min(limit, replyJsonArray.size()) : replyJsonArray.size();
+            for (int i = 0; i < l; i++)
+            {
+                ReplyModel replyModel = new ReplyModel(replyJsonArray.getJsonObject(i), false, String.valueOf(upper.getInt("mid")));
+                replyArrayList.add(LsonUtil.packFromJson(replyJsonArray.getJsonObject(i), replyModel));
+            }
+
+            if(replyCountJson.getInt("num") * replyCountJson.getInt("size") >= replyCountJson.getInt("count"))
+                replyIsEnd = true;
+
+            return l;
         }
         return 0;
     }
 
     public String sendReply(String rpid, String text) throws IOException
     {
-        try
-        {
-            String url = "https://api.bilibili.com/x/v2/reply/add";
-            String arg = "oid=" + oid + "&type=" + type + ((rpid == null || rpid.equals("")) ? "" : ("&root=" + rpid + "&parent=" + rpid)) + "&message=" + text + "&jsonp=jsonp&csrf=" + csrf;
-            JSONObject result = new JSONObject(NetWorkUtil.post(url, arg, webHeaders).body().string());
-            if(result.getInt("code") == 0)
-                return "";
-        }
-        catch (JSONException | NullPointerException e)
-        {
-            e.printStackTrace();
-        }
-        return "未知问题，请重试";
+        String url = "https://api.bilibili.com/x/v2/reply/add";
+        String arg = "oid=" + oid + "&type=" + type + ((rpid == null || rpid.equals("")) ? "" : ("&root=" + rpid + "&parent=" + rpid)) + "&message=" + text + "&jsonp=jsonp&csrf=" + csrf;
+        LsonObject result = LsonUtil.parseAsObject(NetWorkUtil.post(url, arg, webHeaders).body().string());
+        if(result.getInt("code") == 0)
+            return "";
+        return MyApplication.getContext().getString(R.string.main_error_unknown);
     }
 
     public String reportReply(String replyId, String reason) throws IOException
     {
-        try
-        {
-            String url = "https://api.bilibili.com/x/v2/reply/report";
-            String arg = "oid=" + oid + "&type=" + type + "&rpid=" + replyId + "&reason=" + reason + "&content=&csrf=" + csrf;
-            JSONObject result = new JSONObject(NetWorkUtil.post(url, arg, webHeaders).body().string());
-            if(result.optInt("code") == 0)
-                return "";
-        }
-        catch (JSONException e)
-        {
-            e.printStackTrace();
-        }
-        return "未知错误";
+        String url = "https://api.bilibili.com/x/v2/reply/report";
+        String arg = "oid=" + oid + "&type=" + type + "&rpid=" + replyId + "&reason=" + reason + "&content=&csrf=" + csrf;
+
+        LsonObject result = LsonUtil.parseAsObject(NetWorkUtil.post(url, arg, webHeaders).body().string());
+        if(result.getInt("code") == 0)
+            return "";
+        return MyApplication.getContext().getString(R.string.main_error_unknown);
     }
 
     public String likeReply(ReplyModel replyModel, int action, String type)
@@ -146,27 +134,21 @@ public class ReplyApi
         try
         {
             String url = "https://api.bilibili.com/x/v2/reply/action";
-            String per = "oid=" + oid + "&type=" + type + "&rpid=" + replyModel.reply_id + "&action=" + action + "&jsonp=jsonp&csrf=" + csrf;
-            JSONObject j = new JSONObject(NetWorkUtil.post(url, per, webHeaders).body().string());
-            if(j.getInt("code") == 0)
+            String per = "oid=" + oid + "&type=" + type + "&rpid=" + replyModel.getId() + "&action=" + action + "&jsonp=jsonp&csrf=" + csrf;
+            LsonObject result = LsonUtil.parseAsObject(NetWorkUtil.post(url, per, webHeaders).body().string());
+            if(result.getInt("code") == 0)
             {
-                replyModel.reply_user_like = action == 1;
-                replyModel.reply_like_num += action * 2 - 1;
-                replyModel.reply_user_dislike = false;
+                replyModel.setUserLike(action == 1);
+                replyModel.setLikeNum(replyModel.getLikeNum() + action * 2 - 1);
+                replyModel.setUserDislike(false);
                 return "";
             }
             else
-                return j.getString("message");
-        }
-        catch (JSONException e)
-        {
-            e.printStackTrace();
-            return "未知问题，请重试？";
+                return result.getString("message");
         }
         catch (IOException e)
         {
-            e.printStackTrace();
-            return "网络错误！";
+            return MyApplication.getContext().getString(R.string.main_error_web);
         }
     }
 
@@ -175,30 +157,24 @@ public class ReplyApi
         try
         {
             String url = "https://api.bilibili.com/x/v2/reply/hate";
-            String per = "oid=" + oid + "&type=" + type + "&rpid=" + replyModel.reply_id + "&action=" + action + "&jsonp=jsonp&csrf=" + csrf;
-            JSONObject j = new JSONObject(NetWorkUtil.post(url, per, webHeaders).body().string());
+            String per = "oid=" + oid + "&type=" + type + "&rpid=" + replyModel.getId() + "&action=" + action + "&jsonp=jsonp&csrf=" + csrf;
+            LsonObject j = LsonUtil.parseAsObject(NetWorkUtil.post(url, per, webHeaders).body().string());
             if(j.getInt("code") == 0)
             {
-                if(replyModel.reply_user_like)
+                if(replyModel.isUserLike())
                 {
-                    replyModel.reply_like_num--;
-                    replyModel.reply_user_like = false;
+                    replyModel.setLikeNum(replyModel.getLikeNum() - 1);
+                    replyModel.setUserLike(false);
                 }
-                replyModel.reply_user_dislike = action == 1;
+                replyModel.setUserDislike(action == 1);
                 return "";
             }
             else
                 return j.getString("message");
         }
-        catch (JSONException e)
-        {
-            e.printStackTrace();
-            return "未知问题，请重试？";
-        }
         catch (IOException e)
         {
-            e.printStackTrace();
-            return "网络错误！";
+            return MyApplication.getContext().getString(R.string.main_error_web);
         }
     }
 }

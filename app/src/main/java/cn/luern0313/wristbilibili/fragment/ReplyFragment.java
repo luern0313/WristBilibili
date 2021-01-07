@@ -61,7 +61,7 @@ public class ReplyFragment extends Fragment
     private ReplyAdapter replyAdapter;
     private ReplyAdapter.ReplyAdapterListener replyAdapterListener;
 
-    private Handler handler = new Handler();
+    private final Handler handler = new Handler();
     private Runnable runnableUi, runnableNoWeb, runnableNothing, runnableMoreNoMore, runnableMoreErr, runnableUpdate;
 
     private int replyPage = 1;
@@ -94,14 +94,7 @@ public class ReplyFragment extends Fragment
         }
         if(getActivity() instanceof BangumiActivity)
         {
-            ((BangumiActivity) getActivity()).setBangumiReplyActivityListener(new BangumiActivity.BangumiReplyActivityListener()
-            {
-                @Override
-                public void onBangumiReplyUpdate(String oid, String type)
-                {
-                    getReply(oid, type, sort);
-                }
-            });
+            ((BangumiActivity) getActivity()).setBangumiReplyActivityListener((oid, type) -> getReply(oid, type, sort));
         }
     }
 
@@ -161,123 +154,73 @@ public class ReplyFragment extends Fragment
 
         waveSwipeRefreshLayout = rootLayout.findViewById(R.id.reply_swipe);
         waveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
-        waveSwipeRefreshLayout.setWaveColor(ColorUtil.getColor(R.attr.colorPrimary, getContext()));
-        waveSwipeRefreshLayout.setOnRefreshListener(new WaveSwipeRefreshLayout.OnRefreshListener()
-        {
-            @Override
-            public void onRefresh()
-            {
-                handler.post(new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        rootLayout.findViewById(R.id.reply_listview).setVisibility(View.GONE);
-                        getReply(oid, type, sort);
-                    }
-                });
-            }
+        waveSwipeRefreshLayout.setWaveColor(ColorUtil.getColor(R.attr.colorPrimary, ctx));
+        waveSwipeRefreshLayout.setOnRefreshListener(() -> handler.post(() -> {
+            rootLayout.findViewById(R.id.reply_listview).setVisibility(View.GONE);
+            getReply(oid, type, sort);
+        }));
+
+        layoutLoading.findViewById(R.id.wid_load_button).setOnClickListener(v -> {
+            ((TextView) layoutLoading.findViewById(R.id.wid_load_text)).setText(" 加载中. . .");
+            layoutLoading.findViewById(R.id.wid_load_button).setVisibility(View.GONE);
+            getMoreReply();
         });
 
-        layoutLoading.findViewById(R.id.wid_load_button).setOnClickListener(
-                new View.OnClickListener()
-                {
-                    @Override
-                    public void onClick(View v)
-                    {
-                        ((TextView) layoutLoading.findViewById(R.id.wid_load_text)).setText(" 加载中. . .");
-                        layoutLoading.findViewById(R.id.wid_load_button).setVisibility(View.GONE);
-                        getMoreReply();
-                    }
-                });
-
-        runnableUi = new Runnable()
-        {
-            @Override
-            public void run()
+        runnableUi = () -> {
+            try
             {
-                try
-                {
-                    isReplyLoading = false;
-                    waveSwipeRefreshLayout.setRefreshing(false);
-                    rootLayout.findViewById(R.id.reply_nothing).setVisibility(View.GONE);
-                    rootLayout.findViewById(R.id.reply_noweb).setVisibility(View.GONE);
-                    rootLayout.findViewById(R.id.reply_loading).setVisibility(View.GONE);
-                    rootLayout.findViewById(R.id.reply_listview).setVisibility(View.VISIBLE);
-                    replyAdapter = new ReplyAdapter(inflater, uiReplyListView, replyApi.replyArrayList, replyApi.replyIsShowFloor, root != null, replyApi.replyCount, replyWidth, replyAdapterListener);
-                    uiReplyListView.setAdapter(replyAdapter);
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
-            }
-        };
-
-        runnableNoWeb = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                rootLayout.findViewById(R.id.reply_nothing).setVisibility(View.GONE);
-                rootLayout.findViewById(R.id.reply_noweb).setVisibility(View.VISIBLE);
-                rootLayout.findViewById(R.id.reply_loading).setVisibility(View.GONE);
-            }
-        };
-
-        runnableNothing = new Runnable()
-        {
-            @Override
-            public void run()
-            {
+                isReplyLoading = false;
+                waveSwipeRefreshLayout.setRefreshing(false);
                 rootLayout.findViewById(R.id.reply_nothing).setVisibility(View.GONE);
                 rootLayout.findViewById(R.id.reply_noweb).setVisibility(View.GONE);
                 rootLayout.findViewById(R.id.reply_loading).setVisibility(View.GONE);
+                rootLayout.findViewById(R.id.reply_listview).setVisibility(View.VISIBLE);
+                replyAdapter = new ReplyAdapter(inflater, uiReplyListView, replyApi.replyArrayList, replyApi.replyIsShowFloor, root != null, replyApi.replyCount, replyWidth, replyAdapterListener);
+                uiReplyListView.setAdapter(replyAdapter);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
             }
         };
 
-        runnableMoreNoMore = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                ((TextView) layoutLoading.findViewById(R.id.wid_load_text)).setText("  没有更多了...");
-            }
+        runnableNoWeb = () -> {
+            rootLayout.findViewById(R.id.reply_nothing).setVisibility(View.GONE);
+            rootLayout.findViewById(R.id.reply_noweb).setVisibility(View.VISIBLE);
+            rootLayout.findViewById(R.id.reply_loading).setVisibility(View.GONE);
         };
 
-        runnableMoreErr = new Runnable()
-        {
-            @Override
-            public void run()
+        runnableNothing = () -> {
+            rootLayout.findViewById(R.id.reply_nothing).setVisibility(View.GONE);
+            rootLayout.findViewById(R.id.reply_noweb).setVisibility(View.GONE);
+            rootLayout.findViewById(R.id.reply_loading).setVisibility(View.GONE);
+        };
+
+        runnableMoreNoMore = () -> ((TextView) layoutLoading.findViewById(R.id.wid_load_text)).setText("  没有更多了...");
+
+        runnableMoreErr = () -> {
+            ((TextView) layoutLoading.findViewById(R.id.wid_load_text)).setText("好像没有网络...\n检查下网络？");
+            layoutLoading.findViewById(R.id.wid_load_button).setVisibility(View.VISIBLE);
+            isReplyLoading = false;
+        };
+
+        runnableUpdate = () -> {
+            try
             {
-                ((TextView) layoutLoading.findViewById(R.id.wid_load_text)).setText("好像没有网络...\n检查下网络？");
-                layoutLoading.findViewById(R.id.wid_load_button).setVisibility(View.VISIBLE);
+                if(root != null)
+                {
+                    resultIntent.putExtra("replyModel", replyApi.replyArrayList.get(0));
+                    getActivity().setResult(0, resultIntent);
+                }
+
                 isReplyLoading = false;
+                if(replyApi.replyIsEnd)
+                    ((TextView) layoutLoading.findViewById(R.id.wid_load_text)).setText("  没有更多了...");
+                replyAdapter.notifyDataSetChanged();
             }
-        };
-
-        runnableUpdate = new Runnable()
-        {
-            @Override
-            public void run()
+            catch (Exception e)
             {
-                try
-                {
-                    if(root != null)
-                    {
-                        resultIntent.putExtra("replyModel", replyApi.replyArrayList.get(0));
-                        getActivity().setResult(0, resultIntent);
-                    }
-
-                    isReplyLoading = false;
-                    if(replyApi.replyIsEnd)
-                        ((TextView) layoutLoading.findViewById(R.id.wid_load_text)).setText("  没有更多了...");
-                    replyAdapter.notifyDataSetChanged();
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
+                e.printStackTrace();
             }
         };
 
@@ -293,22 +236,17 @@ public class ReplyFragment extends Fragment
         this.oid = oid;
         this.type = type;
         replyPage = 1;
-        new Thread(new Runnable()
-        {
-            @Override
-            public void run()
+        new Thread(() -> {
+            try
             {
-                try
-                {
-                    ReplyModel r = (root != null ? (replyApi.replyArrayList.size() > 0 ? replyApi.replyArrayList.get(0) : root) : null);
-                    int l = replyApi.getReply(1, sort, 0, r);
-                    handler.post(runnableUi);
-                }
-                catch (IOException | NullPointerException e)
-                {
-                    e.printStackTrace();
-                    handler.post(runnableNoWeb);
-                }
+                ReplyModel r = (root != null ? (replyApi.replyArrayList.size() > 0 ? replyApi.replyArrayList.get(0) : root) : null);
+                int l = replyApi.getReply(1, sort, 0, r);
+                handler.post(runnableUi);
+            }
+            catch (IOException | NullPointerException e)
+            {
+                e.printStackTrace();
+                handler.post(runnableNoWeb);
             }
         }).start();
     }
@@ -317,25 +255,20 @@ public class ReplyFragment extends Fragment
     {
         isReplyLoading = true;
         replyPage++;
-        new Thread(new Runnable()
-        {
-            @Override
-            public void run()
+        new Thread(() -> {
+            try
             {
-                try
-                {
-                    ReplyModel r = (root != null ? (replyApi.replyArrayList.size() > 0 ? replyApi.replyArrayList.get(0) : root) : null);
-                    int l = replyApi.getReply(replyPage, sort, 0, r);
-                    if(l != 0)
-                        handler.post(runnableUpdate);
-                    else
-                        handler.post(runnableMoreNoMore);
-                }
-                catch (IOException e)
-                {
-                    handler.post(runnableMoreErr);
-                    e.printStackTrace();
-                }
+                ReplyModel r = (root != null ? (replyApi.replyArrayList.size() > 0 ? replyApi.replyArrayList.get(0) : root) : null);
+                int l = replyApi.getReply(replyPage, sort, 0, r);
+                if(l != 0)
+                    handler.post(runnableUpdate);
+                else
+                    handler.post(runnableMoreNoMore);
+            }
+            catch (IOException e)
+            {
+                handler.post(runnableMoreErr);
+                e.printStackTrace();
             }
         }).start();
     }
@@ -348,7 +281,7 @@ public class ReplyFragment extends Fragment
             if(viewId == R.id.item_reply_head)
             {
                 Intent intent = new Intent(ctx, UserActivity.class);
-                intent.putExtra("mid", replyModel.reply_owner_mid);
+                intent.putExtra("mid", replyModel.getOwnerMid());
                 startActivity(intent);
             }
             else if(viewId == R.id.item_reply_report)
@@ -358,44 +291,32 @@ public class ReplyFragment extends Fragment
                 intent.putExtra("tip", "请选择举报理由");
                 intent.putExtra("options_name", ReplyApi.reportReason);
                 intent.putExtra("options_id", ReplyApi.reportReasonId);
-                intent.putExtra("reply_id", replyApi.replyArrayList.get(position).reply_id);
+                intent.putExtra("reply_id", replyApi.replyArrayList.get(position).getId());
                 startActivityForResult(intent, RESULT_REPORT);
             }
             else if(viewId == R.id.item_reply_like)
             {
-                new Thread(new Runnable()
-                {
-                    @Override
-                    public void run()
+                new Thread(() -> {
+                    String va = replyApi.likeReply(replyModel, replyModel.isUserLike() ? 0 : 1, type);
+                    if(va.equals("")) handler.post(runnableUpdate);
+                    else
                     {
-                        String va = replyApi.likeReply(replyModel, replyModel.reply_user_like ? 0 : 1, type);
-                        if(va.equals("")) handler.post(runnableUpdate);
-                        else
-                        {
-                            Looper.prepare();
-                            Toast.makeText(ctx, (replyModel.reply_user_like ? "取消" : "点赞") + "失败：\n" + va,
-                                           Toast.LENGTH_SHORT).show();
-                            Looper.loop();
-                        }
+                        Looper.prepare();
+                        Toast.makeText(ctx, (replyModel.isUserLike() ? "取消" : "点赞") + "失败：\n" + va, Toast.LENGTH_SHORT).show();
+                        Looper.loop();
                     }
                 }).start();
             }
             else if(viewId == R.id.item_reply_dislike)
             {
-                new Thread(new Runnable()
-                {
-                    @Override
-                    public void run()
+                new Thread(() -> {
+                    String va = replyApi.hateReply(replyModel, replyModel.isUserDislike() ? 0 : 1, type);
+                    if(va.equals("")) handler.post(runnableUpdate);
+                    else
                     {
-                        String va = replyApi.hateReply(replyModel, replyModel.reply_user_dislike ? 0 : 1, type);
-                        if(va.equals("")) handler.post(runnableUpdate);
-                        else
-                        {
-                            Looper.prepare();
-                            Toast.makeText(ctx, (replyModel.reply_user_dislike ? "取消" : "点踩") + "失败：\n" + va,
-                                           Toast.LENGTH_SHORT).show();
-                            Looper.loop();
-                        }
+                        Looper.prepare();
+                        Toast.makeText(ctx, (replyModel.isUserDislike() ? "取消" : "点踩") + "失败：\n" + va, Toast.LENGTH_SHORT).show();
+                        Looper.loop();
                     }
                 }).start();
             }
@@ -413,11 +334,11 @@ public class ReplyFragment extends Fragment
                 else
                 {
                     Intent replyIntent = new Intent(ctx, ReplyActivity.class);
-                    replyIntent.putExtra("rpid", replyApi.replyArrayList.get(position).reply_id);
+                    replyIntent.putExtra("rpid", replyApi.replyArrayList.get(position).getId());
                     replyIntent.putExtra("type", type);
                     if(position != 0)
                         replyIntent.putExtra("text", String.format(getString(R.string.reply_reply_template),
-                                                         replyApi.replyArrayList.get(position).reply_owner_name));
+                                                         replyApi.replyArrayList.get(position).getOwnerName()));
                     startActivityForResult(replyIntent, RESULT_SEND);
                 }
             }
@@ -425,7 +346,7 @@ public class ReplyFragment extends Fragment
         else if(mode == 1)
         {
             Intent replyIntent = new Intent(ctx, ReplyActivity.class);
-            replyIntent.putExtra("rpid", root != null ? root.reply_id : "");
+            replyIntent.putExtra("rpid", root != null ? root.getId() : "");
             replyIntent.putExtra("type", type);
             startActivityForResult(replyIntent, RESULT_SEND);
         }
@@ -438,34 +359,29 @@ public class ReplyFragment extends Fragment
         if(resultCode != 0 || data == null) return;
         if(requestCode == RESULT_SEND)
         {
-            new Thread(new Runnable()
-            {
-                @Override
-                public void run()
+            new Thread(() -> {
+                try
                 {
-                    try
+                    String result = replyApi.sendReply(data.getStringExtra("rpid"), data.getStringExtra("text"));
+                    if(result.equals(""))
                     {
-                        String result = replyApi.sendReply(data.getStringExtra("rpid"), data.getStringExtra("text"));
-                        if(result.equals(""))
-                        {
-                            Looper.prepare();
-                            Toast.makeText(ctx, "发送成功！", Toast.LENGTH_SHORT).show();
-                            Looper.loop();
-                        }
-                        else
-                        {
-                            Looper.prepare();
-                            Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
-                            Looper.loop();
-                        }
-                    }
-                    catch (IOException e)
-                    {
-                        e.printStackTrace();
                         Looper.prepare();
-                        Toast.makeText(ctx, "评论发送失败，请检查网络", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ctx, "发送成功！", Toast.LENGTH_SHORT).show();
                         Looper.loop();
                     }
+                    else
+                    {
+                        Looper.prepare();
+                        Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
+                        Looper.loop();
+                    }
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                    Looper.prepare();
+                    Toast.makeText(ctx, "评论发送失败，请检查网络", Toast.LENGTH_SHORT).show();
+                    Looper.loop();
                 }
             }).start();
         }
@@ -475,41 +391,36 @@ public class ReplyFragment extends Fragment
             ReplyModel r = data.hasExtra("replyModel") ? (ReplyModel) data.getSerializableExtra("replyModel") : null;
             if(p != -1 && r != null)
             {
-                r.reply_mode = 0;
+                r.setMode(0);
                 replyApi.replyArrayList.set(p, r);
             }
             replyAdapter.notifyDataSetChanged();
         }
         else if(requestCode == RESULT_REPORT)
         {
-            new Thread(new Runnable()
-            {
-                @Override
-                public void run()
+            new Thread(() -> {
+                try
                 {
-                    try
+                    String result = replyApi.reportReply(data.getStringExtra("reply_id"), data.getStringExtra("option_id"));
+                    if(result.equals(""))
                     {
-                        String result = replyApi.reportReply(data.getStringExtra("reply_id"), data.getStringExtra("option_id"));
-                        if(result.equals(""))
-                        {
-                            Looper.prepare();
-                            Toast.makeText(ctx, "举报成功！", Toast.LENGTH_SHORT).show();
-                            Looper.loop();
-                        }
-                        else
-                        {
-                            Looper.prepare();
-                            Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
-                            Looper.loop();
-                        }
-                    }
-                    catch (IOException e)
-                    {
-                        e.printStackTrace();
                         Looper.prepare();
-                        Toast.makeText(ctx, "举报失败，请检查网络...", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ctx, "举报成功！", Toast.LENGTH_SHORT).show();
                         Looper.loop();
                     }
+                    else
+                    {
+                        Looper.prepare();
+                        Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
+                        Looper.loop();
+                    }
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                    Looper.prepare();
+                    Toast.makeText(ctx, "举报失败，请检查网络...", Toast.LENGTH_SHORT).show();
+                    Looper.loop();
                 }
             }).start();
         }

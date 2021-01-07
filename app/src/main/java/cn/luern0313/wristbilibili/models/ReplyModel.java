@@ -1,107 +1,137 @@
 package cn.luern0313.wristbilibili.models;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.TextNode;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import cn.luern0313.lson.LsonUtil;
+import cn.luern0313.lson.annotation.field.LsonAddPrefix;
+import cn.luern0313.lson.annotation.field.LsonBooleanFormatAsNumber;
+import cn.luern0313.lson.annotation.field.LsonDateFormat;
+import cn.luern0313.lson.annotation.field.LsonFieldCallMethod;
+import cn.luern0313.lson.annotation.field.LsonPath;
+import cn.luern0313.lson.annotation.method.LsonCallMethod;
+import cn.luern0313.lson.element.LsonArray;
+import cn.luern0313.lson.element.LsonObject;
 import cn.luern0313.wristbilibili.R;
-import cn.luern0313.wristbilibili.util.LruCacheUtil;
+import cn.luern0313.wristbilibili.util.json.ImageUrlFormat;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 被 luern0313 创建于 2020/1/15.
  */
 
+@Getter
+@Setter
 public class ReplyModel implements Serializable
 {
-    public int reply_mode;
-    public String reply_id;
-    public String reply_text;
-    public boolean reply_text_expend;
-    public String reply_time;
-    public String reply_floor;
-    public int reply_like_num;
-    public int reply_reply_num;
-    public ArrayList<String> reply_reply_show = new ArrayList<>();
+    private int mode;
 
-    public String reply_owner_mid;
-    public String reply_owner_face;
-    public String reply_owner_name;
-    public String reply_owner_lv;
-    public int reply_owner_vip;
-    public int reply_owner_official;
+    @LsonPath("rpid_str")
+    private String id;
 
-    public boolean reply_is_up;
-    public boolean reply_is_up_like;
-    public boolean reply_is_up_reply;
-    public boolean reply_user_like;
-    public boolean reply_user_dislike;
-    public HashMap<String, Integer> reply_emote_size = new HashMap<>();
+    @LsonFieldCallMethod(deserialization = "handlerText")
+    @LsonPath("content.")
+    private String text;
 
-    public ReplyModel(JSONObject replyJson, boolean isUpper, String upUid)
+    private boolean textExpend;
+
+    @LsonDateFormat("yyyy-MM-dd HH:mm")
+    @LsonPath("ctime")
+    private String time;
+
+    @LsonAddPrefix("#")
+    @LsonPath("floor")
+    private String floor;
+
+    @LsonPath("like")
+    private int likeNum;
+
+    @LsonPath("rcount")
+    private int replyNum;
+
+    private ArrayList<String> replyShow = new ArrayList<>();
+
+
+    @LsonPath("member.mid")
+    private String ownerMid;
+
+    @ImageUrlFormat
+    @LsonPath("member.avatar")
+    private String ownerFace;
+
+    @LsonPath("member.uname")
+    private String ownerName;
+
+    @LsonPath("member.level_info.current_level")
+    private String ownerLv;
+
+    @LsonPath("member.vip.vipType")
+    private int ownerVip;
+
+    @LsonPath("member.official_verify.type")
+    private int ownerOfficial;
+
+    private String upMid;
+
+    private boolean isUp;
+
+    @LsonPath("up_action.like")
+    private boolean isUpLike;
+
+    @LsonPath("up_action.reply")
+    private boolean isUpReply;
+
+    @LsonBooleanFormatAsNumber(equal = 1)
+    @LsonPath("action")
+    private boolean userLike;
+
+    @LsonBooleanFormatAsNumber(equal = 2)
+    @LsonPath("action")
+    private boolean userDislike;
+
+    private HashMap<String, Integer> emoteSize = new HashMap<>();
+
+    public ReplyModel(LsonObject replyJson, boolean isUpper, String upUid)
     {
-        reply_mode = 0;
-        reply_id = replyJson.optString("rpid_str");
-        JSONObject contentJson = replyJson.has("content") ? replyJson.optJSONObject("content") : new JSONObject();
-        reply_text = handlerText((isUpper ? "<img src=\"" + R.drawable.icon_reply_top + "\"/>" : "") +
-                                         contentJson.optString("message", ""), contentJson);
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
-        reply_time = format.format(new Date(replyJson.optInt("ctime") * 1000L));
+        mode = 0;
+        LsonObject contentJson = replyJson.getJsonObject("content");
+        text = handlerText((isUpper ? "<img src=\"" + R.drawable.icon_reply_top + "\"/>" : "") +
+                                         contentJson.getString("message", ""), contentJson);
 
-        JSONArray replies = (replyJson.has("replies") && replyJson.optJSONArray("replies") != null) ?
-                replyJson.optJSONArray("replies") : new JSONArray();
-        for(int i = 0; i < replies.length(); i++)
+        LsonArray replies = replyJson.getJsonArray("replies");
+        for(int i = 0; i < replies.size(); i++)
         {
-            JSONObject r = replies.optJSONObject(i);
-            JSONObject rc = r.has("content") ? r.optJSONObject("content") : new JSONObject();
-            JSONObject rm = r.has("member") ? r.optJSONObject("member") : new JSONObject();
-            reply_reply_show.add(handlerText("<a href=\"bilibili://space/" + rm.optString("mid") + "\">" +
-                                         rm.optString("uname") + "</a>：" + rc.optString("message"), rc));
+            LsonObject r = replies.getJsonObject(i);
+            LsonObject rc = r.getJsonObject("content");
+            LsonObject rm = r.getJsonObject("member");
+            replyShow.add(handlerText("<a href=\"bilibili://space/" + rm.getString("mid") + "\">" +
+                                         rm.getString("uname") + "</a>：" + rc.getString("message"), rc));
         }
-
-        reply_floor = replyJson.has("floor") ? ("#" + replyJson.optInt("floor")) : "";
-        reply_like_num = replyJson.optInt("like", 0);
-        reply_reply_num = replyJson.optInt("rcount", 0);
-
-        JSONObject reply_owner_json = replyJson.has("member") ? replyJson.optJSONObject("member") : new JSONObject();
-        reply_owner_mid = reply_owner_json.optString("mid");
-        reply_owner_face = LruCacheUtil.getImageUrl(reply_owner_json.optString("avatar"));
-        reply_owner_name = reply_owner_json.optString("uname");
-        reply_owner_lv = reply_owner_json.has("level_info") ?
-                String.valueOf(reply_owner_json.optJSONObject("level_info").optInt("current_level")) : "0";
-        reply_owner_vip = reply_owner_json.has("vip") ?
-                reply_owner_json.optJSONObject("vip").optInt("vipType") : 0;
-        JSONObject reply_owner_official_json = reply_owner_json.has("official_verify") ? reply_owner_json.optJSONObject("official_verify") : new JSONObject();
-        reply_owner_official = reply_owner_official_json.optInt("type");
-
-        reply_is_up = reply_owner_mid.equals(upUid);
-        JSONObject up_action = replyJson.has("up_action") ? replyJson.optJSONObject("up_action") : new JSONObject();
-        reply_is_up_like = up_action.optBoolean("like", false);
-        reply_is_up_reply = up_action.optBoolean("reply", false);
-        reply_user_like = replyJson.optInt("action") == 1;
-        reply_user_dislike = replyJson.optInt("action") == 2;
+        this.upMid = upUid;
     }
 
     public ReplyModel(int mode)
     {
-        reply_mode = mode;
+        this.mode = mode;
     }
 
-    private String handlerText(String text, JSONObject content)
+    @LsonCallMethod(timing = LsonCallMethod.CallMethodTiming.AFTER_DESERIALIZATION)
+    private void initData()
+    {
+        isUp = ownerMid.equals(upMid);
+    }
+
+    private String handlerText(String text, LsonObject content)
     {
         text = text.replace("\n", "<br>");
         Element document = Jsoup.parseBodyFragment(text).body();
@@ -161,19 +191,18 @@ public class ReplyModel implements Serializable
             }
         }
 
-        JSONObject emote = content.has("emote") ? content.optJSONObject("emote") : new JSONObject();
-        Iterator<String> emoteKeys = emote.keys();
-        while(emoteKeys.hasNext())
+        LsonObject emote = content.getJsonObject("emote");
+        String[] emoteKeys = emote.getKeys();
+        for (String key : emoteKeys)
         {
-            String key = emoteKeys.next();
-            JSONObject emoteJson = emote.optJSONObject(key);
-            String tag = "<img src=\"" + emoteJson.optString("url") + "\"/>";
+            LsonObject emoteJson = emote.getJsonObject(key);
+            String tag = "<img src=\"" + emoteJson.getString("url") + "\"/>";
             for(int i = 0; i < textNodes.size(); i++)
             {
                 TextNode textNode = textNodes.get(i);
                 if(textNode.getWholeText().contains(key))
                 {
-                    reply_emote_size.put(emoteJson.optString("url"), emoteJson.has("meta") ? emoteJson.optJSONObject("meta").optInt("size") : 1);
+                    emoteSize.put(emoteJson.getString("url"), emoteJson.getJsonObject("meta").getInt("size", 1));
                     textNode.before(textNode.getWholeText().substring(0, textNode.getWholeText().indexOf(key)));
                     textNode.before(tag);
                     textNode.text(textNode.getWholeText().substring(textNode.getWholeText().indexOf(key) + key.length()));
@@ -183,22 +212,21 @@ public class ReplyModel implements Serializable
             }
         }
 
-        JSONArray members = content.has("members") ? content.optJSONArray("members") : new JSONArray();
-        for(int i = 0; i < members.length(); i++)
+        LsonArray members = content.getJsonArray("members");
+        for(int i = 0; i < members.size(); i++)
         {
-            if(members.optJSONObject(i) != null)
+            if(!members.isNull(i))
             {
-                String name = members.optJSONObject(i).optString("uname");
+                String name = members.getJsonObject(i).getString("uname");
                 String key = "@" + name;
-                String uid = members.optJSONObject(i).optString("mid");
+                String uid = members.getJsonObject(i).getString("mid");
                 String tag = "<a href=\"bilibili://space/" + uid + "\">@" + name + "</a>";
                 for (int j = 0; j < textNodes.size(); j++)
                 {
                     TextNode textNode = textNodes.get(j);
                     if(textNode.getWholeText().contains(key))
                     {
-                        textNode.before(textNode.getWholeText().substring(0, textNode.getWholeText()
-                                .indexOf(key)));
+                        textNode.before(textNode.getWholeText().substring(0, textNode.getWholeText().indexOf(key)));
                         textNode.before(tag);
                         textNode.text(textNode.getWholeText().substring(textNode.getWholeText().indexOf(key) + key.length()));
                         textNodes = document.textNodes();
@@ -208,13 +236,12 @@ public class ReplyModel implements Serializable
             }
         }
 
-        JSONObject topics = content.has("topics_uri") ? content.optJSONObject("topics_uri") : new JSONObject();
-        Iterator<String> topicsKeys = topics.keys();
-        while(topicsKeys.hasNext())
+        LsonObject topics = content.getJsonObject("topics_uri");
+        String[] topicsKeys = topics.getKeys();
+        for (String key : topicsKeys)
         {
-            String key = topicsKeys.next();
             String tagName = "#" + key + "#";
-            String tag = "<a href=\"" + topics.optString(key) + "\">" + tagName + "</a>";
+            String tag = "<a href=\"" + topics.getString(key) + "\">" + tagName + "</a>";
             for(int i = 0; i < textNodes.size(); i++)
             {
                 TextNode textNode = textNodes.get(i);
@@ -229,32 +256,24 @@ public class ReplyModel implements Serializable
             }
         }
 
-        JSONObject jump = content.has("jump_url") ? content.optJSONObject("jump_url") : new JSONObject();
-        Iterator<String> jumpKeys = jump.keys();
-        while(jumpKeys.hasNext())
+        LsonObject jump =  content.getJsonObject("jump_url");
+        String[] jumpKeys = jump.getKeys();
+        for (String key : jumpKeys)
         {
-            String key = jumpKeys.next();
-            try
+            String name = jump.getJsonObject(key).getString("title");
+            String season_id = LsonUtil.parseAsObject(jump.getJsonObject(key).getString("click_report")).getString("season_id");
+            String tag = "<a href=\"bilibili://bangumi/season/" + season_id + "\">" + name + "</a>";
+            for(int i = 0; i < textNodes.size(); i++)
             {
-                String name = jump.optJSONObject(key).optString("title");
-                String season_id = new JSONObject(jump.optJSONObject(key).optString("click_report")).optString("season_id");
-                String tag = "<a href=\"bilibili://bangumi/season/" + season_id + "\">" + name + "</a>";
-                for(int i = 0; i < textNodes.size(); i++)
+                TextNode textNode = textNodes.get(i);
+                if(textNode.getWholeText().contains(key))
                 {
-                    TextNode textNode = textNodes.get(i);
-                    if(textNode.getWholeText().contains(key))
-                    {
-                        textNode.before(textNode.getWholeText().substring(0, textNode.getWholeText().indexOf(key)));
-                        textNode.before(tag);
-                        textNode.text(textNode.getWholeText().substring(textNode.getWholeText().indexOf(key) + key.length()));
-                        textNodes = document.textNodes();
-                        i--;
-                    }
+                    textNode.before(textNode.getWholeText().substring(0, textNode.getWholeText().indexOf(key)));
+                    textNode.before(tag);
+                    textNode.text(textNode.getWholeText().substring(textNode.getWholeText().indexOf(key) + key.length()));
+                    textNodes = document.textNodes();
+                    i--;
                 }
-            }
-            catch (JSONException e)
-            {
-                e.printStackTrace();
             }
         }
 
