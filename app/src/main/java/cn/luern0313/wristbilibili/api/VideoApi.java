@@ -1,13 +1,14 @@
 package cn.luern0313.wristbilibili.api;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
+import cn.luern0313.lson.LsonUtil;
+import cn.luern0313.lson.element.LsonObject;
+import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.models.VideoModel;
+import cn.luern0313.wristbilibili.util.MyApplication;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
@@ -21,13 +22,13 @@ import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
 public class VideoApi
 {
-    private String csrf;
-    private String mid;
-    private String access_key;
+    private final String csrf;
+    private final String mid;
+    private final String access_key;
     public String aid;
     public String bvid;
-    private ArrayList<String> appHeaders;
-    private ArrayList<String> webHeaders;
+    private final ArrayList<String> appHeaders;
+    private final ArrayList<String> webHeaders;
 
     private VideoModel videoModel;
 
@@ -51,166 +52,101 @@ public class VideoApi
 
     public VideoModel getVideoDetails() throws IOException
     {
-        try
+        String url = "https://app.bilibili.com/x/v2/view";
+        String temp_per;
+        if(!bvid.equals(""))
+            temp_per = "access_key=" + access_key + "&appkey=" + ConfInfoApi.getConf("appkey") +
+                    "&build=" + ConfInfoApi.getConf("build") + "&bvid=" + bvid + "&mobi_app=" + ConfInfoApi.getConf("mobi_app") +
+                    "&plat=0&platform=" + ConfInfoApi.getConf("platform") + "&ts=" + (int) (System.currentTimeMillis() / 1000);
+        else
+            temp_per = "access_key=" + access_key + "&aid=" + aid + "&appkey=" + ConfInfoApi.getConf("appkey") +
+                    "&build=" + ConfInfoApi.getConf("build") + "&mobi_app=" + ConfInfoApi.getConf("mobi_app") +
+                    "&plat=0&platform=" + ConfInfoApi.getConf("platform") + "&ts=" + (int) (System.currentTimeMillis() / 1000);
+        String sign = ConfInfoApi.calc_sign(temp_per, ConfInfoApi.getConf("app_secret"));
+        LsonObject result = LsonUtil.parseAsObject(NetWorkUtil.get(url + "?" + temp_per + "&sign=" + sign, appHeaders).body().string());
+        if(result.getInt("code") == 0)
         {
-            String url = "https://app.bilibili.com/x/v2/view";
-            String temp_per;
-            if(!bvid.equals(""))
-                temp_per = "access_key=" + access_key + "&appkey=" + ConfInfoApi.getConf("appkey") +
-                        "&build=" + ConfInfoApi.getConf("build") + "&bvid=" + bvid + "&mobi_app=" + ConfInfoApi.getConf("mobi_app") +
-                        "&plat=0&platform=" + ConfInfoApi.getConf("platform") + "&ts=" + (int) (System.currentTimeMillis() / 1000);
-            else
-                temp_per = "access_key=" + access_key + "&aid=" + aid + "&appkey=" + ConfInfoApi.getConf("appkey") +
-                        "&build=" + ConfInfoApi.getConf("build") + "&mobi_app=" + ConfInfoApi.getConf("mobi_app") +
-                        "&plat=0&platform=" + ConfInfoApi.getConf("platform") + "&ts=" + (int) (System.currentTimeMillis() / 1000);
-            String sign = ConfInfoApi.calc_sign(temp_per, ConfInfoApi.getConf("app_secret"));
-            JSONObject result = new JSONObject(NetWorkUtil.get(url + "?" + temp_per + "&sign=" + sign, appHeaders).body().string());
-            if(result.optInt("code") == 0)
-            {
-                videoModel = new VideoModel(result.optJSONObject("data"));
-                this.aid = videoModel.video_aid;
-                this.bvid = videoModel.video_bvid;
-                return videoModel;
-            }
+            videoModel = LsonUtil.fromJson(result.getJsonObject("data"), VideoModel.class);
+            this.aid = videoModel.getAid();
+            this.bvid = videoModel.getBvid();
         }
-        catch (JSONException | NullPointerException e)
-        {
-            e.printStackTrace();
-        }
-        return null;
+        return videoModel;
     }
 
     public String likeVideo(int mode) throws IOException  //1好评，2取消差评，3差评，4取消差评，后一个会覆盖前一个
     {
-        try
-        {
-            String url = "https://api.bilibili.com/x/web-interface/archive/like";
-            String per = "aid=" + aid + "&like=" + mode + "&csrf=" + csrf;
-            JSONObject result = new JSONObject(NetWorkUtil.post(url, per, webHeaders).body().string());
-            if(result.optInt("code") == 0)
-                return "";
-        }
-        catch (JSONException | NullPointerException e)
-        {
-            e.printStackTrace();
-        }
-        return "未知错误";
+        String url = "https://api.bilibili.com/x/web-interface/archive/like";
+        String per = "aid=" + aid + "&like=" + mode + "&csrf=" + csrf;
+        LsonObject result = LsonUtil.parseAsObject(NetWorkUtil.post(url, per, webHeaders).body().string());
+        if(result.getInt("code") == 0)
+            return "";
+        return MyApplication.getContext().getString(R.string.main_error_unknown);
     }
 
     public String coinVideo(int how) throws IOException
     {
-        try
-        {
-            String url = "https://api.bilibili.com/x/web-interface/coin/add";
-            String per = "aid=" + aid + "&multiply=" + how + "&cross_domain=true&csrf=" + csrf;
-            JSONObject result = new JSONObject(NetWorkUtil.post(url, per, webHeaders).body().string());
-            if(result.optInt("code") == 0)
-                return "";
-        }
-        catch (JSONException | NullPointerException e)
-        {
-            e.printStackTrace();
-        }
-        return "未知错误";
+        String url = "https://api.bilibili.com/x/web-interface/coin/add";
+        String per = "aid=" + aid + "&multiply=" + how + "&cross_domain=true&csrf=" + csrf;
+        LsonObject result = LsonUtil.parseAsObject(NetWorkUtil.post(url, per, webHeaders).body().string());
+        if(result.getInt("code") == 0)
+            return "";
+        return MyApplication.getContext().getString(R.string.main_error_unknown);
     }
 
     public String favVideo(String favId) throws IOException
     {
-        try
-        {
-            String url = "https://api.bilibili.com/medialist/gateway/coll/resource/deal";
-            String per = "rid=" + aid + "&type=2&add_media_ids=" + favId + "&del_media_ids=&csrf=" + csrf;
-            JSONObject result = new JSONObject(NetWorkUtil.post(url, per, webHeaders).body().string());
-            if(result.optInt("code") == 0)
-                return "";
-        }
-        catch (JSONException | NullPointerException e)
-        {
-            e.printStackTrace();
-        }
+        String url = "https://api.bilibili.com/medialist/gateway/coll/resource/deal";
+        String per = "rid=" + aid + "&type=2&add_media_ids=" + favId + "&del_media_ids=&csrf=" + csrf;
+        LsonObject result = LsonUtil.parseAsObject(NetWorkUtil.post(url, per, webHeaders).body().string());
+        if(result.getInt("code") == 0)
+            return "";
         return "未知错误";
     }
 
-    public JSONObject tripleVideo() throws IOException
+    public LsonObject tripleVideo() throws IOException
     {
-        try
-        {
-            String url = "https://api.bilibili.com/x/web-interface/archive/like/triple";
-            String per = "aid=" + aid + "&csrf=" + csrf;
-            return new JSONObject(NetWorkUtil.post(url, per, webHeaders).body().string());
-        }
-        catch (JSONException | NullPointerException e)
-        {
-            e.printStackTrace();
-        }
-        return null;
+        String url = "https://api.bilibili.com/x/web-interface/archive/like/triple";
+        String per = "aid=" + aid + "&csrf=" + csrf;
+        return LsonUtil.parseAsObject(NetWorkUtil.post(url, per, webHeaders).body().string());
     }
 
     public String playLater() throws IOException
     {
-        try
-        {
-            String url = "https://api.bilibili.com/x/v2/history/toview/add";
-            String per = "aid=" + aid + "&csrf=" + csrf;
-            JSONObject result = new JSONObject(NetWorkUtil.post(url, per, webHeaders).body().string());
-            if(result.optInt("code") == 0)
-                return "";
-        }
-        catch (JSONException | NullPointerException e)
-        {
-            e.printStackTrace();
-        }
-        return "未知错误";
+        String url = "https://api.bilibili.com/x/v2/history/toview/add";
+        String per = "aid=" + aid + "&csrf=" + csrf;
+        LsonObject result = LsonUtil.parseAsObject(NetWorkUtil.post(url, per, webHeaders).body().string());
+        if(result.getInt("code") == 0)
+            return "";
+        return MyApplication.getContext().getString(R.string.main_error_unknown);
     }
 
     public String playHistory() throws IOException
     {
-        try
-        {
-            String url = "https://api.bilibili.com/x/report/web/heartbeat";
-            String per = "aid=" + aid + "&cid=" + videoModel.video_cid + "&mid=" + mid + "&csrf=" + csrf + "&played_time=0&realtime=0&start_ts=" + (System.currentTimeMillis() / 1000) + "&type=3&dt=2&play_type=1";
-            JSONObject result = new JSONObject(NetWorkUtil.post(url, per, webHeaders).body().string());
-            if(result.optInt("code") == 0)
-                return "";
-        }
-        catch (JSONException | NullPointerException e)
-        {
-            e.printStackTrace();
-        }
-        return "未知错误";
+        String url = "https://api.bilibili.com/x/report/web/heartbeat";
+        String per = "aid=" + aid + "&cid=" + videoModel.getCid() + "&mid=" + mid + "&csrf=" + csrf + "&played_time=0&realtime=0&start_ts=" + (System.currentTimeMillis() / 1000) + "&type=3&dt=2&play_type=1";
+        LsonObject result = LsonUtil.parseAsObject(NetWorkUtil.post(url, per, webHeaders).body().string());
+        if(result.getInt("code") == 0)
+            return "";
+        return MyApplication.getContext().getString(R.string.main_error_unknown);
     }
 
     public String shareVideo(String text) throws IOException
     {
-        try
-        {
-            String url = "https://api.vc.bilibili.com/dynamic_repost/v1/dynamic_repost/share";
-            String per = "csrf_token=" + csrf + "&platform=pc&uid=" + videoModel.video_up_mid + "&type=8&share_uid=" + mid + "&content=" + URLEncoder.encode(text, "UTF-8") + "&repost_code=20000&rid=" + videoModel.video_aid;
-            JSONObject result = new JSONObject(NetWorkUtil.post(url, per, webHeaders).body().string());
-            if(result.optInt("code") == 0)
-                return "";
-        }
-        catch (JSONException | NullPointerException e)
-        {
-            e.printStackTrace();
-        }
-        return "未知错误";
+        String url = "https://api.vc.bilibili.com/dynamic_repost/v1/dynamic_repost/share";
+        String per = "csrf_token=" + csrf + "&platform=pc&uid=" + videoModel.getUpMid() + "&type=8&share_uid=" + mid + "&content=" + URLEncoder.encode(text, "UTF-8") + "&repost_code=20000&rid=" + videoModel.getAid();
+        LsonObject result = LsonUtil.parseAsObject(NetWorkUtil.post(url, per, webHeaders).body().string());
+        if(result.getInt("code") == 0)
+            return "";
+        return MyApplication.getContext().getString(R.string.main_error_unknown);
     }
 
     public String scoreVideo(int score) throws IOException
     {
-        try
-        {
-            String url = "https://api.bilibili.com/x/stein/mark";
-            String per = "aid=" + aid + "&mark=" + score + "&csrf=" + csrf;
-            JSONObject result = new JSONObject(NetWorkUtil.post(url, per, webHeaders).body().string());
-            if(result.optInt("code") == 0)
-                return "";
-        }
-        catch (JSONException | NullPointerException e)
-        {
-            e.printStackTrace();
-        }
-        return "未知错误";
+        String url = "https://api.bilibili.com/x/stein/mark";
+        String per = "aid=" + aid + "&mark=" + score + "&csrf=" + csrf;
+        LsonObject result = LsonUtil.parseAsObject(NetWorkUtil.post(url, per, webHeaders).body().string());
+        if(result.getInt("code") == 0)
+            return "";
+        return MyApplication.getContext().getString(R.string.main_error_unknown);
     }
 }

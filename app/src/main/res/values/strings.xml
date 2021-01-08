@@ -117,6 +117,22 @@
     <string name="download_state_2">暂停中…</string>
     <string name="download_state_3">暂停</string>
 
+    <string name="video_detail_av">AV%s</string>
+    <string name="video_part_label">共%dP</string>
+    <string name="video_part_more">查看全部></string>
+    <string name="video_control_cover">查看封面</string>
+    <string name="video_control_play">点击播放</string>
+    <string name="video_control_watchlater">稍后再看</string>
+    <string name="video_control_download">缓存视频</string>
+    <string name="video_control_history">历史记录</string>
+    <string name="video_control_share">转发视频</string>
+    <string name="video_control_like">好评</string>
+    <string name="video_control_coin">投币</string>
+    <string name="video_control_fav">收藏</string>
+    <string name="video_control_dislike">差评</string>
+    <string name="video_card_fans">粉丝：%s</string>
+    <string name="video_card_follow">+关注</string>
+
     <string name="bangumi_title_detail">%s详情</string>
     <string name="bangumi_title_reply">单%s评论</string>
     <string name="bangumi_detail_more">查看详情 ></string>

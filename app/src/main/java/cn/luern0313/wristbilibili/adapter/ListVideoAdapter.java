@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -25,17 +26,20 @@ import cn.luern0313.wristbilibili.util.LruCacheUtil;
 
 public class ListVideoAdapter extends BaseAdapter
 {
-    private LayoutInflater mInflater;
+    private final LayoutInflater mInflater;
 
-    private ListVideoAdapterListener listVideoAdapterListener;
-    private ListView listView;
+    private final ListVideoAdapterListener listVideoAdapterListener;
+    private final ListView listView;
 
-    private ArrayList<ListVideoModel> videoList;
+    private final ArrayList<ListVideoModel> videoList;
 
-    public ListVideoAdapter(LayoutInflater inflater, ArrayList<ListVideoModel> videoList, ListView listView, ListVideoAdapterListener listVideoAdapterListener)
+    private final boolean isShowProgress;
+
+    public ListVideoAdapter(LayoutInflater inflater, ArrayList<ListVideoModel> videoList, boolean isShowProgress, ListView listView, ListVideoAdapterListener listVideoAdapterListener)
     {
-        mInflater = inflater;
+        this.mInflater = inflater;
         this.videoList = videoList;
+        this.isShowProgress = isShowProgress;
         this.listView = listView;
         this.listVideoAdapterListener = listVideoAdapterListener;
     }
@@ -70,6 +74,7 @@ public class ListVideoAdapter extends BaseAdapter
             convertView.setTag(viewHolder);
             viewHolder.lay = convertView.findViewById(R.id.item_list_video_lay);
             viewHolder.img = convertView.findViewById(R.id.item_list_video_img);
+            viewHolder.progress = convertView.findViewById(R.id.item_list_video_pro);
             viewHolder.title = convertView.findViewById(R.id.item_list_video_title);
             viewHolder.up = convertView.findViewById(R.id.item_list_video_up);
             viewHolder.play = convertView.findViewById(R.id.item_list_video_play);
@@ -90,16 +95,24 @@ public class ListVideoAdapter extends BaseAdapter
         viewHolder.danmaku.setCompoundDrawables(danmakuNumDrawable,null, null,null);
 
         viewHolder.img.setImageResource(R.drawable.img_default_vid);
-        viewHolder.title.setText(video.getVideoTitle());
-        viewHolder.up.setText(video.getVideoOwnerName());
-        viewHolder.play.setText(video.getVideoPlay());
-        viewHolder.danmaku.setText(video.getVideoDanmaku());
+        viewHolder.title.setText(video.getTitle());
+        viewHolder.up.setText(video.getOwnerName());
+        viewHolder.play.setText(video.getPlay());
+        viewHolder.danmaku.setText(video.getDanmaku());
+
+        if(isShowProgress)
+        {
+            viewHolder.progress.setVisibility(View.VISIBLE);
+            viewHolder.progress.setProgress((int) (video.getProgress() * 100.0 / video.getDuration()));
+        }
+        else
+            viewHolder.progress.setVisibility(View.GONE);
 
         viewHolder.lay.setOnClickListener(onViewClick(position));
         viewHolder.lay.setOnLongClickListener(onViewLongClick(position));
 
-        viewHolder.img.setTag(video.getVideoCover());
-        BitmapDrawable c = setImageFormWeb(video.getVideoCover());
+        viewHolder.img.setTag(video.getCover());
+        BitmapDrawable c = setImageFormWeb(video.getCover());
         if(c != null) viewHolder.img.setImageDrawable(c);
         return convertView;
     }
@@ -108,6 +121,7 @@ public class ListVideoAdapter extends BaseAdapter
     {
         RelativeLayout lay;
         ImageView img;
+        ProgressBar progress;
         TextView title;
         TextView up;
         TextView play;

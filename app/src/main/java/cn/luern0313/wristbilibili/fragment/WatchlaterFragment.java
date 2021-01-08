@@ -7,7 +7,6 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.io.IOException;
@@ -15,9 +14,9 @@ import java.util.ArrayList;
 
 import androidx.fragment.app.Fragment;
 import cn.luern0313.wristbilibili.R;
-import cn.luern0313.wristbilibili.adapter.WatchlaterAdapter;
+import cn.luern0313.wristbilibili.adapter.ListVideoAdapter;
 import cn.luern0313.wristbilibili.api.WatchLaterApi;
-import cn.luern0313.wristbilibili.models.WatchLaterModel;
+import cn.luern0313.wristbilibili.models.ListVideoModel;
 import cn.luern0313.wristbilibili.ui.VideoActivity;
 import cn.luern0313.wristbilibili.util.ColorUtil;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
@@ -30,18 +29,19 @@ import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
 public class WatchlaterFragment extends Fragment
 {
-    Context ctx;
-    View rootLayout;
+    private Context ctx;
+    private View rootLayout;
     private ListView wlListView;
+    private ListVideoAdapter.ListVideoAdapterListener listVideoAdapterListener;
     private WaveSwipeRefreshLayout waveSwipeRefreshLayout;
     private WatchLaterApi watchLaterApi;
 
     public static boolean isLogin;
 
-    Handler handler = new Handler();
+    private final Handler handler = new Handler();
     private Runnable runnableUi, runnableNoWeb, runnableNoData;
 
-    private ArrayList<WatchLaterModel> watchLaterVideoArrayList;
+    private ArrayList<ListVideoModel> watchLaterVideoArrayList;
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -52,75 +52,55 @@ public class WatchlaterFragment extends Fragment
         wlListView = rootLayout.findViewById(R.id.wl_listview);
         waveSwipeRefreshLayout = rootLayout.findViewById(R.id.wl_swipe);
         waveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
-        waveSwipeRefreshLayout.setWaveColor(ColorUtil.getColor(R.attr.colorPrimary, getContext()));
-        waveSwipeRefreshLayout.setOnRefreshListener(new WaveSwipeRefreshLayout.OnRefreshListener()
-        {
-            @Override
-            public void onRefresh()
+        waveSwipeRefreshLayout.setWaveColor(ColorUtil.getColor(R.attr.colorPrimary, ctx));
+        waveSwipeRefreshLayout.setOnRefreshListener(() -> handler.post(() -> {
+            if(isLogin)
             {
-                handler.post(new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        if(isLogin)
-                        {
-                            wlListView.setVisibility(View.GONE);
-                            getWatchLater();
-                        }
-                        else waveSwipeRefreshLayout.setRefreshing(false);
-                    }
-                });
+                wlListView.setVisibility(View.GONE);
+                getWatchLater();
             }
-        });
+            else waveSwipeRefreshLayout.setRefreshing(false);
+        }));
 
-        runnableUi = new Runnable()
+        listVideoAdapterListener = new ListVideoAdapter.ListVideoAdapterListener()
         {
             @Override
-            public void run()
+            public void onListVideoAdapterClick(int viewId, int position)
             {
-                rootLayout.findViewById(R.id.wl_nologin).setVisibility(View.GONE);
-                rootLayout.findViewById(R.id.wl_noweb).setVisibility(View.GONE);
-                rootLayout.findViewById(R.id.wl_nonthing).setVisibility(View.GONE);
-                wlListView.setAdapter(new WatchlaterAdapter(inflater, watchLaterVideoArrayList, wlListView));
-                wlListView.setVisibility(View.VISIBLE);
-                waveSwipeRefreshLayout.setRefreshing(false);
+
+            }
+
+            @Override
+            public void onListVideoAdapterLongClick(int viewId, final int position)
+            {
+
             }
         };
 
-        runnableNoWeb = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                waveSwipeRefreshLayout.setRefreshing(false);
-                rootLayout.findViewById(R.id.wl_noweb).setVisibility(View.VISIBLE);
-                rootLayout.findViewById(R.id.wl_nologin).setVisibility(View.GONE);
-                rootLayout.findViewById(R.id.wl_nonthing).setVisibility(View.GONE);
-            }
+        runnableUi = () -> {
+            rootLayout.findViewById(R.id.wl_nologin).setVisibility(View.GONE);
+            rootLayout.findViewById(R.id.wl_noweb).setVisibility(View.GONE);
+            rootLayout.findViewById(R.id.wl_nonthing).setVisibility(View.GONE);
+            wlListView.setAdapter(new ListVideoAdapter(inflater, watchLaterVideoArrayList, true, wlListView, listVideoAdapterListener));
+            wlListView.setVisibility(View.VISIBLE);
+            waveSwipeRefreshLayout.setRefreshing(false);
         };
 
-        runnableNoData = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                waveSwipeRefreshLayout.setRefreshing(false);
-                rootLayout.findViewById(R.id.wl_nonthing).setVisibility(View.VISIBLE);
-                rootLayout.findViewById(R.id.wl_noweb).setVisibility(View.GONE);
-                rootLayout.findViewById(R.id.wl_nologin).setVisibility(View.GONE);
-            }
+        runnableNoWeb = () -> {
+            waveSwipeRefreshLayout.setRefreshing(false);
+            rootLayout.findViewById(R.id.wl_noweb).setVisibility(View.VISIBLE);
+            rootLayout.findViewById(R.id.wl_nologin).setVisibility(View.GONE);
+            rootLayout.findViewById(R.id.wl_nonthing).setVisibility(View.GONE);
         };
 
-        wlListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
-        {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-            {
-                startActivity(VideoActivity
-                                      .getActivityIntent(ctx, watchLaterVideoArrayList.get(position).aid, ""));
-            }
-        });
+        runnableNoData = () -> {
+            waveSwipeRefreshLayout.setRefreshing(false);
+            rootLayout.findViewById(R.id.wl_nonthing).setVisibility(View.VISIBLE);
+            rootLayout.findViewById(R.id.wl_noweb).setVisibility(View.GONE);
+            rootLayout.findViewById(R.id.wl_nologin).setVisibility(View.GONE);
+        };
+
+        wlListView.setOnItemClickListener((parent, view, position, id) -> startActivity(VideoActivity.getActivityIntent(ctx, watchLaterVideoArrayList.get(position).getAid(), "")));
 
         isLogin = SharedPreferencesUtil.contains(SharedPreferencesUtil.cookies);
         if(isLogin)
@@ -139,34 +119,29 @@ public class WatchlaterFragment extends Fragment
 
     private void getWatchLater()
     {
-        new Thread(new Runnable()
-        {
-            @Override
-            public void run()
+        new Thread(() -> {
+            try
             {
-                try
+                watchLaterApi = new WatchLaterApi();
+                watchLaterVideoArrayList = watchLaterApi.getWatchLater();
+                if(watchLaterVideoArrayList != null && watchLaterVideoArrayList.size() != 0)
                 {
-                    watchLaterApi = new WatchLaterApi();
-                    watchLaterVideoArrayList = watchLaterApi.getWatchLater();
-                    if(watchLaterVideoArrayList != null && watchLaterVideoArrayList.size() != 0)
-                    {
-                        handler.post(runnableUi);
-                    }
-                    else
-                    {
-                        handler.post(runnableNoData);
-                    }
+                    handler.post(runnableUi);
                 }
-                catch (NullPointerException e)
+                else
                 {
                     handler.post(runnableNoData);
-                    e.printStackTrace();
                 }
-                catch (IOException e)
-                {
-                    handler.post(runnableNoWeb);
-                    e.printStackTrace();
-                }
+            }
+            catch (NullPointerException e)
+            {
+                handler.post(runnableNoData);
+                e.printStackTrace();
+            }
+            catch (IOException e)
+            {
+                handler.post(runnableNoWeb);
+                e.printStackTrace();
             }
         }).start();
     }

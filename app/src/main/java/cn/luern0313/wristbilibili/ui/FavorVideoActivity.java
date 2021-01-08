@@ -2,7 +2,6 @@ package cn.luern0313.wristbilibili.ui;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -32,7 +31,7 @@ public class FavorVideoActivity extends BaseActivity
     LayoutInflater inflater;
     FavorVideoApi favorVideoApi;
 
-    ArrayList<ListVideoModel> favorvideoList;
+    ArrayList<ListVideoModel> favorVideoList;
     String mid;
     String fid;
 
@@ -64,7 +63,7 @@ public class FavorVideoActivity extends BaseActivity
             @Override
             public void onListVideoAdapterClick(int viewId, int position)
             {
-                Intent intent = VideoActivity.getActivityIntent(ctx, favorvideoList.get(position).getVideoAid(), "");
+                Intent intent = VideoActivity.getActivityIntent(ctx, favorVideoList.get(position).getAid(), "");
                 startActivity(intent);
             }
 
@@ -73,41 +72,31 @@ public class FavorVideoActivity extends BaseActivity
             {
                 new AlertDialog.Builder(ctx)
                         .setMessage(ctx.getString(R.string.favor_video_delete_message))
-                        .setPositiveButton(ctx.getString(R.string.favor_video_delete_ok), new DialogInterface.OnClickListener()
-                        {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which)
-                            {
-                                new Thread(new Runnable()
-                                {
-                                    @Override
-                                    public void run()
-                                    {
-                                        try
-                                        {
-                                            String result = favorVideoApi.cancelFavVideo(String.valueOf(favorvideoList.get(position).getVideoAid()));
-                                            if(result.equals(""))
-                                            {
-                                                favorvideoList.remove(position);
-                                                handler.post(runnableMore);
-                                                Looper.prepare();
-                                                Toast.makeText(ctx, ctx.getString(R.string.favor_video_delete_message), Toast.LENGTH_SHORT).show();
-                                            }
-                                            else
-                                            {
-                                                Looper.prepare();
-                                                Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
-                                            }
-                                            Looper.loop();
-                                        }
-                                        catch(IOException e)
-                                        {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                }).start();
-                            }
-                        }).setNegativeButton(ctx.getString(R.string.favor_video_delete_cancel), null).show();
+                        .setPositiveButton(ctx.getString(R.string.favor_video_delete_ok),
+                                           (dialog, which) -> new Thread(() -> {
+                                               try
+                                               {
+                                                   String result = favorVideoApi.cancelFavVideo(String.valueOf(
+                                                           favorVideoList.get(position).getAid()));
+                                                   if(result.equals(""))
+                                                   {
+                                                       favorVideoList.remove(position);
+                                                       handler.post(runnableMore);
+                                                       Looper.prepare();
+                                                       Toast.makeText(ctx, ctx.getString(R.string.favor_video_delete_message), Toast.LENGTH_SHORT).show();
+                                                   }
+                                                   else
+                                                   {
+                                                       Looper.prepare();
+                                                       Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
+                                                   }
+                                                   Looper.loop();
+                                               }
+                                               catch(IOException e)
+                                               {
+                                                   e.printStackTrace();
+                                               }
+                                           }).start()).setNegativeButton(ctx.getString(R.string.favor_video_delete_cancel), null).show();
             }
         };
 
@@ -116,101 +105,52 @@ public class FavorVideoActivity extends BaseActivity
         waveSwipeRefreshLayout = findViewById(R.id.favv_swipe);
         waveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
         waveSwipeRefreshLayout.setWaveColor(ColorUtil.getColor(R.attr.colorPrimary, ctx));
-        waveSwipeRefreshLayout.setOnRefreshListener(new WaveSwipeRefreshLayout.OnRefreshListener()
-        {
-            @Override
-            public void onRefresh()
-            {
-                handler.post(new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        favvListView.setVisibility(View.GONE);
-                        getFavorVideo();
-                    }
-                });
-            }
-        });
+        waveSwipeRefreshLayout.setOnRefreshListener(() -> handler.post(() -> {
+            favvListView.setVisibility(View.GONE);
+            getFavorVideo();
+        }));
 
-        runnableUi = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                isLoading = false;
-                findViewById(R.id.favv_noweb).setVisibility(View.GONE);
-                findViewById(R.id.favv_nonthing).setVisibility(View.GONE);
-                favvListView.setVisibility(View.VISIBLE);
+        runnableUi = () -> {
+            isLoading = false;
+            findViewById(R.id.favv_noweb).setVisibility(View.GONE);
+            findViewById(R.id.favv_nonthing).setVisibility(View.GONE);
+            favvListView.setVisibility(View.VISIBLE);
 
-                waveSwipeRefreshLayout.setRefreshing(false);
-                listVideoAdapter = new ListVideoAdapter(inflater, favorvideoList, favvListView, listVideoAdapterListener);
-                favvListView.setAdapter(listVideoAdapter);
-            }
+            waveSwipeRefreshLayout.setRefreshing(false);
+            listVideoAdapter = new ListVideoAdapter(inflater, favorVideoList, false, favvListView, listVideoAdapterListener);
+            favvListView.setAdapter(listVideoAdapter);
         };
 
-        runnableNothing = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                findViewById(R.id.favv_noweb).setVisibility(View.GONE);
-                findViewById(R.id.favv_nonthing).setVisibility(View.VISIBLE);
-                favvListView.setVisibility(View.GONE);
-                waveSwipeRefreshLayout.setRefreshing(false);
-            }
+        runnableNothing = () -> {
+            findViewById(R.id.favv_noweb).setVisibility(View.GONE);
+            findViewById(R.id.favv_nonthing).setVisibility(View.VISIBLE);
+            favvListView.setVisibility(View.GONE);
+            waveSwipeRefreshLayout.setRefreshing(false);
         };
 
-        runnableNoWeb = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                findViewById(R.id.favv_noweb).setVisibility(View.VISIBLE);
-                findViewById(R.id.favv_nonthing).setVisibility(View.GONE);
-                favvListView.setVisibility(View.GONE);
-                waveSwipeRefreshLayout.setRefreshing(false);
-            }
+        runnableNoWeb = () -> {
+            findViewById(R.id.favv_noweb).setVisibility(View.VISIBLE);
+            findViewById(R.id.favv_nonthing).setVisibility(View.GONE);
+            favvListView.setVisibility(View.GONE);
+            waveSwipeRefreshLayout.setRefreshing(false);
         };
 
-        runnableMoreNoWeb = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                ((TextView) loadingView.findViewById(R.id.wid_load_text)).setText(ctx.getString(R.string.main_tip_no_more_web));
-                loadingView.findViewById(R.id.wid_load_button).setVisibility(View.VISIBLE);
-            }
+        runnableMoreNoWeb = () -> {
+            ((TextView) loadingView.findViewById(R.id.wid_load_text)).setText(ctx.getString(R.string.main_tip_no_more_web));
+            loadingView.findViewById(R.id.wid_load_button).setVisibility(View.VISIBLE);
         };
 
-        runnableMoreNothing = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                ((TextView) loadingView.findViewById(R.id.wid_load_text)).setText(ctx.getString(R.string.main_tip_no_more_data));
-            }
+        runnableMoreNothing = () -> ((TextView) loadingView.findViewById(R.id.wid_load_text)).setText(ctx.getString(R.string.main_tip_no_more_data));
+
+        runnableMore = () -> {
+            isLoading = false;
+            listVideoAdapter.notifyDataSetChanged();
         };
 
-        runnableMore = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                isLoading = false;
-                listVideoAdapter.notifyDataSetChanged();
-            }
-        };
-
-        loadingView.findViewById(R.id.wid_load_button).setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                ((TextView) loadingView.findViewById(R.id.wid_load_text)).setText(ctx.getString(R.string.main_tip_no_more_data_loading));
-                loadingView.findViewById(R.id.wid_load_button).setVisibility(View.GONE);
-                getMoreFavorVideo();
-            }
+        loadingView.findViewById(R.id.wid_load_button).setOnClickListener(v -> {
+            ((TextView) loadingView.findViewById(R.id.wid_load_text)).setText(ctx.getString(R.string.main_tip_no_more_data_loading));
+            loadingView.findViewById(R.id.wid_load_button).setVisibility(View.GONE);
+            getMoreFavorVideo();
         });
 
         favvListView.setOnScrollListener(new AbsListView.OnScrollListener()
@@ -240,23 +180,18 @@ public class FavorVideoActivity extends BaseActivity
         isLoading = true;
         favorVideoApi = new FavorVideoApi(mid, fid);
         page = 1;
-        new Thread(new Runnable()
-        {
-            @Override
-            public void run()
+        new Thread(() -> {
+            try
             {
-                try
-                {
-                    favorvideoList = favorVideoApi.getFavorVideo(page);
-                    if(favorvideoList != null && favorvideoList.size() != 0)
-                        handler.post(runnableUi);
-                    else handler.post(runnableNothing);
-                }
-                catch (IOException e)
-                {
-                    handler.post(runnableNoWeb);
-                    e.printStackTrace();
-                }
+                favorVideoList = favorVideoApi.getFavorVideo(page);
+                if(favorVideoList != null && favorVideoList.size() != 0)
+                    handler.post(runnableUi);
+                else handler.post(runnableNothing);
+            }
+            catch (IOException e)
+            {
+                handler.post(runnableNoWeb);
+                e.printStackTrace();
             }
         }).start();
     }
@@ -265,27 +200,22 @@ public class FavorVideoActivity extends BaseActivity
     {
         isLoading = true;
         page++;
-        new Thread(new Runnable()
-        {
-            @Override
-            public void run()
+        new Thread(() -> {
+            try
             {
-                try
+                ArrayList<ListVideoModel> arrayList = favorVideoApi.getFavorVideo(page);
+                if(arrayList != null && arrayList.size() != 0)
                 {
-                    ArrayList<ListVideoModel> arrayList = favorVideoApi.getFavorVideo(page);
-                    if(arrayList != null && arrayList.size() != 0)
-                    {
-                        favorvideoList.addAll(arrayList);
-                        handler.post(runnableMore);
-                    }
-                    else handler.post(runnableMoreNothing);
+                    favorVideoList.addAll(arrayList);
+                    handler.post(runnableMore);
                 }
-                catch (IOException e)
-                {
-                    page--;
-                    handler.post(runnableMoreNoWeb);
-                    e.printStackTrace();
-                }
+                else handler.post(runnableMoreNothing);
+            }
+            catch (IOException e)
+            {
+                page--;
+                handler.post(runnableMoreNoWeb);
+                e.printStackTrace();
             }
         }).start();
     }

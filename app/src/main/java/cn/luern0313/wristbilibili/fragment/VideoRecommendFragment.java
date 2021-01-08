@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 
 import androidx.fragment.app.Fragment;
@@ -53,15 +52,8 @@ public class VideoRecommendFragment extends Fragment
 
         uiListView = rootLayout.findViewById(R.id.vd_recommend_listview);
         uiListView.setEmptyView(rootLayout.findViewById(R.id.vd_recommend_nothing));
-        uiListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
-        {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-            {
-                startActivity(VideoActivity.getActivityIntent(ctx, videoModel.video_recommend_array_list.get(position).video_recommend_video_aid, ""));
-            }
-        });
-        VideoRecommendAdapter recommendAdapter = new VideoRecommendAdapter(inflater, videoModel.video_recommend_array_list, uiListView);
+        uiListView.setOnItemClickListener((parent, view, position, id) -> startActivity(VideoActivity.getActivityIntent(ctx, videoModel.getRecommendList().get(position).recommendVideoAid, "")));
+        VideoRecommendAdapter recommendAdapter = new VideoRecommendAdapter(inflater, videoModel.getRecommendList(), uiListView);
         uiListView.setAdapter(recommendAdapter);
 
         return rootLayout;

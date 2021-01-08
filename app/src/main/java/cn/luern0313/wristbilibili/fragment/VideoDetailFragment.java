@@ -2,6 +2,7 @@ package cn.luern0313.wristbilibili.fragment;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -55,7 +56,7 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
     private AnimatorSet animatorSet, animatorCancelSet, animatorEndSet;
     private CircleProgressView.OnChangeListener onChangeListener;
 
-    private Handler handler = new Handler();
+    private final Handler handler = new Handler();
     private Runnable runnableLoadingStart, runnableLoadingFin;
 
     public VideoDetailFragment() {}
@@ -79,42 +80,33 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         ctx = getActivity();
         rootLayout = inflater.inflate(R.layout.fragment_video_detail, container, false);
 
-        runnableLoadingStart = new Runnable()
-        {
-            @Override
-            public void run()
+        runnableLoadingStart = () -> {
+            try
             {
-                try
-                {
-                    rootLayout.findViewById(R.id.vd_vd_loading).setVisibility(View.VISIBLE);
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
+                rootLayout.findViewById(R.id.vd_vd_loading).setVisibility(View.VISIBLE);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
             }
         };
 
-        runnableLoadingFin = new Runnable()
-        {
-            @Override
-            public void run()
+        runnableLoadingFin = () -> {
+            try
             {
-                try
-                {
-                    rootLayout.findViewById(R.id.vd_vd_loading).setVisibility(View.GONE);
-                    setIcon();
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
+                rootLayout.findViewById(R.id.vd_vd_loading).setVisibility(View.GONE);
+                setIcon();
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
             }
         };
 
@@ -131,120 +123,98 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
         ((TextView) rootLayout.findViewById(R.id.vd_video_play)).setCompoundDrawables(playDrawable,null, null,null);
         ((TextView) rootLayout.findViewById(R.id.vd_video_danamku)).setCompoundDrawables(danmakuDrawable,null, null,null);
 
-        ((TextView) rootLayout.findViewById(R.id.vd_video_title)).setText(videoModel.video_title);
-        ((TextView) rootLayout.findViewById(R.id.vd_video_play)).setText(videoModel.video_play);
-        ((TextView) rootLayout.findViewById(R.id.vd_video_danamku)).setText(videoModel.video_danmaku);
-        ((TextView) rootLayout.findViewById(R.id.vd_video_time)).setText(videoModel.video_time);
-        if(videoModel.video_aid.equals(""))
+        ((TextView) rootLayout.findViewById(R.id.vd_video_title)).setText(videoModel.getTitle());
+        ((TextView) rootLayout.findViewById(R.id.vd_video_play)).setText(videoModel.getPlay());
+        ((TextView) rootLayout.findViewById(R.id.vd_video_danamku)).setText(videoModel.getDanmaku());
+        ((TextView) rootLayout.findViewById(R.id.vd_video_time)).setText(videoModel.getTime());
+        if(videoModel.getAid().equals(""))
             rootLayout.findViewById(R.id.vd_video_aid).setVisibility(View.GONE);
         else
-            ((TextView) rootLayout.findViewById(R.id.vd_video_aid)).setText("AV" + videoModel.video_aid);
-        if(videoModel.video_bvid.equals(""))
+            ((TextView) rootLayout.findViewById(R.id.vd_video_aid)).setText(String.format(getString(R.string.video_detail_av), videoModel.getAid()));
+        if(videoModel.getBvid().equals(""))
             rootLayout.findViewById(R.id.vd_video_bvid).setVisibility(View.GONE);
         else
-            ((TextView) rootLayout.findViewById(R.id.vd_video_bvid)).setText(videoModel.video_bvid);
-        if(!videoModel.video_warning.equals(""))
+            ((TextView) rootLayout.findViewById(R.id.vd_video_bvid)).setText(videoModel.getBvid());
+        if(!videoModel.getWarning().equals(""))
         {
-            ((TextView) rootLayout.findViewById(R.id.vd_video_warning_text)).setText(videoModel.video_warning);
+            ((TextView) rootLayout.findViewById(R.id.vd_video_warning_text)).setText(videoModel.getWarning());
             rootLayout.findViewById(R.id.vd_video_warning).setVisibility(View.VISIBLE);
         }
 
-        ((TextView) rootLayout.findViewById(R.id.vd_video_details)).setText(videoModel.video_desc);
-        ((TextView) rootLayout.findViewById(R.id.vd_card_name)).setText(videoModel.video_up_name);
-        ((TextView) rootLayout.findViewById(R.id.vd_card_sen)).setText("粉丝：" + DataProcessUtil.getView(videoModel.video_up_fan_num));
-        if(videoModel.video_up_vip == 2)
+        ((TextView) rootLayout.findViewById(R.id.vd_video_details)).setText(videoModel.getDesc());
+        ((TextView) rootLayout.findViewById(R.id.vd_card_name)).setText(videoModel.getUpName());
+        ((TextView) rootLayout.findViewById(R.id.vd_card_sen)).setText(String.format(getString(R.string.video_card_fans), DataProcessUtil.getView(videoModel.getUpFanNum())));
+        if(videoModel.getUpVip() == 2)
             ((TextView) rootLayout.findViewById(R.id.vd_card_name)).setTextColor(ColorUtil.getColor(R.attr.colorVip, getContext()));
-        if(videoModel.video_up_official == 0)
+        if(videoModel.getUpOfficial() == 0)
             rootLayout.findViewById(R.id.vd_card_off_1).setVisibility(View.VISIBLE);
-        else if(videoModel.video_up_official == 1)
+        else if(videoModel.getUpOfficial() == 1)
             rootLayout.findViewById(R.id.vd_card_off_2).setVisibility(View.VISIBLE);
 
-        if(!videoModel.video_season_title.equals(""))
+        if(videoModel.getSeasonTitle() != null)
         {
             rootLayout.findViewById(R.id.vd_season).setVisibility(View.VISIBLE);
-            Glide.with(ctx).load(videoModel.video_season_cover).skipMemoryCache(true)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE).into((ImageView) rootLayout.findViewById(R.id.vd_season_img));
-            ((TextView) rootLayout.findViewById(R.id.vd_season_title)).setText(videoModel.video_season_title);
+            Glide.with(ctx).load(videoModel.getSeasonCover()).skipMemoryCache(true)
+                 .diskCacheStrategy(DiskCacheStrategy.NONE).into((ImageView) rootLayout.findViewById(R.id.vd_season_img));
+            ((TextView) rootLayout.findViewById(R.id.vd_season_title)).setText(videoModel.getSeasonTitle());
             StringBuilder title = new StringBuilder();
-            if(videoModel.video_season_is_finish)
+            if(videoModel.isSeasonIsFinish())
                 title.append("已看完，");
-            title.append("共").append(videoModel.video_season_new_ep).append("集");
+            title.append("共").append(videoModel.getSeasonNewEp()).append("集");
             ((TextView) rootLayout.findViewById(R.id.vd_season_detail)).setText(title);
         }
 
-        Glide.with(ctx).load(videoModel.video_up_face).skipMemoryCache(true)
-                .diskCacheStrategy(DiskCacheStrategy.NONE).into((ImageView) rootLayout.findViewById(R.id.vd_card_head));
-        if(videoModel.video_part_array_list.size() > 1)
+        Glide.with(ctx).load(videoModel.getUpFace()).skipMemoryCache(true)
+             .diskCacheStrategy(DiskCacheStrategy.NONE).into((ImageView) rootLayout.findViewById(R.id.vd_card_head));
+        if(videoModel.getPartList().size() > 1)
         {
             rootLayout.findViewById(R.id.vd_video_part_layout).setVisibility(View.VISIBLE);
             rootLayout.findViewById(R.id.vd_bt_play).setVisibility(View.GONE);
-            ((TextView) rootLayout.findViewById(R.id.vd_video_part_text)).setText("共" + videoModel.video_part_array_list.size() + "P");
+            ((TextView) rootLayout.findViewById(R.id.vd_video_part_text)).setText(String.format(getString(R.string.video_part_label), videoModel.getPartList().size()));
             LinearLayoutManager layoutManager = new LinearLayoutManager(ctx);
             layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
             ((RecyclerView) rootLayout.findViewById(R.id.vd_video_part)).setLayoutManager(layoutManager);
             videoPartAdapter = new VideoPartAdapter(videoModel);
-            videoPartAdapter.setOnItemClickListener(new VideoPartAdapter.VideoPartListener()
-            {
-                @Override
-                public void onItemClick(View view, int position)
-                {
-                    videoDetailFragmentListener.onVideoDetailFragmentPartClick(position);
-                }
-            });
+            videoPartAdapter.setOnItemClickListener((view, position) -> videoDetailFragmentListener.onVideoDetailFragmentPartClick(position));
             ((RecyclerView) rootLayout.findViewById(R.id.vd_video_part)).setAdapter(videoPartAdapter);
-            if(videoModel.video_user_progress_position != -1)
-                layoutManager.scrollToPositionWithOffset(videoModel.video_user_progress_position, 0);
+            if(videoModel.getUserProgressPosition() != -1)
+                layoutManager.scrollToPositionWithOffset(videoModel.getUserProgressPosition(), 0);
         }
         else rootLayout.findViewById(R.id.vd_video_part_layout).setVisibility(View.GONE);
 
-        rootLayout.findViewById(R.id.vd_like).setOnTouchListener(new View.OnTouchListener()
-        {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent)
+        rootLayout.findViewById(R.id.vd_like).setOnTouchListener((view, motionEvent) -> {
+            switch (motionEvent.getAction())
             {
-                switch (motionEvent.getAction())
-                {
-                    case MotionEvent.ACTION_UP:
-                    case MotionEvent.ACTION_CANCEL:
-                        if(animatorSet != null)
-                            animatorSet.cancel();
-                        tripleAnimCancel();
-                        uiVideoCoinProgress.setVisibility(View.GONE);
-                        uiVideoFavProgress.setVisibility(View.GONE);
-                        break;
-                }
-                return false;
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL:
+                    if(animatorSet != null)
+                        animatorSet.cancel();
+                    tripleAnimCancel();
+                    uiVideoCoinProgress.setVisibility(View.GONE);
+                    uiVideoFavProgress.setVisibility(View.GONE);
+                    break;
             }
+            return false;
         });
 
-        rootLayout.findViewById(R.id.vd_like).setOnLongClickListener(new View.OnLongClickListener()
-        {
-            @Override
-            public boolean onLongClick(View v)
+        rootLayout.findViewById(R.id.vd_like).setOnLongClickListener(v -> {
+            if(!videoModel.isUserLike() || !videoModel.isUserFav() || videoModel.getUserCoin() == 0)
             {
-                if(!videoModel.video_user_like || !videoModel.video_user_fav || videoModel.video_user_coin == 0)
-                {
-                    tripleAnim();
-                    uiVideoCoinProgress.setVisibility(View.VISIBLE);
-                    uiVideoFavProgress.setVisibility(View.VISIBLE);
-                    uiVideoCoinProgress.setOnChangeListener(onChangeListener);
-                    uiVideoCoinProgress.showAnimation(0, 100, 3000);
-                    uiVideoFavProgress.showAnimation(0, 100, 3000);
-                }
-                else Toast.makeText(ctx, "已完成三连", Toast.LENGTH_SHORT).show();
-                return true;
+                tripleAnim();
+                uiVideoCoinProgress.setVisibility(View.VISIBLE);
+                uiVideoFavProgress.setVisibility(View.VISIBLE);
+                uiVideoCoinProgress.setOnChangeListener(onChangeListener);
+                uiVideoCoinProgress.showAnimation(0, 100, 3000);
+                uiVideoFavProgress.showAnimation(0, 100, 3000);
             }
+            else Toast.makeText(ctx, "已完成三连", Toast.LENGTH_SHORT).show();
+            return true;
         });
 
-        rootLayout.findViewById(R.id.vd_season).setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                Intent intent = new Intent(ctx, BangumiActivity.class);
-                intent.putExtra("season_id", videoModel.video_season_id);
-                startActivity(intent);
-            }
+        rootLayout.findViewById(R.id.vd_season).setOnClickListener(v -> {
+            Intent intent = new Intent(ctx, BangumiActivity.class);
+            intent.putExtra("season_id", videoModel.getSeasonId());
+            startActivity(intent);
         });
 
         rootLayout.findViewById(R.id.vd_video_part_layout).setOnClickListener(this);
@@ -258,31 +228,21 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
         rootLayout.findViewById(R.id.vd_fav).setOnClickListener(this);
         rootLayout.findViewById(R.id.vd_dislike).setOnClickListener(this);
 
-        rootLayout.findViewById(R.id.vd_card_lay).setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                Intent intent = new Intent(ctx, UserActivity.class);
-                intent.putExtra("mid", videoModel.video_up_mid);
-                startActivity(intent);
-            }
+        rootLayout.findViewById(R.id.vd_card_lay).setOnClickListener(v -> {
+            Intent intent = new Intent(ctx, UserActivity.class);
+            intent.putExtra("mid", videoModel.getUpMid());
+            startActivity(intent);
         });
 
-        onChangeListener = new CircleProgressView.OnChangeListener()
-        {
-            @Override
-            public void onProgressChanged(float progress, float max)
+        onChangeListener = (progress, max) -> {
+            if(progress == max && uiVideoCoinProgress.getVisibility() == View.VISIBLE)
             {
-                if(progress == max && uiVideoCoinProgress.getVisibility() == View.VISIBLE)
-                {
-                    animatorSet.cancel();
-                    tripleAnimCancel();
-                    tripleAnimEnd();
-                    uiVideoCoinProgress.setVisibility(View.GONE);
-                    uiVideoFavProgress.setVisibility(View.GONE);
-                    videoDetailFragmentListener.onVideoDetailFragmentTriple();
-                }
+                animatorSet.cancel();
+                tripleAnimCancel();
+                tripleAnimEnd();
+                uiVideoCoinProgress.setVisibility(View.GONE);
+                uiVideoFavProgress.setVisibility(View.GONE);
+                videoDetailFragmentListener.onVideoDetailFragmentTriple();
             }
         };
         setIcon();
@@ -348,20 +308,20 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
 
     private void setIcon()
     {
-        ((TextView) rootLayout.findViewById(R.id.vd_like_text)).setText(videoModel.video_detail_like == 0 ? "点赞" : DataProcessUtil.getView(videoModel.video_detail_like));
-        ((TextView) rootLayout.findViewById(R.id.vd_coin_text)).setText(videoModel.video_detail_coin == 0 ? "投币" : DataProcessUtil.getView(videoModel.video_detail_coin));
-        ((TextView) rootLayout.findViewById(R.id.vd_fav_text)).setText(videoModel.video_detail_fav == 0 ? "收藏" : DataProcessUtil.getView(videoModel.video_detail_fav));
+        ((TextView) rootLayout.findViewById(R.id.vd_like_text)).setText(videoModel.getDetailLike() == 0 ? getString(R.string.video_control_like) : DataProcessUtil.getView(videoModel.getDetailLike()));
+        ((TextView) rootLayout.findViewById(R.id.vd_coin_text)).setText(videoModel.getDetailCoin() == 0 ? getString(R.string.video_control_coin) : DataProcessUtil.getView(videoModel.getDetailCoin()));
+        ((TextView) rootLayout.findViewById(R.id.vd_fav_text)).setText(videoModel.getDetailFav() == 0 ? getString(R.string.video_control_fav) : DataProcessUtil.getView(videoModel.getDetailFav()));
 
-        if(videoModel.video_user_follow_up)
+        if(videoModel.isUserFollowUp())
             rootLayout.findViewById(R.id.vd_card_follow).setVisibility(View.GONE);
 
-        if(videoModel.video_user_like)
+        if(videoModel.isUserLike())
         {
             ((ImageView) rootLayout.findViewById(R.id.vd_like_img)).setImageResource(R.drawable.icon_vdd_do_like_yes_nobg);
             ((ImageView) rootLayout.findViewById(R.id.vd_like_img_bg)).setImageResource(R.drawable.icon_vdd_do_yes_bg);
             ((ImageView) rootLayout.findViewById(R.id.vd_dislike_img)).setImageResource(R.drawable.icon_vdd_do_dislike_no);
         }
-        else if(videoModel.video_user_dislike)
+        else if(videoModel.isUserDislike())
         {
             ((ImageView) rootLayout.findViewById(R.id.vd_like_img)).setImageResource(R.drawable.icon_vdd_do_like_no_nobg);
             ((ImageView) rootLayout.findViewById(R.id.vd_like_img_bg)).setImageResource(R.drawable.icon_vdd_do_no_bg);
@@ -374,7 +334,7 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
             ((ImageView) rootLayout.findViewById(R.id.vd_dislike_img)).setImageResource(R.drawable.icon_vdd_do_dislike_no);
         }
 
-        if(videoModel.video_user_coin > 0)
+        if(videoModel.getUserCoin() > 0)
         {
             ((ImageView) rootLayout.findViewById(R.id.vd_coin_img)).setImageResource(R.drawable.icon_vdd_do_coin_yes_nobg);
             ((ImageView) rootLayout.findViewById(R.id.vd_coin_img_bg)).setImageResource(R.drawable.icon_vdd_do_yes_bg);
@@ -385,7 +345,7 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
             ((ImageView) rootLayout.findViewById(R.id.vd_coin_img_bg)).setImageResource(R.drawable.icon_vdd_do_no_bg);
         }
 
-        if(videoModel.video_user_fav)
+        if(videoModel.isUserFav())
         {
             ((ImageView) rootLayout.findViewById(R.id.vd_fav_img)).setImageResource(R.drawable.icon_vdd_do_fav_yes_nobg);
             ((ImageView) rootLayout.findViewById(R.id.vd_fav_img_bg)).setImageResource(R.drawable.icon_vdd_do_yes_bg);

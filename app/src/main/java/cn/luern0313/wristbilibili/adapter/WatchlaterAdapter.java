@@ -94,15 +94,15 @@ public class WatchlaterAdapter extends BaseAdapter
         }
 
         WatchLaterModel video = wlList.get(position);
-        viewHolder.title.setText(video.title);
+        viewHolder.title.setText(video.getTitle());
         viewHolder.img.setImageResource(R.drawable.img_default_vid);
-        viewHolder.up.setText("UP : " + video.up);
-        viewHolder.play.setText("播放 : " + video.play + "  弹幕 : " + video.danmaku);
+        viewHolder.up.setText("UP : " + video.getUp());
+        viewHolder.play.setText("播放 : " + video.getPlay() + "  弹幕 : " + video.getDanmaku());
         viewHolder.pro.setVisibility(View.VISIBLE);
-        viewHolder.pro.setProgress((int) (video.progress * 100.0 / video.duration));
+        viewHolder.pro.setProgress((int) (video.getProgress() * 100.0 / video.getDuration()));
 
-        viewHolder.img.setTag(video.cover);
-        final BitmapDrawable c = setImageFormWeb(video.cover);
+        viewHolder.img.setTag(video.getCover());
+        final BitmapDrawable c = setImageFormWeb(video.getCover());
         if(c != null) viewHolder.img.setImageDrawable(c);
         return convertView;
     }

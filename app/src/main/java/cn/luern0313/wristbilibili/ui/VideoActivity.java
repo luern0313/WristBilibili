@@ -17,16 +17,15 @@ import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import org.greenrobot.eventbus.EventBus;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
+import cn.luern0313.lson.element.LsonObject;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.FavorBoxApi;
 import cn.luern0313.wristbilibili.api.OnlineVideoApi;
@@ -73,7 +72,7 @@ public class VideoActivity extends BaseActivity implements VideoDetailFragment.V
     final private int RESULT_VD_SHARE = 104;
 
     private DownloadService.MyBinder myBinder;
-    private VideoDownloadServiceConnection connection = new VideoDownloadServiceConnection();
+    private final VideoDownloadServiceConnection connection = new VideoDownloadServiceConnection();
 
     public static Intent getActivityIntent(Context ctx, String aid, String bvid)
     {
@@ -116,54 +115,39 @@ public class VideoActivity extends BaseActivity implements VideoDetailFragment.V
 
         if(SharedPreferencesUtil.getBoolean(SharedPreferencesUtil.tipVd, true)) findViewById(R.id.vd_tip).setVisibility(View.VISIBLE);
 
-        runnableNoWeb = new Runnable()
-        {
-            @Override
-            public void run()
+        runnableNoWeb = () -> {
+            try
             {
-                try
-                {
-                    uiLoading.setVisibility(View.GONE);
-                    uiNoWeb.setVisibility(View.VISIBLE);
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
+                uiLoading.setVisibility(View.GONE);
+                uiNoWeb.setVisibility(View.VISIBLE);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
             }
         };
 
-        runnableUi = new Runnable()
-        {
-            @Override
-            public void run()
+        runnableUi = () -> {
+            try
             {
-                try
-                {
-                    uiLoading.setVisibility(View.GONE);
-                    uiNoWeb.setVisibility(View.GONE);
-                    uiViewPager.setAdapter(pagerAdapter);
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
+                uiLoading.setVisibility(View.GONE);
+                uiNoWeb.setVisibility(View.GONE);
+                uiViewPager.setAdapter(pagerAdapter);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
             }
         };
 
-        runnableNodata = new Runnable()
-        {
-            @Override
-            public void run()
+        runnableNodata = () -> {
+            try
             {
-                try
-                {
-                    findViewById(R.id.vd_novideo).setVisibility(View.VISIBLE);
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
+                findViewById(R.id.vd_novideo).setVisibility(View.VISIBLE);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
             }
         };
 
@@ -182,7 +166,7 @@ public class VideoActivity extends BaseActivity implements VideoDetailFragment.V
                 if(position == 0)
                     return VideoDetailFragment.newInstance(videoModel);
                 else if(position == 1)
-                    return ReplyFragment.newInstance(videoModel.video_aid, "1", null, -1);
+                    return ReplyFragment.newInstance(videoModel.getAid(), "1", null, -1);
                 else
                     return VideoRecommendFragment.newInstance(videoModel);
             }
@@ -221,28 +205,23 @@ public class VideoActivity extends BaseActivity implements VideoDetailFragment.V
             }
         });
 
-        new Thread(new Runnable()
-        {
-            @Override
-            public void run()
+        new Thread(() -> {
+            try
             {
-                try
+                videoModel = videoApi.getVideoDetails();
+                if(videoModel != null)
                 {
-                    videoModel = videoApi.getVideoDetails();
-                    if(videoModel != null)
-                    {
-                        handler.post(runnableUi);
-                    }
-                    else
-                    {
-                        handler.post(runnableNodata);
-                    }
+                    handler.post(runnableUi);
                 }
-                catch (IOException e)
+                else
                 {
-                    e.printStackTrace();
-                    handler.post(runnableNoWeb);
+                    handler.post(runnableNodata);
                 }
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+                handler.post(runnableNoWeb);
             }
         }).start();
     }
@@ -258,12 +237,12 @@ public class VideoActivity extends BaseActivity implements VideoDetailFragment.V
     {
         if(viewId == R.id.vd_video_part_layout)
         {
-            String[] videoPartNames = new String[videoModel.video_part_array_list.size()];
-            String[] videoPartCids = new String[videoModel.video_part_array_list.size()];
-            for(int i = 0; i < videoModel.video_part_array_list.size(); i++)
-                videoPartNames[i] = videoModel.video_part_array_list.get(i).video_part_name;
-            for(int i = 0; i < videoModel.video_part_array_list.size(); i++)
-                videoPartCids[i] = String.valueOf(videoModel.video_part_array_list.get(i).video_part_cid);
+            String[] videoPartNames = new String[videoModel.getPartList().size()];
+            String[] videoPartCids = new String[videoModel.getPartList().size()];
+            for(int i = 0; i < videoModel.getPartList().size(); i++)
+                videoPartNames[i] = videoModel.getPartList().get(i).getPartName();
+            for(int i = 0; i < videoModel.getPartList().size(); i++)
+                videoPartCids[i] = String.valueOf(videoModel.getPartList().get(i).getPartCid());
             Intent intent = new Intent(ctx, SelectPartActivity.class);
             intent.putExtra("title", "分P");
             intent.putExtra("options_name", videoPartNames);
@@ -273,59 +252,53 @@ public class VideoActivity extends BaseActivity implements VideoDetailFragment.V
         else if(viewId == R.id.vd_bt_cover)
         {
             Intent intent = new Intent(ctx, ImgActivity.class);
-            intent.putExtra("imgUrl", new String[]{videoModel.video_cover});
+            intent.putExtra("imgUrl", new String[]{videoModel.getCover()});
             startActivity(intent);
         }
         else if(viewId == R.id.vd_bt_play)
         {
             Intent intent = new Intent(ctx, PlayerActivity.class);
-            intent.putExtra("title", videoModel.video_title);
-            intent.putExtra("aid", videoModel.video_aid);
-            intent.putExtra("cid", videoModel.video_cid);
+            intent.putExtra("title", videoModel.getTitle());
+            intent.putExtra("aid", videoModel.getAid());
+            intent.putExtra("cid", videoModel.getCid());
             startActivity(intent);
         }
         else if(viewId == R.id.vd_bt_watchlater)
         {
-            new Thread(new Runnable()
-            {
-                @Override
-                public void run()
+            new Thread(() -> {
+                try
                 {
-                    try
+                    String result = videoApi.playLater();
+                    if(result.equals(""))
                     {
-                        String result = videoApi.playLater();
-                        if(result.equals(""))
-                        {
-                            Looper.prepare();
-                            Toast.makeText(ctx, "已添加至稍后再看", Toast.LENGTH_SHORT).show();
-                            Looper.loop();
-                        }
-                        else
-                        {
-                            Looper.prepare();
-                            Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
-                            Looper.loop();
-                        }
-                    }
-                    catch (IOException e)
-                    {
-                        e.printStackTrace();
                         Looper.prepare();
-                        Toast.makeText(ctx, "未成功添加至稍后观看！请检查网络再试", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ctx, "已添加至稍后再看", Toast.LENGTH_SHORT).show();
                         Looper.loop();
                     }
+                    else
+                    {
+                        Looper.prepare();
+                        Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
+                        Looper.loop();
+                    }
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                    Looper.prepare();
+                    Toast.makeText(ctx, "未成功添加至稍后观看！请检查网络再试", Toast.LENGTH_SHORT).show();
+                    Looper.loop();
                 }
             }).start();
         }
         else if(viewId == R.id.vd_bt_download)
         {
-            String[] videoPartNames = new String[videoModel.video_part_array_list.size()];
-            String[] videoPartCids = new String[videoModel.video_part_array_list.size()];
-            for (int i = 0; i < videoModel.video_part_array_list.size(); i++)
-                videoPartNames[i] = videoModel.video_part_array_list.get(i).video_part_name;
-            for (int i = 0; i < videoModel.video_part_array_list.size(); i++)
-                videoPartCids[i] = String.valueOf(
-                        videoModel.video_part_array_list.get(i).video_part_cid);
+            String[] videoPartNames = new String[videoModel.getPartList().size()];
+            String[] videoPartCids = new String[videoModel.getPartList().size()];
+            for (int i = 0; i < videoModel.getPartList().size(); i++)
+                videoPartNames[i] = videoModel.getPartList().get(i).getPartName();
+            for (int i = 0; i < videoModel.getPartList().size(); i++)
+                videoPartCids[i] = String.valueOf(videoModel.getPartList().get(i).getPartCid());
             Intent intent = new Intent(ctx, SelectPartActivity.class);
             intent.putExtra("title", "分P下载");
             intent.putExtra("tip", "选择要下载的分P");
@@ -335,34 +308,29 @@ public class VideoActivity extends BaseActivity implements VideoDetailFragment.V
         }
         else if(viewId == R.id.vd_bt_history)
         {
-            new Thread(new Runnable()
-            {
-                @Override
-                public void run()
+            new Thread(() -> {
+                try
                 {
-                    try
+                    String result = videoApi.playHistory();
+                    if(result.equals(""))
                     {
-                        String result = videoApi.playHistory();
-                        if(result.equals(""))
-                        {
-                            Looper.prepare();
-                            Toast.makeText(ctx, "已添加至历史记录！你可以在历史记录找到", Toast.LENGTH_SHORT).show();
-                            Looper.loop();
-                        }
-                        else
-                        {
-                            Looper.prepare();
-                            Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
-                            Looper.loop();
-                        }
-                    }
-                    catch (IOException e)
-                    {
-                        e.printStackTrace();
                         Looper.prepare();
-                        Toast.makeText(ctx, "未成功添加至历史记录！请检查网络再试", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ctx, "已添加至历史记录！你可以在历史记录找到", Toast.LENGTH_SHORT).show();
                         Looper.loop();
                     }
+                    else
+                    {
+                        Looper.prepare();
+                        Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
+                        Looper.loop();
+                    }
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                    Looper.prepare();
+                    Toast.makeText(ctx, "未成功添加至历史记录！请检查网络再试", Toast.LENGTH_SHORT).show();
+                    Looper.loop();
                 }
             }).start();
         }
@@ -370,192 +338,80 @@ public class VideoActivity extends BaseActivity implements VideoDetailFragment.V
         {
             Intent intent = new Intent(ctx, SendDynamicActivity.class);
             intent.putExtra("is_share", true);
-            intent.putExtra("share_dyid", videoModel.video_aid);
-            intent.putExtra("share_up", videoModel.video_up_name);
-            intent.putExtra("share_img", videoModel.video_cover);
-            intent.putExtra("share_title", videoModel.video_title);
+            intent.putExtra("share_dyid", videoModel.getAid());
+            intent.putExtra("share_up", videoModel.getUpName());
+            intent.putExtra("share_img", videoModel.getCover());
+            intent.putExtra("share_title", videoModel.getTitle());
             startActivityForResult(intent, RESULT_VD_SHARE);
         }
         else if(viewId == R.id.vd_like)
         {
-            new Thread(new Runnable()
-            {
-                @Override
-                public void run()
+            new Thread(() -> {
+                try
                 {
-                    try
+                    if(videoModel.isUserLike())
                     {
-                        if(videoModel.video_user_like)
+                        String result = videoApi.likeVideo(2);
+                        if(result.equals(""))
                         {
-                            String result = videoApi.likeVideo(2);
-                            if(result.equals(""))
-                            {
-                                videoModel.video_detail_like--;
-                                videoModel.video_user_like = false;
-                                Looper.prepare();
-                                Toast.makeText(ctx, "已取消喜欢...", Toast.LENGTH_SHORT).show();
-                            }
-                            else
-                            {
-                                Looper.prepare();
-                                Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
-                            }
+                            videoModel.setDetailLike(videoModel.getDetailLike() - 1);
+                            videoModel.setUserLike(false);
+                            Looper.prepare();
+                            Toast.makeText(ctx, "已取消喜欢...", Toast.LENGTH_SHORT).show();
                         }
                         else
                         {
-                            String result = videoApi.likeVideo(1);
-                            if(result.equals(""))
-                            {
-                                videoModel.video_detail_like++;
-                                videoModel.video_user_like = true;
-                                videoModel.video_user_dislike = false;
-                                Looper.prepare();
-                                Toast.makeText(ctx, "已喜欢！这个视频会被更多人看到！", Toast.LENGTH_SHORT).show();
-                            }
-                            else
-                            {
-                                Looper.prepare();
-                                Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
-                            }
+                            Looper.prepare();
+                            Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
                         }
                     }
-                    catch (IOException e)
+                    else
                     {
-                        e.printStackTrace();
-                        Looper.prepare();
-                        Toast.makeText(ctx, "喜欢失败...请检查你的网络..", Toast.LENGTH_SHORT).show();
+                        String result = videoApi.likeVideo(1);
+                        if(result.equals(""))
+                        {
+                            videoModel.setDetailLike(videoModel.getDetailLike() + 1);
+                            videoModel.setUserLike(true);
+                            videoModel.setUserDislike(false);
+                            Looper.prepare();
+                            Toast.makeText(ctx, "已喜欢！这个视频会被更多人看到！", Toast.LENGTH_SHORT).show();
+                        }
+                        else
+                        {
+                            Looper.prepare();
+                            Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
+                        }
                     }
-                    finally
-                    {
-                        EventBus.getDefault().post(videoModel);
-                        Looper.loop();
-                    }
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                    Looper.prepare();
+                    Toast.makeText(ctx, "喜欢失败...请检查你的网络..", Toast.LENGTH_SHORT).show();
+                }
+                finally
+                {
+                    EventBus.getDefault().post(videoModel);
+                    Looper.loop();
                 }
             }).start();
         }
         else if(viewId == R.id.vd_coin)
         {
-            new Thread(new Runnable()
-            {
-                @Override
-                public void run()
+            new Thread(() -> {
+                try
                 {
-                    try
+                    if(videoModel.getDetailCopyright() == 1)  //1原创
                     {
-                        if(videoModel.video_detail_copyright == 1)  //1原创
+                        if(videoModel.getUserCoin() < 2)
                         {
-                            if(videoModel.video_user_coin < 2)
-                            {
-                                String result = videoApi.coinVideo(1);
-                                if(result.equals(""))
-                                {
-                                    videoModel.video_detail_coin++;
-                                    videoModel.video_user_coin++;
-                                    Looper.prepare();
-                                    Toast.makeText(ctx, "你投了一个硬币！再次点击可以再次投币！", Toast.LENGTH_SHORT).show();
-                                }
-                                else
-                                {
-                                    Looper.prepare();
-                                    Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                            else
-                            {
-                                Looper.prepare();
-                                Toast.makeText(ctx, "最多投两个硬币...", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                        else  //2转载
-                        {
-                            if(videoModel.video_user_coin < 1)
-                            {
-                                String result = videoApi.coinVideo(1);
-                                if(result.equals(""))
-                                {
-                                    videoModel.video_detail_coin++;
-                                    videoModel.video_user_coin++;
-                                    Looper.prepare();
-                                    Toast.makeText(ctx, "你投了一个硬币！本稿件最多投一个硬币", Toast.LENGTH_SHORT).show();
-                                }
-                                else
-                                {
-                                    Looper.prepare();
-                                    Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                            else
-                            {
-                                Looper.prepare();
-                                Toast.makeText(ctx, "本稿件最多投一个硬币...", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    }
-                    catch (IOException e)
-                    {
-                        e.printStackTrace();
-                        Looper.prepare();
-                        Toast.makeText(ctx, "投币失败！请检查你的网络..", Toast.LENGTH_SHORT).show();
-                    }
-                    finally
-                    {
-                        EventBus.getDefault().post(videoModel);
-                        Looper.loop();
-                    }
-                }
-            }).start();
-        }
-        else if(viewId == R.id.vd_fav)
-        {
-            new Thread(new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    try
-                    {
-                        FavorBoxApi favorBoxApi = new FavorBoxApi(SharedPreferencesUtil.getString(SharedPreferencesUtil.mid, ""), false);
-                        ArrayList<FavorBoxModel> favorBoxArrayList = favorBoxApi.getFavorBox();
-                        String[] favorBoxNames = new String[favorBoxArrayList.size()];
-                        for (int i = 0; i < favorBoxArrayList.size(); i++)
-                            favorBoxNames[i] = favorBoxArrayList.get(i).getTitle();
-                        String[] favorBoxIds = new String[favorBoxArrayList.size()];
-                        for (int i = 0; i < favorBoxArrayList.size(); i++)
-                            favorBoxIds[i] = favorBoxArrayList.get(i).getId();
-                        Intent intent = new Intent(ctx, SelectPartActivity.class);
-                        intent.putExtra("title", "收藏");
-                        intent.putExtra("tip", "选择收藏夹");
-                        intent.putExtra("options_name", favorBoxNames);
-                        intent.putExtra("options_id", favorBoxIds);
-                        startActivityForResult(intent, RESULT_VD_FAVOR);
-                    }
-                    catch (IOException e)
-                    {
-                        e.printStackTrace();
-                        Looper.prepare();
-                        Toast.makeText(ctx, "收藏失败！请检查你的网络..", Toast.LENGTH_SHORT).show();
-                        Looper.loop();
-                    }
-                }
-            }).start();
-        }
-        else if(viewId == R.id.vd_dislike)
-        {
-            new Thread(new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    try
-                    {
-                        if(videoModel.video_user_dislike)
-                        {
-                            String result = videoApi.likeVideo(4);
+                            String result = videoApi.coinVideo(1);
                             if(result.equals(""))
                             {
-                                videoModel.video_user_dislike = false;
+                                videoModel.setDetailCoin(videoModel.getDetailCoin() + 1);
+                                videoModel.setUserCoin(videoModel.getUserCoin() + 1);
                                 Looper.prepare();
-                                Toast.makeText(ctx, "取消点踩成功！", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ctx, "你投了一个硬币！再次点击可以再次投币！", Toast.LENGTH_SHORT).show();
                             }
                             else
                             {
@@ -565,14 +421,21 @@ public class VideoActivity extends BaseActivity implements VideoDetailFragment.V
                         }
                         else
                         {
-                            String result = videoApi.likeVideo(3);
+                            Looper.prepare();
+                            Toast.makeText(ctx, "最多投两个硬币...", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    else  //2转载
+                    {
+                        if(videoModel.getUserCoin() < 1)
+                        {
+                            String result = videoApi.coinVideo(1);
                             if(result.equals(""))
                             {
-                                videoModel.video_detail_like -= videoModel.video_user_like ? 1 : 0;
-                                videoModel.video_user_dislike = true;
-                                videoModel.video_user_like = false;
+                                videoModel.setDetailLike(videoModel.getDetailLike() + 1);
+                                videoModel.setUserCoin(videoModel.getUserCoin() + 1);
                                 Looper.prepare();
-                                Toast.makeText(ctx, "点踩成功！", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ctx, "你投了一个硬币！本稿件最多投一个硬币", Toast.LENGTH_SHORT).show();
                             }
                             else
                             {
@@ -580,18 +443,103 @@ public class VideoActivity extends BaseActivity implements VideoDetailFragment.V
                                 Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
                             }
                         }
+                        else
+                        {
+                            Looper.prepare();
+                            Toast.makeText(ctx, "本稿件最多投一个硬币...", Toast.LENGTH_SHORT).show();
+                        }
                     }
-                    catch (IOException e)
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                    Looper.prepare();
+                    Toast.makeText(ctx, "投币失败！请检查你的网络..", Toast.LENGTH_SHORT).show();
+                }
+                finally
+                {
+                    EventBus.getDefault().post(videoModel);
+                    Looper.loop();
+                }
+            }).start();
+        }
+        else if(viewId == R.id.vd_fav)
+        {
+            new Thread(() -> {
+                try
+                {
+                    FavorBoxApi favorBoxApi = new FavorBoxApi(SharedPreferencesUtil.getString(SharedPreferencesUtil.mid, ""), false);
+                    ArrayList<FavorBoxModel> favorBoxArrayList = favorBoxApi.getFavorBox();
+                    String[] favorBoxNames = new String[favorBoxArrayList.size()];
+                    for (int i = 0; i < favorBoxArrayList.size(); i++)
+                        favorBoxNames[i] = favorBoxArrayList.get(i).getTitle();
+                    String[] favorBoxIds = new String[favorBoxArrayList.size()];
+                    for (int i = 0; i < favorBoxArrayList.size(); i++)
+                        favorBoxIds[i] = favorBoxArrayList.get(i).getId();
+                    Intent intent = new Intent(ctx, SelectPartActivity.class);
+                    intent.putExtra("title", "收藏");
+                    intent.putExtra("tip", "选择收藏夹");
+                    intent.putExtra("options_name", favorBoxNames);
+                    intent.putExtra("options_id", favorBoxIds);
+                    startActivityForResult(intent, RESULT_VD_FAVOR);
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                    Looper.prepare();
+                    Toast.makeText(ctx, "收藏失败！请检查你的网络..", Toast.LENGTH_SHORT).show();
+                    Looper.loop();
+                }
+            }).start();
+        }
+        else if(viewId == R.id.vd_dislike)
+        {
+            new Thread(() -> {
+                try
+                {
+                    if(videoModel.isUserDislike())
                     {
-                        e.printStackTrace();
-                        Looper.prepare();
-                        Toast.makeText(ctx, "点踩失败！请检查你的网络..", Toast.LENGTH_SHORT).show();
+                        String result = videoApi.likeVideo(4);
+                        if(result.equals(""))
+                        {
+                            videoModel.setUserDislike(false);
+                            Looper.prepare();
+                            Toast.makeText(ctx, "取消点踩成功！", Toast.LENGTH_SHORT).show();
+                        }
+                        else
+                        {
+                            Looper.prepare();
+                            Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
+                        }
                     }
-                    finally
+                    else
                     {
-                        EventBus.getDefault().post(videoModel);
-                        Looper.loop();
+                        String result = videoApi.likeVideo(3);
+                        if(result.equals(""))
+                        {
+                            videoModel.setDetailLike(videoModel.getDetailLike() - (videoModel.isUserLike() ? 1 : 0));
+                            videoModel.setUserDislike(true);
+                            videoModel.setUserLike(false);
+                            Looper.prepare();
+                            Toast.makeText(ctx, "点踩成功！", Toast.LENGTH_SHORT).show();
+                        }
+                        else
+                        {
+                            Looper.prepare();
+                            Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
+                        }
                     }
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                    Looper.prepare();
+                    Toast.makeText(ctx, "点踩失败！请检查你的网络..", Toast.LENGTH_SHORT).show();
+                }
+                finally
+                {
+                    EventBus.getDefault().post(videoModel);
+                    Looper.loop();
                 }
             }).start();
         }
@@ -600,57 +548,52 @@ public class VideoActivity extends BaseActivity implements VideoDetailFragment.V
     @Override
     public void onVideoDetailFragmentPartClick(int position)
     {
-        VideoModel.VideoPartModel videoPartModel = videoModel.video_part_array_list.get(position);
+        VideoModel.VideoPartModel videoPartModel = videoModel.getPartList().get(position);
         Intent intent = new Intent(ctx, PlayerActivity.class);
-        intent.putExtra("title", videoPartModel.video_part_name);
-        intent.putExtra("aid", videoModel.video_aid);
-        intent.putExtra("cid", videoPartModel.video_part_cid);
-        if(videoPartModel.video_part_cid.equals(videoModel.video_user_progress_cid))
-            intent.putExtra("time", videoModel.video_user_progress_time);
+        intent.putExtra("title", videoPartModel.getPartName());
+        intent.putExtra("aid", videoModel.getAid());
+        intent.putExtra("cid", videoPartModel.getPartCid());
+        if(videoPartModel.getPartCid().equals(videoModel.getUserProgressCid()))
+            intent.putExtra("time", videoModel.getUserProgressTime());
         startActivity(intent);
-        videoModel.video_user_progress_cid = videoPartModel.video_part_cid;
-        videoModel.video_user_progress_position = position;
-        videoModel.video_user_progress_time = 0;
+        videoModel.setUserProgressCid(videoPartModel.getPartCid());
+        videoModel.setUserProgressPosition(position);
+        videoModel.setUserProgressTime(0);
         EventBus.getDefault().post(videoModel);
     }
 
     @Override
     public void onVideoDetailFragmentTriple()
     {
-        new Thread(new Runnable()
-        {
-            @Override
-            public void run()
+        new Thread(() -> {
+            try
             {
-                try
+                LsonObject result = videoApi.tripleVideo();
+                if(result.getInt("code") == 0)
                 {
-                    JSONObject result = videoApi.tripleVideo();
-                    if(result.optInt("code") == 0)
-                    {
-                        JSONObject data = result.optJSONObject("data");
-                        videoModel.video_user_like = data.optBoolean("like");
-                        videoModel.video_user_coin += data.optInt("multiply");
-                        videoModel.video_user_fav = data.optBoolean("fav");
-                        Looper.prepare();
-                        Toast.makeText(ctx, "三连成功！", Toast.LENGTH_SHORT).show();
-                    }
-                    else
-                    {
-                        Looper.prepare();
-                        Toast.makeText(ctx, "未知错误", Toast.LENGTH_SHORT).show();
-                    }
-                }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
+                    LsonObject data = result.getJsonObject("data");
+                    videoModel.setUserLike(data.getBoolean("like"));
+                    videoModel.setUserCoin(videoModel.getUserCoin() + data.getInt("multiply"));
+                    videoModel.setUserFav(data.getBoolean("fav"));
                     Looper.prepare();
-                    Toast.makeText(ctx, "三连失败！请检查你的网络..", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ctx, "三连成功！", Toast.LENGTH_SHORT).show();
                 }
-                finally
+                else
                 {
-                    EventBus.getDefault().post(videoModel);
-                    Looper.loop();
+                    Looper.prepare();
+                    Toast.makeText(ctx, "未知错误", Toast.LENGTH_SHORT).show();
                 }
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+                Looper.prepare();
+                Toast.makeText(ctx, "三连失败！请检查你的网络..", Toast.LENGTH_SHORT).show();
+            }
+            finally
+            {
+                EventBus.getDefault().post(videoModel);
+                Looper.loop();
             }
         }).start();
     }
@@ -664,101 +607,85 @@ public class VideoActivity extends BaseActivity implements VideoDetailFragment.V
         switch (requestCode)
         {
             case RESULT_VD_FAVOR:
-                new Thread(new Runnable()
-                {
-                    @Override
-                    public void run()
+                new Thread(() -> {
+                    try
                     {
-                        try
+                        String result = videoApi.favVideo(data.getStringExtra("option_id"));
+                        if(result.equals(""))
                         {
-                            String result = videoApi.favVideo(data.getStringExtra("option_id"));
-                            if(result.equals(""))
-                            {
-                                videoModel.video_detail_fav += videoModel.video_user_fav ? 0 : 1;
-                                videoModel.video_user_fav = true;
-                                Looper.prepare();
-                                Toast.makeText(ctx, "已收藏至 " + data.getStringExtra("option_name") + " 收藏夹！", Toast.LENGTH_SHORT).show();
-                            }
-                            else
-                            {
-                                Looper.prepare();
-                                Toast.makeText(ctx, "错误：" + result, Toast.LENGTH_SHORT).show();
-                            }
-                            Looper.loop();
+                            videoModel.setDetailFav(videoModel.getDetailFav() + (videoModel.isUserFav() ? 0 : 1));
+                            videoModel.setUserFav(true);
+                            Looper.prepare();
+                            Toast.makeText(ctx, "已收藏至 " + data.getStringExtra("option_name") + " 收藏夹！", Toast.LENGTH_SHORT).show();
                         }
-                        catch (IOException e)
+                        else
                         {
-                            e.printStackTrace();
+                            Looper.prepare();
+                            Toast.makeText(ctx, "错误：" + result, Toast.LENGTH_SHORT).show();
                         }
-                        finally
-                        {
-                            EventBus.getDefault().post(videoModel);
-                        }
+                        Looper.loop();
+                    }
+                    catch (IOException e)
+                    {
+                        e.printStackTrace();
+                    }
+                    finally
+                    {
+                        EventBus.getDefault().post(videoModel);
                     }
                 }).start();
                 break;
 
             case RESULT_VD_DOWNLOAD:
-                new Thread(new Runnable()
-                {
-                    @Override
-                    public void run()
+                new Thread(() -> {
+                    try
                     {
-                        try
-                        {
-                            onlineVideoApi = new OnlineVideoApi(videoModel.video_aid, data.getStringExtra("option_id"));
-                            onlineVideoApi.connectionVideoUrl();
-                            connection.downloadVideo(data.getStringExtra("option_name") + " - " + videoModel.video_title,
-                                                     data.getStringExtra("option_id"));
-                        }
-                        catch (IOException e)
-                        {
-                            e.printStackTrace();
-                            Looper.prepare();
-                            Toast.makeText(ctx, "网络连接失败，请检查网络", Toast.LENGTH_SHORT).show();
-                            Looper.loop();
-                        }
+                        onlineVideoApi = new OnlineVideoApi(videoModel.getAid(), data.getStringExtra("option_id"));
+                        onlineVideoApi.connectionVideoUrl();
+                        connection.downloadVideo(data.getStringExtra("option_name") + " - " + videoModel.getTitle(), data.getStringExtra("option_id"));
+                    }
+                    catch (IOException e)
+                    {
+                        e.printStackTrace();
+                        Looper.prepare();
+                        Toast.makeText(ctx, "网络连接失败，请检查网络", Toast.LENGTH_SHORT).show();
+                        Looper.loop();
                     }
                 }).start();
                 break;
 
             case RESULT_VD_PART:
                 Intent intent = new Intent(ctx, PlayerActivity.class);
-                intent.putExtra("title", data.getStringExtra("option_name") + " - " + videoModel.video_title);
-                intent.putExtra("aid", videoModel.video_aid);
+                intent.putExtra("title", data.getStringExtra("option_name") + " - " + videoModel.getTitle());
+                intent.putExtra("aid", videoModel.getAid());
                 intent.putExtra("cid", data.getStringExtra("option_id"));
                 startActivity(intent);
                 break;
 
             case RESULT_VD_SHARE:
-                new Thread(new Runnable()
-                {
-                    @Override
-                    public void run()
+                new Thread(() -> {
+                    try
                     {
-                        try
+                        String result = videoApi.shareVideo(data.getStringExtra("text"));
+                        if(result.equals(""))
                         {
-                            String result = videoApi.shareVideo(data.getStringExtra("text"));
-                            if(result.equals(""))
-                            {
-                                Looper.prepare();
-                                Toast.makeText(ctx, "发送成功！", Toast.LENGTH_SHORT).show();
-                                Looper.loop();
-                            }
-                            else
-                            {
-                                Looper.prepare();
-                                Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
-                                Looper.loop();
-                            }
-                        }
-                        catch (IOException e)
-                        {
-                            e.printStackTrace();
                             Looper.prepare();
-                            Toast.makeText(ctx, "分享视频失败。。请检查网络？", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ctx, "发送成功！", Toast.LENGTH_SHORT).show();
                             Looper.loop();
                         }
+                        else
+                        {
+                            Looper.prepare();
+                            Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
+                            Looper.loop();
+                        }
+                    }
+                    catch (IOException e)
+                    {
+                        e.printStackTrace();
+                        Looper.prepare();
+                        Toast.makeText(ctx, "分享视频失败。。请检查网络？", Toast.LENGTH_SHORT).show();
+                        Looper.loop();
                     }
                 }).start();
                 break;
@@ -785,8 +712,8 @@ public class VideoActivity extends BaseActivity implements VideoDetailFragment.V
 
         void downloadVideo(String title, String cid)
         {
-            String result = myBinder.startDownload(videoModel.video_aid, cid, title,
-                                                   videoModel.video_cover, onlineVideoApi.getVideoUrl(),
+            String result = myBinder.startDownload(videoModel.getAid(), cid, title,
+                                                   videoModel.getCover(), onlineVideoApi.getVideoUrl(),
                                                    onlineVideoApi.getDanmakuUrl());
             Looper.prepare();
             if(result.equals("")) Toast.makeText(ctx, "已添加至下载列表", Toast.LENGTH_SHORT).show();

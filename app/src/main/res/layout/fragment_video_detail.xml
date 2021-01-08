@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:ignore="RtlSymmetry,SmallSp,ContentDescription">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -141,7 +142,7 @@
 
                     <TextView
                         android:id="@+id/vd_video_part_text"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:textColor="?android:attr/textColorHint"
@@ -151,7 +152,7 @@
                         android:id="@+id/vd_video_part_more"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="查看全部>"
+                        android:text="@string/video_part_more"
                         android:textColor="?android:attr/textColorHint"
                         android:textSize="12sp" />
                 </LinearLayout>
@@ -208,7 +209,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="6dp"
-                                android:text="查看封面"
+                                android:text="@string/video_control_cover"
                                 android:textSize="12sp" />
 
                         </LinearLayout>
@@ -235,7 +236,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="6dp"
-                                android:text="点击播放"
+                                android:text="@string/video_control_play"
                                 android:textSize="12sp" />
 
                         </LinearLayout>
@@ -262,7 +263,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="6dp"
-                                android:text="稍后再看"
+                                android:text="@string/video_control_watchlater"
                                 android:textSize="12sp" />
 
                         </LinearLayout>
@@ -289,7 +290,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="6dp"
-                                android:text="缓存视频"
+                                android:text="@string/video_control_download"
                                 android:textSize="12sp" />
 
                         </LinearLayout>
@@ -316,7 +317,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="6dp"
-                                android:text="历史记录"
+                                android:text="@string/video_control_history"
                                 android:textSize="12sp" />
                         </LinearLayout>
 
@@ -342,7 +343,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="6dp"
-                                android:text="转发视频"
+                                android:text="@string/video_control_share"
                                 android:textSize="12sp" />
 
                         </LinearLayout>
@@ -399,7 +400,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="6dp"
-                                android:text="好评"
+                                android:text="@string/video_control_like"
                                 android:textSize="12sp" />
 
                         </LinearLayout>
@@ -453,7 +454,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="6dp"
-                                android:text="投币"
+                                android:text="@string/video_control_coin"
                                 android:textSize="12sp" />
 
                         </LinearLayout>
@@ -506,7 +507,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="6dp"
-                                android:text="收藏"
+                                android:text="@string/video_control_fav"
                                 android:textSize="12sp" />
 
                         </LinearLayout>
@@ -519,6 +520,7 @@
                             android:background="?android:attr/selectableItemBackground"
                             android:clickable="true"
                             android:descendantFocusability="blocksDescendants"
+                            android:focusable="true"
                             android:gravity="center_horizontal"
                             android:orientation="vertical"
                             android:padding="3dp">
@@ -534,7 +536,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="6dp"
-                                android:text="差评"
+                                android:text="@string/video_control_dislike"
                                 android:textSize="12sp" />
 
                         </LinearLayout>
@@ -637,7 +639,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="16dp"
-                    android:text="+关注"
+                    android:text="@string/video_card_follow"
                     android:textColor="@color/white"
                     android:textSize="11sp" />
 

@@ -19,10 +19,10 @@ import cn.luern0313.wristbilibili.R;
 public class ImageTaskUtil extends AsyncTask<String, Void, BitmapDrawable>
 {
     private String imageUrl;
-    private View view;
-    private Resources listViewResources;
-    private int width;
-    private boolean isImgActivity;
+    private final View view;
+    private final Resources listViewResources;
+    private final int width;
+    private final boolean isImgActivity;
 
     public ImageTaskUtil(View view)
     {

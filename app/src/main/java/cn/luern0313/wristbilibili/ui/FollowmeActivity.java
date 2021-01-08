@@ -129,10 +129,10 @@ public class FollowmeActivity extends BaseActivity
                     try
                     {
                         listVideoModel = userApi.getUserVideo(1).get(0);
-                        videoDetail = new VideoApi("", listVideoModel.getVideoBvid());
+                        videoDetail = new VideoApi("", listVideoModel.getBvid());
                         handler.post(runnVideo);
 
-                        byte[] picByte = NetWorkUtil.readStream(NetWorkUtil.get(listVideoModel.getVideoCover()).body().byteStream());
+                        byte[] picByte = NetWorkUtil.readStream(NetWorkUtil.get(listVideoModel.getCover()).body().byteStream());
                         videoCover = BitmapFactory.decodeByteArray(picByte, 0, picByte.length);
                         handler.post(runnImg);
                     }

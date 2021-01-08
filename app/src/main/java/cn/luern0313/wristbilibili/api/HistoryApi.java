@@ -31,11 +31,11 @@ public class HistoryApi
         String arg = "pn=" + pn + "&ps=30";
         LsonObject result = LsonUtil.parseAsObject(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string());
         ArrayList<ListVideoModel> videoModelArrayList = new ArrayList<>();
-        if(result.getAsInt("code", -1) == 0)
+        if(result.getInt("code", -1) == 0)
         {
-            LsonArray videoJSONArray = result.getAsJsonArray("data");
+            LsonArray videoJSONArray = result.getJsonArray("data");
             for(int i = 0; i < videoJSONArray.size(); i++)
-                videoModelArrayList.add(LsonUtil.fromJson(videoJSONArray.getAsJsonObject(i), ListVideoModel.class));
+                videoModelArrayList.add(LsonUtil.fromJson(videoJSONArray.getJsonObject(i), ListVideoModel.class));
         }
         return videoModelArrayList;
     }

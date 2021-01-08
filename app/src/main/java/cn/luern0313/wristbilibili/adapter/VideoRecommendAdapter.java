@@ -24,11 +24,11 @@ import cn.luern0313.wristbilibili.util.LruCacheUtil;
 
 public class VideoRecommendAdapter extends BaseAdapter
 {
-    private LayoutInflater mInflater;
+    private final LayoutInflater mInflater;
 
-    private ListView listView;
+    private final ListView listView;
 
-    private ArrayList<VideoModel.VideoRecommendModel> recommendList;
+    private final ArrayList<VideoModel.VideoRecommendModel> recommendList;
 
     public VideoRecommendAdapter(LayoutInflater inflater, ArrayList<VideoModel.VideoRecommendModel> recommendList, ListView listView)
     {
@@ -87,13 +87,13 @@ public class VideoRecommendAdapter extends BaseAdapter
         viewHolder.danmaku.setCompoundDrawables(danmakuNumDrawable,null, null,null);
 
         viewHolder.img.setImageResource(R.drawable.img_default_vid);
-        viewHolder.title.setText(v.video_recommend_video_title);
-        viewHolder.up.setText(v.video_recommend_video_owner_name);
-        viewHolder.play.setText(v.video_recommend_video_play);
-        viewHolder.danmaku.setText(v.video_recommend_video_danmaku);
+        viewHolder.title.setText(v.recommendVideoTitle);
+        viewHolder.up.setText(v.recommendVideoOwnerName);
+        viewHolder.play.setText(v.recommendVideoPlay);
+        viewHolder.danmaku.setText(v.recommendVideoDanmaku);
 
-        viewHolder.img.setTag(v.video_recommend_video_cover);
-        BitmapDrawable h = setImageFormWeb(v.video_recommend_video_cover);
+        viewHolder.img.setTag(v.recommendVideoCover);
+        BitmapDrawable h = setImageFormWeb(v.recommendVideoCover);
         if(h != null) viewHolder.img.setImageDrawable(h);
 
         return convertView;

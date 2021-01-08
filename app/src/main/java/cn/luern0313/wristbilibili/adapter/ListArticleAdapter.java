@@ -83,8 +83,7 @@ public class ListArticleAdapter extends BaseAdapter
             viewHolder = (ViewHolder) convertView.getTag();
         }
         Drawable upDrawable = convertView.getResources().getDrawable(R.drawable.icon_video_up);
-        Drawable playNumDrawable = convertView.getResources().getDrawable(
-                R.drawable.icon_number_view);
+        Drawable playNumDrawable = convertView.getResources().getDrawable(R.drawable.icon_number_view);
         upDrawable.setBounds(0, 0, DataProcessUtil.dip2px(10), DataProcessUtil.dip2px(10));
         playNumDrawable.setBounds(0, 0, DataProcessUtil.dip2px(10), DataProcessUtil.dip2px(10));
         viewHolder.up.setCompoundDrawables(upDrawable, null, null, null);

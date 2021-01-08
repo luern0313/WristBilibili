@@ -1,13 +1,12 @@
 package cn.luern0313.wristbilibili.api;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.util.ArrayList;
 
-import cn.luern0313.wristbilibili.models.WatchLaterModel;
+import cn.luern0313.lson.LsonUtil;
+import cn.luern0313.lson.element.LsonArray;
+import cn.luern0313.lson.element.LsonObject;
+import cn.luern0313.wristbilibili.models.ListVideoModel;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
@@ -19,10 +18,10 @@ import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
 public class WatchLaterApi
 {
-    private String csrf;
-    private String mid;
+    private final String csrf;
+    private final String mid;
 
-    private ArrayList<String> webHeaders;
+    private final ArrayList<String> webHeaders;
 
     public WatchLaterApi()
     {
@@ -35,29 +34,17 @@ public class WatchLaterApi
         }};
     }
 
-    public ArrayList<WatchLaterModel> getWatchLater() throws IOException
+    public ArrayList<ListVideoModel> getWatchLater() throws IOException
     {
-        try
+        String url = "https://api.bilibili.com/x/v2/history/toview/web";
+        ArrayList<ListVideoModel> videoArrayList = new ArrayList<>();
+        LsonObject result = LsonUtil.parseAsObject(NetWorkUtil.get(url, webHeaders).body().string());
+        if(result.getInt("code") == 0)
         {
-            String url = "https://api.bilibili.com/x/v2/history/toview/web";
-            ArrayList<WatchLaterModel> videoArrayList = new ArrayList<>();
-            JSONObject result = new JSONObject(NetWorkUtil.get(url, webHeaders).body().string());
-            if(result.optInt("code") == 0)
-            {
-                JSONArray wlJsonArray = result.getJSONObject("data").getJSONArray("list");
-                for(int i = 0; i < wlJsonArray.length(); i++)
-                {
-                    JSONObject j = wlJsonArray.optJSONObject(i);
-                    videoArrayList.add(new WatchLaterModel(j));
-                }
-                return videoArrayList;
-            }
-
+            LsonArray list = result.getJsonObject("data").getJsonArray("list");
+            for(int i = 0; i < list.size(); i++)
+                videoArrayList.add(LsonUtil.fromJson(list.getJsonObject(i), ListVideoModel.class));
         }
-        catch (JSONException e)
-        {
-            e.printStackTrace();
-        }
-        return null;
+        return videoArrayList;
     }
 }

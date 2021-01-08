@@ -49,9 +49,7 @@ public class NetWorkUtil
         for(int i = 0; i < headers.size(); i+=2)
             requestBuilder = requestBuilder.addHeader(headers.get(i), headers.get(i+1));
         Request request = requestBuilder.build();
-        Response response = client.newCall(request).execute();
-        if(response.isSuccessful()) return response;
-        return null;
+        return client.newCall(request).execute();
     }
 
     public static byte[] readStream(InputStream inStream) throws IOException

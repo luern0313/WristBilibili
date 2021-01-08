@@ -37,12 +37,12 @@ public class HistoryFragment extends Fragment
     private ListVideoAdapter.ListVideoAdapterListener listVideoAdapterListener;
     private ListView uiListView;
 
-    private ArrayList<ListVideoModel> historyArrayList = new ArrayList<>();
+    private final ArrayList<ListVideoModel> historyArrayList = new ArrayList<>();
 
     public static boolean isLogin;
     private boolean isLoading = true;
 
-    private Handler handler = new Handler();
+    private final Handler handler = new Handler();
     private Runnable runnableUi, runnableNoWeb, runnableNoData, runnableMore, runnableMoreNoData, runnableMoreNoWeb;
 
     private int pn;
@@ -67,42 +67,26 @@ public class HistoryFragment extends Fragment
         waveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
         //noinspection ConstantConditions
         waveSwipeRefreshLayout.setWaveColor(ColorUtil.getColor(R.attr.colorPrimary, getContext()));
-        waveSwipeRefreshLayout.setOnRefreshListener(new WaveSwipeRefreshLayout.OnRefreshListener()
-        {
-            @Override
-            public void onRefresh()
+        waveSwipeRefreshLayout.setOnRefreshListener(() -> handler.post(() -> {
+            if(isLogin)
             {
-                handler.post(new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        if(isLogin)
-                        {
-                            uiListView.setVisibility(View.GONE);
-                            getHistory();
-                        }
-                        else waveSwipeRefreshLayout.setRefreshing(false);
-                    }
-                });
+                uiListView.setVisibility(View.GONE);
+                getHistory();
             }
-        });
+            else waveSwipeRefreshLayout.setRefreshing(false);
+        }));
 
         listVideoAdapterListener = new ListVideoAdapter.ListVideoAdapterListener()
         {
             @Override
             public void onListVideoAdapterClick(int viewId, int position)
             {
-                if(historyArrayList.get(position).getVideoBvid() != null && !historyArrayList.get(position).getVideoBvid().equals(""))
-                {
-                    Intent intent = VideoActivity.getActivityIntent(ctx, "", historyArrayList.get(position).getVideoBvid());
-                    startActivity(intent);
-                }
+                Intent intent;
+                if(historyArrayList.get(position).getBvid() != null && !historyArrayList.get(position).getBvid().equals(""))
+                    intent = VideoActivity.getActivityIntent(ctx, "", historyArrayList.get(position).getBvid());
                 else
-                {
-                    Intent intent = VideoActivity.getActivityIntent(ctx, historyArrayList.get(position).getVideoAid(), "");
-                    startActivity(intent);
-                }
+                    intent = VideoActivity.getActivityIntent(ctx, historyArrayList.get(position).getAid(), "");
+                startActivity(intent);
             }
 
             @Override
@@ -112,75 +96,43 @@ public class HistoryFragment extends Fragment
             }
         };
 
-        runnableUi = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                isLoading = false;
-                rootLayout.findViewById(R.id.history_nologin).setVisibility(View.GONE);
-                rootLayout.findViewById(R.id.history_noweb).setVisibility(View.GONE);
-                rootLayout.findViewById(R.id.history_nonthing).setVisibility(View.GONE);
+        runnableUi = () -> {
+            isLoading = false;
+            rootLayout.findViewById(R.id.history_nologin).setVisibility(View.GONE);
+            rootLayout.findViewById(R.id.history_noweb).setVisibility(View.GONE);
+            rootLayout.findViewById(R.id.history_nonthing).setVisibility(View.GONE);
 
-                listVideoAdapter = new ListVideoAdapter(inflater, historyArrayList, uiListView, listVideoAdapterListener);
-                uiListView.setAdapter(listVideoAdapter);
-                uiListView.setVisibility(View.VISIBLE);
-                waveSwipeRefreshLayout.setRefreshing(false);
-            }
+            listVideoAdapter = new ListVideoAdapter(inflater, historyArrayList, true, uiListView, listVideoAdapterListener);
+            uiListView.setAdapter(listVideoAdapter);
+            uiListView.setVisibility(View.VISIBLE);
+            waveSwipeRefreshLayout.setRefreshing(false);
         };
 
-        runnableNoWeb = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                waveSwipeRefreshLayout.setRefreshing(false);
-                rootLayout.findViewById(R.id.history_noweb).setVisibility(View.VISIBLE);
-                rootLayout.findViewById(R.id.history_nologin).setVisibility(View.GONE);
-                rootLayout.findViewById(R.id.history_nonthing).setVisibility(View.GONE);
-            }
+        runnableNoWeb = () -> {
+            waveSwipeRefreshLayout.setRefreshing(false);
+            rootLayout.findViewById(R.id.history_noweb).setVisibility(View.VISIBLE);
+            rootLayout.findViewById(R.id.history_nologin).setVisibility(View.GONE);
+            rootLayout.findViewById(R.id.history_nonthing).setVisibility(View.GONE);
         };
 
-        runnableNoData = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                waveSwipeRefreshLayout.setRefreshing(false);
-                rootLayout.findViewById(R.id.history_nonthing).setVisibility(View.VISIBLE);
-                rootLayout.findViewById(R.id.history_noweb).setVisibility(View.GONE);
-                rootLayout.findViewById(R.id.history_nologin).setVisibility(View.GONE);
-            }
+        runnableNoData = () -> {
+            waveSwipeRefreshLayout.setRefreshing(false);
+            rootLayout.findViewById(R.id.history_nonthing).setVisibility(View.VISIBLE);
+            rootLayout.findViewById(R.id.history_noweb).setVisibility(View.GONE);
+            rootLayout.findViewById(R.id.history_nologin).setVisibility(View.GONE);
         };
 
-        runnableMore = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                isLoading = false;
-                listVideoAdapter.notifyDataSetChanged();
-            }
+        runnableMore = () -> {
+            isLoading = false;
+            listVideoAdapter.notifyDataSetChanged();
         };
 
-        runnableMoreNoWeb = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                ((TextView) uiLoadingView.findViewById(R.id.wid_load_text)).setText("好像没有网络...\n检查下网络？");
-                uiLoadingView.findViewById(R.id.wid_load_button).setVisibility(View.VISIBLE);
-            }
+        runnableMoreNoWeb = () -> {
+            ((TextView) uiLoadingView.findViewById(R.id.wid_load_text)).setText("好像没有网络...\n检查下网络？");
+            uiLoadingView.findViewById(R.id.wid_load_button).setVisibility(View.VISIBLE);
         };
 
-        runnableMoreNoData = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                ((TextView) uiLoadingView.findViewById(R.id.wid_load_text)).setText("  没有更多了...");
-            }
-        };
+        runnableMoreNoData = () -> ((TextView) uiLoadingView.findViewById(R.id.wid_load_text)).setText("  没有更多了...");
 
         uiListView.setOnScrollListener(new AbsListView.OnScrollListener()
         {
@@ -216,59 +168,49 @@ public class HistoryFragment extends Fragment
 
     private void getHistory()
     {
-        new Thread(new Runnable()
-        {
-            @Override
-            public void run()
+        new Thread(() -> {
+            try
             {
-                try
+                pn = 1;
+                isLoading = true;
+                historyApi = new HistoryApi();
+                ArrayList<ListVideoModel> v = historyApi.getHistory(pn);
+                if(v != null && v.size() != 0)
                 {
-                    pn = 1;
-                    isLoading = true;
-                    historyApi = new HistoryApi();
-                    ArrayList<ListVideoModel> v = historyApi.getHistory(pn);
-                    if(v != null && v.size() != 0)
-                    {
-                        historyArrayList.addAll(v);
-                        handler.post(runnableUi);
-                    }
-                    else
-                        handler.post(runnableNoData);
+                    historyArrayList.addAll(v);
+                    handler.post(runnableUi);
                 }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
-                    handler.post(runnableNoWeb);
-                }
+                else
+                    handler.post(runnableNoData);
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+                handler.post(runnableNoWeb);
             }
         }).start();
     }
 
     private void getMoreHistory()
     {
-        new Thread(new Runnable()
-        {
-            @Override
-            public void run()
+        new Thread(() -> {
+            try
             {
-                try
+                pn++;
+                isLoading = true;
+                ArrayList<ListVideoModel> v = historyApi.getHistory(pn);
+                if(v != null && v.size() != 0)
                 {
-                    pn++;
-                    isLoading = true;
-                    ArrayList<ListVideoModel> v = historyApi.getHistory(pn);
-                    if(v != null && v.size() != 0)
-                    {
-                        historyArrayList.addAll(v);
-                        handler.post(runnableMore);
-                    }
-                    else
-                        handler.post(runnableMoreNoData);
+                    historyArrayList.addAll(v);
+                    handler.post(runnableMore);
                 }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
-                    handler.post(runnableMoreNoWeb);
-                }
+                else
+                    handler.post(runnableMoreNoData);
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+                handler.post(runnableMoreNoWeb);
             }
         }).start();
     }

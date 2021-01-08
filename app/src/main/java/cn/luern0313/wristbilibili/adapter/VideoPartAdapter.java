@@ -18,7 +18,7 @@ import cn.luern0313.wristbilibili.models.VideoModel;
 public class VideoPartAdapter extends RecyclerView.Adapter<VideoPartAdapter.ViewHolder>
 {
     private VideoPartListener videoPartListener;
-    private VideoModel videoModel;
+    private final VideoModel videoModel;
 
     public VideoPartAdapter(VideoModel videoModel)
     {
@@ -36,26 +36,19 @@ public class VideoPartAdapter extends RecyclerView.Adapter<VideoPartAdapter.View
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position)
     {
-        VideoModel.VideoPartModel videoPartModel = videoModel.video_part_array_list.get(position);
-        if(videoModel.video_user_progress_position == position)
+        VideoModel.VideoPartModel videoPartModel = videoModel.getPartList().get(position);
+        if(videoModel.getUserProgressPosition() == position)
             holder.lay.setBackgroundResource(R.drawable.shape_bg_vd_videopart_press);
         else
             holder.lay.setBackgroundResource(R.drawable.selector_bg_vd_videopart);
-        holder.text.setText(videoPartModel.video_part_name);
-        holder.lay.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                videoPartListener.onItemClick(v, position);
-            }
-        });
+        holder.text.setText(videoPartModel.getPartName());
+        holder.lay.setOnClickListener(v -> videoPartListener.onItemClick(v, position));
     }
 
     @Override
     public int getItemCount()
     {
-        return videoModel.video_part_array_list.size();
+        return videoModel.getPartList().size();
     }
 
     public void setOnItemClickListener(VideoPartListener videoPartListener)
