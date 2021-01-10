@@ -1,12 +1,11 @@
 package cn.luern0313.wristbilibili.api;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.util.ArrayList;
 
+import cn.luern0313.lson.LsonUtil;
+import cn.luern0313.lson.element.LsonArray;
+import cn.luern0313.lson.element.LsonObject;
 import cn.luern0313.wristbilibili.models.DynamicModel;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
@@ -29,10 +28,8 @@ public class DynamicApi
     private String csrf;
     private String selfMid;
     private String mid;
-    private JSONArray dynamicJsonArray;
+    private LsonArray dynamicJsonArray;
     private boolean isSelf;
-
-    private DynamicModel dynamicModel;
 
     private String lastDynamicId;
     private ArrayList<String> webHeaders;
@@ -43,7 +40,6 @@ public class DynamicApi
         this.selfMid = SharedPreferencesUtil.getString(SharedPreferencesUtil.mid, "");
         this.mid = mid;
         this.isSelf = isSelf;
-        this.dynamicModel = new DynamicModel();
         webHeaders = new ArrayList<String>(){{
             add("Cookie"); add(SharedPreferencesUtil.getString(SharedPreferencesUtil.cookies, ""));
             add("Referer"); add("https://www.bilibili.com/anime");
@@ -53,134 +49,106 @@ public class DynamicApi
 
     public void getDynamic() throws IOException
     {
-        try
-        {
-            if(isSelf)
-            {
-                String url = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/dynamic_new";
-                String arg = "uid=" + mid + "&type=" + DYNAMICTYPE;
-                dynamicJsonArray = new JSONObject(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string()).getJSONObject("data").getJSONArray("cards");
-            }
-            else
-            {
-                String url = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/space_history";
-                String arg = "visitor_uid=" + selfMid + "&host_uid=" + mid + "&offset_dynamic_id=0";
-                dynamicJsonArray = new JSONObject(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string()).getJSONObject("data").getJSONArray("cards");
-            }
-            if(dynamicJsonArray.length() == 0) dynamicJsonArray = null;
-        }
-        catch (JSONException e)
-        {
-            dynamicJsonArray = null;
-            e.printStackTrace();
-        }
-    }
-
-    public void getHistoryDynamic() throws IOException, JSONException
-    {
+        String url, arg;
         if(isSelf)
         {
-            String url = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/dynamic_history";
-            String arg = "uid=" + mid + "&offset_dynamic_id=" + lastDynamicId + "&type=" + DYNAMICTYPE;
-            dynamicJsonArray = new JSONObject(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string()).getJSONObject("data").getJSONArray("cards");
+            url = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/dynamic_new";
+            arg = "uid=" + mid + "&type=" + DYNAMICTYPE;
         }
-        else {
-            String url = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/space_history";
-            String arg = "visitor_uid=" + selfMid + "&host_uid=" + mid + "&offset_dynamic_id=" + lastDynamicId;
-            dynamicJsonArray = new JSONObject(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string()).getJSONObject("data").getJSONArray("cards");
+        else
+        {
+            url = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/space_history";
+            arg = "visitor_uid=" + selfMid + "&host_uid=" + mid + "&offset_dynamic_id=0";
         }
+        dynamicJsonArray = LsonUtil.parseAsObject(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string()).getJsonObject("data").getJsonArray("cards");
+        if(dynamicJsonArray.size() == 0) dynamicJsonArray = null;
     }
 
-    public ArrayList<DynamicModel> getDynamicList()
+    public void getHistoryDynamic() throws IOException
     {
-        ArrayList<DynamicModel> dynamicList = new ArrayList<>();
-        for (int i = 0; i < dynamicJsonArray.length(); i++)
+        String url, arg;
+        if(isSelf)
         {
-            JSONObject dy = dynamicJsonArray.optJSONObject(i);
-            JSONObject display = dy.has("display") ? dy.optJSONObject("display") : new JSONObject();
-            DynamicModel dynamic = getDynamicClass(dy.optString("card", "{}"), dy.optJSONObject("desc"), display, dy.optString("extend_json", "{}"));
+            url = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/dynamic_history";
+            arg = "uid=" + mid + "&offset_dynamic_id=" + lastDynamicId + "&type=" + DYNAMICTYPE;
+        }
+        else {
+            url = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/space_history";
+            arg = "visitor_uid=" + selfMid + "&host_uid=" + mid + "&offset_dynamic_id=" + lastDynamicId;
+        }
+        dynamicJsonArray = LsonUtil.parseAsObject(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string()).getJsonObject("data").getJsonArray("cards");
+    }
+
+    public ArrayList<DynamicModel.DynamicBaseModel> getDynamicList()
+    {
+        ArrayList<DynamicModel.DynamicBaseModel> dynamicList = new ArrayList<>();
+        for (int i = 0; i < dynamicJsonArray.size(); i++)
+        {
+            LsonObject dy = dynamicJsonArray.getJsonObject(i);
+            LsonObject display = dy.getJsonObject("display");
+            DynamicModel.DynamicBaseModel dynamic = getDynamicClass(dy.getString("card", "{}"), dy.getJsonObject("desc"), display, dy.getString("extend_json", "{}"));
             dynamicList.add(dynamic);
-            if(i == dynamicJsonArray.length() - 1)
-                lastDynamicId = dy.optJSONObject("desc").optString("dynamic_id_str");
+            if(i == dynamicJsonArray.size() - 1)
+                lastDynamicId = dy.getJsonObject("desc").getString("dynamic_id_str");
         }
         return dynamicList;
     }
 
-    public DynamicModel getDynamicDetail(String dynamicId) throws IOException
+    public DynamicModel.DynamicBaseModel getDynamicDetail(String dynamicId) throws IOException
     {
-        try
+        String url = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/get_dynamic_detail";
+        String arg = "dynamic_id=" + dynamicId;
+        LsonObject result = LsonUtil.parseAsObject(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string());
+        if(result.getInt("code") == 0)
         {
-            String url = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/get_dynamic_detail";
-            String arg = "dynamic_id=" + dynamicId;
-            JSONObject result = new JSONObject(NetWorkUtil.get(url + "?" + arg, webHeaders).body().string());
-            if(result.optInt("code") == 0)
-            {
-                JSONObject card = result.optJSONObject("data").optJSONObject("card");
-                JSONObject display = card.has("display") ? card.optJSONObject("display") : new JSONObject();
-                return getDynamicClass(card.optString("card", "{}"), card.optJSONObject("desc"),
-                                       display, card.optString("extend_json", "{}"));
-            }
-        }
-        catch (JSONException e)
-        {
-            e.printStackTrace();
+            LsonObject card = result.getJsonObject("data").getJsonObject("card");
+            LsonObject display = card.getJsonObject("display");
+            return getDynamicClass(card.getString("card", "{}"), card.getJsonObject("desc"), display, card.getString("extend_json", "{}"));
         }
         return null;
     }
 
-    private DynamicModel getDynamicClass(String cardStr, JSONObject desc, JSONObject display, String extendStr)
+    private DynamicModel.DynamicBaseModel getDynamicClass(String cardStr, LsonObject desc, LsonObject display, String extendStr)
     {
-        try
+        LsonObject dynamic = new LsonObject();
+        dynamic.put("card", LsonUtil.parseAsObject(cardStr));
+        dynamic.put("desc", desc);
+        dynamic.put("display", display);
+        dynamic.put("extend", LsonUtil.parseAsObject(extendStr));
+        switch(desc.getInt("type"))
         {
-            JSONObject card = new JSONObject(cardStr);
-            JSONObject extend = new JSONObject(extendStr);
-            switch(desc.optInt("type"))
-            {
-                case 1:
-                    return dynamicModel.new DynamicShareModel(card, desc, display, extend, false);
-                case 2:
-                    return dynamicModel.new DynamicAlbumModel(card, desc, display, extend, false);
-                case 4:
-                    return dynamicModel.new DynamicTextModel(card, desc, display, extend, false);
-                case 8:
-                    return dynamicModel.new DynamicVideoModel(card, desc, display, extend, false);
-                case 64:
-                    return dynamicModel.new DynamicArticleModel(card, desc, display, extend, false);
-                case 512:
-                case 4098:
-                case 4099:
-                case 4101:
-                    return dynamicModel.new DynamicBangumiModel(card, desc, display, extend, false);
-                case 2048:
-                    return dynamicModel.new DynamicUrlModel(card, desc, display, extend, false);
-                case 4200:
-                    return dynamicModel.new DynamicLiveModel(card, desc, display, extend, false);
-                case 4300:
-                    return dynamicModel.new DynamicFavorModel(card, desc, display, extend, false);
-            }
-            return dynamicModel.new DynamicUnknownModel(card, desc, display, extend, false);
+            case 1:
+                return LsonUtil.fromJson(dynamic, DynamicModel.DynamicShareModel.class, dynamic, false);
+            case 2:
+                return LsonUtil.fromJson(dynamic, DynamicModel.DynamicAlbumModel.class, dynamic, false);
+            case 4:
+                return LsonUtil.fromJson(dynamic, DynamicModel.DynamicTextModel.class, dynamic, false);
+            case 8:
+                return LsonUtil.fromJson(dynamic, DynamicModel.DynamicVideoModel.class, dynamic, false);
+            case 64:
+                return LsonUtil.fromJson(dynamic, DynamicModel.DynamicArticleModel.class, dynamic, false);
+            case 512:
+            case 4098:
+            case 4099:
+            case 4101:
+                return LsonUtil.fromJson(dynamic, DynamicModel.DynamicBangumiModel.class, dynamic, false);
+            case 2048:
+                return LsonUtil.fromJson(dynamic, DynamicModel.DynamicUrlModel.class, dynamic, false);
+            case 4200:
+                return LsonUtil.fromJson(dynamic, DynamicModel.DynamicLiveModel.class, dynamic, false);
+            case 4300:
+                return LsonUtil.fromJson(dynamic, DynamicModel.DynamicFavorModel.class, dynamic, false);
         }
-        catch (JSONException e)
-        {
-            e.printStackTrace();
-        }
-        return null;
+        return LsonUtil.fromJson(dynamic, DynamicModel.DynamicUnknownModel.class, dynamic, false);
     }
 
     public String likeDynamic(String dynamicId, String action) throws IOException //1点赞 2取消
     {
-        try
-        {
-            String url = "https://api.vc.bilibili.com/dynamic_like/v1/dynamic_like/thumb";
-            String arg = "uid=" + mid + "&dynamic_id=" + dynamicId + "&up=" + action + "&csrf_token=" + csrf;
-            JSONObject result = new JSONObject(NetWorkUtil.post(url, arg, webHeaders).body().string());
-            if(result.getInt("code") == 0)
-                return "";
-        }
-        catch (JSONException e)
-        {
-            e.printStackTrace();
-        }
+        String url = "https://api.vc.bilibili.com/dynamic_like/v1/dynamic_like/thumb";
+        String arg = "uid=" + mid + "&dynamic_id=" + dynamicId + "&up=" + action + "&csrf_token=" + csrf;
+        LsonObject result = LsonUtil.parseAsObject(NetWorkUtil.post(url, arg, webHeaders).body().string());
+        if(result.getInt("code") == 0)
+            return "";
         return "未知错误，点赞失败。。";
     }
 }

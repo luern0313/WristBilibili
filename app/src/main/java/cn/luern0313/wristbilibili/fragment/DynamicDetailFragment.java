@@ -30,7 +30,7 @@ public class DynamicDetailFragment extends Fragment
 
     private Context ctx;
     private View rootLayout;
-    private DynamicModel dynamicModel;
+    private DynamicModel.DynamicBaseModel dynamicModel;
     private DynamicAdapter dynamicAdapter;
     private DynamicAdapter.DynamicAdapterListener dynamicAdapterListener;
     private DynamicAdapter.ViewHolder viewHolder;
@@ -45,7 +45,7 @@ public class DynamicDetailFragment extends Fragment
 
     public DynamicDetailFragment() { }
 
-    public static DynamicDetailFragment newInstance(DynamicModel dynamicModel)
+    public static DynamicDetailFragment newInstance(DynamicModel.DynamicBaseModel dynamicModel)
     {
         DynamicDetailFragment fragment = new DynamicDetailFragment();
         Bundle args = new Bundle();
@@ -60,7 +60,7 @@ public class DynamicDetailFragment extends Fragment
         super.onCreate(savedInstanceState);
         if(getArguments() != null)
         {
-            dynamicModel = (DynamicModel) getArguments().getSerializable(ARG_DYNAMIC_MODEL);
+            dynamicModel = (DynamicModel.DynamicBaseModel) getArguments().getSerializable(ARG_DYNAMIC_MODEL);
         }
     }
 
@@ -107,7 +107,7 @@ public class DynamicDetailFragment extends Fragment
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEventMainThread(DynamicModel dynamicModel)
+    public void onEventMainThread(DynamicModel.DynamicBaseModel dynamicModel)
     {
         this.dynamicModel = dynamicModel;
         dynamicAdapter.handlerView(viewHolder, dynamicModel, 0, false, true);
@@ -224,7 +224,7 @@ public class DynamicDetailFragment extends Fragment
         EventBus.getDefault().unregister(this);
     }
 
-    private void getShareIntent(Intent intent, DynamicModel dynamicModel)
+    private void getShareIntent(Intent intent, DynamicModel.DynamicBaseModel dynamicModel)
     {
         switch (dynamicModel.getCardType())
         {

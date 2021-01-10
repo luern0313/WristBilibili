@@ -44,11 +44,11 @@ public class DynamicAdapter extends BaseAdapter
 
     private final DynamicAdapterListener dynamicAdapterListener;
 
-    private final ArrayList<DynamicModel> dynamicModelArrayList;
+    private final ArrayList<DynamicModel.DynamicBaseModel> dynamicModelArrayList;
     private final View view;
     private final int dynamicWidth;
 
-    public DynamicAdapter(LayoutInflater inflater, ArrayList<DynamicModel> dynamicModelArrayList, View view, int dynamicWidth, DynamicAdapterListener dynamicAdapterListener)
+    public DynamicAdapter(LayoutInflater inflater, ArrayList<DynamicModel.DynamicBaseModel> dynamicModelArrayList, View view, int dynamicWidth, DynamicAdapterListener dynamicAdapterListener)
     {
         ctx = MyApplication.getContext();
         mInflater = inflater;
@@ -110,7 +110,7 @@ public class DynamicAdapter extends BaseAdapter
     @Override
     public View getView(int position, View convertView, ViewGroup viewGroup)
     {
-        DynamicModel dynamicModel = dynamicModelArrayList.get(position);
+        DynamicModel.DynamicBaseModel dynamicModel = dynamicModelArrayList.get(position);
         ViewHolder viewHolder;
         if(convertView == null || ((ViewHolder) convertView.getTag()).type != dynamicModel.getCardType())
         {
@@ -125,7 +125,7 @@ public class DynamicAdapter extends BaseAdapter
         return convertView;
     }
 
-    public ViewHolder getViewHolder(DynamicModel dynamicModel, View convertView, int viewId)
+    public ViewHolder getViewHolder(DynamicModel.DynamicBaseModel dynamicModel, View convertView, int viewId)
     {
         ViewHolder viewHolder;
         ViewHolder vh = new ViewHolder();
@@ -237,7 +237,7 @@ public class DynamicAdapter extends BaseAdapter
         return viewHolder;
     }
 
-    public void handlerView(ViewHolder vh, DynamicModel dm, int position, boolean isShared, boolean isExpand)
+    public void handlerView(ViewHolder vh, DynamicModel.DynamicBaseModel dm, int position, boolean isShared, boolean isExpand)
     {
         if(dm.getCardType() == 1 && !(dm instanceof DynamicModel.DynamicUnknownModel))
         {
@@ -588,10 +588,8 @@ public class DynamicAdapter extends BaseAdapter
                 viewHolder.live_author_img.setTag(dynamicModel.getLiveAuthorImg());
                 BitmapDrawable a = setImageFormWeb(dynamicModel.getLiveAuthorImg());
                 if(a != null) viewHolder.live_author_img.setImageDrawable(a);
-                viewHolder.live_author_lay.setVisibility(View.VISIBLE);
             }
-            else
-                viewHolder.live_author_lay.setVisibility(View.VISIBLE);
+            viewHolder.live_author_lay.setVisibility(View.VISIBLE);
 
             viewHolder.live_title.setText(dynamicModel.getLiveTitle());
             viewHolder.live_area.setText(dynamicModel.getLiveArea());

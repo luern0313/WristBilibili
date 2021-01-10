@@ -1,8 +1,5 @@
 package cn.luern0313.wristbilibili.models;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.TextNode;
@@ -15,73 +12,29 @@ import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import cn.luern0313.wristbilibili.util.DataProcessUtil;
+import cn.luern0313.lson.LsonUtil;
+import cn.luern0313.lson.annotation.field.LsonAddPrefix;
+import cn.luern0313.lson.annotation.field.LsonBooleanFormatAsNumber;
+import cn.luern0313.lson.annotation.field.LsonDateFormat;
+import cn.luern0313.lson.annotation.field.LsonPath;
+import cn.luern0313.lson.annotation.method.LsonCallMethod;
+import cn.luern0313.lson.element.LsonArray;
+import cn.luern0313.lson.element.LsonObject;
 import cn.luern0313.wristbilibili.util.LruCacheUtil;
+import cn.luern0313.wristbilibili.util.json.ImageUrlFormat;
+import cn.luern0313.wristbilibili.util.json.TimeFormat;
+import cn.luern0313.wristbilibili.util.json.ViewFormat;
 import lombok.Getter;
 import lombok.Setter;
 
 /**
  * 被 luern0313 创建于 2020/5/17.
  */
-@Getter
-@Setter
-public class DynamicModel implements Serializable
+public class DynamicModel
 {
-    private int cardType;
-    private boolean cardIsShared;
-    private String cardId;
-    private String cardReplyId;
-    private String cardUrl;
-    private String cardTime;
-
-    private String cardAuthorName;
-    private String cardAuthorUid;
-    private String cardAuthorImg;
-    private int cardAuthorOfficial = -1;
-    private int cardAuthorVipStatus;
-    private int cardAuthorVipType;
-
-    private String cardShareNum;
-    private String cardReplyNum;
-    private int cardLikeNum;
-
-    private boolean cardUserLike;
-
-    private HashMap<String, Integer> cardEmoteSize = new HashMap<>();
-
-    public DynamicModel(){}
-
-    private DynamicModel(JSONObject card, JSONObject desc, JSONObject display, JSONObject extend, boolean isShared)
-    {
-        cardType = desc.optInt("type");
-        this.cardIsShared = isShared;
-        cardId = desc.optString("dynamic_id_str");
-        cardReplyId = cardId;
-        cardUrl = "bilibili://following/detail/" + cardId;
-        cardTime = DataProcessUtil.getTime(desc.optInt("timestamp"), "MM-dd HH:mm");
-
-        JSONObject author = desc.has("user_profile") ? desc.optJSONObject("user_profile") : new JSONObject();
-        JSONObject author_info = author.has("info") ? author.optJSONObject("info") : new JSONObject();
-        cardAuthorName = author_info.optString("uname");
-        cardAuthorUid = String.valueOf(author_info.optInt("uid"));
-        cardAuthorImg = LruCacheUtil.getImageUrl(author_info.optString("face"));
-        JSONObject author_card = author.has("card") ? author.optJSONObject("card") : new JSONObject();
-        JSONObject author_card_official = author_card.has("official_verify") ? author_card.optJSONObject("official_verify") : new JSONObject();
-        cardAuthorOfficial = author_card_official.optInt("type", -1);
-        JSONObject author_vip = author.has("vip") ? author.optJSONObject("vip") : new JSONObject();
-        cardAuthorVipStatus = author_vip.optInt("vipStatus");
-        cardAuthorVipType = author_vip.optInt("vipType");
-
-        cardShareNum = DataProcessUtil.getView(desc.optInt("repost"));
-        cardReplyNum = DataProcessUtil.getView(desc.optInt("comment"));
-        cardLikeNum = desc.optInt("like");
-
-        cardUserLike = desc.optInt("is_liked") == 1;
-    }
-
     @Getter
     @Setter
-    public class DynamicShareModel extends DynamicModel implements Serializable //1
+    public static class DynamicShareModel extends DynamicBaseModel implements Serializable //1
     {
         private String shareTextOrg;
         private String shareText;
@@ -89,340 +42,431 @@ public class DynamicModel implements Serializable
 
         private String shareOriginTips;
         private int shareOriginType;
-        private DynamicModel shareOriginCard;
+        private DynamicBaseModel shareOriginCard;
 
-        public DynamicShareModel(JSONObject card, JSONObject desc, JSONObject display, JSONObject extend, boolean isShared)
+        public DynamicShareModel(LsonObject dynamic, boolean isShared)
         {
-            super(card, desc, display, extend, isShared);
-            try
+            LsonObject card_item = dynamic.getJsonObject("card").getJsonObject("item");
+            shareTextOrg = card_item.getString("content");
+            shareText = super.handlerText(shareTextOrg, dynamic.getJsonObject("display"), dynamic.getJsonObject("extend"));
+
+            LsonObject origin = new LsonObject();
+            origin.put("card", LsonUtil.parseAsObject(dynamic.getJsonObject("card").getString("origin", "{}")));
+            origin.put("desc", dynamic.getJsonObject("desc").getJsonObject("origin"));
+            origin.put("display", dynamic.getJsonObject("display").getJsonObject("origin"));
+            origin.put("extend", LsonUtil.parseAsObject(dynamic.getJsonObject("card").getString("origin_extend_json", "{}")));
+
+            shareOriginType = origin.getJsonObject("desc").getInt("type");
+            if(card_item.getInt("miss") == 1)
             {
-                JSONObject card_item = card.has("item") ? card.optJSONObject("item") : new JSONObject();
-                shareTextOrg = card_item.optString("content");
-                shareText = super.handlerText(shareTextOrg, display, extend);
-
-                JSONObject card_origin = new JSONObject(card.optString("origin", "{}"));
-                JSONObject desc_origin = desc.has("origin") ? desc.optJSONObject("origin") : new JSONObject();
-                JSONObject display_origin = display.has("origin") ? display.optJSONObject("origin") : new JSONObject();
-                JSONObject extend_origin = new JSONObject(card.optString("origin_extend_json", "{}"));
-
-                shareOriginType = desc_origin.optInt("type");
-                if(card_item.optInt("miss") == 1)
-                {
-                    shareOriginType = 9999;
-                    shareOriginTips = card_item.optString("tips");
-                }
-
-                switch(shareOriginType)
-                {
-                    case 1:
-                        shareOriginCard = new DynamicShareModel(card_origin, desc_origin, display_origin, extend_origin, true);
-                        break;
-                    case 2:
-                        shareOriginCard = new DynamicAlbumModel(card_origin, desc_origin, display_origin, extend_origin, true);
-                        break;
-                    case 4:
-                        shareOriginCard = new DynamicTextModel(card_origin, desc_origin, display_origin, extend_origin, true);
-                        break;
-                    case 8:
-                        shareOriginCard = new DynamicVideoModel(card_origin, desc_origin, display_origin, extend_origin, true);
-                        break;
-                    case 64:
-                        shareOriginCard = new DynamicArticleModel(card_origin, desc_origin, display_origin, extend_origin, true);
-                        break;
-                    case 512:
-                    case 4098:
-                    case 4099:
-                    case 4101:
-                        shareOriginCard = new DynamicBangumiModel(card_origin, desc_origin, display_origin, extend_origin, true);
-                        break;
-                    case 2048:
-                        shareOriginCard = new DynamicUrlModel(card_origin, desc_origin, display_origin, extend_origin, true);
-                        break;
-                    case 4200:
-                        shareOriginCard = new DynamicLiveModel(card_origin, desc_origin, display_origin, extend_origin, true);
-                        break;
-                    case 4300:
-                        shareOriginCard = new DynamicFavorModel(card_origin, desc_origin, display_origin, extend_origin, true);
-                        break;
-                    default:
-                        shareOriginCard = new DynamicUnknownModel(card_origin, desc_origin, display_origin, extend_origin, true, shareOriginTips);
-                        break;
-                }
+                shareOriginType = 9999;
+                shareOriginTips = card_item.getString("tips");
             }
-            catch (JSONException e)
+
+            switch(shareOriginType)
             {
-                e.printStackTrace();
+                case 1:
+                    shareOriginCard = LsonUtil.fromJson(origin, DynamicShareModel.class, origin, true);
+                    break;
+                case 2:
+                    shareOriginCard = LsonUtil.fromJson(origin, DynamicAlbumModel.class, origin, true);
+                    break;
+                case 4:
+                    shareOriginCard = LsonUtil.fromJson(origin, DynamicTextModel.class, origin, true);
+                    break;
+                case 8:
+                    shareOriginCard = LsonUtil.fromJson(origin, DynamicVideoModel.class, origin, true);
+                    break;
+                case 64:
+                    shareOriginCard = LsonUtil.fromJson(origin, DynamicArticleModel.class, origin, true);
+                    break;
+                case 512:
+                case 4098:
+                case 4099:
+                case 4101:
+                    shareOriginCard = LsonUtil.fromJson(origin, DynamicBangumiModel.class, origin, true);
+                    break;
+                case 2048:
+                    shareOriginCard = LsonUtil.fromJson(origin, DynamicUrlModel.class, origin, true);
+                    break;
+                case 4200:
+                    shareOriginCard = LsonUtil.fromJson(origin, DynamicLiveModel.class, origin, true);
+                    break;
+                case 4300:
+                    shareOriginCard = LsonUtil.fromJson(origin, DynamicFavorModel.class, origin, true);
+                    break;
+                default:
+                    shareOriginCard = LsonUtil.fromJson(origin, DynamicUnknownModel.class, origin, true, shareOriginTips);
+                    break;
             }
         }
     }
 
     @Getter
     @Setter
-    public class DynamicAlbumModel extends DynamicModel implements Serializable //2
+    public static class DynamicAlbumModel extends DynamicBaseModel implements Serializable //2
     {
+        @LsonPath("card.id")
         private String albumId;
+
+        @LsonPath("card.user.name")
         private String albumAuthorName;
+
+        @LsonPath("card.user.uid")
         private String albumAuthorUid;
+
         private String albumTextOrg;
         private String albumText;
         private boolean albumTextExpand;
+
+        @ImageUrlFormat
+        @LsonPath("card.item.pictures[*].img_src")
         private ArrayList<String> albumImg;
 
-        public DynamicAlbumModel(JSONObject card, JSONObject desc, JSONObject display, JSONObject extend, boolean isShared)
+        @ViewFormat
+        @LsonPath("card.reply")
+        private String albumReply;
+
+        public DynamicAlbumModel(LsonObject dynamic, boolean isShared)
         {
-            super(card, desc, display, extend, isShared);
-            JSONObject card_user = card.has("user") ? card.optJSONObject("user") : new JSONObject();
-            albumAuthorName = card_user.optString("name");
-            albumAuthorUid = String.valueOf(card_user.optInt("uid"));
+            albumTextOrg = dynamic.getJsonObject("card").getJsonObject("item").getString("description");
+            albumText = super.handlerText(albumTextOrg, dynamic.getJsonObject("display"), dynamic.getJsonObject("extend"));
 
-            JSONObject card_item = card.has("item") ? card.optJSONObject("item") : new JSONObject();
-            albumTextOrg = card_item.optString("description");
-            albumText = super.handlerText(albumTextOrg, display, extend);
+            setCardIsShared(isShared);
+        }
 
-            JSONArray card_img = card_item.optJSONArray("pictures");
-            albumImg = new ArrayList<>();
-            for(int i = 0; i < card_img.length(); i++)
-                albumImg.add(LruCacheUtil.getImageUrl(card_img.optJSONObject(i).optString("img_src")));
-
-            super.cardReplyId = String.valueOf(card_item.optInt("id"));
-            super.cardReplyNum = DataProcessUtil.getView(card_item.optInt("reply"));
+        @LsonCallMethod(timing = LsonCallMethod.CallMethodTiming.AFTER_DESERIALIZATION)
+        private void initData()
+        {
+            setCardReplyId(albumId);
+            setCardReplyNum(albumReply);
         }
     }
 
     @Getter
     @Setter
-    public class DynamicTextModel extends DynamicModel implements Serializable //4
+    public static class DynamicTextModel extends DynamicBaseModel implements Serializable //4
     {
+        @LsonPath("card.user.uname")
         private String textAuthorName;
+
+        @LsonPath("card.user.uid")
         private String textAuthorUid;
+
         private String textTextOrg;
         private String textText;
         private boolean textTextExpand;
 
-        public DynamicTextModel(JSONObject card, JSONObject desc, JSONObject display, JSONObject extend, boolean isShared)
+        public DynamicTextModel(LsonObject dynamic, boolean isShared)
         {
-            super(card, desc, display, extend, isShared);
-            JSONObject card_user = card.has("user") ? card.optJSONObject("user") : new JSONObject();
-            textAuthorName = card_user.optString("uname");
-            textAuthorUid = String.valueOf(card_user.optInt("uid"));
-            JSONObject card_item = card.has("item") ? card.optJSONObject("item") : new JSONObject();
-            textTextOrg = card_item.optString("content");
-            textText = super.handlerText(textTextOrg, display, extend);
+            textTextOrg = dynamic.getJsonObject("card").getJsonObject("item").getString("content");
+            textText = super.handlerText(textTextOrg, dynamic.getJsonObject("display"), dynamic.getJsonObject("extend"));
+
+            setCardIsShared(isShared);
         }
     }
 
     @Getter
     @Setter
-    public class DynamicVideoModel extends DynamicModel implements Serializable //8
+    public static class DynamicVideoModel extends DynamicBaseModel implements Serializable //8
     {
+        @LsonPath("card.owner.name")
         private String videoAuthorName;
+
+        @ImageUrlFormat
+        @LsonPath("card.owner.face")
         private String videoAuthorImg;
+
+        @LsonPath("card.owner.mid")
         private String videoAuthorUid;
+
+        @LsonPath("card.aid")
         private String videoAid;
+
+        @LsonPath("card.bvid")
         private String videoBvid;
+
         private String videoDynamicOrg;
         private String videoDynamic;
         private boolean videoDynamicExpand;
-        private String videoTitle;
-        private String videoImg;
-        private String videoDesc;
-        private String videoDuration;
-        private String videoPlay;
-        private String videoDanmaku;
-        public DynamicVideoModel(JSONObject card, JSONObject desc, JSONObject display, JSONObject extend, boolean isShared)
-        {
-            super(card, desc, display, extend, isShared);
-            JSONObject card_owner = card.has("owner") ? card.optJSONObject("owner") : new JSONObject();
-            videoAuthorName = card_owner.optString("name");
-            videoAuthorImg = LruCacheUtil.getImageUrl(card_owner.optString("face"));
-            videoAuthorUid = String.valueOf(card_owner.optInt("mid"));
-            videoAid = String.valueOf(card.optInt("aid"));
-            videoBvid = card.optString("bvid");
-            if(!card.optString("dynamic").equals(""))
-            {
-                videoDynamicOrg = card.optString("dynamic");
-                videoDynamic = super.handlerText(videoDynamicOrg, display, extend);
-            }
-            videoTitle = card.optString("title");
-            videoImg = LruCacheUtil.getImageUrl(card.optString("pic"));
-            videoDesc = card.optString("desc");
-            videoDuration = DataProcessUtil.getMinFromSec(card.optInt("duration"));
-            JSONObject card_stat = card.has("stat") ? card.optJSONObject("stat") : new JSONObject();
-            videoPlay = DataProcessUtil.getView(card_stat.optInt("view"));
-            videoDanmaku = DataProcessUtil.getView(card_stat.optInt("danmaku"));
 
-            super.cardReplyId = videoAid;
-            super.cardUrl = "bilibili://video/" + videoAid;
-            super.cardReplyNum = DataProcessUtil.getView(card_stat.optInt("reply"));
+        @LsonPath("card.title")
+        private String videoTitle;
+
+        @ImageUrlFormat
+        @LsonPath("card.pic")
+        private String videoImg;
+
+        @LsonPath("card.desc")
+        private String videoDesc;
+
+        @TimeFormat
+        @LsonPath("card.duration")
+        private String videoDuration;
+
+        @ViewFormat
+        @LsonPath("card.stat.view")
+        private String videoPlay;
+
+        @ViewFormat
+        @LsonPath("card.stat.danmaku")
+        private String videoDanmaku;
+
+        @ViewFormat
+        @LsonPath("card.stat.reply")
+        private String videoReply;
+        public DynamicVideoModel(LsonObject dynamic, boolean isShared)
+        {
+            String content = dynamic.getJsonObject("card").getString("dynamic");
+            if(content != null && !content.equals(""))
+            {
+                videoDynamicOrg = dynamic.getJsonObject("card").getString("dynamic");
+                videoDynamic = super.handlerText(videoDynamicOrg, dynamic.getJsonObject("display"), dynamic.getJsonObject("extend"));
+            }
+
+            setCardIsShared(isShared);
+        }
+
+        @LsonCallMethod(timing = LsonCallMethod.CallMethodTiming.AFTER_DESERIALIZATION)
+        private void initData()
+        {
+            setCardUrl("bilibili://video/" + videoAid);
+            setCardReplyId(videoAid);
+            setCardReplyNum(videoReply);
         }
     }
 
     @Getter
     @Setter
-    public class DynamicArticleModel extends DynamicModel implements Serializable //64
+    public static class DynamicArticleModel extends DynamicBaseModel implements Serializable //64
     {
+        @LsonPath("card.id")
         private String articleId;
+
+        @LsonPath("card.author.name")
         private String articleAuthorName;
+
+        @ImageUrlFormat
+        @LsonPath("card.author.face")
         private String articleAuthorImg;
+
+        @LsonPath("card.author.mid")
         private String articleAuthorUid;
+
         private String articleDynamicOrg;
         private String articleDynamic;
         private boolean articleDynamicExpand;
-        private String articleTitle;
-        private String articleImg;
-        private String articleDesc;
-        private String articleView;
-        public DynamicArticleModel(JSONObject card, JSONObject desc, JSONObject display, JSONObject extend, boolean isShared)
-        {
-            super(card, desc, display, extend, isShared);
-            articleId = String.valueOf(card.optInt("id"));
-            JSONObject card_author = card.has("author") ? card.optJSONObject("author") : new JSONObject();
-            articleAuthorName = card_author.optString("name");
-            articleAuthorImg = LruCacheUtil.getImageUrl(card_author.optString("face"));
-            articleAuthorUid = String.valueOf(card_author.optInt("mid"));
-            if(!card.optString("dynamic").equals(""))
-            {
-                articleDynamicOrg = card.optString("dynamic");
-                articleDynamic = super.handlerText(articleDynamicOrg, display, extend);
-            }
-            articleTitle = card.optString("title");
-            articleDesc = card.optString("summary");
-            JSONArray card_img = card.has("image_urls") ? card.optJSONArray("image_urls") : new JSONArray();
-            articleImg = LruCacheUtil.getImageUrl(card_img.optString(0));
-            JSONObject card_stat = card.has("stats") ? card.optJSONObject("stats") : new JSONObject();
-            articleView = DataProcessUtil.getView(card_stat.optInt("view"));
 
-            super.cardReplyId = articleId;
-            super.cardUrl = "bilibili://article/" + articleId;
-            super.cardReplyNum = DataProcessUtil.getView(card_stat.optInt("reply"));
+        @LsonPath("card.title")
+        private String articleTitle;
+
+        @LsonPath("card.image_urls[0]")
+        private String articleImg;
+
+        @LsonPath("card.summary")
+        private String articleDesc;
+
+        @ViewFormat
+        @LsonPath("card.stats.view")
+        private String articleView;
+
+        @ViewFormat
+        @LsonPath("card.stats.reply")
+        private String articleReply;
+        public DynamicArticleModel(LsonObject dynamic, boolean isShared)
+        {
+            String content = dynamic.getJsonObject("card").getString("dynamic");
+            if(content != null && !content.equals(""))
+            {
+                articleDynamicOrg = dynamic.getJsonObject("card").getString("dynamic");
+                articleDynamic = super.handlerText(articleDynamicOrg, dynamic.getJsonObject("display"), dynamic.getJsonObject("extend"));
+            }
+
+            setCardIsShared(isShared);
+        }
+
+        @LsonCallMethod(timing = LsonCallMethod.CallMethodTiming.AFTER_DESERIALIZATION)
+        private void initData()
+        {
+            setCardUrl("bilibili://article/" + articleId);
+            setCardReplyId(articleId);
+            setCardReplyNum(articleReply);
         }
     }
 
     @Getter
     @Setter
-    public class DynamicBangumiModel extends DynamicModel implements Serializable //512番剧 4096??? 4097??? 4098电影 4099综艺、电视剧 4100??? 4101纪录片
+    public static class DynamicBangumiModel extends DynamicBaseModel implements Serializable //512番剧 4096??? 4097??? 4098电影 4099综艺、电视剧 4100??? 4101纪录片
     {
+        @LsonPath("card.apiSeasonInfo.season_id")
         private String bangumiSeasonId;
+
+        @LsonPath("card.apiSeasonInfo.title")
         private String bangumiAuthorName;
+
+        @LsonPath("card.new_desc")
         private String bangumiTitle;
+
+        @ImageUrlFormat
+        @LsonPath("card.cover")
         private String bangumiImg;
+
+        @ViewFormat
+        @LsonPath("card.play_count")
         private String bangumiView;
+
+        @ViewFormat
+        @LsonPath("card.bullet_count")
         private String bangumiDanmaku;
 
-        public DynamicBangumiModel(JSONObject card, JSONObject desc, JSONObject display, JSONObject extend, boolean isShared)
-        {
-            super(card, desc, display, extend, isShared);
-            bangumiTitle = card.optString("new_desc");
-            bangumiImg = LruCacheUtil.getImageUrl(card.optString("cover"));
-            bangumiView = DataProcessUtil.getView(card.optInt("play_count"));
-            bangumiDanmaku = DataProcessUtil.getView(card.optInt("bullet_count"));
+        @ViewFormat
+        @LsonPath("card.reply_count")
+        private String bangumiReply;
 
-            JSONObject card_info = card.has("apiSeasonInfo") ? card.optJSONObject("apiSeasonInfo") : new JSONObject();
-            bangumiSeasonId = String.valueOf(card_info.optInt("season_id"));
-            bangumiAuthorName = card_info.optString("title");
-            if(bangumiTitle == null || bangumiTitle.equals(""))
-                bangumiTitle = card_info.optString("title");
+        public DynamicBangumiModel(LsonObject dynamic, boolean isShared)
+        {
+            LsonObject card_info = dynamic.getJsonObject("card").getJsonObject("apiSeasonInfo");
             if(!isShared)
             {
-                super.cardAuthorName = card_info.optString("title");
-                super.cardAuthorImg = LruCacheUtil.getImageUrl(card_info.optString("cover"));
-                super.cardAuthorOfficial = -1;
+                setCardAuthorName(card_info.getString("title"));
+                setCardAuthorImg(LruCacheUtil.getImageUrl(card_info.getString("cover")));
+                setCardAuthorOfficial(-1);
             }
 
-            super.cardUrl = "bilibili://bangumi/season/" + bangumiSeasonId;
-            super.cardReplyNum = DataProcessUtil.getView(card.optInt("reply_count"));
+            setCardIsShared(isShared);
+        }
+
+        @LsonCallMethod(timing = LsonCallMethod.CallMethodTiming.AFTER_DESERIALIZATION)
+        private void initData()
+        {
+            if(bangumiTitle == null || bangumiTitle.equals(""))
+                bangumiTitle = bangumiAuthorName;
+            setCardUrl("bilibili://bangumi/season/" + bangumiSeasonId);
+            setCardReplyNum(bangumiReply);
         }
     }
 
     @Getter
     @Setter
-    public class DynamicUrlModel extends DynamicModel implements Serializable //2048
+    public static class DynamicUrlModel extends DynamicBaseModel implements Serializable //2048
     {
+        @LsonPath("card.user.uname")
         private String urlAuthorName;
+
+        @LsonPath("card.user.uid")
         private String urlAuthorUid;
+
         private String urlDynamicOrg;
         private String urlDynamic;
         private boolean urlDynamicExpand;
+
+        @LsonPath("card.sketch.title")
         private String urlTitle;
+
+        @LsonPath("card.sketch.desc_text")
         private String urlDesc;
+
+        @ImageUrlFormat
+        @LsonPath("card.sketch.cover_url")
         private String urlImg;
+
+        @LsonPath("card.sketch.target_url")
         private String urlUrl;
-        public DynamicUrlModel(JSONObject card, JSONObject desc, JSONObject display, JSONObject extend, boolean isShared)
+        public DynamicUrlModel(LsonObject dynamic, boolean isShared)
         {
-            super(card, desc, display, extend, isShared);
-            JSONObject card_user = card.has("user") ? card.optJSONObject("user") : new JSONObject();
-            urlAuthorName = card_user.optString("uname");
-            urlAuthorUid = card_user.optString("uid");
-            JSONObject card_vest = card.has("vest") ? card.optJSONObject("vest") : new JSONObject();
-            if(!card_vest.optString("content").equals(""))
+            String content = dynamic.getJsonObject("card").getJsonObject("vest").getString("content");
+            if(content != null && !content.equals(""))
             {
-                urlDynamicOrg = card_vest.optString("content");
-                urlDynamic = super.handlerText(urlDynamicOrg, display, extend);
+                urlDynamicOrg = content;
+                urlDynamic = super.handlerText(urlDynamicOrg, dynamic.getJsonObject("display"), dynamic.getJsonObject("extend"));
             }
-            JSONObject card_sketch = card.has("sketch") ? card.optJSONObject("sketch") : new JSONObject();
-            urlTitle = card_sketch.optString("title");
-            urlDesc = card_sketch.optString("desc_text");
-            urlImg = LruCacheUtil.getImageUrl(card_sketch.optString("cover_url"));
-            urlUrl = card_sketch.optString("target_url");
+            setCardIsShared(isShared);
         }
     }
 
     @Getter
     @Setter
-    public class DynamicLiveModel extends DynamicModel implements Serializable //4200
+    public static class DynamicLiveModel extends DynamicBaseModel implements Serializable //4200
     {
+        @LsonPath("card.roomid")
         private String liveId;
+
+        @LsonPath("card.title")
         private String liveTitle;
+
+        @LsonPath("card.uname")
         private String liveAuthorName;
+
+        @LsonPath("card.uid")
         private String liveAuthorUid;
+
+        @ImageUrlFormat
+        @LsonPath("card.face")
         private String liveAuthorImg;
+
+        @ImageUrlFormat
+        @LsonPath("card.cover")
         private String liveImg;
+
+        @LsonPath("card.area_v2_name")
         private String liveArea;
+
+        @ViewFormat
+        @LsonPath("card.online")
         private String liveOnline;
+
+        @LsonBooleanFormatAsNumber(equal = 1)
+        @LsonPath("card.live_status")
         private boolean liveStatus;
 
-        public DynamicLiveModel(JSONObject card, JSONObject desc, JSONObject display, JSONObject extend, boolean isShared)
+        public DynamicLiveModel(LsonObject dynamic, boolean isShared)
         {
-            super(card, desc, display, extend, isShared);
-            liveId = card.optString("roomid");
-            liveTitle = card.optString("title");
-            liveAuthorName = card.optString("uname");
-            liveAuthorUid = String.valueOf(card.optInt("uid"));
-            liveAuthorImg = LruCacheUtil.getImageUrl(card.optString("face"));
-            liveImg = LruCacheUtil.getImageUrl(card.optString("cover"));
-            liveArea = card.optString("area_v2_name");
-            liveOnline = DataProcessUtil.getView(card.optInt("online"));
-            liveStatus = card.optInt("live_status") == 1;
+            setCardIsShared(isShared);
+        }
 
-            super.cardUrl = "bilibili://live/" + liveId;
+        @LsonCallMethod(timing = LsonCallMethod.CallMethodTiming.AFTER_DESERIALIZATION)
+        private void initData()
+        {
+            setCardUrl("bilibili://live/" + liveId);
         }
     }
 
     @Getter
     @Setter
-    public class DynamicFavorModel extends DynamicModel implements Serializable //4300
+    public static class DynamicFavorModel extends DynamicBaseModel implements Serializable //4300
     {
+        @LsonPath("card.title")
         private String favorTitle;
+
+        @LsonPath("card.fid")
         private String favorId;
+
+        @ImageUrlFormat
+        @LsonPath("card.cover")
         private String favorImg;
+
+        @LsonPath("card.media_count")
         private int favorCount;
+
+        @LsonPath("card.upper.name")
         private String favorAuthorName;
+
+        @LsonPath("card.upper.mid")
         private String favorAuthorUid;
+
+        @ImageUrlFormat
+        @LsonPath("card.upper.face")
         private String favorAuthorImg;
 
-        public DynamicFavorModel(JSONObject card, JSONObject desc, JSONObject display, JSONObject extend, boolean isShared)
+        public DynamicFavorModel(LsonObject dynamic, boolean isShared)
         {
-            super(card, desc, display, extend, isShared);
-            favorTitle = card.optString("title");
-            favorId = String.valueOf(card.optInt("fid"));
-            favorImg = LruCacheUtil.getImageUrl(card.optString("cover"));
-            favorCount = card.optInt("media_count");
-            JSONObject card_upper = card.has("upper") ? card.optJSONObject("upper") : new JSONObject();
-            favorAuthorName = card_upper.optString("name");
-            favorAuthorUid = String.valueOf(card_upper.optInt("mid"));
-            favorAuthorImg = LruCacheUtil.getImageUrl(card_upper.optString("face"));
+            setCardIsShared(isShared);
+        }
 
-            super.cardUrl = "bilibili://collect/" + favorId + "?uid=" + favorAuthorUid;
+        @LsonCallMethod(timing = LsonCallMethod.CallMethodTiming.AFTER_DESERIALIZATION)
+        private void initData()
+        {
+            setCardUrl("bilibili://collect/" + favorId + "?uid=" + favorAuthorUid);
         }
     }
 
@@ -437,138 +481,174 @@ public class DynamicModel implements Serializable
 
     @Getter
     @Setter
-    public class DynamicUnknownModel extends DynamicModel implements Serializable
+    public static class DynamicUnknownModel extends DynamicBaseModel implements Serializable
     {
         private String unknownTips;
 
-        public DynamicUnknownModel(JSONObject card, JSONObject desc, JSONObject display, JSONObject extend, boolean isShared)
+        public DynamicUnknownModel(LsonObject dynamic, boolean isShared)
         {
-            this(card, desc, display, extend, isShared, "");
+            this(dynamic, isShared, "");
         }
 
-        public DynamicUnknownModel(JSONObject card, JSONObject desc, JSONObject display, JSONObject extend, boolean isShared, String tips)
+        public DynamicUnknownModel(LsonObject dynamic, boolean isShared, String tips)
         {
-            super(card, desc, display, extend, isShared);
             unknownTips = tips;
+            setCardIsShared(isShared);
         }
     }
 
-    private String handlerText(String text, JSONObject display, JSONObject extend)
+    @Getter
+    @Setter
+    public abstract static class DynamicBaseModel implements Serializable
     {
-        int ctrlLength = 0;
-        JSONArray ctrlJSONArray = extend.has("ctrl") ? extend.optJSONArray("ctrl") : new JSONArray();
-        for(int i = 0; i < ctrlJSONArray.length(); i++)
-        {
-            JSONObject ctrlJSON = ctrlJSONArray.optJSONObject(i);
-            String data = ctrlJSON.optString("data");
-            int location = ctrlJSON.optInt("location") + ctrlLength;
-            int length = ctrlJSON.optInt("length");
-            if(ctrlJSON.optInt("type") == 1)
-            {
-                String tag = "<a href=\"bilibili://space/" + data +"\">" + text.substring(location, Math.min(location + length, text.length() -1)) + "</a>";
-                StringBuilder stringBuilder = new StringBuilder(text);
-                stringBuilder.replace(location, location + length, tag);
-                text = stringBuilder.toString();
-                ctrlLength += tag.length() - length;
-            }
-        }
+        @LsonPath("desc.type")
+        private int cardType;
 
-        text = text.replace("\n", "<br>");
-        Element document = Jsoup.parseBodyFragment(text).body();
-        List<TextNode> textNodes = document.textNodes();
+        private boolean cardIsShared;
 
-        Pattern bvPattern = Pattern.compile("([Bb][Vv][a-zA-Z0-9]{10})");
-        for(int i = 0; i < textNodes.size(); i++)
-        {
-            TextNode textNode = textNodes.get(i);
-            Matcher bvMatcher = bvPattern.matcher(textNode.getWholeText());
-            if(bvMatcher.find())
-            {
-                MatchResult bvMatcherResult = bvMatcher.toMatchResult();
-                String tag = "<a href=\"bilibili://video/BV" + bvMatcherResult.group(0).substring(2) +
-                        "\">BV" + bvMatcherResult.group().substring(2) + "</a>";
-                textNode.before(textNode.getWholeText().substring(0, bvMatcherResult.start(0)));
-                textNode.before(tag);
-                textNode.text(textNode.getWholeText().substring(bvMatcherResult.end(0)));
-                textNodes = document.textNodes();
-                i--;
-            }
-        }
+        @LsonPath("desc.dynamic_id_str")
+        private String cardId;
 
-        Pattern avPattern = Pattern.compile("([Aa][Vv][0-9]+(?=[^1-9]|$))");
-        for(int i = 0; i < textNodes.size(); i++)
-        {
-            TextNode textNode = textNodes.get(i);
-            Matcher avMatcher = avPattern.matcher(textNode.getWholeText());
-            if(avMatcher.find())
-            {
-                MatchResult avMatcherResult = avMatcher.toMatchResult();
-                String tag = "<a href=\"bilibili://video/" + avMatcherResult.group(0).substring(2) +
-                        "\">av" + avMatcherResult.group(0).substring(2) + "</a>";
-                textNode.before(textNode.getWholeText().substring(0, avMatcherResult.start(0)));
-                textNode.before(tag);
-                textNode.text(textNode.getWholeText().substring(avMatcherResult.end(0)));
-                textNodes = document.textNodes();
-                i--;
-            }
-        }
+        @LsonPath("desc.dynamic_id_str")
+        private String cardReplyId;
 
-        Pattern cvPattern = Pattern.compile("([Cc][Vv][0-9]+(?=[^1-9]|$))");
-        for(int i = 0; i < textNodes.size(); i++)
-        {
-            TextNode textNode = textNodes.get(i);
-            Matcher cvMatcher = cvPattern.matcher(textNode.getWholeText());
-            if(cvMatcher.find())
-            {
-                MatchResult cvMatcherResult = cvMatcher.toMatchResult();
-                String tag = "<a href=\"bilibili://article/" + cvMatcherResult.group(0).substring(2) +
-                        "\">cv" + cvMatcherResult.group(0).substring(2) + "</a>";
-                textNode.before(textNode.getWholeText().substring(0, cvMatcherResult.start(0)));
-                textNode.before(tag);
-                textNode.text(textNode.getWholeText().substring(cvMatcherResult.end(0)));
-                textNodes = document.textNodes();
-                i--;
-            }
-        }
+        @LsonAddPrefix("bilibili://following/detail/")
+        @LsonPath("desc.dynamic_id_str")
+        private String cardUrl;
 
-        if(display != null)
+        @LsonDateFormat("MM-dd HH:mm")
+        @LsonPath("desc.timestamp")
+        private String cardTime;
+
+
+        @LsonPath("desc.user_profile.info.uname")
+        private String cardAuthorName;
+
+        @LsonPath("desc.user_profile.info.uid")
+        private String cardAuthorUid;
+
+        @LsonPath("desc.user_profile.info.face")
+        private String cardAuthorImg;
+
+        @LsonPath("desc.user_profile.card.official_verify.type")
+        private int cardAuthorOfficial = -1;
+
+        @LsonPath("desc.user_profile.vip.vipStatus")
+        private int cardAuthorVipStatus;
+
+        @LsonPath("desc.user_profile.vip.vipType")
+        private int cardAuthorVipType;
+
+
+        @ViewFormat
+        @LsonPath("desc.repost")
+        private String cardShareNum;
+
+        @ViewFormat
+        @LsonPath("desc.comment")
+        private String cardReplyNum;
+
+        @LsonPath("desc.like")
+        private int cardLikeNum;
+
+        @LsonBooleanFormatAsNumber(equal = 1)
+        @LsonPath("desc.is_liked")
+        private boolean cardUserLike;
+
+        private HashMap<String, Integer> cardEmoteSize = new HashMap<>();
+
+        private String handlerText(String text, LsonObject display, LsonObject extend)
         {
-            JSONObject emote = display.has("emoji_info") ? display.optJSONObject("emoji_info") : new JSONObject();
-            JSONArray emoteDetail = emote.has("emoji_details") ? emote.optJSONArray("emoji_details") : new JSONArray();
-            for (int i = 0; i < emoteDetail.length(); i++)
+            int ctrlLength = 0;
+            LsonArray ctrlJSONArray = extend.getJsonArray("ctrl");
+            for(int i = 0; i < ctrlJSONArray.size(); i++)
             {
-                JSONObject emoteJson = emoteDetail.optJSONObject(i);
-                String key = emoteJson.optString("text");
-                String tag = "<img src=\"" + emoteJson.optString("url") + "\"/>";
-                for (int j = 0; j < textNodes.size(); j++)
+                LsonObject ctrlJSON = ctrlJSONArray.getJsonObject(i);
+                String data = ctrlJSON.getString("data");
+                int location = ctrlJSON.getInt("location") + ctrlLength;
+                int length = ctrlJSON.getInt("length");
+                if(ctrlJSON.getInt("type") == 1)
                 {
-                    TextNode textNode = textNodes.get(j);
-                    if(textNode.getWholeText().contains(key))
-                    {
-                        cardEmoteSize.put(emoteJson.optString("url"), emoteJson.has("meta") ? emoteJson.optJSONObject("meta").optInt("size") : 1);
-                        textNode.before(textNode.getWholeText().substring(0, textNode.getWholeText().indexOf(key)));
-                        textNode.before(tag);
-                        textNode.text(textNode.getWholeText().substring(textNode.getWholeText().indexOf(key) + key.length()));
-                        textNodes = document.textNodes();
-                        j--;
-                    }
+                    String tag = "<a href=\"bilibili://space/" + data +"\">" + text.substring(location, Math.min(location + length, text.length() -1)) + "</a>";
+                    StringBuilder stringBuilder = new StringBuilder(text);
+                    stringBuilder.replace(location, location + length, tag);
+                    text = stringBuilder.toString();
+                    ctrlLength += tag.length() - length;
                 }
             }
 
-            if((extend.has("topic") ? extend.optJSONObject("topic").optInt("is_attach_topic") : 1) == 1)
+            text = text.replace("\n", "<br>");
+            Element document = Jsoup.parseBodyFragment(text).body();
+            List<TextNode> textNodes = document.textNodes();
+
+            Pattern bvPattern = Pattern.compile("([Bb][Vv][a-zA-Z0-9]{10})");
+            for(int i = 0; i < textNodes.size(); i++)
             {
-                JSONObject topics = display.has("topic_info") ? display.optJSONObject("topic_info") : new JSONObject();
-                JSONArray topicsDetail = topics.has("topic_details") ? topics.optJSONArray("topic_details") : new JSONArray();
-                for (int i = 0; i < topicsDetail.length(); i++)
+                TextNode textNode = textNodes.get(i);
+                Matcher bvMatcher = bvPattern.matcher(textNode.getWholeText());
+                if(bvMatcher.find())
                 {
-                    JSONObject topicsJSON = topicsDetail.optJSONObject(i);
-                    String key = "#" + topicsJSON.optString("topic_name") + "#";
-                    String tag = "<a href=\"bilibili://pegasus/channel/" + topicsJSON.optString("topic_id") + "\">" + key + "</a>";
+                    MatchResult bvMatcherResult = bvMatcher.toMatchResult();
+                    String tag = "<a href=\"bilibili://video/BV" + bvMatcherResult.group(0).substring(2) +
+                            "\">BV" + bvMatcherResult.group().substring(2) + "</a>";
+                    textNode.before(textNode.getWholeText().substring(0, bvMatcherResult.start(0)));
+                    textNode.before(tag);
+                    textNode.text(textNode.getWholeText().substring(bvMatcherResult.end(0)));
+                    textNodes = document.textNodes();
+                    i--;
+                }
+            }
+
+            Pattern avPattern = Pattern.compile("([Aa][Vv][0-9]+(?=[^1-9]|$))");
+            for(int i = 0; i < textNodes.size(); i++)
+            {
+                TextNode textNode = textNodes.get(i);
+                Matcher avMatcher = avPattern.matcher(textNode.getWholeText());
+                if(avMatcher.find())
+                {
+                    MatchResult avMatcherResult = avMatcher.toMatchResult();
+                    String tag = "<a href=\"bilibili://video/" + avMatcherResult.group(0).substring(2) +
+                            "\">av" + avMatcherResult.group(0).substring(2) + "</a>";
+                    textNode.before(textNode.getWholeText().substring(0, avMatcherResult.start(0)));
+                    textNode.before(tag);
+                    textNode.text(textNode.getWholeText().substring(avMatcherResult.end(0)));
+                    textNodes = document.textNodes();
+                    i--;
+                }
+            }
+
+            Pattern cvPattern = Pattern.compile("([Cc][Vv][0-9]+(?=[^1-9]|$))");
+            for(int i = 0; i < textNodes.size(); i++)
+            {
+                TextNode textNode = textNodes.get(i);
+                Matcher cvMatcher = cvPattern.matcher(textNode.getWholeText());
+                if(cvMatcher.find())
+                {
+                    MatchResult cvMatcherResult = cvMatcher.toMatchResult();
+                    String tag = "<a href=\"bilibili://article/" + cvMatcherResult.group(0).substring(2) +
+                            "\">cv" + cvMatcherResult.group(0).substring(2) + "</a>";
+                    textNode.before(textNode.getWholeText().substring(0, cvMatcherResult.start(0)));
+                    textNode.before(tag);
+                    textNode.text(textNode.getWholeText().substring(cvMatcherResult.end(0)));
+                    textNodes = document.textNodes();
+                    i--;
+                }
+            }
+
+            if(display != null)
+            {
+                LsonArray emoteDetail = display.getJsonObject("emoji_info").getJsonArray("emoji_details");
+                for (int i = 0; i < emoteDetail.size(); i++)
+                {
+                    LsonObject emoteJson = emoteDetail.getJsonObject(i);
+                    String key = emoteJson.getString("text");
+                    String tag = "<img src=\"" + emoteJson.getString("url") + "\"/>";
                     for (int j = 0; j < textNodes.size(); j++)
                     {
                         TextNode textNode = textNodes.get(j);
                         if(textNode.getWholeText().contains(key))
                         {
+                            cardEmoteSize.put(emoteJson.getString("url"), emoteJson.getJsonObject("meta").getInt("size", 1));
                             textNode.before(textNode.getWholeText().substring(0, textNode.getWholeText().indexOf(key)));
                             textNode.before(tag);
                             textNode.text(textNode.getWholeText().substring(textNode.getWholeText().indexOf(key) + key.length()));
@@ -577,26 +657,49 @@ public class DynamicModel implements Serializable
                         }
                     }
                 }
-            }
-        }
 
-        Pattern urlPattern = Pattern.compile("((?:https?://)?[a-zA-Z0-9.]+?\\.(?:com|cn|top|org|gov|edu|net)(?:/[a-zA-Z0-9\\-_.~!*'();:@&=+$,/?#\\[\\]]*)*)");
-        for(int i = 0; i < textNodes.size(); i++)
-        {
-            TextNode textNode = textNodes.get(i);
-            Matcher urlMatcher = urlPattern.matcher(textNode.getWholeText());
-            if(urlMatcher.find())
+                if(extend.getJsonObject("topic").getInt("is_attach_topic", 1) == 1)
+                {
+                    LsonArray topicsDetail = display.getJsonObject("topic_info").getJsonArray("topic_details");
+                    for (int i = 0; i < topicsDetail.size(); i++)
+                    {
+                        LsonObject topicsJSON = topicsDetail.getJsonObject(i);
+                        String key = "#" + topicsJSON.getString("topic_name") + "#";
+                        String tag = "<a href=\"bilibili://pegasus/channel/" + topicsJSON.getString("topic_id") + "\">" + key + "</a>";
+                        for (int j = 0; j < textNodes.size(); j++)
+                        {
+                            TextNode textNode = textNodes.get(j);
+                            if(textNode.getWholeText().contains(key))
+                            {
+                                textNode.before(textNode.getWholeText().substring(0, textNode.getWholeText().indexOf(key)));
+                                textNode.before(tag);
+                                textNode.text(textNode.getWholeText().substring(textNode.getWholeText().indexOf(key) + key.length()));
+                                textNodes = document.textNodes();
+                                j--;
+                            }
+                        }
+                    }
+                }
+            }
+
+            Pattern urlPattern = Pattern.compile("((?:https?://)?[a-zA-Z0-9.]+?\\.(?:com|cn|top|org|gov|edu|net)(?:/[a-zA-Z0-9\\-_.~!*'();:@&=+$,/?#\\[\\]]*)*)");
+            for(int i = 0; i < textNodes.size(); i++)
             {
-                MatchResult urlMatcherResult = urlMatcher.toMatchResult();
-                String tag = "<a href=\"" + urlMatcherResult.group(0) + "\">" + urlMatcherResult.group() + "</a>";
-                textNode.before(textNode.getWholeText().substring(0, urlMatcherResult.start(0)));
-                textNode.before(tag);
-                textNode.text(textNode.getWholeText().substring(urlMatcherResult.end(0)));
-                textNodes = document.textNodes();
-                i--;
+                TextNode textNode = textNodes.get(i);
+                Matcher urlMatcher = urlPattern.matcher(textNode.getWholeText());
+                if(urlMatcher.find())
+                {
+                    MatchResult urlMatcherResult = urlMatcher.toMatchResult();
+                    String tag = "<a href=\"" + urlMatcherResult.group(0) + "\">" + urlMatcherResult.group() + "</a>";
+                    textNode.before(textNode.getWholeText().substring(0, urlMatcherResult.start(0)));
+                    textNode.before(tag);
+                    textNode.text(textNode.getWholeText().substring(urlMatcherResult.end(0)));
+                    textNodes = document.textNodes();
+                    i--;
+                }
             }
-        }
 
-        return document.outerHtml();
+            return document.outerHtml();
+        }
     }
 }

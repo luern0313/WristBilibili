@@ -5,7 +5,6 @@ import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -16,7 +15,6 @@ import org.greenrobot.eventbus.EventBus;
 import java.io.IOException;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -33,10 +31,9 @@ import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 public class DynamicDetailActivity extends BaseActivity implements DynamicDetailFragment.DynamicDetailFragmentListener
 {
     Context ctx;
-    LayoutInflater inflater;
     FragmentPagerAdapter pagerAdapter;
     DynamicApi dynamicApi;
-    DynamicModel dynamicModel;
+    DynamicModel.DynamicBaseModel dynamicModel;
 
     ViewFlipper uiTitle;
     ViewPager uiViewPager;
@@ -56,54 +53,39 @@ public class DynamicDetailActivity extends BaseActivity implements DynamicDetail
         uiViewPager = findViewById(R.id.dynamic_detail_viewpager);
         uiLoading = findViewById(R.id.dynamic_detail_loading_img);
 
-        runnableUi = new Runnable()
-        {
-            @Override
-            public void run()
+        runnableUi = () -> {
+            findViewById(R.id.dynamic_detail_loading).setVisibility(View.GONE);
+            findViewById(R.id.dynamic_detail_nothing).setVisibility(View.GONE);
+            findViewById(R.id.dynamic_detail_noweb).setVisibility(View.GONE);
+
+            uiViewPager.setAdapter(pagerAdapter);
+            if(getIntent().hasExtra("page"))
+                uiViewPager.setCurrentItem(Integer.parseInt(getIntent().getStringExtra("page")));
+        };
+
+        runnableNoWeb = () -> {
+            try
             {
                 findViewById(R.id.dynamic_detail_loading).setVisibility(View.GONE);
                 findViewById(R.id.dynamic_detail_nothing).setVisibility(View.GONE);
+                findViewById(R.id.dynamic_detail_noweb).setVisibility(View.VISIBLE);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        };
+
+        runnableNothing = () -> {
+            try
+            {
+                findViewById(R.id.dynamic_detail_loading).setVisibility(View.GONE);
+                findViewById(R.id.dynamic_detail_nothing).setVisibility(View.VISIBLE);
                 findViewById(R.id.dynamic_detail_noweb).setVisibility(View.GONE);
-
-                uiViewPager.setAdapter(pagerAdapter);
-                if(getIntent().hasExtra("page"))
-                    uiViewPager.setCurrentItem(Integer.parseInt(getIntent().getStringExtra("page")));
             }
-        };
-
-        runnableNoWeb = new Runnable()
-        {
-            @Override
-            public void run()
+            catch (Exception e)
             {
-                try
-                {
-                    findViewById(R.id.dynamic_detail_loading).setVisibility(View.GONE);
-                    findViewById(R.id.dynamic_detail_nothing).setVisibility(View.GONE);
-                    findViewById(R.id.dynamic_detail_noweb).setVisibility(View.VISIBLE);
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
-            }
-        };
-
-        runnableNothing = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                try
-                {
-                    findViewById(R.id.dynamic_detail_loading).setVisibility(View.GONE);
-                    findViewById(R.id.dynamic_detail_nothing).setVisibility(View.VISIBLE);
-                    findViewById(R.id.dynamic_detail_noweb).setVisibility(View.GONE);
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
+                e.printStackTrace();
             }
         };
 
@@ -146,24 +128,19 @@ public class DynamicDetailActivity extends BaseActivity implements DynamicDetail
             }
         });
 
-        new Thread(new Runnable()
-        {
-            @Override
-            public void run()
+        new Thread(() -> {
+            try
             {
-                try
-                {
-                    dynamicModel = dynamicApi.getDynamicDetail(getIntent().getStringExtra("dynamic_id"));
-                    if(dynamicModel != null)
-                        handler.post(runnableUi);
-                    else
-                        handler.post(runnableNothing);
-                }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
-                    handler.post(runnableNoWeb);
-                }
+                dynamicModel = dynamicApi.getDynamicDetail(getIntent().getStringExtra("dynamic_id"));
+                if(dynamicModel != null)
+                    handler.post(runnableUi);
+                else
+                    handler.post(runnableNothing);
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+                handler.post(runnableNoWeb);
             }
         }).start();
     }
@@ -177,37 +154,32 @@ public class DynamicDetailActivity extends BaseActivity implements DynamicDetail
         }
         else if(viewId == R.id.item_dynamic_like_lay)
         {
-            new Thread(new Runnable()
-            {
-                @Override
-                public void run()
+            new Thread(() -> {
+                try
                 {
-                    try
+                    String result = dynamicApi.likeDynamic(dynamicModel.getCardId(), dynamicModel.isCardUserLike() ? "2" : "1");
+                    if(result.equals(""))
                     {
-                        String result = dynamicApi.likeDynamic(dynamicModel.getCardId(), dynamicModel.isCardUserLike() ? "2" : "1");
-                        if(result.equals(""))
-                        {
-                            dynamicModel.setCardUserLike(!dynamicModel.isCardUserLike());
-                            dynamicModel.setCardLikeNum(dynamicModel.getCardLikeNum() + 1);
-                            Looper.prepare();
-                        }
-                        else
-                        {
-                            Looper.prepare();
-                            Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                    catch (IOException e)
-                    {
-                        e.printStackTrace();
+                        dynamicModel.setCardUserLike(!dynamicModel.isCardUserLike());
+                        dynamicModel.setCardLikeNum(dynamicModel.getCardLikeNum() + 1);
                         Looper.prepare();
-                        Toast.makeText(ctx, "操作失败，请检查网络...", Toast.LENGTH_SHORT).show();
                     }
-                    finally
+                    else
                     {
-                        EventBus.getDefault().post(dynamicModel);
-                        Looper.loop();
+                        Looper.prepare();
+                        Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
                     }
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                    Looper.prepare();
+                    Toast.makeText(ctx, "操作失败，请检查网络...", Toast.LENGTH_SHORT).show();
+                }
+                finally
+                {
+                    EventBus.getDefault().post(dynamicModel);
+                    Looper.loop();
                 }
             }).start();
         }
@@ -236,5 +208,5 @@ public class DynamicDetailActivity extends BaseActivity implements DynamicDetail
                 return ReplyFragment.newInstance(dynamicModel.getCardReplyId(), ReplyApi.typeMap.containsKey(dynamicModel.getCardType()) ?
                         ReplyApi.typeMap.get(dynamicModel.getCardType()) : "17", null, 0);
         }
-    };
+    }
 }

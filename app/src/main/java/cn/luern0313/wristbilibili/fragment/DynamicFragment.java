@@ -16,8 +16,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONException;
-
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -51,7 +49,7 @@ public class DynamicFragment extends Fragment
 
     private DynamicApi dynamicApi;
     private SendDynamicApi sendDynamicApi;
-    private ArrayList<DynamicModel> dynamicList;
+    private ArrayList<DynamicModel.DynamicBaseModel> dynamicList;
 
     private View rootLayout;
     private ListView dyListView;
@@ -62,7 +60,7 @@ public class DynamicFragment extends Fragment
     private DynamicAdapter dynamicAdapter;
     private DynamicAdapter.DynamicAdapterListener adapterListener;
 
-    private Handler handler = new Handler();
+    private final Handler handler = new Handler();
     private Runnable runnableUi, runnableNoWeb, runnableMore, runnableNoData, runnableMoreNoWeb, runnableMoreNoData;
 
     private boolean isLoading = true;
@@ -119,134 +117,73 @@ public class DynamicFragment extends Fragment
 
         sendDynamicApi = new SendDynamicApi();
 
-        runnableUi = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                rootLayout.findViewById(R.id.dy_noweb).setVisibility(View.GONE);
-                rootLayout.findViewById(R.id.dy_nologin).setVisibility(View.GONE);
-                rootLayout.findViewById(R.id.dy_nonthing).setVisibility(View.GONE);
-                dyListView.setVisibility(View.VISIBLE);
+        runnableUi = () -> {
+            rootLayout.findViewById(R.id.dy_noweb).setVisibility(View.GONE);
+            rootLayout.findViewById(R.id.dy_nologin).setVisibility(View.GONE);
+            rootLayout.findViewById(R.id.dy_nonthing).setVisibility(View.GONE);
+            dyListView.setVisibility(View.VISIBLE);
 
-                waveSwipeRefreshLayout.setRefreshing(false);
-                dynamicAdapter = new DynamicAdapter(inflater, dynamicList, dyListView, dynamicWidth, adapterListener);
-                dyListView.setAdapter(dynamicAdapter);
-            }
+            waveSwipeRefreshLayout.setRefreshing(false);
+            dynamicAdapter = new DynamicAdapter(inflater, dynamicList, dyListView, dynamicWidth, adapterListener);
+            dyListView.setAdapter(dynamicAdapter);
         };
 
-        runnableNoWeb = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                waveSwipeRefreshLayout.setRefreshing(false);
-                rootLayout.findViewById(R.id.dy_noweb).setVisibility(View.VISIBLE);
-                rootLayout.findViewById(R.id.dy_nologin).setVisibility(View.GONE);
-                rootLayout.findViewById(R.id.dy_nonthing).setVisibility(View.GONE);
-                dyListView.setVisibility(View.GONE);
-            }
+        runnableNoWeb = () -> {
+            waveSwipeRefreshLayout.setRefreshing(false);
+            rootLayout.findViewById(R.id.dy_noweb).setVisibility(View.VISIBLE);
+            rootLayout.findViewById(R.id.dy_nologin).setVisibility(View.GONE);
+            rootLayout.findViewById(R.id.dy_nonthing).setVisibility(View.GONE);
+            dyListView.setVisibility(View.GONE);
         };
 
-        runnableMoreNoWeb = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                ((TextView) loadingView.findViewById(R.id.wid_load_button)).setText("好像没有网络...\n检查下网络？");
-                loadingView.findViewById(R.id.wid_load_button).setVisibility(View.VISIBLE);
-                isLoading = false;
-            }
+        runnableMoreNoWeb = () -> {
+            ((TextView) loadingView.findViewById(R.id.wid_load_button)).setText("好像没有网络...\n检查下网络？");
+            loadingView.findViewById(R.id.wid_load_button).setVisibility(View.VISIBLE);
+            isLoading = false;
         };
 
-        runnableNoData = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                rootLayout.findViewById(R.id.dy_noweb).setVisibility(View.GONE);
-                rootLayout.findViewById(R.id.dy_nologin).setVisibility(View.GONE);
-                rootLayout.findViewById(R.id.dy_nonthing).setVisibility(View.VISIBLE);
-                dyListView.setVisibility(View.GONE);
-                waveSwipeRefreshLayout.setRefreshing(false);
-            }
+        runnableNoData = () -> {
+            rootLayout.findViewById(R.id.dy_noweb).setVisibility(View.GONE);
+            rootLayout.findViewById(R.id.dy_nologin).setVisibility(View.GONE);
+            rootLayout.findViewById(R.id.dy_nonthing).setVisibility(View.VISIBLE);
+            dyListView.setVisibility(View.GONE);
+            waveSwipeRefreshLayout.setRefreshing(false);
         };
 
-        runnableMoreNoWeb = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                isLoading = false;
-                ((TextView) loadingView.findViewById(R.id.wid_load_button)).setText("好像没有网络...\n检查下网络？");
-                loadingView.findViewById(R.id.wid_load_button).setVisibility(View.VISIBLE);
-            }
+        runnableMoreNoWeb = () -> {
+            isLoading = false;
+            ((TextView) loadingView.findViewById(R.id.wid_load_button)).setText("好像没有网络...\n检查下网络？");
+            loadingView.findViewById(R.id.wid_load_button).setVisibility(View.VISIBLE);
         };
 
-        runnableMoreNoData = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                ((TextView) loadingView.findViewById(R.id.wid_load_text)).setText("  没有更多了...");
-            }
-        };
+        runnableMoreNoData = () -> ((TextView) loadingView.findViewById(R.id.wid_load_text)).setText("  没有更多了...");
 
-        loadingView.findViewById(R.id.wid_load_button).setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                ((TextView) loadingView.findViewById(R.id.wid_load_button)).setText("  加载中...");
-                loadingView.findViewById(R.id.wid_load_button).setVisibility(View.GONE);
-                getMoreDynamic();
-            }
+        loadingView.findViewById(R.id.wid_load_button).setOnClickListener(v -> {
+            ((TextView) loadingView.findViewById(R.id.wid_load_button)).setText("  加载中...");
+            loadingView.findViewById(R.id.wid_load_button).setVisibility(View.GONE);
+            getMoreDynamic();
         });
 
-        runnableMore = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                dynamicAdapter.notifyDataSetChanged();
-            }
-        };
+        runnableMore = () -> dynamicAdapter.notifyDataSetChanged();
 
         waveSwipeRefreshLayout = rootLayout.findViewById(R.id.dy_swipe);
         waveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
         //noinspection ConstantConditions
         waveSwipeRefreshLayout.setWaveColor(ColorUtil.getColor(R.attr.colorPrimary, getContext()));
-        waveSwipeRefreshLayout.setOnRefreshListener(new WaveSwipeRefreshLayout.OnRefreshListener()
-        {
-            @Override
-            public void onRefresh()
+        waveSwipeRefreshLayout.setOnRefreshListener(() -> handler.post(() -> {
+            isLogin = SharedPreferencesUtil.contains(SharedPreferencesUtil.cookies);
+            if(isLogin)
             {
-                handler.post(new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        isLogin = SharedPreferencesUtil.contains(SharedPreferencesUtil.cookies);
-                        if(isLogin)
-                        {
-                            dyListView.setVisibility(View.GONE);
-                            getDynamic();
-                        }
-                        else waveSwipeRefreshLayout.setRefreshing(false);
-                    }
-                });
+                dyListView.setVisibility(View.GONE);
+                getDynamic();
             }
-        });
+            else waveSwipeRefreshLayout.setRefreshing(false);
+        }));
 
-        loadingView.findViewById(R.id.wid_load_button).setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                ((TextView) loadingView.findViewById(R.id.wid_load_button)).setText("  加载中...");
-                loadingView.findViewById(R.id.wid_load_button).setVisibility(View.GONE);
-                getMoreDynamic();
-            }
+        loadingView.findViewById(R.id.wid_load_button).setOnClickListener(v -> {
+            ((TextView) loadingView.findViewById(R.id.wid_load_button)).setText("  加载中...");
+            loadingView.findViewById(R.id.wid_load_button).setVisibility(View.GONE);
+            getMoreDynamic();
         });
 
         dyListView.setOnScrollListener(new AbsListView.OnScrollListener()
@@ -266,25 +203,13 @@ public class DynamicFragment extends Fragment
             }
         });
 
-        sendDynamicButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                Intent intent = new Intent(ctx, SendDynamicActivity.class);
-                intent.putExtra("is_share", false);
-                startActivityForResult(intent, RESULT_DYNAMIC_SEND_DYNAMIC);
-            }
+        sendDynamicButton.setOnClickListener(v -> {
+            Intent intent = new Intent(ctx, SendDynamicActivity.class);
+            intent.putExtra("is_share", false);
+            startActivityForResult(intent, RESULT_DYNAMIC_SEND_DYNAMIC);
         });
 
-        adapterListener = new DynamicAdapter.DynamicAdapterListener()
-        {
-            @Override
-            public void onClick(int viewId, int position, boolean isShared)
-            {
-                onViewClick(viewId, position, isShared);
-            }
-        };
+        adapterListener = this::onViewClick;
 
         if(isLogin)
         {
@@ -305,36 +230,31 @@ public class DynamicFragment extends Fragment
     private void getDynamic()
     {
         isLoading = true;
-        new Thread(new Runnable()
-        {
-            @Override
-            public void run()
+        new Thread(() -> {
+            try
             {
-                try
+                dynamicApi = new DynamicApi(mid, isShowSendButton);
+                dynamicApi.getDynamic();
+                dynamicList = dynamicApi.getDynamicList();
+                if(dynamicList != null && dynamicList.size() != 0)
                 {
-                    dynamicApi = new DynamicApi(mid, isShowSendButton);
-                    dynamicApi.getDynamic();
-                    dynamicList = dynamicApi.getDynamicList();
-                    if(dynamicList != null && dynamicList.size() != 0)
-                    {
-                        isLoading = false;
-                        handler.post(runnableUi);
-                    }
-                    else
-                    {
-                        handler.post(runnableNoData);
-                    }
+                    isLoading = false;
+                    handler.post(runnableUi);
                 }
-                catch (NullPointerException e)
+                else
                 {
                     handler.post(runnableNoData);
-                    e.printStackTrace();
                 }
-                catch (IOException e)
-                {
-                    handler.post(runnableNoWeb);
-                    e.printStackTrace();
-                }
+            }
+            catch (NullPointerException e)
+            {
+                handler.post(runnableNoData);
+                e.printStackTrace();
+            }
+            catch (IOException e)
+            {
+                handler.post(runnableNoWeb);
+                e.printStackTrace();
             }
         }).start();
     }
@@ -342,49 +262,39 @@ public class DynamicFragment extends Fragment
     private void getMoreDynamic()
     {
         isLoading = true;
-        new Thread(new Runnable()
-        {
-            @Override
-            public void run()
+        new Thread(() -> {
+            try
             {
-                try
-                {
-                    dynamicApi.getHistoryDynamic();
-                    dynamicList.addAll(dynamicApi.getDynamicList());
-                    isLoading = false;
-                    handler.post(runnableMore);
-                }
-                catch (IOException e)
-                {
-                    handler.post(runnableMoreNoWeb);
-                    e.printStackTrace();
-                }
-                catch (JSONException e)
-                {
-                    handler.post(runnableMoreNoData);
-                    e.printStackTrace();
-                }
+                dynamicApi.getHistoryDynamic();
+                dynamicList.addAll(dynamicApi.getDynamicList());
+                isLoading = false;
+                handler.post(runnableMore);
+            }
+            catch (IOException e)
+            {
+                handler.post(runnableMoreNoWeb);
+                e.printStackTrace();
             }
         }).start();
     }
 
     private void onViewClick(int viewId, int position, boolean isShared)
     {
-        final DynamicModel dynamicModel = dynamicList.get(position);
+        final DynamicModel.DynamicBaseModel dynamicModel = dynamicList.get(position);
         if(viewId == R.id.item_dynamic_author_lay)
         {
+            Intent intent;
             if(dynamicModel.getCardType() != 512 && dynamicModel.getCardType() != 4098 && dynamicModel.getCardType() != 4099 && dynamicModel.getCardType() != 4101)
             {
-                Intent intent = new Intent(ctx, UserActivity.class);
+                intent = new Intent(ctx, UserActivity.class);
                 intent.putExtra("mid", dynamicModel.getCardAuthorUid());
-                startActivity(intent);
             }
             else
             {
-                Intent intent = new Intent(ctx, BangumiActivity.class);
+                intent = new Intent(ctx, BangumiActivity.class);
                 intent.putExtra("season_id", ((DynamicModel.DynamicBangumiModel) dynamicModel).getBangumiSeasonId());
-                startActivity(intent);
             }
+            startActivity(intent);
         }
         else if(viewId == R.id.item_dynamic_share_lay)
         {
@@ -403,34 +313,29 @@ public class DynamicFragment extends Fragment
         }
         else if(viewId == R.id.item_dynamic_like_lay)
         {
-            new Thread(new Runnable()
-            {
-                @Override
-                public void run()
+            new Thread(() -> {
+                try
                 {
-                    try
+                    String result = dynamicApi.likeDynamic(dynamicModel.getCardId(), dynamicModel.isCardUserLike() ? "2" : "1");
+                    if(result.equals(""))
                     {
-                        String result = dynamicApi.likeDynamic(dynamicModel.getCardId(), dynamicModel.isCardUserLike() ? "2" : "1");
-                        if(result.equals(""))
-                        {
-                            dynamicModel.setCardUserLike(!dynamicModel.isCardUserLike());
-                            dynamicModel.setCardLikeNum(dynamicModel.getCardLikeNum() + 1);
-                            handler.post(runnableMore);
-                        }
-                        else
-                        {
-                            Looper.prepare();
-                            Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
-                            Looper.loop();
-                        }
+                        dynamicModel.setCardUserLike(!dynamicModel.isCardUserLike());
+                        dynamicModel.setCardLikeNum(dynamicModel.getCardLikeNum() + 1);
+                        handler.post(runnableMore);
                     }
-                    catch (IOException e)
+                    else
                     {
-                        e.printStackTrace();
                         Looper.prepare();
-                        Toast.makeText(ctx, "操作失败，请检查网络...", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
                         Looper.loop();
                     }
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                    Looper.prepare();
+                    Toast.makeText(ctx, "操作失败，请检查网络...", Toast.LENGTH_SHORT).show();
+                    Looper.loop();
                 }
             }).start();
         }
@@ -481,18 +386,12 @@ public class DynamicFragment extends Fragment
         }
         else if(viewId == R.id.dynamic_url_url)
         {
+            Intent intent = new Intent(ctx, UnsupportedLinkActivity.class);
             if(!isShared)
-            {
-                Intent intent = new Intent(ctx, UnsupportedLinkActivity.class);
                 intent.putExtra("url", ((DynamicModel.DynamicUrlModel) dynamicModel).getUrlUrl());
-                startActivity(intent);
-            }
             else
-            {
-                Intent intent = new Intent(ctx, UnsupportedLinkActivity.class);
                 intent.putExtra("url", ((DynamicModel.DynamicUrlModel) ((DynamicModel.DynamicShareModel) dynamicModel).getShareOriginCard()).getUrlUrl());
-                startActivity(intent);
-            }
+            startActivity(intent);
         }
         else if(viewId == R.id.dynamic_live_author)
         {
@@ -517,74 +416,64 @@ public class DynamicFragment extends Fragment
         if(resultCode != 0) return;
         if(requestCode == RESULT_DYNAMIC_SEND_DYNAMIC)
         {
-            new Thread(new Runnable()
-            {
-                @Override
-                public void run()
+            new Thread(() -> {
+                try
                 {
-                    try
+                    String result = sendDynamicApi.sendDynamic(data.getStringExtra("text"));
+                    if(result.equals(""))
                     {
-                        String result = sendDynamicApi.sendDynamic(data.getStringExtra("text"));
-                        if(result.equals(""))
-                        {
-                            Looper.prepare();
-                            Toast.makeText(ctx, "发送成功！", Toast.LENGTH_SHORT).show();
-                            Looper.loop();
-                            getDynamic();
-                        }
-                        else
-                        {
-                            Looper.prepare();
-                            Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
-                            Looper.loop();
-                        }
-                    }
-                    catch (IOException e)
-                    {
-                        e.printStackTrace();
                         Looper.prepare();
-                        Toast.makeText(ctx, "发送失败，请检查网络...", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ctx, "发送成功！", Toast.LENGTH_SHORT).show();
+                        Looper.loop();
+                        getDynamic();
+                    }
+                    else
+                    {
+                        Looper.prepare();
+                        Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
                         Looper.loop();
                     }
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                    Looper.prepare();
+                    Toast.makeText(ctx, "发送失败，请检查网络...", Toast.LENGTH_SHORT).show();
+                    Looper.loop();
                 }
             }).start();
         }
         else if(requestCode == RESULT_DYNAMIC_SHARE)
         {
-            new Thread(new Runnable()
-            {
-                @Override
-                public void run()
+            new Thread(() -> {
+                try
                 {
-                    try
+                    String result = sendDynamicApi.sendDynamicWithDynamic(data.getStringExtra("share_id"), data.getStringExtra("text"));
+                    if(result.equals(""))
                     {
-                        String result = sendDynamicApi.sendDynamicWithDynamic(data.getStringExtra("share_id"), data.getStringExtra("text"));
-                        if(result.equals(""))
-                        {
-                            Looper.prepare();
-                            Toast.makeText(ctx, "转发成功！", Toast.LENGTH_SHORT).show();
-                            Looper.loop();
-                        }
-                        else
-                        {
-                            Looper.prepare();
-                            Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
-                            Looper.loop();
-                        }
-                    }
-                    catch (IOException e)
-                    {
-                        e.printStackTrace();
                         Looper.prepare();
-                        Toast.makeText(ctx, "转发失败，请检查网络...", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ctx, "转发成功！", Toast.LENGTH_SHORT).show();
                         Looper.loop();
                     }
+                    else
+                    {
+                        Looper.prepare();
+                        Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
+                        Looper.loop();
+                    }
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                    Looper.prepare();
+                    Toast.makeText(ctx, "转发失败，请检查网络...", Toast.LENGTH_SHORT).show();
+                    Looper.loop();
                 }
             }).start();
         }
     }
 
-    private void getShareIntent(Intent intent, DynamicModel dynamicModel)
+    private void getShareIntent(Intent intent, DynamicModel.DynamicBaseModel dynamicModel)
     {
         switch (dynamicModel.getCardType())
         {
