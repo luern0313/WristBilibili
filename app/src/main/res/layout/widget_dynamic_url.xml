@@ -26,7 +26,7 @@
         android:layout_marginEnd="18dp"
         android:layout_marginBottom="2dp"
         android:textSize="13sp"
-        app:etv_MaxLinesOnShrink="6"/>
+        app:etv_MaxLinesOnShrink="6" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/dynamic_url_url"
@@ -41,7 +41,7 @@
         android:focusable="true"
         android:foreground="?android:attr/selectableItemBackground"
         app:cardBackgroundColor="?attr/colorBackgroundColor"
-        app:cardCornerRadius="4dp"
+        app:cardCornerRadius="3dp"
         app:cardElevation="0dp">
 
         <RelativeLayout
