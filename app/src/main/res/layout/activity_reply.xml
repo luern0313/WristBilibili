@@ -63,7 +63,7 @@
                     android:layout_width="42dp"
                     android:layout_height="42dp"
                     android:layout_marginRight="32dp"
-                    android:src="@drawable/ic_reply_voiceinput"
+                    android:src="@drawable/icon_reply_voiceinput"
                     android:scaleType="fitCenter"
                     android:background="@color/alpha"
                     android:onClick="rp_clickVoiceInput" />
@@ -71,7 +71,7 @@
                 <ImageButton
                     android:layout_width="42dp"
                     android:layout_height="42dp"
-                    android:src="@drawable/ic_reply_send"
+                    android:src="@drawable/icon_reply_send"
                     android:scaleType="fitCenter"
                     android:background="@color/alpha"
                     android:onClick="rp_clickSend" />

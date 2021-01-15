@@ -137,60 +137,6 @@ public class ReplyModel implements Serializable
         Element document = Jsoup.parseBodyFragment(text).body();
         List<TextNode> textNodes = document.textNodes();
 
-        Pattern bvPattern = Pattern.compile("([Bb][Vv][a-zA-Z0-9]{10})");
-        for(int i = 0; i < textNodes.size(); i++)
-        {
-            TextNode textNode = textNodes.get(i);
-            Matcher bvMatcher = bvPattern.matcher(textNode.getWholeText());
-            if(bvMatcher.find())
-            {
-                MatchResult bvMatcherResult = bvMatcher.toMatchResult();
-                String tag = "<a href=\"bilibili://video/BV" + bvMatcherResult.group(0).substring(2) +
-                        "\">BV" + bvMatcherResult.group().substring(2) + "</a>";
-                textNode.before(textNode.getWholeText().substring(0, bvMatcherResult.start(0)));
-                textNode.before(tag);
-                textNode.text(textNode.getWholeText().substring(bvMatcherResult.end(0)));
-                textNodes = document.textNodes();
-                i--;
-            }
-        }
-
-        Pattern avPattern = Pattern.compile("([Aa][Vv][0-9]+(?=[^1-9]|$))");
-        for(int i = 0; i < textNodes.size(); i++)
-        {
-            TextNode textNode = textNodes.get(i);
-            Matcher avMatcher = avPattern.matcher(textNode.getWholeText());
-            if(avMatcher.find())
-            {
-                MatchResult avMatcherResult = avMatcher.toMatchResult();
-                String tag = "<a href=\"bilibili://video/" + avMatcherResult.group(0).substring(2) +
-                        "\">av" + avMatcherResult.group(0).substring(2) + "</a>";
-                textNode.before(textNode.getWholeText().substring(0, avMatcherResult.start(0)));
-                textNode.before(tag);
-                textNode.text(textNode.getWholeText().substring(avMatcherResult.end(0)));
-                textNodes = document.textNodes();
-                i--;
-            }
-        }
-
-        Pattern cvPattern = Pattern.compile("([Cc][Vv][0-9]+(?=[^1-9]|$))");
-        for(int i = 0; i < textNodes.size(); i++)
-        {
-            TextNode textNode = textNodes.get(i);
-            Matcher cvMatcher = cvPattern.matcher(textNode.getWholeText());
-            if(cvMatcher.find())
-            {
-                MatchResult cvMatcherResult = cvMatcher.toMatchResult();
-                String tag = "<a href=\"bilibili://article/" + cvMatcherResult.group(0).substring(2) +
-                        "\">cv" + cvMatcherResult.group(0).substring(2) + "</a>";
-                textNode.before(textNode.getWholeText().substring(0, cvMatcherResult.start(0)));
-                textNode.before(tag);
-                textNode.text(textNode.getWholeText().substring(cvMatcherResult.end(0)));
-                textNodes = document.textNodes();
-                i--;
-            }
-        }
-
         LsonObject emote = content.getJsonObject("emote");
         String[] emoteKeys = emote.getKeys();
         for (String key : emoteKeys)
@@ -256,23 +202,43 @@ public class ReplyModel implements Serializable
             }
         }
 
-        LsonObject jump =  content.getJsonObject("jump_url");
-        String[] jumpKeys = jump.getKeys();
+        LsonObject jump_url =  content.getJsonObject("jump_url");
+        String[] jumpKeys = jump_url.getKeys();
         for (String key : jumpKeys)
         {
-            String name = jump.getJsonObject(key).getString("title");
-            String season_id = LsonUtil.parseAsObject(jump.getJsonObject(key).getString("click_report")).getString("season_id");
-            String tag = "<a href=\"bilibili://bangumi/season/" + season_id + "\">" + name + "</a>";
-            for(int i = 0; i < textNodes.size(); i++)
+            LsonObject jump = jump_url.getJsonObject(key);
+            String tag = null;
+            if(key.startsWith("av") || key.startsWith("bv"))
             {
-                TextNode textNode = textNodes.get(i);
-                if(textNode.getWholeText().contains(key))
+                String name = jump.getString("title");
+                String av = jump.getString("click_report");
+                tag = "<a href=\"bilibili://video/" + av + "\"><img src=\"" + jump.getString("prefix_icon") + "\"/>" + name + "</a>";
+            }
+            else if(key.startsWith("cv"))
+            {
+                String name = jump.getString("title");
+                String cv = jump.getString("click_report");
+                tag = "<a href=\"bilibili://article/" + cv + "\"><img src=\"" + jump.getString("prefix_icon") + "\"/>" + name + "</a>";
+            }
+            else if(key.contains("bangumi") && key.contains("ss"))
+            {
+                String name = jump.getString("title");
+                String season_id = LsonUtil.parseAsObject(jump.getString("click_report")).getString("season_id");
+                tag = "<a href=\"bilibili://bangumi/season/" + season_id + "\"><img src=\"" + jump.getString("prefix_icon") + "\"/>" + name + "</a>";
+            }
+            if(tag != null)
+            {
+                for(int i = 0; i < textNodes.size(); i++)
                 {
-                    textNode.before(textNode.getWholeText().substring(0, textNode.getWholeText().indexOf(key)));
-                    textNode.before(tag);
-                    textNode.text(textNode.getWholeText().substring(textNode.getWholeText().indexOf(key) + key.length()));
-                    textNodes = document.textNodes();
-                    i--;
+                    TextNode textNode = textNodes.get(i);
+                    if(textNode.getWholeText().contains(key))
+                    {
+                        textNode.before(textNode.getWholeText().substring(0, textNode.getWholeText().indexOf(key)));
+                        textNode.before(tag);
+                        textNode.text(textNode.getWholeText().substring(textNode.getWholeText().indexOf(key) + key.length()));
+                        textNodes = document.textNodes();
+                        i--;
+                    }
                 }
             }
         }

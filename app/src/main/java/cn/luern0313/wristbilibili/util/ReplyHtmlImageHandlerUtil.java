@@ -17,6 +17,7 @@ import java.util.HashMap;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.res.ResourcesCompat;
 import cn.luern0313.wristbilibili.R;
 
 /**
@@ -42,9 +43,8 @@ public class ReplyHtmlImageHandlerUtil implements Html.ImageGetter
 
         if(isNumericZidai(source))
         {
-            Drawable drawable;
-            drawable = ctx.getResources().getDrawable(Integer.parseInt(source));
-            drawable.setBounds(0, 0, (int)(DataProcessUtil.sp2px(14) * 1.6), DataProcessUtil.sp2px(14));
+            Drawable drawable = ResourcesCompat.getDrawable(ctx.getResources(), Integer.parseInt(source), null);
+            drawable.setBounds(0, 0, (int)(1f * DataProcessUtil.sp2px(14) * drawable.getIntrinsicWidth() / drawable.getIntrinsicHeight()), DataProcessUtil.sp2px(14));
             return drawable;
         }
         else
@@ -58,9 +58,10 @@ public class ReplyHtmlImageHandlerUtil implements Html.ImageGetter
             {
                 final LevelListDrawable drawable = new LevelListDrawable();
                 final String finalSource = source;
+                int size = emoteSize.containsKey(source) ? emoteSize.get(source) : 1;
 
-                drawable.addLevel(0, 0, container.getResources().getDrawable(R.drawable.img_default_article_img));
-                drawable.setBounds(0, 0, emoteSize.get(source) * DataProcessUtil.sp2px(18), emoteSize.get(source) * DataProcessUtil.sp2px(18));
+                drawable.addLevel(0, 0, ResourcesCompat.getDrawable(container.getResources(), R.drawable.img_default_article_img, null));
+                drawable.setBounds(0, 0, size * DataProcessUtil.sp2px(18), size * DataProcessUtil.sp2px(18));
 
                 Glide.with(ctx).asBitmap().load(source).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).placeholder(R.drawable.img_default_article_img).into(
                         new SimpleTarget<Bitmap>()

@@ -74,7 +74,7 @@
     <string name="reply_toolbar_send">发送回复</string>
     <string name="reply_toolbar_total_reply">共%s条回复</string>
     <string name="reply_toolbar_total_comment">共%s条评论</string>
-    
+
     <string name="reply_description_head">用户头像</string>
     <string name="reply_description_off_1">个人认证</string>
     <string name="reply_description_off_2">企业认证</string>
@@ -153,7 +153,7 @@
     <string name="article_card_live_status_off">未开播</string>
     <string name="article_card_live_status_on">直播中</string>
     <string name="article_card_live_online_default">--</string>
-    
+
     <string name="vip_annual">年度大会员</string>
     <string name="vip_normal">大会员</string>
 

@@ -66,6 +66,11 @@ public class ReplyApi
         return oid;
     }
 
+    public String getType()
+    {
+        return type;
+    }
+
     public int getReply(int page, String sort, int limit, ReplyModel root) throws IOException
     {
         String url = "https://api.bilibili.com/x/v2" + (root == null ? "" : "/reply") + "/reply?pn=" + page + "&type=" + type + "&oid=" + oid + "&sort=" + sort + (root == null ? "" : ("&root=" + root.getId()));

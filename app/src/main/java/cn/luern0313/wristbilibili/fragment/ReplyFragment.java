@@ -239,6 +239,8 @@ public class ReplyFragment extends Fragment
         new Thread(() -> {
             try
             {
+                if(!replyApi.getOid().equals(oid) || !replyApi.getType().equals(type))
+                    replyApi = new ReplyApi(oid, type);
                 ReplyModel r = (root != null ? (replyApi.replyArrayList.size() > 0 ? replyApi.replyArrayList.get(0) : root) : null);
                 int l = replyApi.getReply(1, sort, 0, r);
                 handler.post(runnableUi);

@@ -85,7 +85,7 @@ public class ReplyAdapter extends BaseAdapter
     @Override
     public int getItemViewType(int position)
     {
-        return replyList.get(position).reply_mode;
+        return replyList.get(position).getMode();
     }
 
     @Override
@@ -128,7 +128,7 @@ public class ReplyAdapter extends BaseAdapter
 
                 case 1:
                     convertView = mInflater.inflate(R.layout.widget_reply_changemode, null);
-                    ((TextView) convertView.findViewById(R.id.item_reply_sort_sign)).setText("热门评论");
+                    ((TextView) convertView.findViewById(R.id.item_reply_sort_sign)).setText(ctx.getString(R.string.reply_sore_sign_hot));
                     Drawable changeNewDrawable = convertView.getResources().getDrawable(R.drawable.icon_reply_sort);
                     changeNewDrawable.setBounds(0, 0, DataProcessUtil.dip2px(12), DataProcessUtil.dip2px(12));
                     ((TextView) convertView.findViewById(R.id.item_reply_sort_change)).setCompoundDrawables(changeNewDrawable,null, null,null);
@@ -140,7 +140,7 @@ public class ReplyAdapter extends BaseAdapter
 
                 case 2:
                     convertView = mInflater.inflate(R.layout.widget_reply_changemode, null);
-                    ((TextView) convertView.findViewById(R.id.item_reply_sort_sign)).setText("最新评论");
+                    ((TextView) convertView.findViewById(R.id.item_reply_sort_sign)).setText(ctx.getString(R.string.reply_sore_sign_time));
                     Drawable changeHotDrawable = convertView.getResources().getDrawable(R.drawable.icon_reply_sort);
                     changeHotDrawable.setBounds(0, 0,DataProcessUtil.dip2px(12), DataProcessUtil.dip2px(12));
                     ((TextView) convertView.findViewById(R.id.item_reply_sort_change))
@@ -163,12 +163,12 @@ public class ReplyAdapter extends BaseAdapter
         if(type == 0)
         {
             viewHolder.reply_img.setImageResource(R.drawable.img_default_avatar);
-            if(replyModel.reply_owner_official == 0)
+            if(replyModel.getOwnerOfficial() == 0)
             {
                 viewHolder.reply_off_1.setVisibility(View.VISIBLE);
                 viewHolder.reply_off_2.setVisibility(View.GONE);
             }
-            else if(replyModel.reply_owner_official == 1)
+            else if(replyModel.getOwnerOfficial() == 1)
             {
                 viewHolder.reply_off_1.setVisibility(View.GONE);
                 viewHolder.reply_off_2.setVisibility(View.VISIBLE);
@@ -179,33 +179,33 @@ public class ReplyAdapter extends BaseAdapter
                 viewHolder.reply_off_2.setVisibility(View.GONE);
             }
 
-            viewHolder.reply_name.setText(replyModel.reply_owner_name);
-            viewHolder.reply_time.setText(replyModel.reply_time);
+            viewHolder.reply_name.setText(replyModel.getOwnerName());
+            viewHolder.reply_time.setText(replyModel.getTime());
 
-            viewHolder.reply_is_up.setVisibility(replyModel.reply_is_up ? View.VISIBLE : View.GONE);
+            viewHolder.reply_is_up.setVisibility(replyModel.isUp() ? View.VISIBLE : View.GONE);
             viewHolder.reply_floor.setVisibility(isShowFloor ? View.VISIBLE : View.GONE);
             if(isShowFloor)
-                viewHolder.reply_floor.setText(replyModel.reply_floor);
-            viewHolder.reply_level.setText(String.format(ctx.getString(R.string.reply_lv), replyModel.reply_owner_lv));
+                viewHolder.reply_floor.setText(replyModel.getFloor());
+            viewHolder.reply_level.setText(String.format(ctx.getString(R.string.reply_lv), replyModel.getOwnerLv()));
 
             viewHolder.reply_text.setExpandListener(new ExpandableTextView.OnExpandListener()
             {
                 @Override
                 public void onExpand(ExpandableTextView view)
                 {
-                    replyModel.reply_text_expend = true;
+                    replyModel.setTextExpend(true);
                 }
 
                 @Override
                 public void onShrink(ExpandableTextView view)
                 {
-                    replyModel.reply_text_expend = false;
+                    replyModel.setTextExpend(false);
                 }
             });
-            CharSequence text = DataProcessUtil.getClickableHtml(replyModel.reply_text, new ReplyHtmlImageHandlerUtil(
-                    viewHolder.reply_text, replyModel.reply_emote_size));
+            CharSequence text = DataProcessUtil.getClickableHtml(replyModel.getText(), new ReplyHtmlImageHandlerUtil(
+                    viewHolder.reply_text, replyModel.getEmoteSize()));
             viewHolder.reply_text.setOrigText(text);
-            viewHolder.reply_text.updateForRecyclerView(text, replyWidth, replyModel.reply_text_expend ?
+            viewHolder.reply_text.updateForRecyclerView(text, replyWidth, replyModel.isTextExpend() ?
                     ExpandableTextView.STATE_EXPAND : ExpandableTextView.STATE_SHRINK);
 
             viewHolder.reply_text.setMovementMethod(viewHolder.reply_text.new LinkTouchMovementMethod());
@@ -213,37 +213,37 @@ public class ReplyAdapter extends BaseAdapter
             viewHolder.reply_text.setClickable(false);
             viewHolder.reply_text.setLongClickable(false);
 
-            if(replyModel.reply_reply_show.size() > 0 && !isHasRoot)
+            if(replyModel.getReplyShow().size() > 0 && !isHasRoot)
             {
                 viewHolder.reply_reply_show.setVisibility(View.VISIBLE);
                 viewHolder.reply_reply_show_1.setVisibility(View.GONE);
                 viewHolder.reply_reply_show_2.setVisibility(View.GONE);
                 viewHolder.reply_reply_show_3.setVisibility(View.GONE);
                 viewHolder.reply_reply_show.setOnClickListener(onViewClick(position));
-                switch(replyModel.reply_reply_show.size())
+                switch(replyModel.getReplyShow().size())
                 {
                     case 3:
                         viewHolder.reply_reply_show_3.setVisibility(View.VISIBLE);
                         viewHolder.reply_reply_show_3.setText(
-                                DataProcessUtil.getClickableHtml(replyModel.reply_reply_show.get(2),
-                                              new ReplyHtmlImageHandlerUtil(viewHolder.reply_reply_show_3, replyModel.reply_emote_size)));
+                                DataProcessUtil.getClickableHtml(replyModel.getReplyShow().get(2),
+                                              new ReplyHtmlImageHandlerUtil(viewHolder.reply_reply_show_3, replyModel.getEmoteSize())));
                     case 2:
                         viewHolder.reply_reply_show_2.setVisibility(View.VISIBLE);
                         viewHolder.reply_reply_show_2.setText(
-                                DataProcessUtil.getClickableHtml(replyModel.reply_reply_show.get(1),
-                                              new ReplyHtmlImageHandlerUtil(viewHolder.reply_reply_show_2, replyModel.reply_emote_size)));
+                                DataProcessUtil.getClickableHtml(replyModel.getReplyShow().get(1),
+                                              new ReplyHtmlImageHandlerUtil(viewHolder.reply_reply_show_2, replyModel.getEmoteSize())));
                     case 1:
                         viewHolder.reply_reply_show_1.setVisibility(View.VISIBLE);
                         viewHolder.reply_reply_show_1.setText(
-                                DataProcessUtil.getClickableHtml(replyModel.reply_reply_show.get(0),
-                                              new ReplyHtmlImageHandlerUtil(viewHolder.reply_reply_show_1, replyModel.reply_emote_size)));
+                                DataProcessUtil.getClickableHtml(replyModel.getReplyShow().get(0),
+                                              new ReplyHtmlImageHandlerUtil(viewHolder.reply_reply_show_1, replyModel.getEmoteSize())));
                 }
-                if(replyModel.reply_reply_num > Math.min(replyModel.reply_reply_show.size(), 3))
+                if(replyModel.getReplyNum() > Math.min(replyModel.getReplyShow().size(), 3))
                 {
-                    if(!replyModel.reply_is_up_reply) viewHolder.reply_reply_show_show.setText(
-                            Html.fromHtml("<font color=\"#188ad0\">共" + DataProcessUtil.getView(replyModel.reply_reply_num) + "条回复 ></font>"));
+                    if(!replyModel.isUpReply()) viewHolder.reply_reply_show_show.setText(
+                            Html.fromHtml("<font color=\"#188ad0\">共" + DataProcessUtil.getView(replyModel.getReplyNum()) + "条回复 ></font>"));
                     else viewHolder.reply_reply_show_show.setText(Html.fromHtml(
-                            "UP主等人<font color=\"#188ad0\">共" + DataProcessUtil.getView(replyModel.reply_reply_num) + "条回复 ></font>"));
+                            "UP主等人<font color=\"#188ad0\">共" + DataProcessUtil.getView(replyModel.getReplyNum()) + "条回复 ></font>"));
                     viewHolder.reply_reply_show_show.setVisibility(View.VISIBLE);
                 }
                 else
@@ -265,14 +265,14 @@ public class ReplyAdapter extends BaseAdapter
             else
                 viewHolder.reply_reply_show.setVisibility(View.GONE);
 
-            viewHolder.reply_is_up_like.setVisibility(replyModel.reply_is_up_like ? View.VISIBLE : View.GONE);
-            viewHolder.reply_like_num.setText(DataProcessUtil.getView(replyModel.reply_like_num));
+            viewHolder.reply_is_up_like.setVisibility(replyModel.isUpLike() ? View.VISIBLE : View.GONE);
+            viewHolder.reply_like_num.setText(DataProcessUtil.getView(replyModel.getLikeNum()));
 
-            if(replyModel.reply_user_like) viewHolder.reply_like_img.setImageResource(R.drawable.icon_liked);
+            if(replyModel.isUpLike()) viewHolder.reply_like_img.setImageResource(R.drawable.icon_liked);
             else viewHolder.reply_like_img.setImageResource(R.drawable.icon_like);
-            if(replyModel.reply_user_dislike) viewHolder.reply_dislike.setImageResource(R.drawable.icon_disliked);
+            if(replyModel.isUserDislike()) viewHolder.reply_dislike.setImageResource(R.drawable.icon_disliked);
             else viewHolder.reply_dislike.setImageResource(R.drawable.icon_dislike);
-            if(replyModel.reply_owner_vip == 2)
+            if(replyModel.getOwnerVip() == 2)
             {
                 viewHolder.reply_name.setTextColor(ColorUtil.getColor(R.attr.colorVip, listView.getContext()));
                 viewHolder.reply_name.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
@@ -283,8 +283,8 @@ public class ReplyAdapter extends BaseAdapter
                 viewHolder.reply_name.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL));
             }
 
-            viewHolder.reply_img.setTag(replyModel.reply_owner_face);
-            BitmapDrawable h = setImageFormWeb(replyModel.reply_owner_face);
+            viewHolder.reply_img.setTag(replyModel.getOwnerFace());
+            BitmapDrawable h = setImageFormWeb(replyModel.getOwnerFace());
             if(h != null) viewHolder.reply_img.setImageDrawable(h);
 
             viewHolder.reply_img.setOnClickListener(onViewClick(position));
