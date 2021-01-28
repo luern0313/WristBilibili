@@ -1,6 +1,7 @@
 package cn.luern0313.wristbilibili.fragment;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,11 +12,14 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.adapter.ListBangumiAdapter;
 import cn.luern0313.wristbilibili.models.ListBangumiModel;
 import cn.luern0313.wristbilibili.ui.BangumiActivity;
+import cn.luern0313.wristbilibili.util.ListViewTouchListener;
+import cn.luern0313.wristbilibili.widget.TitleView;
 
 /**
  * 被 luern0313 创建于 2020/3/20.
@@ -31,6 +35,7 @@ public class BangumiRecommendFragment extends Fragment
     private ListBangumiAdapter bangumiRecommendAdapter;
     private ArrayList<ListBangumiModel> bangumiRecommendModelArrayList;
     private ListBangumiAdapter.ListBangumiAdapterListener listBangumiAdapterListener;
+    private TitleView.TitleViewListener titleViewListener;
 
     public BangumiRecommendFragment() { }
 
@@ -53,23 +58,18 @@ public class BangumiRecommendFragment extends Fragment
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         ctx = getActivity();
         rootLayout = inflater.inflate(R.layout.fragment_bangumi_recommend, container, false);
 
-        listBangumiAdapterListener = new ListBangumiAdapter.ListBangumiAdapterListener()
-        {
-            @Override
-            public void onListBangumiAdapterClick(int viewId, int position)
-            {
-                onViewClick(viewId, position);
-            }
-        };
+        listBangumiAdapterListener = this::onViewClick;
 
         uiRecommendListView = rootLayout.findViewById(R.id.bgm_recommend_listview);
         uiRecommendListView.setEmptyView(rootLayout.findViewById(R.id.bgm_recommend_nothing));
+        uiRecommendListView.setOnTouchListener(new ListViewTouchListener(uiRecommendListView, titleViewListener));
 
         bangumiRecommendAdapter = new ListBangumiAdapter(inflater, uiRecommendListView, bangumiRecommendModelArrayList, listBangumiAdapterListener);
         uiRecommendListView.setAdapter(bangumiRecommendAdapter);
@@ -85,5 +85,13 @@ public class BangumiRecommendFragment extends Fragment
             intent.putExtra("season_id", bangumiRecommendModelArrayList.get(position).getSeasonId());
             startActivity(intent);
         }
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context)
+    {
+        super.onAttach(context);
+        if(context instanceof TitleView.TitleViewListener)
+            titleViewListener = (TitleView.TitleViewListener) context;
     }
 }

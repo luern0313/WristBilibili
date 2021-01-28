@@ -1,5 +1,6 @@
 package cn.luern0313.wristbilibili.fragment;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -13,15 +14,19 @@ import android.widget.ListView;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.adapter.FavorBoxAdapter;
 import cn.luern0313.wristbilibili.api.FavorBoxApi;
 import cn.luern0313.wristbilibili.models.FavorBoxModel;
-import cn.luern0313.wristbilibili.ui.FavorArticleActivity;
+import cn.luern0313.wristbilibili.ui.FavorOtherActivity;
 import cn.luern0313.wristbilibili.ui.FavorVideoActivity;
 import cn.luern0313.wristbilibili.util.ColorUtil;
+import cn.luern0313.wristbilibili.util.DataProcessUtil;
+import cn.luern0313.wristbilibili.util.ListViewTouchListener;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
+import cn.luern0313.wristbilibili.widget.TitleView;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
 /**
@@ -41,6 +46,7 @@ public class FavorBoxFragment extends Fragment
     private FavorBoxApi favorBoxApi;
     private ArrayList<FavorBoxModel> favorBoxArrayList;
     private FavorBoxAdapter.FavorBoxAdapterListener favorBoxAdapterListener;
+    private TitleView.TitleViewListener titleViewListener;
 
     private View rootLayout;
     private ListView favListView;
@@ -74,6 +80,7 @@ public class FavorBoxFragment extends Fragment
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
@@ -83,96 +90,69 @@ public class FavorBoxFragment extends Fragment
         favListView = rootLayout.findViewById(R.id.fav_listview);
         waveSwipeRefreshLayout = rootLayout.findViewById(R.id.fav_swipe);
         waveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
-        //noinspection ConstantConditions
-        waveSwipeRefreshLayout.setWaveColor(ColorUtil.getColor(R.attr.colorPrimary, getContext()));
-        waveSwipeRefreshLayout.setOnRefreshListener(new WaveSwipeRefreshLayout.OnRefreshListener()
-        {
-            @Override
-            public void onRefresh()
+        waveSwipeRefreshLayout.setWaveColor(ColorUtil.getColor(R.attr.colorPrimary, ctx));
+        waveSwipeRefreshLayout.setTopOffsetOfWave(DataProcessUtil.dip2px(33));
+        waveSwipeRefreshLayout.setOnRefreshListener(() -> handler.post(() -> {
+            if(isLogin)
             {
-                handler.post(new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        if(isLogin)
-                        {
-                            favListView.setVisibility(View.GONE);
-                            getFavorBox();
-                        }
-                        else waveSwipeRefreshLayout.setRefreshing(false);
-                    }
-                });
+                favListView.setVisibility(View.GONE);
+                getFavorBox();
             }
-        });
+            else waveSwipeRefreshLayout.setRefreshing(false);
+        }));
 
-        favorBoxAdapterListener = new FavorBoxAdapter.FavorBoxAdapterListener()
-        {
-            @Override
-            public void onClick(int viewId, int position)
+        favorBoxAdapterListener = (viewId, position) -> {
+            if(viewId == R.id.favor_lay)
             {
-                if(viewId == R.id.favor_lay)
+                FavorBoxModel favorBoxModel = favorBoxArrayList.get(position);
+                if(favorBoxModel.getMode() == 0)
                 {
-                    FavorBoxModel favorBoxModel = favorBoxArrayList.get(position);
-                    if(favorBoxModel.getMode() == 0)
-                    {
-                        Intent intent = new Intent(ctx, FavorVideoActivity.class);
-                        intent.putExtra("fid", favorBoxArrayList.get(position).getFid());
-                        intent.putExtra("mid", mid);
-                        startActivity(intent);
-                    }
-                    else if(favorBoxModel.getMode() == 1)
-                    {
-                        Intent intent = new Intent(ctx, FavorArticleActivity.class);
-                        startActivity(intent);
-                    }
-                    else if(favorBoxModel.getMode() == 2)
-                    {
-
-                    }
+                    Intent intent = new Intent(ctx, FavorVideoActivity.class);
+                    intent.putExtra("fid", favorBoxArrayList.get(position).getFid());
+                    intent.putExtra("mid", mid);
+                    startActivity(intent);
+                }
+                else if(favorBoxModel.getMode() == 1)
+                {
+                    Intent intent = new Intent(ctx, FavorOtherActivity.class);
+                    intent.putExtra("mode", 0);
+                    startActivity(intent);
+                }
+                else if(favorBoxModel.getMode() == 2)
+                {
+                    Intent intent = new Intent(ctx, FavorOtherActivity.class);
+                    intent.putExtra("mode", 1);
+                    startActivity(intent);
                 }
             }
         };
 
-        runnableUi = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                rootLayout.findViewById(R.id.fav_nologin).setVisibility(View.GONE);
-                rootLayout.findViewById(R.id.fav_noweb).setVisibility(View.GONE);
-                rootLayout.findViewById(R.id.fav_nonthing).setVisibility(View.GONE);
-                favListView.setAdapter(new FavorBoxAdapter(inflater, favorBoxArrayList, favListView, favorBoxAdapterListener));
-                favListView.setVisibility(View.VISIBLE);
-                waveSwipeRefreshLayout.setRefreshing(false);
-            }
+        runnableUi = () -> {
+            rootLayout.findViewById(R.id.fav_nologin).setVisibility(View.GONE);
+            rootLayout.findViewById(R.id.fav_noweb).setVisibility(View.GONE);
+            rootLayout.findViewById(R.id.fav_nonthing).setVisibility(View.GONE);
+            favListView.setAdapter(new FavorBoxAdapter(inflater, favorBoxArrayList, favListView, favorBoxAdapterListener));
+            favListView.setVisibility(View.VISIBLE);
+            waveSwipeRefreshLayout.setRefreshing(false);
         };
 
-        runnableNoWeb = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                rootLayout.findViewById(R.id.fav_nologin).setVisibility(View.GONE);
-                rootLayout.findViewById(R.id.fav_noweb).setVisibility(View.VISIBLE);
-                rootLayout.findViewById(R.id.fav_nonthing).setVisibility(View.GONE);
-                favListView.setVisibility(View.GONE);
-                waveSwipeRefreshLayout.setRefreshing(false);
-            }
+        runnableNoWeb = () -> {
+            rootLayout.findViewById(R.id.fav_nologin).setVisibility(View.GONE);
+            rootLayout.findViewById(R.id.fav_noweb).setVisibility(View.VISIBLE);
+            rootLayout.findViewById(R.id.fav_nonthing).setVisibility(View.GONE);
+            favListView.setVisibility(View.GONE);
+            waveSwipeRefreshLayout.setRefreshing(false);
         };
 
-        runnableNoData = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                rootLayout.findViewById(R.id.fav_nologin).setVisibility(View.GONE);
-                rootLayout.findViewById(R.id.fav_noweb).setVisibility(View.GONE);
-                rootLayout.findViewById(R.id.fav_nonthing).setVisibility(View.VISIBLE);
-                favListView.setVisibility(View.GONE);
-                waveSwipeRefreshLayout.setRefreshing(false);
-            }
+        runnableNoData = () -> {
+            rootLayout.findViewById(R.id.fav_nologin).setVisibility(View.GONE);
+            rootLayout.findViewById(R.id.fav_noweb).setVisibility(View.GONE);
+            rootLayout.findViewById(R.id.fav_nonthing).setVisibility(View.VISIBLE);
+            favListView.setVisibility(View.GONE);
+            waveSwipeRefreshLayout.setRefreshing(false);
         };
+
+        favListView.setOnTouchListener(new ListViewTouchListener(favListView, titleViewListener));
 
         isLogin = SharedPreferencesUtil.contains(SharedPreferencesUtil.cookies);
         if(isLogin)
@@ -191,31 +171,34 @@ public class FavorBoxFragment extends Fragment
 
     private void getFavorBox()
     {
-        new Thread(new Runnable()
-        {
-            @Override
-            public void run()
+        new Thread(() -> {
+            try
             {
-                try
-                {
-                    favorBoxApi = new FavorBoxApi(mid, isShowOtherBox);
-                    favorBoxArrayList = favorBoxApi.getFavorBox();
-                    if(favorBoxArrayList != null && favorBoxArrayList.size() != 0)
-                        handler.post(runnableUi);
-                    else
-                        handler.post(runnableNoData);
-                }
-                catch (NullPointerException e)
-                {
+                favorBoxApi = new FavorBoxApi(mid, isShowOtherBox);
+                favorBoxArrayList = favorBoxApi.getFavorBox();
+                if(favorBoxArrayList != null && favorBoxArrayList.size() != 0)
+                    handler.post(runnableUi);
+                else
                     handler.post(runnableNoData);
-                    e.printStackTrace();
-                }
-                catch (IOException e)
-                {
-                    handler.post(runnableNoWeb);
-                    e.printStackTrace();
-                }
+            }
+            catch (NullPointerException e)
+            {
+                handler.post(runnableNoData);
+                e.printStackTrace();
+            }
+            catch (IOException e)
+            {
+                handler.post(runnableNoWeb);
+                e.printStackTrace();
             }
         }).start();
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context)
+    {
+        super.onAttach(context);
+        if(context instanceof TitleView.TitleViewListener)
+            titleViewListener = (TitleView.TitleViewListener) context;
     }
 }

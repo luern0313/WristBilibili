@@ -76,6 +76,7 @@ public class UserBangumiFragment extends Fragment
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
@@ -83,14 +84,7 @@ public class UserBangumiFragment extends Fragment
         rootLayout = inflater.inflate(R.layout.fragment_user_bangumi, container, false);
         userApi = new UserApi(mid);
 
-        listBangumiAdapterListener = new ListBangumiAdapter.ListBangumiAdapterListener()
-        {
-            @Override
-            public void onListBangumiAdapterClick(int viewId, int position)
-            {
-                onViewClick(viewId, position);
-            }
-        };
+        listBangumiAdapterListener = this::onViewClick;
 
         layoutLoading = inflater.inflate(R.layout.widget_loading, null, false);
         uiListView = rootLayout.findViewById(R.id.user_bangumi_listview);
@@ -100,78 +94,39 @@ public class UserBangumiFragment extends Fragment
 
         uiListView.addFooterView(layoutLoading);
 
-        runnableUi = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                uiLoading.setVisibility(View.GONE);
-                uiNoWeb.setVisibility(View.GONE);
-                uiNothing.setVisibility(View.GONE);
-                listBangumiAdapter = new ListBangumiAdapter(inflater, uiListView, listBangumiModelArrayList, listBangumiAdapterListener);
-                uiListView.setAdapter(listBangumiAdapter);
-            }
+        runnableUi = () -> {
+            uiLoading.setVisibility(View.GONE);
+            uiNoWeb.setVisibility(View.GONE);
+            uiNothing.setVisibility(View.GONE);
+            listBangumiAdapter = new ListBangumiAdapter(inflater, uiListView, listBangumiModelArrayList, listBangumiAdapterListener);
+            uiListView.setAdapter(listBangumiAdapter);
         };
 
-        runnableNoWeb = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                uiLoading.setVisibility(View.GONE);
-                uiNoWeb.setVisibility(View.VISIBLE);
-                uiNothing.setVisibility(View.GONE);
-            }
+        runnableNoWeb = () -> {
+            uiLoading.setVisibility(View.GONE);
+            uiNoWeb.setVisibility(View.VISIBLE);
+            uiNothing.setVisibility(View.GONE);
         };
 
-        runnableNothing = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                uiLoading.setVisibility(View.GONE);
-                uiNoWeb.setVisibility(View.GONE);
-                uiNothing.setVisibility(View.VISIBLE);
-            }
+        runnableNothing = () -> {
+            uiLoading.setVisibility(View.GONE);
+            uiNoWeb.setVisibility(View.GONE);
+            uiNothing.setVisibility(View.VISIBLE);
         };
 
-        runnableMore = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                listBangumiAdapter.notifyDataSetChanged();
-            }
+        runnableMore = () -> listBangumiAdapter.notifyDataSetChanged();
+
+        runnableMoreNoWeb = () -> {
+            ((TextView) layoutLoading.findViewById(R.id.wid_load_button)).setText(getString(R.string.main_tip_no_more_web));
+            layoutLoading.findViewById(R.id.wid_load_button).setVisibility(View.VISIBLE);
         };
 
-        runnableMoreNoWeb = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                ((TextView) layoutLoading.findViewById(R.id.wid_load_button)).setText("好像没有网络...\n检查下网络？");
-                layoutLoading.findViewById(R.id.wid_load_button).setVisibility(View.VISIBLE);
-            }
-        };
+        runnableMoreNothing = () -> ((TextView) layoutLoading.findViewById(R.id.wid_load_text)).setText(getString(R.string.main_tip_no_more_data));
 
-        runnableMoreNothing = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                ((TextView) layoutLoading.findViewById(R.id.wid_load_text)).setText("  没有更多了...");
-            }
-        };
-
-        layoutLoading.findViewById(R.id.wid_load_button).setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                ((TextView) layoutLoading.findViewById(R.id.wid_load_button)).setText("  加载中...");
-                layoutLoading.findViewById(R.id.wid_load_button).setVisibility(View.GONE);
-                getMoreBangumi();
-            }
+        layoutLoading.findViewById(R.id.wid_load_button).setOnClickListener(v -> {
+            ((TextView) layoutLoading.findViewById(R.id.wid_load_button)).setText(getString(R.string.main_tip_no_more_data_loading));
+            layoutLoading.findViewById(R.id.wid_load_button).setVisibility(View.GONE);
+            getMoreBangumi();
         });
 
         uiListView.setOnScrollListener(new AbsListView.OnScrollListener()
@@ -192,28 +147,25 @@ public class UserBangumiFragment extends Fragment
             }
         });
 
-        new Thread(new Runnable()
-        {
-            @Override
-            public void run()
+        uiListView.setOnTouchListener(new ListViewTouchListener(uiListView, titleViewListener));
+
+        new Thread(() -> {
+            try
             {
-                try
+                ArrayList<ListBangumiModel> b = userApi.getUserBangumi(page, mode);
+                isLoading = false;
+                if(b != null && b.size() != 0)
                 {
-                    ArrayList<ListBangumiModel> b = userApi.getUserBangumi(page, mode);
-                    isLoading = false;
-                    if(b != null && b.size() != 0)
-                    {
-                        listBangumiModelArrayList.addAll(b);
-                        handler.post(runnableUi);
-                    }
-                    else
-                        handler.post(runnableNothing);
+                    listBangumiModelArrayList.addAll(b);
+                    handler.post(runnableUi);
                 }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
-                    handler.post(runnableNoWeb);
-                }
+                else
+                    handler.post(runnableNothing);
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+                handler.post(runnableNoWeb);
             }
         }).start();
 
@@ -222,29 +174,24 @@ public class UserBangumiFragment extends Fragment
 
     private void getMoreBangumi()
     {
-        new Thread(new Runnable()
-        {
-            @Override
-            public void run()
+        new Thread(() -> {
+            try
             {
-                try
+                page++;
+                ArrayList<ListBangumiModel> b = userApi.getUserBangumi(page, mode);
+                isLoading = false;
+                if(b != null && b.size() != 0)
                 {
-                    page++;
-                    ArrayList<ListBangumiModel> b = userApi.getUserBangumi(page, mode);
-                    isLoading = false;
-                    if(b != null && b.size() != 0)
-                    {
-                        listBangumiModelArrayList.addAll(b);
-                        handler.post(runnableMore);
-                    }
-                    else
-                        handler.post(runnableMoreNothing);
+                    listBangumiModelArrayList.addAll(b);
+                    handler.post(runnableMore);
                 }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
-                    handler.post(runnableMoreNoWeb);
-                }
+                else
+                    handler.post(runnableMoreNothing);
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+                handler.post(runnableMoreNoWeb);
             }
         }).start();
     }
@@ -257,5 +204,14 @@ public class UserBangumiFragment extends Fragment
             intent.putExtra("season_id", listBangumiModelArrayList.get(position).getSeasonId());
             startActivity(intent);
         }
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context)
+    {
+        super.onAttach(context);
+        if(context instanceof TitleView.TitleViewListener)
+            titleViewListener = (TitleView.TitleViewListener) context;
+
     }
 }

@@ -1,5 +1,6 @@
 package cn.luern0313.wristbilibili.fragment;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -18,6 +19,7 @@ import android.widget.Toast;
 
 import java.io.IOException;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.adapter.ReplyAdapter;
@@ -30,6 +32,8 @@ import cn.luern0313.wristbilibili.ui.SelectPartActivity;
 import cn.luern0313.wristbilibili.ui.UserActivity;
 import cn.luern0313.wristbilibili.util.ColorUtil;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
+import cn.luern0313.wristbilibili.util.ListViewTouchListener;
+import cn.luern0313.wristbilibili.widget.TitleView;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
 /**
@@ -60,6 +64,7 @@ public class ReplyFragment extends Fragment
 
     private ReplyAdapter replyAdapter;
     private ReplyAdapter.ReplyAdapterListener replyAdapterListener;
+    private TitleView.TitleViewListener titleViewListener;
 
     private final Handler handler = new Handler();
     private Runnable runnableUi, runnableNoWeb, runnableNothing, runnableMoreNoMore, runnableMoreErr, runnableUpdate;
@@ -98,6 +103,7 @@ public class ReplyFragment extends Fragment
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
@@ -152,19 +158,23 @@ public class ReplyFragment extends Fragment
             }
         });
 
+
         waveSwipeRefreshLayout = rootLayout.findViewById(R.id.reply_swipe);
         waveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
         waveSwipeRefreshLayout.setWaveColor(ColorUtil.getColor(R.attr.colorPrimary, ctx));
+        waveSwipeRefreshLayout.setTopOffsetOfWave(DataProcessUtil.dip2px(33));
         waveSwipeRefreshLayout.setOnRefreshListener(() -> handler.post(() -> {
             rootLayout.findViewById(R.id.reply_listview).setVisibility(View.GONE);
             getReply(oid, type, sort);
         }));
 
         layoutLoading.findViewById(R.id.wid_load_button).setOnClickListener(v -> {
-            ((TextView) layoutLoading.findViewById(R.id.wid_load_text)).setText(" 加载中. . .");
+            ((TextView) layoutLoading.findViewById(R.id.wid_load_text)).setText(getString(R.string.main_tip_no_more_data_loading));
             layoutLoading.findViewById(R.id.wid_load_button).setVisibility(View.GONE);
             getMoreReply();
         });
+
+        uiReplyListView.setOnTouchListener(new ListViewTouchListener(uiReplyListView, titleViewListener));
 
         runnableUi = () -> {
             try
@@ -196,10 +206,10 @@ public class ReplyFragment extends Fragment
             rootLayout.findViewById(R.id.reply_loading).setVisibility(View.GONE);
         };
 
-        runnableMoreNoMore = () -> ((TextView) layoutLoading.findViewById(R.id.wid_load_text)).setText("  没有更多了...");
+        runnableMoreNoMore = () -> ((TextView) layoutLoading.findViewById(R.id.wid_load_text)).setText(getString(R.string.main_tip_no_more_data));
 
         runnableMoreErr = () -> {
-            ((TextView) layoutLoading.findViewById(R.id.wid_load_text)).setText("好像没有网络...\n检查下网络？");
+            ((TextView) layoutLoading.findViewById(R.id.wid_load_text)).setText(getString(R.string.main_tip_no_more_web));
             layoutLoading.findViewById(R.id.wid_load_button).setVisibility(View.VISIBLE);
             isReplyLoading = false;
         };
@@ -215,7 +225,7 @@ public class ReplyFragment extends Fragment
 
                 isReplyLoading = false;
                 if(replyApi.replyIsEnd)
-                    ((TextView) layoutLoading.findViewById(R.id.wid_load_text)).setText("  没有更多了...");
+                    ((TextView) layoutLoading.findViewById(R.id.wid_load_text)).setText(getString(R.string.main_tip_no_more_data));
                 replyAdapter.notifyDataSetChanged();
             }
             catch (Exception e)
@@ -322,7 +332,8 @@ public class ReplyFragment extends Fragment
                     }
                 }).start();
             }
-            else if(viewId == R.id.item_reply_reply_show || viewId == R.id.item_reply_reply)
+            else if(viewId == R.id.item_reply_reply_show_1 || viewId == R.id.item_reply_reply_show_2 ||
+                    viewId == R.id.item_reply_reply_show_3 || viewId == R.id.item_reply_reply_show_show || viewId == R.id.item_reply_reply)
             {
                 if(root == null)
                 {
@@ -352,6 +363,14 @@ public class ReplyFragment extends Fragment
             replyIntent.putExtra("type", type);
             startActivityForResult(replyIntent, RESULT_SEND);
         }
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context)
+    {
+        super.onAttach(context);
+        if(context instanceof TitleView.TitleViewListener)
+            titleViewListener = (TitleView.TitleViewListener) context;
     }
 
     @Override

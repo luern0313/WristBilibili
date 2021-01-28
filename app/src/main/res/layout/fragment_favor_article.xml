@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:ignore="RtlSymmetry,SmallSp,ContentDescription">
 
     <LinearLayout
         android:id="@+id/favor_article_no_web"
@@ -12,7 +14,6 @@
         android:focusable="true"
         android:gravity="center"
         android:orientation="vertical"
-        android:paddingBottom="20dp"
         android:visibility="gone">
 
         <ImageView
@@ -62,7 +63,10 @@
             android:id="@+id/favor_article_listview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:dividerHeight="1dp"/>
+            android:clipToPadding="false"
+            android:divider="@color/alpha"
+            android:dividerHeight="1dp"
+            android:paddingTop="33dp" />
     </jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout>
 
 </RelativeLayout>

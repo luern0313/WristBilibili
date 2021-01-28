@@ -12,19 +12,21 @@ import android.widget.Toast;
 
 import java.io.IOException;
 
-import androidx.appcompat.app.AppCompatActivity;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.SendDynamicApi;
+import cn.luern0313.wristbilibili.util.ListViewTouchListener;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
+import cn.luern0313.wristbilibili.widget.TitleView;
 
-public class SueActivity extends BaseActivity
+public class SueActivity extends BaseActivity implements TitleView.TitleViewListener
 {
     Context ctx;
     SendDynamicApi sendDynamicApi;
 
+    TitleView titleView;
     TextView uiText;
     LinearLayout uiLoading;
-    LinearLayout uiNologin;
+    LinearLayout uiNoLogin;
 
     Handler handler = new Handler();
     Runnable runnableUi;
@@ -35,32 +37,19 @@ public class SueActivity extends BaseActivity
         setContentView(R.layout.activity_sue);
         ctx = this;
 
-        uiText = findViewById(R.id.dt_text);
-        uiLoading = findViewById(R.id.dt_loading);
-        uiNologin = findViewById(R.id.dt_nologin);
+        titleView = findViewById(R.id.sue_title);
+        uiText = findViewById(R.id.sue_text);
+        uiLoading = findViewById(R.id.sue_loading);
+        uiNoLogin = findViewById(R.id.dt_nologin);
         sendDynamicApi = new SendDynamicApi();
         uiText.setText(Html.fromHtml("<font color=\"#188ad0\">#腕上哔哩# #用手表上b站# </font>" + sendDynamicApi.getNextShareText()));
 
         if(!SharedPreferencesUtil.contains(SharedPreferencesUtil.cookies))
-            uiNologin.setVisibility(View.VISIBLE);
+            uiNoLogin.setVisibility(View.VISIBLE);
 
-        runnableUi = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                uiLoading.setVisibility(View.GONE);
-            }
-        };
+        findViewById(R.id.sue_lay).setOnTouchListener(new ListViewTouchListener(findViewById(R.id.sue_lay), (TitleView.TitleViewListener) ctx));
 
-        findViewById(R.id.dt_title_layout).setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                finish();
-            }
-        });
+        runnableUi = () -> uiLoading.setVisibility(View.GONE);
     }
 
     public void clickRe(View view)
@@ -71,28 +60,35 @@ public class SueActivity extends BaseActivity
     public void clickSend(View view)
     {
         uiLoading.setVisibility(View.VISIBLE);
-        new Thread(new Runnable()
-        {
-            @Override
-            public void run()
+        new Thread(() -> {
+            try
             {
-                try
-                {
-                    sendDynamicApi.shareVideo("#腕上哔哩# #用手表上b站# " + sendDynamicApi.getNowShareText());
-                    Looper.prepare();
-                    Toast.makeText(ctx, "发送成功！", Toast.LENGTH_SHORT).show();
-                    handler.post(runnableUi);
-                    Looper.loop();
-                }
-                catch (IOException e)
-                {
-                    Looper.prepare();
-                    Toast.makeText(ctx, "好像没有网络连接呢...", Toast.LENGTH_SHORT).show();
-                    handler.post(runnableUi);
-                    Looper.loop();
-                    e.printStackTrace();
-                }
+                sendDynamicApi.shareVideo("#腕上哔哩# #用手表上b站# " + sendDynamicApi.getNowShareText());
+                Looper.prepare();
+                Toast.makeText(ctx, "发送成功！", Toast.LENGTH_SHORT).show();
+                handler.post(runnableUi);
+                Looper.loop();
+            }
+            catch (IOException e)
+            {
+                Looper.prepare();
+                Toast.makeText(ctx, "好像没有网络连接呢...", Toast.LENGTH_SHORT).show();
+                handler.post(runnableUi);
+                Looper.loop();
+                e.printStackTrace();
             }
         }).start();
+    }
+
+    @Override
+    public boolean hideTitle()
+    {
+        return titleView.hide();
+    }
+
+    @Override
+    public boolean showTitle()
+    {
+        return titleView.show();
     }
 }

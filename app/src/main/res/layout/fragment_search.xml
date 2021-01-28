@@ -1,27 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:ignore="ContentDescription">
 
     <TextView
         android:id="@+id/sea_hotwordtext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="34dp"
         android:paddingLeft="30dp"
+        android:paddingTop="33dp"
         android:paddingRight="30dp"
-        android:paddingTop="34dp"
-        android:text="加载搜索热词中..." />
+        android:text="@string/search_hotword_loading" />
 
     <GridView
         android:id="@+id/sea_hotword"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/sea_hotwordtext"
+        android:layout_below="@+id/sea_hotword_text"
         android:clipToPadding="false"
         android:numColumns="2"
-        android:paddingBottom="26dp"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
+        android:paddingBottom="26dp"
         android:scrollbars="none" />
 
     <ListView

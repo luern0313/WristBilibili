@@ -20,6 +20,15 @@
         </attr>
     </declare-styleable>
 
+    <declare-styleable name="TitleView">
+        <attr name="title" format="reference|string" />
+        <attr name="mode" format="enum">
+            <enum name="back" value="0" />
+            <enum name="menu" value="1" />
+            <enum name="viewpager" value="2" />
+        </attr>
+    </declare-styleable>
+
     <attr name="colorTitle" format="color" />
     <attr name="colorTitleBackground" format="color" />
     <attr name="colorButtonText" format="color" />

@@ -8,7 +8,6 @@ import android.os.Looper;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
-import android.widget.ViewFlipper;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -27,15 +26,16 @@ import cn.luern0313.wristbilibili.fragment.ReplyFragment;
 import cn.luern0313.wristbilibili.models.DynamicModel;
 import cn.luern0313.wristbilibili.util.MyApplication;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
+import cn.luern0313.wristbilibili.widget.TitleView;
 
-public class DynamicDetailActivity extends BaseActivity implements DynamicDetailFragment.DynamicDetailFragmentListener
+public class DynamicDetailActivity extends BaseActivity implements DynamicDetailFragment.DynamicDetailFragmentListener, TitleView.TitleViewListener
 {
     Context ctx;
     FragmentPagerAdapter pagerAdapter;
     DynamicApi dynamicApi;
     DynamicModel.DynamicBaseModel dynamicModel;
 
-    ViewFlipper uiTitle;
+    TitleView uiTitleView;
     ViewPager uiViewPager;
     ImageView uiLoading;
 
@@ -49,7 +49,7 @@ public class DynamicDetailActivity extends BaseActivity implements DynamicDetail
         ctx = MyApplication.getContext();
         dynamicApi = new DynamicApi(SharedPreferencesUtil.getString(SharedPreferencesUtil.mid, ""), false);
 
-        uiTitle = findViewById(R.id.dynamic_detail_title_title);
+        uiTitleView = findViewById(R.id.dynamic_detail_title);
         uiViewPager = findViewById(R.id.dynamic_detail_viewpager);
         uiLoading = findViewById(R.id.dynamic_detail_loading_img);
 
@@ -110,19 +110,20 @@ public class DynamicDetailActivity extends BaseActivity implements DynamicDetail
             @Override
             public void onPageSelected(int position)
             {
-                while(uiTitle.getDisplayedChild() != position)
+                while(uiTitleView.getDisplayedChild() != position)
                 {
-                    if(uiTitle.getDisplayedChild() < position)
+                    uiTitleView.show();
+                    if(uiTitleView.getDisplayedChild() < position)
                     {
-                        uiTitle.setInAnimation(ctx, R.anim.slide_in_right);
-                        uiTitle.setOutAnimation(ctx, R.anim.slide_out_left);
-                        uiTitle.showNext();
+                        uiTitleView.setInAnimation(ctx, R.anim.slide_in_right);
+                        uiTitleView.setOutAnimation(ctx, R.anim.slide_out_left);
+                        uiTitleView.showNext();
                     }
                     else
                     {
-                        uiTitle.setInAnimation(ctx, android.R.anim.slide_in_left);
-                        uiTitle.setOutAnimation(ctx, android.R.anim.slide_out_right);
-                        uiTitle.showPrevious();
+                        uiTitleView.setInAnimation(ctx, android.R.anim.slide_in_left);
+                        uiTitleView.setOutAnimation(ctx, android.R.anim.slide_out_right);
+                        uiTitleView.showPrevious();
                     }
                 }
             }
@@ -131,7 +132,7 @@ public class DynamicDetailActivity extends BaseActivity implements DynamicDetail
         new Thread(() -> {
             try
             {
-                dynamicModel = dynamicApi.getDynamicDetail(getIntent().getStringExtra("dynamic_id"));
+                dynamicModel = dynamicApi.getDynamicDetail(getIntent().getStringExtra("dynamic_id"), getIntent().getStringExtra("type"));
                 if(dynamicModel != null)
                     handler.post(runnableUi);
                 else
@@ -174,7 +175,7 @@ public class DynamicDetailActivity extends BaseActivity implements DynamicDetail
                 {
                     e.printStackTrace();
                     Looper.prepare();
-                    Toast.makeText(ctx, "操作失败，请检查网络...", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ctx, getString(R.string.main_error_web), Toast.LENGTH_SHORT).show();
                 }
                 finally
                 {
@@ -185,7 +186,19 @@ public class DynamicDetailActivity extends BaseActivity implements DynamicDetail
         }
     }
 
-    class DynamicDetailFragmentPagerAdapter extends FragmentPagerAdapter
+    @Override
+    public boolean hideTitle()
+    {
+        return uiTitleView.hide();
+    }
+
+    @Override
+    public boolean showTitle()
+    {
+        return uiTitleView.show();
+    }
+
+    private class DynamicDetailFragmentPagerAdapter extends FragmentPagerAdapter
     {
         DynamicDetailFragmentPagerAdapter(@NonNull FragmentManager fm, int behavior)
         {

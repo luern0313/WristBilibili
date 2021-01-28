@@ -7,8 +7,10 @@
         android:id="@+id/article_article_listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clipToPadding="false"
         android:divider="@color/alpha"
-        android:dividerHeight="0dp"/>
+        android:dividerHeight="0dp"
+        android:paddingTop="33dp" />
 
     <LinearLayout
         android:id="@+id/article_article_loading"

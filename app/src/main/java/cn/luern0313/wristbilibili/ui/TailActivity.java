@@ -6,22 +6,19 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
 public class TailActivity extends BaseActivity
 {
     Context ctx;
-    Switch uiSwitch;
+    SwitchCompat uiSwitch;
     EditText uiEditText;
     ImageView uiVoice;
 
@@ -35,24 +32,19 @@ public class TailActivity extends BaseActivity
         uiSwitch = findViewById(R.id.tail_switch);
         uiEditText = findViewById(R.id.tail_preview);
         uiVoice = findViewById(R.id.tail_voice);
-        ((Switch) findViewById(R.id.tail_switch)).setChecked(SharedPreferencesUtil.getBoolean(SharedPreferencesUtil.tail, true));
+        ((SwitchCompat) findViewById(R.id.tail_switch)).setChecked(SharedPreferencesUtil.getBoolean(SharedPreferencesUtil.tail, true));
         ((TextView) findViewById(R.id.tail_preview)).setText(getTail(false));
 
-        uiVoice.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
+        uiVoice.setOnClickListener(v -> {
+            Intent voiceInputIntent = new Intent("com.mobvoi.ticwear.action.SPEECH");
+            voiceInputIntent.putExtra("start_mode", "start_mode_with_voice_input");
+            try
             {
-                Intent voiceInputIntent = new Intent("com.mobvoi.ticwear.action.SPEECH");
-                voiceInputIntent.putExtra("start_mode", "start_mode_with_voice_input");
-                try
-                {
-                    startActivityForResult(voiceInputIntent, 0);
-                }
-                catch (Exception e)
-                {
-                    Toast.makeText(ctx, "抱歉，该手表不支持语音输入", Toast.LENGTH_SHORT).show();
-                }
+                startActivityForResult(voiceInputIntent, 0);
+            }
+            catch (Exception e)
+            {
+                Toast.makeText(ctx, getString(R.string.main_tip_voice_input), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -72,14 +64,7 @@ public class TailActivity extends BaseActivity
         });
 
         uiSwitch.setChecked(SharedPreferencesUtil.getBoolean(SharedPreferencesUtil.tail, true));
-        uiSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
-        {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
-            {
-                SharedPreferencesUtil.putBoolean(SharedPreferencesUtil.tail, isChecked);
-            }
-        });
+        uiSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> SharedPreferencesUtil.putBoolean(SharedPreferencesUtil.tail, isChecked));
     }
 
     @Override

@@ -3,40 +3,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:ignore="SmallSp,ContentDescription">
 
-    <RelativeLayout
-        android:id="@+id/fme_title_layout"
+    <cn.luern0313.wristbilibili.widget.TitleView
+        android:id="@+id/fme_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorTitleBackground"
-        android:gravity="center_vertical"
-        android:paddingTop="10dp"
-        android:paddingBottom="4dp">
-
-        <TextView
-            android:id="@+id/fme_title_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:text="关注我"
-            android:textColor="@color/white" />
-
-        <ImageView
-            android:id="@+id/fme_title_extraicon"
-            android:layout_width="12dp"
-            android:layout_height="19dp"
-            android:layout_marginStart="2dp"
-            android:layout_toStartOf="@+id/fme_title_title"
-            android:rotation="90"
-            android:src="@drawable/icon_extra" />
-
-    </RelativeLayout>
+        app:mode="back"
+        app:title="@string/follow_me_title" />
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/fme_title_layout">
+        android:layout_below="@+id/fme_title">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -49,7 +29,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:gravity="center_horizontal"
-                android:text="↓ ↓ 来个关注~ ↓ ↓"
+                android:text="@string/follow_me_follow"
                 android:textSize="12sp" />
 
             <androidx.cardview.widget.CardView
@@ -63,7 +43,7 @@
                 android:clickable="true"
                 android:descendantFocusability="blocksDescendants"
                 android:focusable="true"
-                app:cardBackgroundColor="?attr/colorBackgroundColor"
+                app:cardBackgroundColor="?attr/colorBackground"
                 app:cardCornerRadius="4dp"
                 app:cardElevation="6dp">
 
@@ -79,45 +59,6 @@
                         android:src="@drawable/img_temp" />
 
                     <TextView
-                        android:id="@+id/fme_card_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="6dp"
-                        android:layout_toEndOf="@+id/fme_card_head"
-                        android:text="luern0313"
-                        android:textColor="?attr/colorAccent"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/fme_card_lv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/fme_card_name"
-                        android:layout_marginStart="6dp"
-                        android:layout_toEndOf="@+id/fme_card_head"
-                        android:background="@drawable/shape_lvbg_fme"
-                        android:paddingLeft="4dp"
-                        android:paddingTop="1dp"
-                        android:paddingRight="4dp"
-                        android:paddingBottom="1dp"
-                        android:text="LV6"
-                        android:textColor="?attr/colorAccent"
-                        android:textSize="8sp" />
-
-                    <TextView
-                        android:id="@+id/fme_card_video"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/fme_card_name"
-                        android:layout_marginStart="4dp"
-                        android:layout_marginTop="-1dp"
-                        android:layout_toEndOf="@+id/fme_card_lv"
-                        android:text=""
-                        android:textColor="?attr/colorTitle"
-                        android:textSize="10sp"
-                        tools:text="123" />
-
-                    <TextView
                         android:id="@+id/fme_card_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -129,9 +70,50 @@
                         android:paddingTop="4dp"
                         android:paddingRight="6dp"
                         android:paddingBottom="4dp"
-                        android:text="+关注"
+                        android:text="@string/follow_me_follow_button"
                         android:textColor="@color/white"
                         android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/fme_card_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="6dp"
+                        android:layout_toStartOf="@id/fme_card_button"
+                        android:layout_toEndOf="@+id/fme_card_head"
+                        android:text="@string/follow_me_follow_name"
+                        android:textColor="?attr/colorAccent"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/fme_card_lv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/fme_card_name"
+                        android:layout_marginStart="6dp"
+                        android:layout_toEndOf="@+id/fme_card_head"
+                        android:background="@drawable/shape_bg_fme_lv"
+                        android:paddingLeft="4dp"
+                        android:paddingTop="1dp"
+                        android:paddingRight="4dp"
+                        android:paddingBottom="1dp"
+                        android:text="@string/follow_me_follow_lv"
+                        android:textColor="?attr/colorAccent"
+                        android:textSize="8sp" />
+
+                    <TextView
+                        android:id="@+id/fme_card_video"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/fme_card_name"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginTop="-1dp"
+                        android:layout_toStartOf="@id/fme_card_button"
+                        android:layout_toEndOf="@+id/fme_card_lv"
+                        android:text="@string/follow_me_follow_lv"
+                        android:textColor="?attr/colorTitle"
+                        android:textSize="10sp" />
+
                 </RelativeLayout>
 
             </androidx.cardview.widget.CardView>
@@ -141,7 +123,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:gravity="center_horizontal"
-                android:text="↓ ↓ 最新投稿 ↓ ↓"
+                android:text=""
                 android:textSize="12sp" />
 
             <RelativeLayout
@@ -153,6 +135,7 @@
                 android:background="?android:attr/selectableItemBackground"
                 android:clickable="true"
                 android:descendantFocusability="blocksDescendants"
+                android:focusable="true"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp">
 
@@ -173,7 +156,7 @@
                     android:layout_toEndOf="@id/fme_video_img"
                     android:ellipsize="end"
                     android:maxLines="3"
-                    android:text="请稍后..."
+                    android:text="@string/main_tip_loading"
                     android:textSize="12sp" />
             </RelativeLayout>
 
@@ -197,14 +180,12 @@
                     android:gravity="center_horizontal"
                     android:text="这个视频参加了“互动游戏开发大赛”，点击按钮为这个作品投一票~\n（之后一定要去亲自玩玩看！）"
                     android:textColor="@color/white"
-                    android:textSize="10dp" />
+                    android:textSize="10sp" />
 
                 <TextView
                     android:id="@+id/fme_vote_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
                     android:layout_marginTop="4dp"
                     android:background="@drawable/shape_bg_anre_followbg"
                     android:paddingLeft="8dp"
@@ -268,6 +249,7 @@
                     android:background="?android:attr/selectableItemBackground"
                     android:clickable="true"
                     android:descendantFocusability="blocksDescendants"
+                    android:focusable="true"
                     android:gravity="center_horizontal"
                     android:orientation="vertical"
                     android:paddingTop="4dp"
@@ -283,7 +265,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="给这个视频点赞"
+                        android:text="@string/follow_me_video_like"
                         android:textSize="11sp" />
                 </LinearLayout>
 
@@ -295,6 +277,7 @@
                     android:background="?android:attr/selectableItemBackground"
                     android:clickable="true"
                     android:descendantFocusability="blocksDescendants"
+                    android:focusable="true"
                     android:gravity="center_horizontal"
                     android:orientation="vertical"
                     android:paddingTop="4dp"
@@ -310,7 +293,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="给这个视频投币"
+                        android:text="@string/follow_me_video_coin"
                         android:textSize="11sp" />
 
                 </LinearLayout>
@@ -323,10 +306,11 @@
         android:id="@+id/fme_nologin"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/fme_title_layout"
+        android:layout_below="@+id/fme_title"
         android:layout_centerInParent="true"
         android:background="?android:attr/colorBackground"
         android:clickable="true"
+        android:focusable="true"
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:paddingTop="20dp"
@@ -335,14 +319,13 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="88dp"
-            android:layout_centerHorizontal="true"
             android:src="@drawable/img_videonotfound" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="你还没登录. . ." />
+            android:text="@string/main_tip_no_login2" />
     </LinearLayout>
 
 </RelativeLayout>

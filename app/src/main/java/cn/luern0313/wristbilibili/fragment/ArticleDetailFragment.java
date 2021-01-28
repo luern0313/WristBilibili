@@ -72,6 +72,7 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
@@ -120,14 +121,8 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
         else if(articleModel.getUpOfficial() == 1)
             layoutArticleHeader.findViewById(R.id.article_card_off_2).setVisibility(View.VISIBLE);
 
-        layoutArticleHeader.findViewById(R.id.article_card_follow).setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                articleDetailFragmentListener.onArticleDetailFragmentViewClick(v.getId());
-            }
-        });
+        layoutArticleHeader.findViewById(R.id.article_card_follow).setOnClickListener(
+                v -> articleDetailFragmentListener.onArticleDetailFragmentViewClick(v.getId()));
 
         setArticleIcon();
 
@@ -137,39 +132,24 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
         layoutArticleHeader.findViewById(R.id.article_article_bt_fav).setOnClickListener(this);
         layoutArticleHeader.findViewById(R.id.article_article_bt_share).setOnClickListener(this);
 
+        uiArticleListView.setOnTouchListener(new ListViewTouchListener(uiArticleListView, titleViewListener));
+
         articleAdapter = new ArticleAdapter(inflater, img_width, articleModel.getArticleCardModelList(), uiArticleListView, articleListener);
         uiArticleListView.addHeaderView(layoutArticleHeader);
         uiArticleListView.addFooterView(layoutArticleFooter);
         uiArticleListView.setAdapter(articleAdapter);
 
-        layoutArticleFooter.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                uiArticleListView.smoothScrollToPositionFromTop(0, 0, 500);
-                uiArticleListView.postDelayed(new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        uiArticleListView.setSelection(0);
-                    }
-                }, 500);
-            }
+        layoutArticleFooter.setOnClickListener(v -> {
+            titleViewListener.showTitle();
+            uiArticleListView.smoothScrollToPositionFromTop(0, 0, 500);
+            uiArticleListView.postDelayed(() -> uiArticleListView.setSelection(0), 500);
         });
 
-        layoutArticleHeader.findViewById(R.id.article_card_lay).setOnClickListener(
-                new View.OnClickListener()
-                {
-                    @Override
-                    public void onClick(View v)
-                    {
-                        Intent intent = new Intent(ctx, UserActivity.class);
-                        intent.putExtra("mid", articleModel.getUpMid());
-                        ArticleDetailFragment.this.startActivity(intent);
-                    }
-                });
+        layoutArticleHeader.findViewById(R.id.article_card_lay).setOnClickListener(v -> {
+            Intent intent = new Intent(ctx, UserActivity.class);
+            intent.putExtra("mid", articleModel.getUpMid());
+            ArticleDetailFragment.this.startActivity(intent);
+        });
 
         return rootLayout;
     }
@@ -253,7 +233,7 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
     }
 
     @Override
-    public void onAttach(Context context)
+    public void onAttach(@NonNull Context context)
     {
         super.onAttach(context);
         if(context instanceof ArticleDetailFragmentListener)
@@ -274,9 +254,10 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
             });
         }
         else
-        {
             throw new RuntimeException(context.toString() + " must implement OnFragmentInteractionListener");
-        }
+
+        if(context instanceof TitleView.TitleViewListener)
+            titleViewListener = (TitleView.TitleViewListener) context;
     }
 
     @Override

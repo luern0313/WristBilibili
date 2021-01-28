@@ -3,10 +3,10 @@ package cn.luern0313.wristbilibili.fragment;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageInfo;
@@ -15,7 +15,6 @@ import android.os.IBinder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -27,12 +26,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.adapter.DownloadAdapter;
 import cn.luern0313.wristbilibili.models.DownloadModel;
 import cn.luern0313.wristbilibili.service.DownloadService;
 import cn.luern0313.wristbilibili.util.FileUtil;
+import cn.luern0313.wristbilibili.util.ListViewTouchListener;
+import cn.luern0313.wristbilibili.widget.TitleView;
 
 public class DownloadFragment extends Fragment
 {
@@ -44,6 +46,7 @@ public class DownloadFragment extends Fragment
     private LinearLayout uiListViewEmpty;
     private TextView uiTip;
     private DownloadAdapter downloadAdapter;
+    private TitleView.TitleViewListener titleViewListener;
 
     private ArrayList<DownloadModel> downloadingItems;
     private ArrayList<DownloadModel> downloadedItems;
@@ -111,6 +114,7 @@ public class DownloadFragment extends Fragment
         }
     };
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
@@ -129,107 +133,82 @@ public class DownloadFragment extends Fragment
         Intent intent = new Intent(ctx, DownloadService.class);
         getActivity().bindService(intent, connection, Context.BIND_AUTO_CREATE);
 
-        uiListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
-        {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+        uiListView.setOnItemClickListener((parent, view, position, id) -> {
+            if(position == 0 || position == downloadingItems.size())
+                return;
+            if(position < downloadingItems.size())
             {
-                if(position == 0 || position == downloadingItems.size())
-                    return;
-                if(position < downloadingItems.size())
+                if(downloadingItems.get(position).getDownloadMode() != 2)
                 {
-                    if(downloadingItems.get(position).getDownloadMode() != 2)
+                    if(downloadingItems.get(position).getDownloadState() == 1)
                     {
-                        if(downloadingItems.get(position).getDownloadState() == 1)
-                        {
-                            myBinder.pause(position);
-                            downloadAdapter.notifyDataSetChanged();
-                        }
-                        else if(downloadingItems.get(position).getDownloadState() == 3 || downloadingItems.get(position).getDownloadState() == 5)
-                        {
-                            myBinder.start(position);
-                            downloadAdapter.notifyDataSetChanged();
-                        }
+                        myBinder.pause(position);
+                        downloadAdapter.notifyDataSetChanged();
                     }
+                    else if(downloadingItems.get(position).getDownloadState() == 3 || downloadingItems.get(position).getDownloadState() == 5)
+                    {
+                        myBinder.start(position);
+                        downloadAdapter.notifyDataSetChanged();
+                    }
+                }
+            }
+            else
+            {
+                String name = getVideoName();
+                if(!Objects.equals(name, ""))
+                {
+                    DownloadModel downloadItem = downloadedItems.get(position - downloadingItems.size());
+                    Intent intent1 = new Intent();
+                    intent1.setComponent(new ComponentName(name, name + ".ui.PlayerActivity"));
+                    intent1.putExtra("mode", 2);
+                    intent1.putExtra("url", ctx.getExternalFilesDir(null) + "/download/" + downloadItem.getDownloadAid() + "/" + downloadItem.getDownloadCid() + "/video.mp4");
+                    intent1.putExtra("title", downloadItem.getDownloadTitle());
+                    startActivityForResult(intent1, 0);
                 }
                 else
-                {
-                    String name = getVideoName();
-                    if(!Objects.equals(name, ""))
-                    {
-                        DownloadModel downloadItem = downloadedItems.get(position - downloadingItems.size());
-                        Intent intent = new Intent();
-                        intent.setComponent(new ComponentName(name, name + ".ui.PlayerActivity"));
-                        intent.putExtra("mode", 2);
-                        intent.putExtra("url", ctx.getExternalFilesDir(null) + "/download/" + downloadItem.getDownloadAid() + "/" + downloadItem.getDownloadCid() + "/video.mp4");
-                        intent.putExtra("title", downloadItem.getDownloadTitle());
-                        startActivityForResult(intent, 0);
-                    }
-                    else
-                        Toast.makeText(ctx, "你没有安装配套视频软件：腕上视频，请先前往应用商店下载！", Toast.LENGTH_LONG).show();
-                }
+                    Toast.makeText(ctx, "你没有安装配套视频软件：腕上视频，请先前往应用商店下载！", Toast.LENGTH_LONG).show();
             }
         });
 
-        uiListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener()
-        {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id)
-            {
-                if(position == 0 || position == downloadingItems.size())
-                    return false;
-                new AlertDialog.Builder(ctx)
-                        .setMessage("你确定要删除该任务及本地文件吗？")
-                        .setPositiveButton("删除", new DialogInterface.OnClickListener()
+        uiListView.setOnItemLongClickListener((parent, view, position, id) -> {
+            if(position == 0 || position == downloadingItems.size())
+                return false;
+            new AlertDialog.Builder(ctx)
+                    .setMessage("你确定要删除该任务及本地文件吗？")
+                    .setPositiveButton("删除", (dialog, which) -> {
+                        DownloadModel downloadItem;
+                        if(position < downloadingItems.size())
                         {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which)
-                            {
-                                DownloadModel downloadItem;
-                                if(position < downloadingItems.size())
-                                {
-                                    myBinder.pause(position);
-                                    downloadItem = downloadingItems.get(position);
-                                    downloadingItems.remove(position);
-                                }
-                                else
-                                {
-                                    downloadItem = downloadedItems.get(position - downloadingItems.size());
-                                    downloadedItems.remove(position - downloadingItems.size());
-                                }
-                                FileUtil.deleteDir(new File(ctx.getExternalFilesDir(null) +
-                                                             "/download/" + downloadItem.getDownloadAid() + "/" + downloadItem.getDownloadCid() + "/"));
-                                File dirFile = new File(ctx.getExternalFilesDir(null) + "/download/" + downloadItem.getDownloadAid() + "/");
-                                if(dirFile.list().length == 0)
-                                    FileUtil.deleteDir(dirFile);
-                                downloadAdapter.notifyDataSetChanged();
-                            }
-                        })
-                        .setNegativeButton("取消", null).show();
-                return true;
-            }
+                            myBinder.pause(position);
+                            downloadItem = downloadingItems.get(position);
+                            downloadingItems.remove(position);
+                        }
+                        else
+                        {
+                            downloadItem = downloadedItems.get(position - downloadingItems.size());
+                            downloadedItems.remove(position - downloadingItems.size());
+                        }
+                        FileUtil.deleteDir(new File(ctx.getExternalFilesDir(null) +
+                                                     "/download/" + downloadItem.getDownloadAid() + "/" + downloadItem.getDownloadCid() + "/"));
+                        File dirFile = new File(ctx.getExternalFilesDir(null) + "/download/" + downloadItem.getDownloadAid() + "/");
+                        if(dirFile.list().length == 0)
+                            FileUtil.deleteDir(dirFile);
+                        downloadAdapter.notifyDataSetChanged();
+                    })
+                    .setNegativeButton("取消", null).show();
+            return true;
         });
+
+        uiListView.setOnTouchListener(new ListViewTouchListener(uiListView, titleViewListener));
 
         uiTip.setText(String.format(getString(R.string.download_tip), BASE_DOWNLOAD_PATH));
 
-        uiTipBtu.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                uiTip.setVisibility(View.VISIBLE);
-                ObjectAnimator.ofFloat(uiTip, "alpha", 0.0f, 1.0f).setDuration(500).start();
-            }
+        uiTipBtu.setOnClickListener(v -> {
+            uiTip.setVisibility(View.VISIBLE);
+            ObjectAnimator.ofFloat(uiTip, "alpha", 0.0f, 1.0f).setDuration(500).start();
         });
 
-        uiTip.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                tipAnim.start();
-            }
-        });
+        uiTip.setOnClickListener(v -> tipAnim.start());
 
         tipAnim = ObjectAnimator.ofFloat(uiTip, "alpha", 1.0f, 0.0f);
         tipAnim.setDuration(500);
@@ -263,6 +242,14 @@ public class DownloadFragment extends Fragment
                     ver = "cn.luern0313.wristvideoplayer_free";
         }
         return ver;
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context)
+    {
+        super.onAttach(context);
+        if(context instanceof TitleView.TitleViewListener)
+            titleViewListener = (TitleView.TitleViewListener) context;
     }
 
     @Override

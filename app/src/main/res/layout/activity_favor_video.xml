@@ -1,53 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:ignore="ContentDescription">
 
-    <RelativeLayout
-        android:id="@+id/favv_title_layout"
+    <jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout
+        android:id="@+id/favor_video_swipe"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ListView
+            android:id="@+id/favor_video_listview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:divider="@null"
+            android:paddingTop="33dp" />
+    </jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout>
+
+    <cn.luern0313.wristbilibili.widget.TitleView
+        android:id="@+id/favor_video_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorTitleBackground"
-        android:gravity="center_vertical"
-        android:paddingTop="10dp"
-        android:paddingBottom="4dp">
-
-        <TextView
-            android:id="@+id/favv_title_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:text="收藏夹"
-            android:textColor="@color/white" />
-
-        <ImageView
-            android:id="@+id/favv_title_extraicon"
-            android:layout_width="12dp"
-            android:layout_height="19dp"
-            android:layout_marginStart="2dp"
-            android:layout_toStartOf="@+id/favv_title_title"
-            android:rotation="90"
-            android:src="@drawable/icon_extra" />
-    </RelativeLayout>
+        app:mode="back"
+        app:title="@string/favor_video_title" />
 
     <LinearLayout
-        android:id="@+id/favv_noweb"
+        android:id="@+id/favor_video_noweb"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/favv_title_layout"
         android:background="?android:attr/colorBackground"
         android:clickable="true"
         android:focusable="true"
         android:gravity="center"
         android:orientation="vertical"
-        android:paddingBottom="20dp"
         android:visibility="gone">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="92dp"
             android:padding="6dp"
-            android:src="@drawable/img_noweb" />
+            android:src="@drawable/img_no_web" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -57,23 +52,21 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/favv_nonthing"
+        android:id="@+id/favor_video_nonthing"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/favv_title_layout"
         android:background="?android:attr/colorBackground"
         android:clickable="true"
         android:focusable="true"
         android:gravity="center"
         android:orientation="vertical"
-        android:paddingBottom="20dp"
         android:visibility="gone">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="94dp"
             android:padding="6dp"
-            android:src="@drawable/img_nodata" />
+            android:src="@drawable/img_no_data" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -81,18 +74,4 @@
             android:text="@string/main_tip_no_data" />
 
     </LinearLayout>
-
-    <jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout
-        android:id="@+id/favv_swipe"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/favv_title_layout">
-
-        <ListView
-            android:id="@+id/favv_listview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:divider="@null" />
-    </jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout>
-
 </RelativeLayout>

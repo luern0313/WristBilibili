@@ -9,9 +9,7 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ViewFlipper;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -32,6 +30,7 @@ import cn.luern0313.wristbilibili.fragment.user.UserListPeopleFragment;
 import cn.luern0313.wristbilibili.fragment.user.UserVideoFragment;
 import cn.luern0313.wristbilibili.models.UserModel;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
+import cn.luern0313.wristbilibili.widget.TitleView;
 
 /**
  * 被 luern0313 创建于 不知道什么时候.
@@ -41,7 +40,7 @@ import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
  *
  * ok现在好多了
  */
-public class UserActivity extends BaseActivity implements UserDetailFragment.UserDetailFragmentListener
+public class UserActivity extends BaseActivity implements UserDetailFragment.UserDetailFragmentListener, TitleView.TitleViewListener
 {
     Context ctx;
     Intent intent;
@@ -53,7 +52,7 @@ public class UserActivity extends BaseActivity implements UserDetailFragment.Use
     Handler handler = new Handler();
     Runnable runnableUi, runnableNoWeb, runnableNothing;
 
-    ViewFlipper uiTitle;
+    TitleView uiTitleView;
     ViewPager uiViewPager;
     ImageView uiLoading;
 
@@ -68,7 +67,7 @@ public class UserActivity extends BaseActivity implements UserDetailFragment.Use
         inflater = getLayoutInflater();
 
         userApi = new UserApi(intent.getStringExtra("mid"));
-        uiTitle = findViewById(R.id.user_title_title);
+        uiTitleView = findViewById(R.id.user_title);
         uiViewPager = findViewById(R.id.user_viewpager);
         uiLoading = findViewById(R.id.ou_loading_img);
 
@@ -79,7 +78,7 @@ public class UserActivity extends BaseActivity implements UserDetailFragment.Use
             findViewById(R.id.user_noweb).setVisibility(View.GONE);
 
             for (int i = 1; i < userModel.getTab().size(); i++)
-                ((ViewFlipper) findViewById(R.id.user_title_title)).addView(getTitleTextView(userModel.getTab().get(i).get(1)));
+                uiTitleView.addTitle(userModel.getTab().get(i).get(1));
             uiViewPager.setAdapter(pagerAdapter);
         };
 
@@ -131,19 +130,20 @@ public class UserActivity extends BaseActivity implements UserDetailFragment.Use
             @Override
             public void onPageSelected(int position)
             {
-                while(uiTitle.getDisplayedChild() != position)
+                while(uiTitleView.getDisplayedChild() != position)
                 {
-                    if(uiTitle.getDisplayedChild() < position)
+                    uiTitleView.show();
+                    if(uiTitleView.getDisplayedChild() < position)
                     {
-                        uiTitle.setInAnimation(ctx, R.anim.slide_in_right);
-                        uiTitle.setOutAnimation(ctx, R.anim.slide_out_left);
-                        uiTitle.showNext();
+                        uiTitleView.setInAnimation(ctx, R.anim.slide_in_right);
+                        uiTitleView.setOutAnimation(ctx, R.anim.slide_out_left);
+                        uiTitleView.showNext();
                     }
                     else
                     {
-                        uiTitle.setInAnimation(ctx, android.R.anim.slide_in_left);
-                        uiTitle.setOutAnimation(ctx, android.R.anim.slide_out_right);
-                        uiTitle.showPrevious();
+                        uiTitleView.setInAnimation(ctx, android.R.anim.slide_in_left);
+                        uiTitleView.setOutAnimation(ctx, android.R.anim.slide_out_right);
+                        uiTitleView.showPrevious();
                     }
                 }
             }
@@ -153,10 +153,8 @@ public class UserActivity extends BaseActivity implements UserDetailFragment.Use
             try
             {
                 userModel = userApi.getUserInfo();
-                if(userModel != null)
-                    handler.post(runnableUi);
-                else
-                    handler.post(runnableNothing);
+                if(userModel != null) handler.post(runnableUi);
+                else handler.post(runnableNothing);
             }
             catch (IOException e)
             {
@@ -164,14 +162,6 @@ public class UserActivity extends BaseActivity implements UserDetailFragment.Use
                 handler.post(runnableNoWeb);
             }
         }).start();
-    }
-
-    private TextView getTitleTextView(String title)
-    {
-        TextView t = new TextView(ctx);
-        t.setText(title);
-        t.setTextColor(getResources().getColor(R.color.white));
-        return t;
     }
 
     @Override
@@ -266,6 +256,18 @@ public class UserActivity extends BaseActivity implements UserDetailFragment.Use
             if(userModel.getTab().get(i).get(0).equals(tabName))
                 return i;
         return -1;
+    }
+
+    @Override
+    public boolean hideTitle()
+    {
+        return uiTitleView.hide();
+    }
+
+    @Override
+    public boolean showTitle()
+    {
+        return uiTitleView.show();
     }
 
     class UserFragmentPagerAdapter extends FragmentPagerAdapter

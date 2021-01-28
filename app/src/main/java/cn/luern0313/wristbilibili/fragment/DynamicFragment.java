@@ -1,5 +1,6 @@
 package cn.luern0313.wristbilibili.fragment;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.adapter.DynamicAdapter;
@@ -26,12 +28,15 @@ import cn.luern0313.wristbilibili.api.DynamicApi;
 import cn.luern0313.wristbilibili.api.SendDynamicApi;
 import cn.luern0313.wristbilibili.models.DynamicModel;
 import cn.luern0313.wristbilibili.ui.BangumiActivity;
+import cn.luern0313.wristbilibili.ui.SelectPartActivity;
 import cn.luern0313.wristbilibili.ui.SendDynamicActivity;
 import cn.luern0313.wristbilibili.ui.UnsupportedLinkActivity;
 import cn.luern0313.wristbilibili.ui.UserActivity;
 import cn.luern0313.wristbilibili.util.ColorUtil;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
+import cn.luern0313.wristbilibili.util.ListViewTouchListener;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
+import cn.luern0313.wristbilibili.widget.TitleView;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
 /**
@@ -50,6 +55,8 @@ public class DynamicFragment extends Fragment
     private DynamicApi dynamicApi;
     private SendDynamicApi sendDynamicApi;
     private ArrayList<DynamicModel.DynamicBaseModel> dynamicList;
+    private TitleView.TitleViewListener titleViewListener;
+    private int dynamicType = 0;
 
     private View rootLayout;
     private ListView dyListView;
@@ -94,6 +101,7 @@ public class DynamicFragment extends Fragment
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         ctx = getActivity();
@@ -102,7 +110,7 @@ public class DynamicFragment extends Fragment
         dyListView = rootLayout.findViewById(R.id.dy_listview);
         loadingView = inflater.inflate(R.layout.widget_loading, null);
         sendDynamicView = inflater.inflate(R.layout.widget_dy_senddynamic, null);
-        sendDynamicButton = sendDynamicView.findViewById(R.id.wid_dy_senddynamic);
+        sendDynamicButton = sendDynamicView.findViewById(R.id.wid_dy_send);
 
         WindowManager manager = getActivity().getWindowManager();
         DisplayMetrics outMetrics = new DisplayMetrics();
@@ -169,8 +177,8 @@ public class DynamicFragment extends Fragment
 
         waveSwipeRefreshLayout = rootLayout.findViewById(R.id.dy_swipe);
         waveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
-        //noinspection ConstantConditions
-        waveSwipeRefreshLayout.setWaveColor(ColorUtil.getColor(R.attr.colorPrimary, getContext()));
+        waveSwipeRefreshLayout.setWaveColor(ColorUtil.getColor(R.attr.colorPrimary, ctx));
+        waveSwipeRefreshLayout.setTopOffsetOfWave(DataProcessUtil.dip2px(33));
         waveSwipeRefreshLayout.setOnRefreshListener(() -> handler.post(() -> {
             isLogin = SharedPreferencesUtil.contains(SharedPreferencesUtil.cookies);
             if(isLogin)
@@ -204,13 +212,36 @@ public class DynamicFragment extends Fragment
             }
         });
 
+        dyListView.setOnTouchListener(new ListViewTouchListener(dyListView, titleViewListener));
+
+        sendDynamicView.findViewById(R.id.wid_dy_title).setOnClickListener(v -> {
+            Intent intent = new Intent(ctx, SelectPartActivity.class);
+            intent.putExtra("title", getString(R.string.dynamic_filter_title));
+            intent.putExtra("options_name", getResources().getStringArray(R.array.dynamic_filter));
+            intent.putExtra("options_id", DynamicApi.DYNAMIC_TYPES);
+            startActivityForResult(intent, RESULT_DYNAMIC_FILTER);
+        });
+
         sendDynamicButton.setOnClickListener(v -> {
             Intent intent = new Intent(ctx, SendDynamicActivity.class);
             intent.putExtra("is_share", false);
             startActivityForResult(intent, RESULT_DYNAMIC_SEND_DYNAMIC);
         });
 
-        adapterListener = this::onViewClick;
+        adapterListener = new DynamicAdapter.DynamicAdapterListener()
+        {
+            @Override
+            public void onClick(int viewId, int position, boolean isShared)
+            {
+                onViewClick(viewId, position, isShared);
+            }
+
+            @Override
+            public boolean onLongClick(int viewId, int position, boolean isShared)
+            {
+                return false;
+            }
+        };
 
         if(isLogin)
         {
@@ -231,11 +262,12 @@ public class DynamicFragment extends Fragment
     private void getDynamic()
     {
         isLoading = true;
+        ((TextView) sendDynamicView.findViewById(R.id.wid_dy_title_title)).setText(getResources().getStringArray(R.array.dynamic_filter)[dynamicType]);
         new Thread(() -> {
             try
             {
                 dynamicApi = new DynamicApi(mid, isShowSendButton);
-                dynamicApi.getDynamic();
+                dynamicApi.getDynamic(dynamicType);
                 dynamicList = dynamicApi.getDynamicList();
                 if(dynamicList != null && dynamicList.size() != 0)
                 {
@@ -266,7 +298,7 @@ public class DynamicFragment extends Fragment
         new Thread(() -> {
             try
             {
-                dynamicApi.getHistoryDynamic();
+                dynamicApi.getHistoryDynamic(dynamicType);
                 dynamicList.addAll(dynamicApi.getDynamicList());
                 isLoading = false;
                 handler.post(runnableMore);
@@ -409,6 +441,14 @@ public class DynamicFragment extends Fragment
     }
 
     @Override
+    public void onAttach(@NonNull Context context)
+    {
+        super.onAttach(context);
+        if(context instanceof TitleView.TitleViewListener)
+            titleViewListener = (TitleView.TitleViewListener) context;
+    }
+
+    @Override
     public void onActivityResult(final int requestCode, int resultCode, final Intent data)
     {
         super.onActivityResult(requestCode, resultCode, data);
@@ -471,6 +511,11 @@ public class DynamicFragment extends Fragment
                     Looper.loop();
                 }
             }).start();
+        }
+        else if(requestCode == RESULT_DYNAMIC_FILTER)
+        {
+            dynamicType = data.getIntExtra("option_position", 0);
+            getDynamic();
         }
     }
 

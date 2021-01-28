@@ -1,5 +1,6 @@
 package cn.luern0313.wristbilibili.fragment;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.widget.ListView;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.adapter.ListVideoAdapter;
@@ -19,7 +21,10 @@ import cn.luern0313.wristbilibili.api.WatchLaterApi;
 import cn.luern0313.wristbilibili.models.ListVideoModel;
 import cn.luern0313.wristbilibili.ui.VideoActivity;
 import cn.luern0313.wristbilibili.util.ColorUtil;
+import cn.luern0313.wristbilibili.util.DataProcessUtil;
+import cn.luern0313.wristbilibili.util.ListViewTouchListener;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
+import cn.luern0313.wristbilibili.widget.TitleView;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
 /**
@@ -35,6 +40,7 @@ public class WatchlaterFragment extends Fragment
     private ListVideoAdapter.ListVideoAdapterListener listVideoAdapterListener;
     private WaveSwipeRefreshLayout waveSwipeRefreshLayout;
     private WatchLaterApi watchLaterApi;
+    private TitleView.TitleViewListener titleViewListener;
 
     public static boolean isLogin;
 
@@ -43,6 +49,7 @@ public class WatchlaterFragment extends Fragment
 
     private ArrayList<ListVideoModel> watchLaterVideoArrayList;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
@@ -53,6 +60,7 @@ public class WatchlaterFragment extends Fragment
         waveSwipeRefreshLayout = rootLayout.findViewById(R.id.wl_swipe);
         waveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
         waveSwipeRefreshLayout.setWaveColor(ColorUtil.getColor(R.attr.colorPrimary, ctx));
+        waveSwipeRefreshLayout.setTopOffsetOfWave(DataProcessUtil.dip2px(33));
         waveSwipeRefreshLayout.setOnRefreshListener(() -> handler.post(() -> {
             if(isLogin)
             {
@@ -101,6 +109,7 @@ public class WatchlaterFragment extends Fragment
         };
 
         wlListView.setOnItemClickListener((parent, view, position, id) -> startActivity(VideoActivity.getActivityIntent(ctx, watchLaterVideoArrayList.get(position).getAid(), "")));
+        wlListView.setOnTouchListener(new ListViewTouchListener(wlListView, titleViewListener));
 
         isLogin = SharedPreferencesUtil.contains(SharedPreferencesUtil.cookies);
         if(isLogin)
@@ -144,5 +153,13 @@ public class WatchlaterFragment extends Fragment
                 e.printStackTrace();
             }
         }).start();
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context)
+    {
+        super.onAttach(context);
+        if(context instanceof TitleView.TitleViewListener)
+            titleViewListener = (TitleView.TitleViewListener) context;
     }
 }

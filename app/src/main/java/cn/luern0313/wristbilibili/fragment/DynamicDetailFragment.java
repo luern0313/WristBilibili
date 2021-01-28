@@ -22,7 +22,9 @@ import cn.luern0313.wristbilibili.ui.SendDynamicActivity;
 import cn.luern0313.wristbilibili.ui.UnsupportedLinkActivity;
 import cn.luern0313.wristbilibili.ui.UserActivity;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
+import cn.luern0313.wristbilibili.util.ListViewTouchListener;
 import cn.luern0313.wristbilibili.util.MyApplication;
+import cn.luern0313.wristbilibili.widget.TitleView;
 
 public class DynamicDetailFragment extends Fragment
 {
@@ -34,8 +36,7 @@ public class DynamicDetailFragment extends Fragment
     private DynamicAdapter dynamicAdapter;
     private DynamicAdapter.DynamicAdapterListener dynamicAdapterListener;
     private DynamicAdapter.ViewHolder viewHolder;
-
-    private int dynamicWidth;
+    private TitleView.TitleViewListener titleViewListener;
 
     private DynamicDetailFragmentListener dynamicDetailFragmentListener;
 
@@ -73,7 +74,7 @@ public class DynamicDetailFragment extends Fragment
         WindowManager manager = getActivity().getWindowManager();
         DisplayMetrics outMetrics = new DisplayMetrics();
         manager.getDefaultDisplay().getMetrics(outMetrics);
-        dynamicWidth = outMetrics.widthPixels - DataProcessUtil.dip2px(18) * 2;
+        int dynamicWidth = outMetrics.widthPixels - DataProcessUtil.dip2px(18) * 2;
 
         dynamicAdapterListener = new DynamicAdapter.DynamicAdapterListener()
         {
@@ -82,7 +83,15 @@ public class DynamicDetailFragment extends Fragment
             {
                 onDynamicClick(viewId, position, isShared);
             }
+
+            @Override
+            public boolean onLongClick(int viewId, int position, boolean isShared)
+            {
+                return false;
+            }
         };
+
+        rootLayout.findViewById(R.id.dynamic_detail_lay).setOnTouchListener(new ListViewTouchListener(rootLayout.findViewById(R.id.dynamic_detail_lay), titleViewListener));
 
         rootLayout.findViewById(R.id.item_dynamic_lay).setBackground(null);
         dynamicAdapter = new DynamicAdapter(inflater, null, rootLayout, dynamicWidth, dynamicAdapterListener);
@@ -97,13 +106,12 @@ public class DynamicDetailFragment extends Fragment
     {
         super.onAttach(context);
         if(context instanceof DynamicDetailFragmentListener)
-        {
             dynamicDetailFragmentListener = (DynamicDetailFragmentListener) context;
-        }
         else
-        {
             throw new RuntimeException(context.toString() + " must implement DynamicDetailFragmentListener");
-        }
+
+        if(context instanceof TitleView.TitleViewListener)
+            titleViewListener = (TitleView.TitleViewListener) context;
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

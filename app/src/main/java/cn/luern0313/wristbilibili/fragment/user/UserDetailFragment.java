@@ -61,6 +61,7 @@ public class UserDetailFragment extends Fragment implements View.OnClickListener
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
@@ -81,6 +82,8 @@ public class UserDetailFragment extends Fragment implements View.OnClickListener
             intent.putExtra("imgUrl", new String[]{userModel.getCardFace()});
             startActivity(intent);
         });
+
+        ((ScrollView) rootLayout.findViewById(R.id.user_detail_lay)).setOnTouchListener(new ListViewTouchListener(rootLayout.findViewById(R.id.user_detail_lay), titleViewListener));
 
         rootLayout.findViewById(R.id.user_detail_video).setOnClickListener(this);
         rootLayout.findViewById(R.id.user_detail_favor).setOnClickListener(this);
@@ -168,13 +171,12 @@ public class UserDetailFragment extends Fragment implements View.OnClickListener
     {
         super.onAttach(context);
         if(context instanceof UserDetailFragmentListener)
-        {
             userDetailFragmentListener = (UserDetailFragmentListener) context;
-        }
         else
-        {
             throw new RuntimeException(context.toString() + " must implement UserDetailFragmentListener");
-        }
+
+        if(context instanceof TitleView.TitleViewListener)
+            titleViewListener = (TitleView.TitleViewListener) context;
     }
 
     @Override

@@ -14,7 +14,6 @@ import org.sufficientlysecure.htmltextview.HtmlTextView;
 
 import java.io.IOException;
 
-import androidx.appcompat.app.AppCompatActivity;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.UnsupportedLinkApi;
 import cn.luern0313.wristbilibili.models.UnsupportedLinkModel;
@@ -56,44 +55,29 @@ public class UnsupportedLinkActivity extends BaseActivity
         ((TextView) findViewById(R.id.ul_link)).setText(unsupportedLinkApi.getUrl());
         ((ImageView) findViewById(R.id.ul_qr)).setImageBitmap(QRCodeUtil.createQRCodeBitmap(unsupportedLinkApi.getUrl(), 120, 120));
 
-        runnableUi = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                findViewById(R.id.ul_loading).setVisibility(View.GONE);
-                ((HtmlTextView) findViewById(R.id.ul_info)).setHtml(unsupportedLinkModel.getDetail());
-            }
+        runnableUi = () -> {
+            findViewById(R.id.ul_loading).setVisibility(View.GONE);
+            ((HtmlTextView) findViewById(R.id.ul_info)).setHtml(unsupportedLinkModel.getDetail());
         };
 
-        runnableErr = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                findViewById(R.id.ul_loading).setVisibility(View.GONE);
-                ((HtmlTextView) findViewById(R.id.ul_info)).setHtml("获取页面信息失败");
-            }
+        runnableErr = () -> {
+            findViewById(R.id.ul_loading).setVisibility(View.GONE);
+            ((HtmlTextView) findViewById(R.id.ul_info)).setHtml("获取页面信息失败");
         };
 
-        new Thread(new Runnable()
-        {
-            @Override
-            public void run()
+        new Thread(() -> {
+            try
             {
-                try
-                {
-                    unsupportedLinkModel = unsupportedLinkApi.getUnsupportedLink();
-                    if(unsupportedLinkModel != null)
-                        handler.post(runnableUi);
-                    else
-                        handler.post(runnableErr);
-                }
-                catch (IOException | IllegalArgumentException e)
-                {
-                    e.printStackTrace();
+                unsupportedLinkModel = unsupportedLinkApi.getUnsupportedLink();
+                if(unsupportedLinkModel != null)
+                    handler.post(runnableUi);
+                else
                     handler.post(runnableErr);
-                }
+            }
+            catch (IOException | IllegalArgumentException e)
+            {
+                e.printStackTrace();
+                handler.post(runnableErr);
             }
         }).start();
     }

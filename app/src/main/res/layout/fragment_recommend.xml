@@ -35,9 +35,11 @@
             android:id="@+id/rc_listview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:clipToPadding="false"
             android:divider="@color/alpha"
             android:dividerHeight="0dp"
-            android:scrollbars="none"/>
+            android:paddingTop="33dp"
+            android:scrollbars="none" />
     </jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout>
 
 </RelativeLayout>

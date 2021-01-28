@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:ignore="ContentDescription">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -9,37 +12,15 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingBottom="30dp">
 
-            <RelativeLayout
+            <cn.luern0313.wristbilibili.widget.TitleView
                 android:id="@+id/login_title_layout"
                 android:layout_width="match_parent"
-                android:layout_height="33dp"
-                android:background="?attr/colorTitleBackground"
-                android:gravity="center_vertical"
-                android:paddingBottom="4dp"
-                android:paddingTop="10dp">
-
-                <TextView
-                    android:id="@+id/login_title_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:text="登录"
-                    android:textColor="@color/white" />
-
-                <ImageView
-                    android:id="@+id/login_title_extraicon"
-                    android:layout_width="12dp"
-                    android:layout_height="19dp"
-                    android:layout_marginStart="2dp"
-                    android:layout_toStartOf="@id/login_title_title"
-                    android:rotation="90"
-                    android:src="@drawable/icon_extra" />
-
-            </RelativeLayout>
+                android:layout_height="wrap_content"
+                app:title="@string/login_title" />
 
             <TextView
                 android:id="@+id/login_change_mode"
@@ -48,9 +29,9 @@
                 android:layout_below="@+id/login_title_layout"
                 android:background="@android:color/holo_orange_light"
                 android:gravity="center"
-                android:paddingBottom="4dp"
                 android:paddingTop="4dp"
-                android:text="账号密码登录 >"
+                android:paddingBottom="4dp"
+                android:text="@string/login_change_pw"
                 android:textColor="@color/white" />
 
             <RelativeLayout
@@ -66,7 +47,7 @@
                     android:layout_below="@+id/login_qr"
                     android:layout_centerHorizontal="false"
                     android:gravity="center"
-                    android:text="打开哔哩哔哩客户端 - 扫一扫"
+                    android:text="@string/login_qr_tip"
                     android:textColor="?attr/colorAccent"
                     android:textSize="12sp" />
 
@@ -85,9 +66,9 @@
                     android:layout_height="120dp"
                     android:layout_centerHorizontal="true"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginBottom="10dp"
                     android:layout_marginTop="8dp"
-                    android:src="@drawable/ic_qrloading" />
+                    android:layout_marginBottom="10dp"
+                    android:src="@drawable/icon_qrloading" />
 
                 <ImageView
                     android:id="@+id/login_qrerr"
@@ -108,15 +89,15 @@
                 android:background="?android:attr/colorBackground"
                 android:orientation="vertical"
                 android:paddingLeft="22dp"
-                android:paddingRight="22dp"
                 android:paddingTop="6dp"
+                android:paddingRight="22dp"
                 android:visibility="gone">
 
                 <TextView
                     android:id="@+id/login_pw_user"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="账号/手机号"
+                    android:text="@string/login_pw_user"
                     android:textSize="13sp" />
 
                 <EditText
@@ -124,15 +105,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textPersonName"
-                    android:paddingBottom="9dp"
                     android:paddingTop="9dp"
+                    android:paddingBottom="9dp"
                     android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/login_pw_pw"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="密码"
+                    android:text="@string/login_pw_pw"
                     android:textSize="13sp" />
 
                 <EditText
@@ -140,8 +121,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textPassword"
-                    android:paddingBottom="9dp"
                     android:paddingTop="9dp"
+                    android:paddingBottom="9dp"
                     android:textSize="16sp" />
 
                 <Button
@@ -151,7 +132,7 @@
                     android:layout_height="40dp"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="10dp"
-                    android:text="登录"
+                    android:text="@string/login_pw_login"
                     android:textColor="@color/white" />
 
             </LinearLayout>
@@ -177,7 +158,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="  登录中.."
+            android:text="@string/login_pw_login_loading"
             android:textColor="@color/white" />
     </LinearLayout>
 

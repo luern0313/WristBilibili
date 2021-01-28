@@ -7,9 +7,11 @@
     tools:ignore="RtlSymmetry,SmallSp,ContentDescription">
 
     <ScrollView
+        android:id="@+id/vd_lay"
+        android:clipToPadding="false"
+        android:paddingTop="33dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#00DA1E1E">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"

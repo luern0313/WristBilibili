@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:ignore="ContentDescription">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -9,34 +12,11 @@
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
-        <RelativeLayout
+        <cn.luern0313.wristbilibili.widget.TitleView
             android:id="@+id/join_title_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/colorTitleBackground"
-            android:gravity="center_vertical"
-            android:paddingTop="10dp"
-            android:paddingBottom="4dp">
-
-            <TextView
-                android:id="@+id/join_title_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:text="联系作者"
-                android:textColor="@color/white"
-                android:textSize="13sp" />
-
-            <ImageView
-                android:id="@+id/join_title_extraicon"
-                android:layout_width="12dp"
-                android:layout_height="19dp"
-                android:layout_marginStart="2dp"
-                android:layout_toStartOf="@+id/join_title_text"
-                android:rotation="90"
-                android:src="@drawable/icon_extra" />
-
-        </RelativeLayout>
+            app:title="@string/join_qq_title" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -56,7 +36,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="反馈BUG" />
+                android:text="@string/join_qq_report_bug" />
 
             <ImageView
                 android:layout_width="16dp"

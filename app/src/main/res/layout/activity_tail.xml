@@ -1,57 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <RelativeLayout
-        android:id="@+id/tail_title_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorTitleBackground"
-        android:paddingBottom="4dp"
-        android:paddingTop="10dp">
-
-        <TextView
-            android:id="@+id/tail_title_title"
-            android:layout_width="wrap_content"
-            android:layout_height="19dp"
-            android:layout_centerHorizontal="true"
-            android:gravity="center_vertical"
-            android:text="小尾巴设置"
-            android:textColor="@color/white"
-            android:textSize="12sp" />
-
-        <ImageView
-            android:id="@+id/tail_title_extraicon"
-            android:layout_width="12dp"
-            android:layout_height="19dp"
-            android:layout_marginStart="2dp"
-            android:layout_toStartOf="@+id/tail_title_title"
-            android:rotation="90"
-            android:src="@drawable/icon_extra" />
-
-    </RelativeLayout>
+    android:layout_height="match_parent"
+    tools:ignore="ContentDescription,Autofill,LabelFor">
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/tail_title_layout">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <Switch
-                android:id="@+id/tail_switch"
+            <cn.luern0313.wristbilibili.widget.TitleView
+                android:id="@+id/tail_title_layout"
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:mode="back"
+                app:title="@string/tail_title" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/tail_switch"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="44dp"
                 android:paddingTop="8dp"
                 android:paddingRight="44dp"
                 android:paddingBottom="6dp"
-                android:text="小尾巴开关"
+                android:text="@string/tail_switch"
                 android:textColor="?android:attr/colorForeground"
                 android:textSize="14sp" />
 
@@ -60,26 +39,27 @@
                 android:id="@+id/tail_preetlay"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="?attr/colorLayerBack"
+                android:background="?attr/colorLayerBackground"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingLeft="22dp"
                 android:paddingTop="4dp"
                 android:paddingRight="22dp">
 
-                <TextView
-                    android:id="@+id/tail_pretext"
-                    android:layout_width="wrap_content"
-                    android:layout_height="24dp"
-                    android:paddingLeft="4dp"
-                    android:text="编辑小尾巴：" />
-
                 <ImageView
                     android:id="@+id/tail_voice"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:layout_alignParentRight="true"
-                    android:src="@drawable/ic_voiceinput_search" />
+                    android:layout_alignParentEnd="true"
+                    android:src="@drawable/icon_voiceinput_search" />
+
+                <TextView
+                    android:id="@+id/tail_pretext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_toStartOf="@id/tail_voice"
+                    android:text="@string/tail_edit" />
 
                 <EditText
                     android:id="@+id/tail_preview"
@@ -90,7 +70,7 @@
                     android:inputType="textMultiLine"
                     android:maxLength="70"
                     android:paddingTop="0dp"
-                    android:textSize="14dp" />
+                    android:textSize="14sp" />
 
             </RelativeLayout>
 
@@ -98,13 +78,12 @@
                 android:id="@+id/tail_exp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tail_preetlay"
                 android:paddingLeft="32dp"
                 android:paddingTop="6dp"
                 android:paddingRight="32dp"
                 android:paddingBottom="30dp"
-                android:text="小尾巴最多70个字符\n\n在小尾巴中可以插入以下预置字符串，发送时自动替换\n{{device}}机型数据\n{{appname}}应用名称\n{{appauthor}}应用作者\n{{videoid}}软件介绍视频av号"
-                android:textSize="12dp" />
+                android:text="@string/tail_rule"
+                android:textSize="12sp" />
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>

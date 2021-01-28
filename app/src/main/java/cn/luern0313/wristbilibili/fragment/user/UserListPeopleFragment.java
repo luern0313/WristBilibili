@@ -142,6 +142,8 @@ public class UserListPeopleFragment extends Fragment
             }
         });
 
+        uiListView.setOnTouchListener(new ListViewTouchListener(uiListView, titleViewListener));
+
         new Thread(() -> {
             try
             {
@@ -197,5 +199,13 @@ public class UserListPeopleFragment extends Fragment
                 handler.post(runnableMoreNoWeb);
             }
         }).start();
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context)
+    {
+        super.onAttach(context);
+        if(context instanceof TitleView.TitleViewListener)
+            titleViewListener = (TitleView.TitleViewListener) context;
     }
 }

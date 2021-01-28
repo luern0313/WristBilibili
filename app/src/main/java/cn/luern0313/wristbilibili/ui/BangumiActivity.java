@@ -13,9 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ViewFlipper;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -32,12 +30,13 @@ import cn.luern0313.wristbilibili.api.OnlineVideoApi;
 import cn.luern0313.wristbilibili.fragment.BangumiDetailFragment;
 import cn.luern0313.wristbilibili.fragment.BangumiRecommendFragment;
 import cn.luern0313.wristbilibili.fragment.ReplyFragment;
-import cn.luern0313.wristbilibili.models.ListBangumiModel;
 import cn.luern0313.wristbilibili.models.BangumiModel;
+import cn.luern0313.wristbilibili.models.ListBangumiModel;
 import cn.luern0313.wristbilibili.service.DownloadService;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
+import cn.luern0313.wristbilibili.widget.TitleView;
 
-public class BangumiActivity extends BaseActivity implements BangumiDetailFragment.BangumiDetailFragmentListener
+public class BangumiActivity extends BaseActivity implements BangumiDetailFragment.BangumiDetailFragmentListener, TitleView.TitleViewListener
 {
     Context ctx;
     Intent intent;
@@ -51,7 +50,7 @@ public class BangumiActivity extends BaseActivity implements BangumiDetailFragme
     FragmentPagerAdapter pagerAdapter;
     ArrayList<ListBangumiModel> bangumiRecommendModelArrayList;
 
-    ViewFlipper uiTitle;
+    TitleView uiTitleView;
     ViewPager uiViewPager;
     ImageView uiLoadingImg;
     LinearLayout uiLoading;
@@ -86,7 +85,7 @@ public class BangumiActivity extends BaseActivity implements BangumiDetailFragme
 
         inflater = getLayoutInflater();
 
-        uiTitle = findViewById(R.id.bgm_title_title);
+        uiTitleView = findViewById(R.id.bgm_title);
         uiViewPager = findViewById(R.id.bgm_viewpager);
         uiViewPager.setOffscreenPageLimit(2);
         uiLoadingImg = findViewById(R.id.bgm_loading_img);
@@ -102,8 +101,8 @@ public class BangumiActivity extends BaseActivity implements BangumiDetailFragme
         uiLoading.setVisibility(View.VISIBLE);
 
         runnableUi = () -> {
-            ((TextView) uiTitle.findViewWithTag("1")).setText(String.format(getString(R.string.bangumi_title_detail), bangumiModel.getTypeName()));
-            ((TextView) uiTitle.findViewWithTag("2")).setText(String.format(getString(R.string.bangumi_title_reply), bangumiModel.getTypeEp()));
+            uiTitleView.setTitle(0, String.format(getString(R.string.bangumi_title_detail), bangumiModel.getTypeName()));
+            uiTitleView.setTitle(1, String.format(getString(R.string.bangumi_title_reply), bangumiModel.getTypeEp()));
 
             uiLoading.setVisibility(View.GONE);
             uiNoWeb.setVisibility(View.GONE);
@@ -171,19 +170,20 @@ public class BangumiActivity extends BaseActivity implements BangumiDetailFragme
             @Override
             public void onPageSelected(int position)
             {
-                while(uiTitle.getDisplayedChild() != position)
+                while(uiTitleView.getDisplayedChild() != position)
                 {
-                    if(uiTitle.getDisplayedChild() < position)
+                    uiTitleView.show();
+                    if(uiTitleView.getDisplayedChild() < position)
                     {
-                        uiTitle.setInAnimation(ctx, R.anim.slide_in_right);
-                        uiTitle.setOutAnimation(ctx, R.anim.slide_out_left);
-                        uiTitle.showNext();
+                        uiTitleView.setInAnimation(ctx, R.anim.slide_in_right);
+                        uiTitleView.setOutAnimation(ctx, R.anim.slide_out_left);
+                        uiTitleView.showNext();
                     }
                     else
                     {
-                        uiTitle.setInAnimation(ctx, android.R.anim.slide_in_left);
-                        uiTitle.setOutAnimation(ctx, android.R.anim.slide_out_right);
-                        uiTitle.showPrevious();
+                        uiTitleView.setInAnimation(ctx, android.R.anim.slide_in_left);
+                        uiTitleView.setOutAnimation(ctx, android.R.anim.slide_out_right);
+                        uiTitleView.showPrevious();
                     }
                 }
             }
@@ -335,6 +335,18 @@ public class BangumiActivity extends BaseActivity implements BangumiDetailFragme
         bangumiModel.setUserProgressPosition(position);
         bangumiModel.setUserProgressAid(aid);
         bangumiReplyActivityListener.onBangumiReplyUpdate(bangumiModel.getUserProgressAid(), "1");
+    }
+
+    @Override
+    public boolean hideTitle()
+    {
+        return uiTitleView.hide();
+    }
+
+    @Override
+    public boolean showTitle()
+    {
+        return uiTitleView.show();
     }
 
     class BangumiDownloadServiceConnection implements ServiceConnection

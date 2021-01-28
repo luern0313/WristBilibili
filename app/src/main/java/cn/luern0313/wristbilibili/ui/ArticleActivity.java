@@ -13,7 +13,6 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-import android.widget.ViewFlipper;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -30,9 +29,10 @@ import cn.luern0313.wristbilibili.fragment.ArticleDetailFragment;
 import cn.luern0313.wristbilibili.fragment.ReplyFragment;
 import cn.luern0313.wristbilibili.models.article.ArticleModel;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
+import cn.luern0313.wristbilibili.widget.TitleView;
 
 
-public class ArticleActivity extends BaseActivity implements ArticleDetailFragment.ArticleDetailFragmentListener
+public class ArticleActivity extends BaseActivity implements ArticleDetailFragment.ArticleDetailFragmentListener, TitleView.TitleViewListener
 {
     Context ctx;
     Intent intent;
@@ -44,7 +44,7 @@ public class ArticleActivity extends BaseActivity implements ArticleDetailFragme
     PagerAdapter pagerAdapter;
     ArticleDetailActivityListener articleDetailActivityListener;
 
-    ViewFlipper uiTitle;
+    TitleView uiTitleView;
     ViewPager uiViewPager;
     ImageView uiLoadingImg;
     LinearLayout uiLoading;
@@ -75,7 +75,7 @@ public class ArticleActivity extends BaseActivity implements ArticleDetailFragme
         inflater = getLayoutInflater();
         layoutReplyLoading = inflater.inflate(R.layout.widget_loading, null);
 
-        uiTitle = findViewById(R.id.art_title_title);
+        uiTitleView = findViewById(R.id.art_title);
         uiViewPager = findViewById(R.id.art_viewpager);
         uiViewPager.setOffscreenPageLimit(1);
         uiLoadingImg = findViewById(R.id.art_loading_img);
@@ -90,66 +90,44 @@ public class ArticleActivity extends BaseActivity implements ArticleDetailFragme
         loadingImgAnim.start();
         uiLoading.setVisibility(View.VISIBLE);
 
-        runnableUi = new Runnable()
-        {
-            @Override
-            public void run()
+        runnableUi = () -> {
+            try
             {
-                try
-                {
-                    uiLoading.setVisibility(View.GONE);
-                    uiNoWeb.setVisibility(View.GONE);
-                    uiViewPager.setAdapter(pagerAdapter);
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                    handler.post(runnableNodata);
-                }
+                uiLoading.setVisibility(View.GONE);
+                uiNoWeb.setVisibility(View.GONE);
+                uiViewPager.setAdapter(pagerAdapter);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+                handler.post(runnableNodata);
             }
         };
 
-        runnableNoWeb = new Runnable()
-        {
-            @Override
-            public void run()
+        runnableNoWeb = () -> {
+            try
             {
-                try
-                {
-                    uiLoading.setVisibility(View.GONE);
-                    uiNoWeb.setVisibility(View.VISIBLE);
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
+                uiLoading.setVisibility(View.GONE);
+                uiNoWeb.setVisibility(View.VISIBLE);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
             }
         };
 
-        runnableNodata = new Runnable()
-        {
-            @Override
-            public void run()
+        runnableNodata = () -> {
+            try
             {
-                try
-                {
-                    ArticleActivity.this.findViewById(R.id.art_novideo).setVisibility(View.VISIBLE);
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
+                ArticleActivity.this.findViewById(R.id.art_novideo).setVisibility(View.VISIBLE);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
             }
         };
 
-        runnableLoadingFin = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                ArticleActivity.this.findViewById(R.id.article_article_loading).setVisibility(View.GONE);
-            }
-        };
+        runnableLoadingFin = () -> ArticleActivity.this.findViewById(R.id.article_article_loading).setVisibility(View.GONE);
 
         pagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager())
         {
@@ -182,46 +160,38 @@ public class ArticleActivity extends BaseActivity implements ArticleDetailFragme
             @Override
             public void onPageSelected(int position)
             {
-                while(uiTitle.getDisplayedChild() != position)
+                while(uiTitleView.getDisplayedChild() != position)
                 {
-                    if(uiTitle.getDisplayedChild() < position)
+                    uiTitleView.show();
+                    if(uiTitleView.getDisplayedChild() < position)
                     {
-                        uiTitle.setInAnimation(ctx, R.anim.slide_in_right);
-                        uiTitle.setOutAnimation(ctx, R.anim.slide_out_left);
-                        uiTitle.showNext();
+                        uiTitleView.setInAnimation(ctx, R.anim.slide_in_right);
+                        uiTitleView.setOutAnimation(ctx, R.anim.slide_out_left);
+                        uiTitleView.showNext();
                     }
                     else
                     {
-                        uiTitle.setInAnimation(ctx, android.R.anim.slide_in_left);
-                        uiTitle.setOutAnimation(ctx, android.R.anim.slide_out_right);
-                        uiTitle.showPrevious();
+                        uiTitleView.setInAnimation(ctx, android.R.anim.slide_in_left);
+                        uiTitleView.setOutAnimation(ctx, android.R.anim.slide_out_right);
+                        uiTitleView.showPrevious();
                     }
                 }
             }
         });
 
-        new Thread(new Runnable()
-        {
-            @Override
-            public void run()
+        new Thread(() -> {
+            try
             {
-                try
-                {
-                    articleModel = articleApi.getArticleModel();
-                    if(articleModel != null)
-                    {
-                        handler.post(runnableUi);
-                    }
-                    else
-                    {
-                        handler.post(runnableNodata);
-                    }
-                }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
-                    handler.post(runnableNoWeb);
-                }
+                articleModel = articleApi.getArticleModel();
+                if(articleModel != null)
+                    handler.post(runnableUi);
+                else
+                    handler.post(runnableNodata);
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+                handler.post(runnableNoWeb);
             }
         }).start();
     }
@@ -242,158 +212,143 @@ public class ArticleActivity extends BaseActivity implements ArticleDetailFragme
         }
         else if(viewId == R.id.article_article_bt_like)
         {
-            new Thread(new Runnable()
-            {
-                @Override
-                public void run()
+            new Thread(() -> {
+                try
                 {
-                    try
+                    if(articleModel.isUserLike())
                     {
-                        if(articleModel.isUserLike())
+                        String result = articleApi.likeArticle(2);
+                        if(result.equals(""))
                         {
-                            String result = articleApi.likeArticle(2);
-                            if(result.equals(""))
-                            {
-                                articleModel.setLike(articleModel.getLike() - 1);
-                                articleModel.setUserLike(false);
-                                Looper.prepare();
-                                Toast.makeText(ctx, "已取消喜欢...", Toast.LENGTH_SHORT).show();
-                            }
-                            else
-                            {
-                                Looper.prepare();
-                                Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
-                            }
+                            articleModel.setLike(articleModel.getLike() - 1);
+                            articleModel.setUserLike(false);
+                            Looper.prepare();
+                            Toast.makeText(ctx, "已取消喜欢...", Toast.LENGTH_SHORT).show();
                         }
                         else
                         {
-                            String result = articleApi.likeArticle(1);
-                            if(result.equals(""))
-                            {
-                                articleModel.setLike(articleModel.getLike() + 1);
-                                articleModel.setUserLike(true);
-                                Looper.prepare();
-                                Toast.makeText(ctx, "已喜欢专栏！", Toast.LENGTH_SHORT).show();
-                            }
-                            else
-                            {
-                                Looper.prepare();
-                                Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
-                            }
+                            Looper.prepare();
+                            Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
                         }
                     }
-                    catch (IOException e)
+                    else
                     {
-                        e.printStackTrace();
-                        Looper.prepare();
-                        Toast.makeText(ctx, ArticleActivity.this.getString(R.string.main_error_web), Toast.LENGTH_SHORT).show();
+                        String result = articleApi.likeArticle(1);
+                        if(result.equals(""))
+                        {
+                            articleModel.setLike(articleModel.getLike() + 1);
+                            articleModel.setUserLike(true);
+                            Looper.prepare();
+                            Toast.makeText(ctx, "已喜欢专栏！", Toast.LENGTH_SHORT).show();
+                        }
+                        else
+                        {
+                            Looper.prepare();
+                            Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
+                        }
                     }
-                    finally
-                    {
-                        EventBus.getDefault().post(articleModel);
-                        Looper.loop();
-                    }
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                    Looper.prepare();
+                    Toast.makeText(ctx, ArticleActivity.this.getString(R.string.main_error_web), Toast.LENGTH_SHORT).show();
+                }
+                finally
+                {
+                    EventBus.getDefault().post(articleModel);
+                    Looper.loop();
                 }
             }).start();
         }
         else if(viewId == R.id.article_article_bt_coin)
         {
-            new Thread(new Runnable()
-            {
-                @Override
-                public void run()
+            new Thread(() -> {
+                try
                 {
-                    try
+                    if(articleModel.getUserCoin() == 0)
                     {
-                        if(articleModel.getUserCoin() == 0)
+                        String result = articleApi.coinArticle();
+                        if(result.equals(""))
                         {
-                            String result = articleApi.coinArticle();
-                            if(result.equals(""))
-                            {
-                                articleModel.setCoin(articleModel.getCoin() + 1);
-                                articleModel.setUserCoin(1);
-                                Looper.prepare();
-                                Toast.makeText(ctx, "你投了一个硬币！", Toast.LENGTH_SHORT).show();
-                            }
-                            else
-                            {
-                                Looper.prepare();
-                                Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
-                            }
+                            articleModel.setCoin(articleModel.getCoin() + 1);
+                            articleModel.setUserCoin(1);
+                            Looper.prepare();
+                            Toast.makeText(ctx, "你投了一个硬币！", Toast.LENGTH_SHORT).show();
                         }
                         else
                         {
                             Looper.prepare();
-                            Toast.makeText(ctx, "投币失败，超过投币上限！", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
                         }
                     }
-                    catch (IOException e)
+                    else
                     {
-                        e.printStackTrace();
                         Looper.prepare();
-                        Toast.makeText(ctx, ArticleActivity.this.getString(R.string.main_error_web), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ctx, "投币失败，超过投币上限！", Toast.LENGTH_SHORT).show();
                     }
-                    finally
-                    {
-                        EventBus.getDefault().post(articleModel);
-                        Looper.loop();
-                    }
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                    Looper.prepare();
+                    Toast.makeText(ctx, ArticleActivity.this.getString(R.string.main_error_web), Toast.LENGTH_SHORT).show();
+                }
+                finally
+                {
+                    EventBus.getDefault().post(articleModel);
+                    Looper.loop();
                 }
             }).start();
         }
         else if(viewId == R.id.article_article_bt_fav)
         {
-            new Thread(new Runnable()
-            {
-                @Override
-                public void run()
+            new Thread(() -> {
+                try
                 {
-                    try
+                    if(articleModel.isUserFavor())
                     {
-                        if(articleModel.isUserFavor())
+                        String result = articleApi.favArticle(2);
+                        if(result.equals(""))
                         {
-                            String result = articleApi.favArticle(2);
-                            if(result.equals(""))
-                            {
-                                articleModel.setFavor(articleModel.getFavor() - 1);
-                                articleModel.setUserFavor(false);
-                                Looper.prepare();
-                                Toast.makeText(ctx, "已取消收藏...", Toast.LENGTH_SHORT).show();
-                            }
-                            else
-                            {
-                                Looper.prepare();
-                                Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
-                            }
+                            articleModel.setFavor(articleModel.getFavor() - 1);
+                            articleModel.setUserFavor(false);
+                            Looper.prepare();
+                            Toast.makeText(ctx, "已取消收藏...", Toast.LENGTH_SHORT).show();
                         }
                         else
                         {
-                            String result = articleApi.favArticle(1);
-                            if(result.equals(""))
-                            {
-                                articleModel.setFavor(articleModel.getFavor() + 1);
-                                articleModel.setUserFavor(true);
-                                Looper.prepare();
-                                Toast.makeText(ctx, "已收藏专栏！", Toast.LENGTH_SHORT).show();
-                            }
-                            else
-                            {
-                                Looper.prepare();
-                                Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
-                            }
+                            Looper.prepare();
+                            Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
                         }
                     }
-                    catch (IOException e)
+                    else
                     {
-                        e.printStackTrace();
-                        Looper.prepare();
-                        Toast.makeText(ctx, ArticleActivity.this.getString(R.string.main_error_web), Toast.LENGTH_SHORT).show();
+                        String result = articleApi.favArticle(1);
+                        if(result.equals(""))
+                        {
+                            articleModel.setFavor(articleModel.getFavor() + 1);
+                            articleModel.setUserFavor(true);
+                            Looper.prepare();
+                            Toast.makeText(ctx, "已收藏专栏！", Toast.LENGTH_SHORT).show();
+                        }
+                        else
+                        {
+                            Looper.prepare();
+                            Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
+                        }
                     }
-                    finally
-                    {
-                        EventBus.getDefault().post(articleModel);
-                        Looper.loop();
-                    }
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                    Looper.prepare();
+                    Toast.makeText(ctx, ArticleActivity.this.getString(R.string.main_error_web), Toast.LENGTH_SHORT).show();
+                }
+                finally
+                {
+                    EventBus.getDefault().post(articleModel);
+                    Looper.loop();
                 }
             }).start();
         }
@@ -408,37 +363,32 @@ public class ArticleActivity extends BaseActivity implements ArticleDetailFragme
         }
         else if(viewId == R.id.article_card_follow)
         {
-            new Thread(new Runnable()
-            {
-                @Override
-                public void run()
+            new Thread(() -> {
+                try
                 {
-                    try
+                    String result = articleApi.followUp();
+                    if(result.equals(""))
                     {
-                        String result = articleApi.followUp();
-                        if(result.equals(""))
-                        {
-                            articleModel.setUpFansNum(articleModel.getUpFansNum() + 1);
-                            Looper.prepare();
-                            Toast.makeText(ctx, "已关注UP主", Toast.LENGTH_SHORT).show();
-                        }
-                        else
-                        {
-                            Looper.prepare();
-                            Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                    catch (IOException e)
-                    {
-                        e.printStackTrace();
+                        articleModel.setUpFansNum(articleModel.getUpFansNum() + 1);
                         Looper.prepare();
-                        Toast.makeText(ctx, ArticleActivity.this.getString(R.string.main_error_web), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ctx, "已关注UP主", Toast.LENGTH_SHORT).show();
                     }
-                    finally
+                    else
                     {
-                        EventBus.getDefault().post(articleModel);
-                        Looper.loop();
+                        Looper.prepare();
+                        Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
                     }
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                    Looper.prepare();
+                    Toast.makeText(ctx, ArticleActivity.this.getString(R.string.main_error_web), Toast.LENGTH_SHORT).show();
+                }
+                finally
+                {
+                    EventBus.getDefault().post(articleModel);
+                    Looper.loop();
                 }
             }).start();
         }
@@ -451,37 +401,44 @@ public class ArticleActivity extends BaseActivity implements ArticleDetailFragme
         if(resultCode != 0) return;
         if(requestCode == RESULT_DETAIL_SHARE)
         {
-            new Thread(new Runnable()
-            {
-                @Override
-                public void run()
+            new Thread(() -> {
+                try
                 {
-                    try
+                    String result = articleApi.shareArticle(data.getStringExtra("text"));
+                    if(result.equals(""))
                     {
-                        String result = articleApi.shareArticle(data.getStringExtra("text"));
-                        if(result.equals(""))
-                        {
-                            Looper.prepare();
-                            Toast.makeText(ctx, "发送成功！", Toast.LENGTH_SHORT).show();
-                            Looper.loop();
-                        }
-                        else
-                        {
-                            Looper.prepare();
-                            Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
-                            Looper.loop();
-                        }
-                    }
-                    catch (IOException e)
-                    {
-                        e.printStackTrace();
                         Looper.prepare();
-                        Toast.makeText(ctx, ArticleActivity.this.getString(R.string.main_error_web), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ctx, "发送成功！", Toast.LENGTH_SHORT).show();
+                        Looper.loop();
+                    }
+                    else
+                    {
+                        Looper.prepare();
+                        Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
                         Looper.loop();
                     }
                 }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                    Looper.prepare();
+                    Toast.makeText(ctx, ArticleActivity.this.getString(R.string.main_error_web), Toast.LENGTH_SHORT).show();
+                    Looper.loop();
+                }
             }).start();
         }
+    }
+
+    @Override
+    public boolean hideTitle()
+    {
+        return uiTitleView.hide();
+    }
+
+    @Override
+    public boolean showTitle()
+    {
+        return uiTitleView.show();
     }
 
     public interface ArticleDetailActivityListener

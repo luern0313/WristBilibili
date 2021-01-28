@@ -1,5 +1,6 @@
 package cn.luern0313.wristbilibili.fragment;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import cn.luern0313.wristbilibili.R;
@@ -23,6 +25,9 @@ import cn.luern0313.wristbilibili.api.RecommendApi;
 import cn.luern0313.wristbilibili.models.RecommendModel;
 import cn.luern0313.wristbilibili.ui.VideoActivity;
 import cn.luern0313.wristbilibili.util.ColorUtil;
+import cn.luern0313.wristbilibili.util.DataProcessUtil;
+import cn.luern0313.wristbilibili.util.ListViewTouchListener;
+import cn.luern0313.wristbilibili.widget.TitleView;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
 /**
@@ -38,6 +43,7 @@ public class RecommendFragment extends Fragment
     private ListView uiListView;
     private WaveSwipeRefreshLayout uiWaveSwipeRefreshLayout;
     private View uiLoadingView;
+    private TitleView.TitleViewListener titleViewListener;
 
     private RecommendApi recommendApi;
     private final ArrayList<RecommendModel> recommendVideoArrayList = new ArrayList<>();
@@ -46,6 +52,7 @@ public class RecommendFragment extends Fragment
     Handler handler = new Handler();
     private Runnable runnableUi, runnableNoWeb, runnableNoMore, RunnableNoWebH;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(final LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState)
     {
@@ -58,79 +65,38 @@ public class RecommendFragment extends Fragment
         uiListView.addFooterView(uiLoadingView);
         uiWaveSwipeRefreshLayout = rootLayout.findViewById(R.id.rc_swipe);
         uiWaveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
-        //noinspection ConstantConditions
-        uiWaveSwipeRefreshLayout.setWaveColor(ColorUtil.getColor(R.attr.colorPrimary, getContext()));
-        uiWaveSwipeRefreshLayout.setOnRefreshListener(new WaveSwipeRefreshLayout.OnRefreshListener()
-        {
-            @Override
-            public void onRefresh()
-            {
-                handler.post(new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        isLoading = true;
-                        getRecommend(1);
-                    }
-                });
-            }
-        });
+        uiWaveSwipeRefreshLayout.setWaveColor(ColorUtil.getColor(R.attr.colorPrimary, ctx));
+        uiWaveSwipeRefreshLayout.setTopOffsetOfWave(DataProcessUtil.dip2px(33));
+        uiWaveSwipeRefreshLayout.setOnRefreshListener(() -> handler.post(() -> {
+            isLoading = true;
+            getRecommend(1);
+        }));
 
-        adapterListener = new RecommendAdapter.RecommendAdapterListener()
-        {
-            @Override
-            public void onClick(int viewId, int position)
-            {
-                onViewClick(viewId, position);
-            }
-        };
+        adapterListener = this::onViewClick;
 
         recommendAdapter = new RecommendAdapter(inflater, recommendVideoArrayList, uiListView, adapterListener);
         uiListView.setAdapter(recommendAdapter);
 
-        runnableUi = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                rootLayout.findViewById(R.id.rc_noweb).setVisibility(View.GONE);
-                uiListView.setVisibility(View.VISIBLE);
-                uiWaveSwipeRefreshLayout.setRefreshing(false);
-                isLoading = false;
-                recommendAdapter.notifyDataSetChanged();
-            }
+        runnableUi = () -> {
+            rootLayout.findViewById(R.id.rc_noweb).setVisibility(View.GONE);
+            uiListView.setVisibility(View.VISIBLE);
+            uiWaveSwipeRefreshLayout.setRefreshing(false);
+            isLoading = false;
+            recommendAdapter.notifyDataSetChanged();
         };
 
-        runnableNoWeb = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                uiWaveSwipeRefreshLayout.setRefreshing(false);
-                rootLayout.findViewById(R.id.rc_noweb).setVisibility(View.VISIBLE);
-                isLoading = false;
-            }
+        runnableNoWeb = () -> {
+            uiWaveSwipeRefreshLayout.setRefreshing(false);
+            rootLayout.findViewById(R.id.rc_noweb).setVisibility(View.VISIBLE);
+            isLoading = false;
         };
 
-        RunnableNoWebH = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                ((TextView) uiLoadingView.findViewById(R.id.wid_load_button)).setText(ctx.getString(R.string.main_tip_no_more_web));
-                uiLoadingView.findViewById(R.id.wid_load_button).setVisibility(View.VISIBLE);
-            }
+        RunnableNoWebH = () -> {
+            ((TextView) uiLoadingView.findViewById(R.id.wid_load_button)).setText(ctx.getString(R.string.main_tip_no_more_web));
+            uiLoadingView.findViewById(R.id.wid_load_button).setVisibility(View.VISIBLE);
         };
 
-        runnableNoMore = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                ((TextView) uiLoadingView.findViewById(R.id.wid_load_text)).setText(ctx.getString(R.string.main_tip_no_more_data));
-            }
-        };
+        runnableNoMore = () -> ((TextView) uiLoadingView.findViewById(R.id.wid_load_text)).setText(ctx.getString(R.string.main_tip_no_more_data));
 
         uiListView.setOnScrollListener(new AbsListView.OnScrollListener()
         {
@@ -150,6 +116,8 @@ public class RecommendFragment extends Fragment
             }
         });
 
+        uiListView.setOnTouchListener(new ListViewTouchListener(uiListView, titleViewListener));
+
         uiListView.setVisibility(View.GONE);
         uiWaveSwipeRefreshLayout.setRefreshing(true);
         getRecommend(2);
@@ -159,35 +127,30 @@ public class RecommendFragment extends Fragment
 
     private void getRecommend(final int mode) //1上 2下
     {
-        new Thread(new Runnable()
-        {
-            @Override
-            public void run()
+        new Thread(() -> {
+            try
             {
-                try
+                ArrayList<RecommendModel> rankingModelArrayList = recommendApi.getRecommendVideo(mode == 1);
+                if(rankingModelArrayList != null && rankingModelArrayList.size() != 0)
                 {
-                    ArrayList<RecommendModel> rankingModelArrayList = recommendApi.getRecommendVideo(mode == 1);
-                    if(rankingModelArrayList != null && rankingModelArrayList.size() != 0)
+                    if(mode == 1)
                     {
-                        if(mode == 1)
-                        {
-                            recommendVideoArrayList.add(0, new RecommendModel(1));
-                            recommendVideoArrayList.addAll(0, rankingModelArrayList);
-                        }
-                        else
-                            recommendVideoArrayList.addAll(rankingModelArrayList);
-                        handler.post(runnableUi);
+                        recommendVideoArrayList.add(0, new RecommendModel(1));
+                        recommendVideoArrayList.addAll(0, rankingModelArrayList);
                     }
                     else
-                    {
-                        handler.post(runnableNoMore);
-                    }
+                        recommendVideoArrayList.addAll(rankingModelArrayList);
+                    handler.post(runnableUi);
                 }
-                catch (IOException e)
+                else
                 {
-                    handler.post(runnableNoWeb);
-                    e.printStackTrace();
+                    handler.post(runnableNoMore);
                 }
+            }
+            catch (IOException e)
+            {
+                handler.post(runnableNoWeb);
+                e.printStackTrace();
             }
         }).start();
     }
@@ -210,5 +173,13 @@ public class RecommendFragment extends Fragment
             recommendVideoArrayList.remove(position);
             getRecommend(1);
         }
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context)
+    {
+        super.onAttach(context);
+        if(context instanceof TitleView.TitleViewListener)
+            titleViewListener = (TitleView.TitleViewListener) context;
     }
 }

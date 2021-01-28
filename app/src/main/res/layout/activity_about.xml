@@ -1,101 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:ignore="SmallSp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingLeft="19dp"
+        android:paddingRight="19dp">
 
-        <RelativeLayout
-            android:id="@+id/about_title_layout"
+        <cn.luern0313.wristbilibili.widget.TitleView
+            android:id="@+id/about_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/colorTitleBackground"
-            android:gravity="center_vertical"
-            android:paddingBottom="4dp"
-            android:paddingTop="10dp">
+            app:mode="back"
+            app:title="@string/about_title" />
 
-            <TextView
-                android:id="@+id/about_title_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:text="关于"
-                android:textColor="@color/white" />
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="92dp"
+            android:layout_height="92dp"
+            android:layout_marginTop="6dp"
+            android:src="@mipmap/ic_launcher_new2" />
 
-            <ImageView
-                android:id="@+id/about_title_extraicon"
-                android:layout_width="12dp"
-                android:layout_height="19dp"
-                android:layout_marginStart="2dp"
-                android:layout_toStartOf="@+id/about_title_title"
-                android:rotation="90"
-                android:src="@drawable/icon_extra" />
+        <TextView
+            android:id="@+id/about_app_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textStyle="bold" />
 
-        </RelativeLayout>
-
-        <LinearLayout
+        <TextView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
             android:gravity="center_horizontal"
-            android:orientation="vertical"
-            android:paddingLeft="19dp"
-            android:paddingRight="19dp">
+            android:text="@string/about_app_desc"
+            android:textSize="12sp" />
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:layout_width="92dp"
-                android:layout_height="92dp"
-                android:layout_marginTop="6dp"
-                android:src="@mipmap/ic_launcher_new_round" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:gravity="center_horizontal"
+            android:text="@string/about_app_permission"
+            android:textSize="10sp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="腕上哔哩v3.1"
-                android:textStyle="bold" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="@string/about_app_author"
+            android:textSize="12sp" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="6dp"
-                android:gravity="center_horizontal"
-                android:text="集成部分b站功能的非官方客户端\n\n求应用商店五星好评！"
-                android:textSize="12sp" />
+        <ImageView
+            android:id="@+id/about_33"
+            android:layout_width="120dp"
+            android:layout_height="120dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:layout_marginTop="4dp"
-                android:gravity="center_horizontal"
-                android:text="请注意！如有连不上网、查看不了本地文件等等问题，请先前往系统设置-权限管理，将此应用相应权限打开！每次更新或重新安装后也要重新设置权限！"
-                android:textSize="10sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:text="程序 : luern0313\n图标设计制作 : 一佳一等于一\n\n部分图标使用或修改自b站客户端和网页的资源，该部分图标版权归原作者所有\n\n本程序非商业使用，仅因兴趣所作...b站不要起诉我啊，要是起诉我，我就...我就...我就哭给你看......有什么事情咱们商量着来好不好......"
-                android:textSize="12sp" />
-
-            <ImageView
-                android:id="@+id/about_33"
-                android:layout_width="120dp"
-                android:layout_height="120dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:layout_marginTop="10dp"
-                android:gravity="center_horizontal"
-                android:text="Copyright © 2014-2020 setTile luern0313.\nAll rights reserved.\n哔哩哔哩 - ( ゜- ゜)つロ 乾杯~\n另外祝杨永信及同类机构负责人\n早！日！爆！炸！\nhttps://996.icu/  "
-                android:textSize="10sp" />
-        </LinearLayout>
-
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:gravity="center_horizontal"
+            android:text="@string/about_right"
+            android:textSize="10sp" />
     </LinearLayout>
+
 </ScrollView>

@@ -82,38 +82,28 @@ public class FollowmeActivity extends BaseActivity
         uiVideoCoin = findViewById(R.id.fme_coin);
         uiVideoCoinImg = findViewById(R.id.fme_coin_img);
 
-        runnVideo = new Runnable()
-        {
-            @Override
-            public void run()
+        runnVideo = () -> {
+            try
             {
-                try
-                {
-                    uiVideoTitle.setText(listVideoModel.getVideoTitle());
-                    if(listVideoModel.getVideoTitle().startsWith("【互动"))
-                        uiVideoStarLin.setVisibility(View.VISIBLE);
-                    uiVideoLC.setVisibility(View.VISIBLE);
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
+                uiVideoTitle.setText(listVideoModel.getTitle());
+                if(listVideoModel.getTitle().startsWith("【互动"))
+                    uiVideoStarLin.setVisibility(View.VISIBLE);
+                uiVideoLC.setVisibility(View.VISIBLE);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
             }
         };
 
-        runnImg = new Runnable()
-        {
-            @Override
-            public void run()
+        runnImg = () -> {
+            try
             {
-                try
-                {
-                    uiVideoImg.setImageBitmap(videoCover);
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
+                uiVideoImg.setImageBitmap(videoCover);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
             }
         };
 
@@ -121,162 +111,102 @@ public class FollowmeActivity extends BaseActivity
             findViewById(R.id.fme_nologin).setVisibility(View.VISIBLE);
         else
         {
-            new Thread(new Runnable()
-            {
-                @Override
-                public void run()
+            new Thread(() -> {
+                try
                 {
-                    try
-                    {
-                        listVideoModel = userApi.getUserVideo(1).get(0);
-                        videoDetail = new VideoApi("", listVideoModel.getBvid());
-                        handler.post(runnVideo);
+                    listVideoModel = userApi.getUserVideo(1).get(0);
+                    videoDetail = new VideoApi("", listVideoModel.getBvid());
+                    handler.post(runnVideo);
 
-                        byte[] picByte = NetWorkUtil.readStream(NetWorkUtil.get(listVideoModel.getCover()).body().byteStream());
-                        videoCover = BitmapFactory.decodeByteArray(picByte, 0, picByte.length);
-                        handler.post(runnImg);
-                    }
-                    catch (Exception e)
-                    {
-                        e.printStackTrace();
-                    }
+                    byte[] picByte = NetWorkUtil.readStream(NetWorkUtil.get(listVideoModel.getCover()).body().byteStream());
+                    videoCover = BitmapFactory.decodeByteArray(picByte, 0, picByte.length);
+                    handler.post(runnImg);
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
                 }
             }).start();
         }
 
-        cardView.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                cardViewText.setText("已关注");
-                cardViewText.setBackgroundResource(R.drawable.shape_bg_anre_followbgyes);
-                new Thread(new Runnable()
+        cardView.setOnClickListener(v -> {
+            cardViewText.setText("已关注");
+            cardViewText.setBackgroundResource(R.drawable.shape_bg_anre_followbgyes);
+            new Thread(() -> {
+                try
                 {
-                    @Override
-                    public void run()
-                    {
-                        try
-                        {
-                            userApi.follow();
-                        }
-                        catch (Exception e)
-                        {
-                            e.printStackTrace();
-                            Looper.prepare();
-                            Toast.makeText(ctx, "关注失败...", Toast.LENGTH_SHORT).show();
-                            Looper.loop();
-                        }
-                    }
-                }).start();
-            }
+                    userApi.follow();
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                    Looper.prepare();
+                    Toast.makeText(ctx, "关注失败...", Toast.LENGTH_SHORT).show();
+                    Looper.loop();
+                }
+            }).start();
         });
 
-        uiVideo.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                if(videoDetail != null)
-                    startActivity(VideoActivity.getActivityIntent(ctx, "", videoDetail.bvid));
-            }
+        uiVideo.setOnClickListener(v -> {
+            if(videoDetail != null)
+                startActivity(VideoActivity.getActivityIntent(ctx, "", videoDetail.bvid));
         });
 
-        uiVote.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                uiVote.setText("感谢投票~");
-                uiVote.setBackgroundResource(R.drawable.shape_bg_anre_followbgyes);
-                new Thread(new Runnable()
+        uiVote.setOnClickListener(v -> {
+            uiVote.setText("感谢投票~");
+            uiVote.setBackgroundResource(R.drawable.shape_bg_anre_followbgyes);
+            new Thread(() -> {
+                try
                 {
-                    @Override
-                    public void run()
-                    {
-                        try
-                        {
-                            videoDetail.scoreVideo(5);
-                        }
-                        catch (IOException e)
-                        {
-                            e.printStackTrace();
-                        }
-                    }
-                }).start();
-            }
+                    videoDetail.scoreVideo(5);
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+            }).start();
         });
 
-        uiVideoStarLin.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                uiVideoStar.setImageResource(R.drawable.img_fme_star_yes);
-                new Thread(new Runnable()
+        uiVideoStarLin.setOnClickListener(v -> {
+            uiVideoStar.setImageResource(R.drawable.img_fme_star_yes);
+            new Thread(() -> {
+                try
                 {
-                    @Override
-                    public void run()
-                    {
-                        try
-                        {
-                            videoDetail.scoreVideo(5);
-                        }
-                        catch (IOException e)
-                        {
-                            e.printStackTrace();
-                        }
-                    }
-                }).start();
-            }
+                    videoDetail.scoreVideo(5);
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+            }).start();
         });
 
-        uiVideoLike.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                uiVideoLikeImg.setImageResource(R.drawable.icon_like_yes);
-                new Thread(new Runnable()
+        uiVideoLike.setOnClickListener(v -> {
+            uiVideoLikeImg.setImageResource(R.drawable.icon_like_yes);
+            new Thread(() -> {
+                try
                 {
-                    @Override
-                    public void run()
-                    {
-                        try
-                        {
-                            videoDetail.likeVideo(1);
-                        }
-                        catch (Exception e)
-                        {
-                            e.printStackTrace();
-                        }
-                    }
-                }).start();
-            }
+                    videoDetail.likeVideo(1);
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }).start();
         });
 
-        uiVideoCoin.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                uiVideoCoinImg.setImageResource(R.drawable.icon_coin_yes);
-                new Thread(new Runnable()
+        uiVideoCoin.setOnClickListener(v -> {
+            uiVideoCoinImg.setImageResource(R.drawable.icon_coin_yes);
+            new Thread(() -> {
+                try
                 {
-                    @Override
-                    public void run()
-                    {
-                        try
-                        {
-                            videoDetail.coinVideo(2);
-                        }
-                        catch (Exception e)
-                        {
-                            e.printStackTrace();
-                        }
-                    }
-                }).start();
-            }
+                    videoDetail.coinVideo(2);
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }).start();
         });
     }
 }

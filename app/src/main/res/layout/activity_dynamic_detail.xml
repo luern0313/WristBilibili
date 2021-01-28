@@ -1,66 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <RelativeLayout
-        android:id="@+id/dynamic_detail_title_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorTitleBackground"
-        android:gravity="center_vertical"
-        android:paddingBottom="4dp"
-        android:paddingTop="10dp">
-
-        <ViewFlipper
-            android:id="@+id/dynamic_detail_title_title"
-            android:layout_width="wrap_content"
-            android:layout_height="19dp"
-            android:layout_centerHorizontal="true">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="详情"
-                android:textColor="@color/white"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="评论"
-                android:textColor="@color/white"/>
-
-        </ViewFlipper>
-
-        <ImageView
-            android:id="@+id/dynamic_detail_title_extraicon"
-            android:layout_width="12dp"
-            android:layout_height="19dp"
-            android:layout_toStartOf="@+id/dynamic_detail_title_title"
-            android:rotation="90"
-            android:src="@drawable/icon_extra" />
-
-        <ImageView
-            android:id="@+id/dynamic_detail_title_extraicon2"
-            android:layout_width="12dp"
-            android:layout_height="19dp"
-            android:layout_toEndOf="@+id/dynamic_detail_title_title"
-            android:rotation="270"
-            android:src="@drawable/icon_extra" />
-
-    </RelativeLayout>
+    android:layout_height="match_parent"
+    tools:ignore="ContentDescription">
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/dynamic_detail_viewpager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/dynamic_detail_title_layout" />
+        android:layout_height="match_parent" />
+
+    <cn.luern0313.wristbilibili.widget.TitleView
+        android:id="@+id/dynamic_detail_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:mode="viewpager"
+        app:title="@string/dynamic_detail_title" />
 
     <LinearLayout
         android:id="@+id/dynamic_detail_loading"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/dynamic_detail_title_layout"
+        android:layout_below="@+id/dynamic_detail_title"
         android:background="?android:attr/colorBackground"
         android:clickable="true"
         android:focusable="true"
@@ -77,7 +39,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="加载中. . ."
+            android:text="@string/main_tip_loading"
             android:textSize="13sp" />
     </LinearLayout>
 
@@ -85,7 +47,7 @@
         android:id="@+id/dynamic_detail_noweb"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/dynamic_detail_title_layout"
+        android:layout_below="@+id/dynamic_detail_title"
         android:background="?android:attr/colorBackground"
         android:clickable="true"
         android:focusable="true"
@@ -98,12 +60,12 @@
             android:layout_width="wrap_content"
             android:layout_height="92dp"
             android:padding="6dp"
-            android:src="@drawable/img_noweb" />
+            android:src="@drawable/img_no_web" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="加载失败\n可能是没有网络？"
+            android:text="@string/main_tip_no_web"
             android:textSize="13sp" />
     </LinearLayout>
 
@@ -111,7 +73,7 @@
         android:id="@+id/dynamic_detail_nothing"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/dynamic_detail_title_layout"
+        android:layout_below="@+id/dynamic_detail_title"
         android:background="?android:attr/colorBackground"
         android:clickable="true"
         android:focusable="true"
@@ -124,12 +86,12 @@
             android:layout_width="wrap_content"
             android:layout_height="92dp"
             android:padding="6dp"
-            android:src="@drawable/img_noweb" />
+            android:src="@drawable/img_no_web" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="  什么都没找到..."
+            android:text="@string/main_tip_no_data"
             android:textSize="13sp" />
     </LinearLayout>
 

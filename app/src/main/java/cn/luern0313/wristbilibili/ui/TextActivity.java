@@ -6,15 +6,15 @@ import android.os.Bundle;
 import android.text.Html;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
 import cn.luern0313.wristbilibili.R;
+import cn.luern0313.wristbilibili.widget.TitleView;
 
 public class TextActivity extends BaseActivity
 {
     Context ctx;
     Intent intent;
 
-    TextView uiTitle;
+    TitleView uiTitle;
     TextView uiText;
 
     @Override
@@ -25,9 +25,9 @@ public class TextActivity extends BaseActivity
         ctx = this;
         intent = getIntent();
 
-        uiTitle = findViewById(R.id.text_title_title);
+        uiTitle = findViewById(R.id.text_title);
         uiText = findViewById(R.id.text_textview);
-        uiTitle.setText(intent.getStringExtra("title"));
+        uiTitle.setTitle(intent.getStringExtra("title"));
         uiText.setText(Html.fromHtml(intent.getStringExtra("text")));
         //fromHtml(, new MImageGetter(uiText, ctx), null)
     }

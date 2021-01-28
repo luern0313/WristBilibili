@@ -1,8 +1,8 @@
 package cn.luern0313.wristbilibili.fragment;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -19,12 +19,17 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.adapter.ListArticleAdapter;
-import cn.luern0313.wristbilibili.api.FavorArticleApi;
+import cn.luern0313.wristbilibili.api.FavorOtherApi;
 import cn.luern0313.wristbilibili.models.ListArticleModel;
 import cn.luern0313.wristbilibili.ui.ArticleActivity;
+import cn.luern0313.wristbilibili.util.ColorUtil;
+import cn.luern0313.wristbilibili.util.DataProcessUtil;
+import cn.luern0313.wristbilibili.util.ListViewTouchListener;
+import cn.luern0313.wristbilibili.widget.TitleView;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
 /**
@@ -39,10 +44,11 @@ public class FavorArticleFragment extends Fragment
     private View layoutLoading;
     private WaveSwipeRefreshLayout waveSwipeRefreshLayout;
 
-    private FavorArticleApi favorArticleApi;
+    private FavorOtherApi favorArticleApi;
     private ArrayList<ListArticleModel> listArticleModelArrayList;
     private ListArticleAdapter listArticleAdapter;
     private ListArticleAdapter.ListArticleAdapterListener listArticleAdapterListener;
+    private TitleView.TitleViewListener titleViewListener;
 
     private final Handler handler = new Handler();
     private Runnable runnableUi, runnableNoWeb, runnableNoData, runnableMore, runnableMoreNoWeb, runnableMoreNoData;
@@ -55,6 +61,7 @@ public class FavorArticleFragment extends Fragment
         return new FavorArticleFragment();
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
@@ -65,23 +72,12 @@ public class FavorArticleFragment extends Fragment
         layoutLoading = inflater.inflate(R.layout.widget_loading, null);
         waveSwipeRefreshLayout = rootLayout.findViewById(R.id.favor_article_swipe);
         waveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
-        waveSwipeRefreshLayout.setWaveColor(Color.argb(255, 250, 114, 152));
-        waveSwipeRefreshLayout.setOnRefreshListener(new WaveSwipeRefreshLayout.OnRefreshListener()
-        {
-            @Override
-            public void onRefresh()
-            {
-                handler.post(new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        getFavorArticle();
-                        waveSwipeRefreshLayout.setRefreshing(false);
-                    }
-                });
-            }
-        });
+        waveSwipeRefreshLayout.setWaveColor(ColorUtil.getColor(R.attr.colorPrimary, ctx));
+        waveSwipeRefreshLayout.setTopOffsetOfWave(DataProcessUtil.dip2px(33));
+        waveSwipeRefreshLayout.setOnRefreshListener(() -> handler.post(() -> {
+            getFavorArticle();
+            waveSwipeRefreshLayout.setRefreshing(false);
+        }));
         uiListView.addFooterView(layoutLoading, null, true);
         uiListView.setHeaderDividersEnabled(false);
 
@@ -100,82 +96,45 @@ public class FavorArticleFragment extends Fragment
             }
         };
 
-        runnableUi = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                isFavorLoading = false;
-                rootLayout.findViewById(R.id.favor_article_no_web).setVisibility(View.GONE);
-                rootLayout.findViewById(R.id.favor_article_no_data).setVisibility(View.GONE);
-                listArticleAdapter = new ListArticleAdapter(inflater, listArticleModelArrayList, uiListView, listArticleAdapterListener);
-                uiListView.setAdapter(listArticleAdapter);
-                uiListView.setVisibility(View.VISIBLE);
-                waveSwipeRefreshLayout.setRefreshing(false);
-            }
+        runnableUi = () -> {
+            isFavorLoading = false;
+            rootLayout.findViewById(R.id.favor_article_no_web).setVisibility(View.GONE);
+            rootLayout.findViewById(R.id.favor_article_no_data).setVisibility(View.GONE);
+            listArticleAdapter = new ListArticleAdapter(inflater, listArticleModelArrayList, uiListView, listArticleAdapterListener);
+            uiListView.setAdapter(listArticleAdapter);
+            uiListView.setVisibility(View.VISIBLE);
+            waveSwipeRefreshLayout.setRefreshing(false);
         };
 
-        runnableNoWeb = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                rootLayout.findViewById(R.id.favor_article_no_web).setVisibility(View.VISIBLE);
-                rootLayout.findViewById(R.id.favor_article_no_data).setVisibility(View.GONE);
-                waveSwipeRefreshLayout.setRefreshing(false);
-            }
+        runnableNoWeb = () -> {
+            rootLayout.findViewById(R.id.favor_article_no_web).setVisibility(View.VISIBLE);
+            rootLayout.findViewById(R.id.favor_article_no_data).setVisibility(View.GONE);
+            waveSwipeRefreshLayout.setRefreshing(false);
         };
 
-        runnableNoData = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                rootLayout.findViewById(R.id.favor_article_no_web).setVisibility(View.GONE);
-                rootLayout.findViewById(R.id.favor_article_no_data).setVisibility(View.VISIBLE);
-                waveSwipeRefreshLayout.setRefreshing(false);
-            }
+        runnableNoData = () -> {
+            rootLayout.findViewById(R.id.favor_article_no_web).setVisibility(View.GONE);
+            rootLayout.findViewById(R.id.favor_article_no_data).setVisibility(View.VISIBLE);
+            waveSwipeRefreshLayout.setRefreshing(false);
         };
 
-        runnableMore = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                isFavorLoading = false;
-                listArticleAdapter.notifyDataSetChanged();
-            }
+        runnableMore = () -> {
+            isFavorLoading = false;
+            listArticleAdapter.notifyDataSetChanged();
         };
 
-        runnableMoreNoWeb = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                ((TextView) layoutLoading.findViewById(R.id.wid_load_text)).setText(ctx.getString(R.string.main_tip_no_web));
-                layoutLoading.findViewById(R.id.wid_load_button).setVisibility(View.VISIBLE);
-                isFavorLoading = false;
-            }
+        runnableMoreNoWeb = () -> {
+            ((TextView) layoutLoading.findViewById(R.id.wid_load_text)).setText(ctx.getString(R.string.main_tip_no_web));
+            layoutLoading.findViewById(R.id.wid_load_button).setVisibility(View.VISIBLE);
+            isFavorLoading = false;
         };
 
-        runnableMoreNoData = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                ((TextView) layoutLoading.findViewById(R.id.wid_load_text)).setText(ctx.getString(R.string.main_tip_no_more_data));
-            }
-        };
+        runnableMoreNoData = () -> ((TextView) layoutLoading.findViewById(R.id.wid_load_text)).setText(ctx.getString(R.string.main_tip_no_more_data));
 
-        layoutLoading.findViewById(R.id.wid_load_button).setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                ((TextView) layoutLoading.findViewById(R.id.wid_load_text)).setText(ctx.getString(R.string.main_tip_no_more_data_loading));
-                layoutLoading.findViewById(R.id.wid_load_button).setVisibility(View.GONE);
-                getMoreFavorArticle();
-            }
+        layoutLoading.findViewById(R.id.wid_load_button).setOnClickListener(v -> {
+            ((TextView) layoutLoading.findViewById(R.id.wid_load_text)).setText(ctx.getString(R.string.main_tip_no_more_data_loading));
+            layoutLoading.findViewById(R.id.wid_load_button).setVisibility(View.GONE);
+            getMoreFavorArticle();
         });
 
         uiListView.setOnScrollListener(new AbsListView.OnScrollListener()
@@ -195,6 +154,8 @@ public class FavorArticleFragment extends Fragment
             }
         });
 
+        uiListView.setOnTouchListener(new ListViewTouchListener(uiListView, titleViewListener));
+
         waveSwipeRefreshLayout.setRefreshing(true);
         getFavorArticle();
 
@@ -205,25 +166,20 @@ public class FavorArticleFragment extends Fragment
     {
         isFavorLoading = true;
         favorPage = 1;
-        new Thread(new Runnable()
-        {
-            @Override
-            public void run()
+        new Thread(() -> {
+            try
             {
-                try
-                {
-                    favorArticleApi = new FavorArticleApi();
-                    listArticleModelArrayList = favorArticleApi.getFavorArticle(favorPage);
-                    if(listArticleModelArrayList != null && listArticleModelArrayList.size() > 0)
-                        handler.post(runnableUi);
-                    else
-                        handler.post(runnableNoData);
-                }
-                catch (IOException e)
-                {
-                    handler.post(runnableNoWeb);
-                    e.printStackTrace();
-                }
+                favorArticleApi = new FavorOtherApi();
+                listArticleModelArrayList = favorArticleApi.getFavorArticle(favorPage);
+                if(listArticleModelArrayList != null && listArticleModelArrayList.size() > 0)
+                    handler.post(runnableUi);
+                else
+                    handler.post(runnableNoData);
+            }
+            catch (IOException e)
+            {
+                handler.post(runnableNoWeb);
+                e.printStackTrace();
             }
         }).start();
     }
@@ -232,28 +188,23 @@ public class FavorArticleFragment extends Fragment
     {
         isFavorLoading = true;
         favorPage++;
-        new Thread(new Runnable()
-        {
-            @Override
-            public void run()
+        new Thread(() -> {
+            try
             {
-                try
+                favorArticleApi = new FavorOtherApi();
+                ArrayList<ListArticleModel> articleModelArrayList = favorArticleApi.getFavorArticle(favorPage);
+                if(articleModelArrayList.size() > 0)
                 {
-                    favorArticleApi = new FavorArticleApi();
-                    ArrayList<ListArticleModel> articleModelArrayList = favorArticleApi.getFavorArticle(favorPage);
-                    if(articleModelArrayList.size() > 0)
-                    {
-                        listArticleModelArrayList.addAll(articleModelArrayList);
-                        handler.post(runnableMore);
-                    }
-                    else
-                        handler.post(runnableMoreNoData);
+                    listArticleModelArrayList.addAll(articleModelArrayList);
+                    handler.post(runnableMore);
                 }
-                catch (IOException e)
-                {
-                    handler.post(runnableMoreNoWeb);
-                    e.printStackTrace();
-                }
+                else
+                    handler.post(runnableMoreNoData);
+            }
+            catch (IOException e)
+            {
+                handler.post(runnableMoreNoWeb);
+                e.printStackTrace();
             }
         }).start();
     }
@@ -274,41 +225,38 @@ public class FavorArticleFragment extends Fragment
         {
             new AlertDialog.Builder(ctx)
                     .setMessage(ctx.getString(R.string.favor_article_delete_message))
-                    .setPositiveButton(ctx.getString(R.string.favor_article_delete_ok), new DialogInterface.OnClickListener()
-                    {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which)
-                        {
-                            new Thread(new Runnable()
-                            {
-                                @Override
-                                public void run()
-                                {
-                                    try
-                                    {
-                                        String result = favorArticleApi.cancelFavorArticle(String.valueOf(listArticleModelArrayList.get(position).getId()));
-                                        if(result.equals(""))
-                                        {
-                                            listArticleModelArrayList.remove(position);
-                                            handler.post(runnableMore);
-                                            Looper.prepare();
-                                            Toast.makeText(ctx, ctx.getString(R.string.favor_article_delete_done), Toast.LENGTH_SHORT).show();
-                                        }
-                                        else
-                                        {
-                                            Looper.prepare();
-                                            Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
-                                        }
-                                        Looper.loop();
-                                    }
-                                    catch(IOException e)
-                                    {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }).start();
-                        }
-                    }).setNegativeButton(ctx.getString(R.string.favor_article_delete_cancel), null).show();
+                    .setPositiveButton(ctx.getString(R.string.favor_article_delete_ok),
+                                       (dialog, which) -> new Thread(() -> {
+                                           try
+                                           {
+                                               String result = favorArticleApi.cancelFavorArticle(String.valueOf(listArticleModelArrayList.get(position).getId()));
+                                               if(result.equals(""))
+                                               {
+                                                   listArticleModelArrayList.remove(position);
+                                                   handler.post(runnableMore);
+                                                   Looper.prepare();
+                                                   Toast.makeText(ctx, ctx.getString(R.string.favor_article_delete_done), Toast.LENGTH_SHORT).show();
+                                               }
+                                               else
+                                               {
+                                                   Looper.prepare();
+                                                   Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
+                                               }
+                                               Looper.loop();
+                                           }
+                                           catch(IOException e)
+                                           {
+                                               e.printStackTrace();
+                                           }
+                                       }).start()).setNegativeButton(ctx.getString(R.string.favor_article_delete_cancel), null).show();
         }
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context)
+    {
+        super.onAttach(context);
+        if(context instanceof TitleView.TitleViewListener)
+            titleViewListener = (TitleView.TitleViewListener) context;
     }
 }

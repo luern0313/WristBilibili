@@ -1,54 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/theme_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/theme_title_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorTitleBackground"
-        android:paddingTop="10dp"
-        android:paddingBottom="4dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <TextView
-            android:id="@+id/theme_title_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="主题设置"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
-            android:id="@+id/theme_title_extraicon"
-            android:layout_width="12dp"
-            android:layout_height="19dp"
-            android:layout_marginTop="-1dp"
-            android:rotation="90"
-            android:src="@drawable/icon_extra"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toLeftOf="@+id/theme_title_text"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/theme_list"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
         android:background="?android:attr/colorBackground"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/theme_title_layout" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:clipToPadding="false"
+        android:paddingTop="33dp"
+        android:paddingBottom="22dp" />
+
+    <cn.luern0313.wristbilibili.widget.TitleView
+        android:id="@+id/theme_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:mode="back"
+        app:title="@string/theme_title" />
+</RelativeLayout>

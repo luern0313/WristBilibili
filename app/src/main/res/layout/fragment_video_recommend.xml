@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:ignore="ContentDescription">
 
     <ListView
         android:id="@+id/vd_recommend_listview"
@@ -9,6 +11,7 @@
         android:layout_height="match_parent"
         android:clipToPadding="false"
         android:divider="@color/alpha"
+        android:paddingTop="33dp"
         android:paddingBottom="22dp" />
 
     <LinearLayout

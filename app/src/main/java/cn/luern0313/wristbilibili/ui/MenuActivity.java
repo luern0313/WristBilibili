@@ -7,8 +7,10 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,8 +20,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import androidx.appcompat.app.AppCompatActivity;
+import cn.luern0313.lson.LsonUtil;
 import cn.luern0313.wristbilibili.R;
+import cn.luern0313.wristbilibili.adapter.MenuAdapter;
 import cn.luern0313.wristbilibili.api.UserInfoApi;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
@@ -51,16 +54,23 @@ public class MenuActivity extends BaseActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
         ctx = this;
+        inflater = getLayoutInflater();
 
-        uiUserName = findViewById(R.id.menu_username);
-        uiUserCoin = findViewById(R.id.menu_usercoin);
-        uiUserLV = findViewById(R.id.menu_userlv);
-        uiUserHead = findViewById(R.id.menu_useric);
-        uiUserVip = findViewById(R.id.menu_uservip);
+        uiListView = findViewById(R.id.menu_listview);
+        layoutMenuHeader = inflater.inflate(R.layout.widget_menu_header, null);
+        uiListView.addHeaderView(layoutMenuHeader);
 
-        uiUserName.setText(SharedPreferencesUtil.getString(SharedPreferencesUtil.userName, "你还没登录呢~"));
-        uiUserCoin.setText("硬币 : " + SharedPreferencesUtil.getString(SharedPreferencesUtil.userCoin, "0"));
-        uiUserLV.setText("LV" + SharedPreferencesUtil.getInt(SharedPreferencesUtil.userLV, 0));
+        menuAdapterListener = this::onClick;
+
+        uiUserName = layoutMenuHeader.findViewById(R.id.menu_username);
+        uiUserCoin = layoutMenuHeader.findViewById(R.id.menu_user_coin);
+        uiUserLV = layoutMenuHeader.findViewById(R.id.menu_user_lv);
+        uiUserHead = layoutMenuHeader.findViewById(R.id.menu_user_img);
+        uiUserVip = layoutMenuHeader.findViewById(R.id.menu_user_vip);
+
+        uiUserName.setText(SharedPreferencesUtil.getString(SharedPreferencesUtil.userName, getString(R.string.menu_default_login)));
+        uiUserCoin.setText(String.format(getString(R.string.menu_coin), SharedPreferencesUtil.getString(SharedPreferencesUtil.userCoin, "0")));
+        uiUserLV.setText(String.format(getString(R.string.menu_lv), SharedPreferencesUtil.getInt(SharedPreferencesUtil.userLV, 0)));
         uiUserVip.setVisibility(SharedPreferencesUtil.getBoolean(SharedPreferencesUtil.userVip, false) ? View.VISIBLE : View.GONE);
         try
         {
@@ -70,6 +80,9 @@ public class MenuActivity extends BaseActivity
         {
             e.printStackTrace();
         }
+
+        menuAdapter = new MenuAdapter(inflater, getMenuSort(), 0, uiListView, menuAdapterListener);
+        uiListView.setAdapter(menuAdapter);
 
         resultIntent = new Intent();
         setResult(-1, resultIntent);
@@ -83,51 +96,41 @@ public class MenuActivity extends BaseActivity
         if(SharedPreferencesUtil.contains(SharedPreferencesUtil.cookies)) //是否登录（←错错错错错错错错！！cookie有时限！！！！）
         {
             final UserInfoApi userInfoApi = new UserInfoApi();
-            runnableUi = new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    uiUserName.setText(userInfoApi.getUserName());
-                    uiUserCoin.setText("硬币 : " + userInfoApi.getUserCoin());
-                    uiUserLV.setText("LV" + userInfoApi.getUserLV());
-                    uiUserHead.setImageBitmap(head);
-                    uiUserVip.setVisibility(userInfoApi.isVip() ? View.VISIBLE : View.GONE);
+            runnableUi = () -> {
+                uiUserName.setText(userInfoApi.getUserName());
+                uiUserCoin.setText(String.format(getString(R.string.menu_coin), userInfoApi.getUserCoin()));
+                uiUserLV.setText(String.format(getString(R.string.menu_lv), userInfoApi.getUserLV()));
+                uiUserHead.setImageBitmap(head);
+                uiUserVip.setVisibility(userInfoApi.isVip() ? View.VISIBLE : View.GONE);
 
-                    SharedPreferencesUtil.putString(SharedPreferencesUtil.userName, userInfoApi.getUserName());
-                    SharedPreferencesUtil.putString(SharedPreferencesUtil.userCoin, userInfoApi.getUserCoin());
-                    SharedPreferencesUtil.putInt(SharedPreferencesUtil.userLV, userInfoApi.getUserLV());
-                    SharedPreferencesUtil.putBoolean(SharedPreferencesUtil.userVip, userInfoApi.isVip());
-                }
+                SharedPreferencesUtil.putString(SharedPreferencesUtil.userName, userInfoApi.getUserName());
+                SharedPreferencesUtil.putString(SharedPreferencesUtil.userCoin, userInfoApi.getUserCoin());
+                SharedPreferencesUtil.putInt(SharedPreferencesUtil.userLV, userInfoApi.getUserLV());
+                SharedPreferencesUtil.putBoolean(SharedPreferencesUtil.userVip, userInfoApi.isVip());
             };
-            new Thread(new Runnable()
-            {
-                @Override
-                public void run()
+            new Thread(() -> {
+                try
                 {
-                    try
+                    int stat = userInfoApi.getUserInfo();
+                    //0正常，-1其他问题，-2登录过期
+                    if(stat == 0)
                     {
-                        int stat = userInfoApi.getUserInfo();
-                        //0正常，-1其他问题，-2登录过期
-                        if(stat == 0)
-                        {
-                            head = userInfoApi.getUserHead();
-                            saveBitmap(head);
-                            handler.post(runnableUi);
-                        }
-                        else if(stat == -2)
-                        {
-                            Looper.prepare();
-                            Toast.makeText(getApplicationContext(), "您的登录信息已过期，请注销后重新登录", Toast.LENGTH_LONG).show();
-                            Intent i = new Intent(ctx, LogsoffActivity.class);
-                            startActivity(i);
-                            Looper.loop();
-                        }
+                        head = userInfoApi.getUserHead();
+                        saveBitmap(head);
+                        handler.post(runnableUi);
                     }
-                    catch (IOException e)
+                    else if(stat == -2)
                     {
-                        e.printStackTrace();
+                        Looper.prepare();
+                        Toast.makeText(getApplicationContext(), "您的登录信息已过期，请注销后重新登录", Toast.LENGTH_LONG).show();
+                        Intent i = new Intent(ctx, LogsoffActivity.class);
+                        startActivity(i);
+                        Looper.loop();
                     }
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
                 }
             }).start();
         }
@@ -164,7 +167,7 @@ public class MenuActivity extends BaseActivity
         }
     }
 
-    public void buutonUser(View view)  //个人信息/登录
+    public void buttonUser(View view)  //个人信息/登录
     {
         if(!SharedPreferencesUtil.contains(SharedPreferencesUtil.cookies))//是否登录的验证
         {
@@ -178,6 +181,19 @@ public class MenuActivity extends BaseActivity
             intent.putExtra("mid", SharedPreferencesUtil.getString(SharedPreferencesUtil.mid, ""));
             startActivity(intent);
         }
+    }
+
+    public void onClick(int position)
+    {
+        resultIntent.putExtra("activity", position);
+        setResult(0, resultIntent);
+        finish();
+        overridePendingTransition(0, R.anim.anim_activity_out_up);
+    }
+
+    public int[] getMenuSort()
+    {
+        return LsonUtil.fromJson(LsonUtil.parse(SharedPreferencesUtil.getString(SharedPreferencesUtil.menuSort, "[0,1,2,3,4,5,6,7,8,9,10]")), int[].class);
     }
 
     public void buttonDynamic(View view)
@@ -212,7 +228,7 @@ public class MenuActivity extends BaseActivity
         overridePendingTransition(0, R.anim.anim_activity_out_up);
     }
 
-    public void buttonDL(View view)
+    public void buttonRegion(View view)
     {
         resultIntent.putExtra("activity", 5);
         setResult(0, resultIntent);
@@ -220,7 +236,7 @@ public class MenuActivity extends BaseActivity
         overridePendingTransition(0, R.anim.anim_activity_out_up);
     }
 
-    public void buttonSearch(View view)
+    public void buttonDL(View view)
     {
         resultIntent.putExtra("activity", 6);
         setResult(0, resultIntent);
@@ -228,7 +244,7 @@ public class MenuActivity extends BaseActivity
         overridePendingTransition(0, R.anim.anim_activity_out_up);
     }
 
-    public void buttonCollect(View view)
+    public void buttonSearch(View view)
     {
         resultIntent.putExtra("activity", 7);
         setResult(0, resultIntent);
@@ -236,7 +252,7 @@ public class MenuActivity extends BaseActivity
         overridePendingTransition(0, R.anim.anim_activity_out_up);
     }
 
-    public void buttonWatchlater(View view)
+    public void buttonCollect(View view)
     {
         resultIntent.putExtra("activity", 8);
         setResult(0, resultIntent);
@@ -244,7 +260,7 @@ public class MenuActivity extends BaseActivity
         overridePendingTransition(0, R.anim.anim_activity_out_up);
     }
 
-    public void buttonHistory(View view)
+    public void buttonWatchlater(View view)
     {
         resultIntent.putExtra("activity", 9);
         setResult(0, resultIntent);
@@ -252,9 +268,17 @@ public class MenuActivity extends BaseActivity
         overridePendingTransition(0, R.anim.anim_activity_out_up);
     }
 
-    public void buttonSetting(View view)
+    public void buttonHistory(View view)
     {
         resultIntent.putExtra("activity", 10);
+        setResult(0, resultIntent);
+        finish();
+        overridePendingTransition(0, R.anim.anim_activity_out_up);
+    }
+
+    public void buttonSetting(View view)
+    {
+        resultIntent.putExtra("activity", 11);
         setResult(0, resultIntent);
         finish();
         overridePendingTransition(0, R.anim.anim_activity_out_up);

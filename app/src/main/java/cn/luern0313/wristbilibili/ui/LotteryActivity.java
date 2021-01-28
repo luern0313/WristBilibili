@@ -1,31 +1,32 @@
 package cn.luern0313.wristbilibili.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import cn.luern0313.wristbilibili.R;
-import cn.luern0313.wristbilibili.fragment.FavorArticleFragment;
+import cn.luern0313.wristbilibili.fragment.LotteryFragment;
 
-public class FavorArticleActivity extends BaseActivity
+public class LotteryActivity extends BaseActivity
 {
+    public static final String ARG_LOTTERY_ID = "id";
+
     Context ctx;
-    LayoutInflater inflater;
+    Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_favor_article);
-
+        setContentView(R.layout.activity_lottery);
         ctx = this;
-        inflater = getLayoutInflater();
+        intent = getIntent();
 
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
-        transaction.replace(R.id.favor_article_frame, FavorArticleFragment.newInstance());
+        transaction.replace(R.id.lottery_frame, LotteryFragment.newInstance(intent.getStringExtra(ARG_LOTTERY_ID)));
         transaction.commit();
     }
 }

@@ -17,7 +17,6 @@ import android.widget.ViewFlipper;
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import cn.luern0313.wristbilibili.R;
@@ -200,10 +199,8 @@ public class ImgActivity extends BaseActivity
 
         private BitmapDrawable setImageFormWeb(String url)
         {
-            if(LruCacheUtil.getLruCache().get(url) != null)
-            {
+            if(url != null && LruCacheUtil.getLruCache().get(url) != null)
                 return LruCacheUtil.getLruCache().get(url);
-            }
             else
             {
                 ImageTaskUtil it = new ImageTaskUtil(uiViewPager, 500, true);

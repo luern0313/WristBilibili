@@ -1,5 +1,6 @@
 package cn.luern0313.wristbilibili.fragment;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.adapter.ListVideoAdapter;
@@ -22,7 +24,10 @@ import cn.luern0313.wristbilibili.api.HistoryApi;
 import cn.luern0313.wristbilibili.models.ListVideoModel;
 import cn.luern0313.wristbilibili.ui.VideoActivity;
 import cn.luern0313.wristbilibili.util.ColorUtil;
+import cn.luern0313.wristbilibili.util.DataProcessUtil;
+import cn.luern0313.wristbilibili.util.ListViewTouchListener;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
+import cn.luern0313.wristbilibili.widget.TitleView;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
 public class HistoryFragment extends Fragment
@@ -36,6 +41,7 @@ public class HistoryFragment extends Fragment
     private ListVideoAdapter listVideoAdapter;
     private ListVideoAdapter.ListVideoAdapterListener listVideoAdapterListener;
     private ListView uiListView;
+    private TitleView.TitleViewListener titleViewListener;
 
     private final ArrayList<ListVideoModel> historyArrayList = new ArrayList<>();
 
@@ -54,6 +60,7 @@ public class HistoryFragment extends Fragment
         return new HistoryFragment();
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
@@ -65,8 +72,8 @@ public class HistoryFragment extends Fragment
         uiListView.addFooterView(uiLoadingView);
         waveSwipeRefreshLayout = rootLayout.findViewById(R.id.history_swipe);
         waveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
-        //noinspection ConstantConditions
-        waveSwipeRefreshLayout.setWaveColor(ColorUtil.getColor(R.attr.colorPrimary, getContext()));
+        waveSwipeRefreshLayout.setWaveColor(ColorUtil.getColor(R.attr.colorPrimary, ctx));
+        waveSwipeRefreshLayout.setTopOffsetOfWave(DataProcessUtil.dip2px(33));
         waveSwipeRefreshLayout.setOnRefreshListener(() -> handler.post(() -> {
             if(isLogin)
             {
@@ -151,6 +158,8 @@ public class HistoryFragment extends Fragment
             }
         });
 
+        uiListView.setOnTouchListener(new ListViewTouchListener(uiListView, titleViewListener));
+
         isLogin = SharedPreferencesUtil.contains(SharedPreferencesUtil.cookies);
         if(isLogin)
         {
@@ -213,5 +222,13 @@ public class HistoryFragment extends Fragment
                 handler.post(runnableMoreNoWeb);
             }
         }).start();
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context)
+    {
+        super.onAttach(context);
+        if(context instanceof TitleView.TitleViewListener)
+            titleViewListener = (TitleView.TitleViewListener) context;
     }
 }

@@ -14,7 +14,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-import android.widget.ViewFlipper;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -37,8 +36,9 @@ import cn.luern0313.wristbilibili.models.FavorBoxModel;
 import cn.luern0313.wristbilibili.models.VideoModel;
 import cn.luern0313.wristbilibili.service.DownloadService;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
+import cn.luern0313.wristbilibili.widget.TitleView;
 
-public class VideoActivity extends BaseActivity implements VideoDetailFragment.VideoDetailFragmentListener
+public class VideoActivity extends BaseActivity implements VideoDetailFragment.VideoDetailFragmentListener, TitleView.TitleViewListener
 {
     Context ctx;
     Intent intent;
@@ -55,7 +55,7 @@ public class VideoActivity extends BaseActivity implements VideoDetailFragment.V
 
     AnimationDrawable loadingImgAnim;
 
-    ViewFlipper uiTitle;
+    TitleView uiTitleView;
     ViewPager uiViewPager;
     View layoutSendReply, layoutLoading;
     ImageView uiLoadingImg;
@@ -98,7 +98,7 @@ public class VideoActivity extends BaseActivity implements VideoDetailFragment.V
         layoutSendReply = inflater.inflate(R.layout.widget_reply_sendreply, null);
         layoutLoading = inflater.inflate(R.layout.widget_loading, null);
 
-        uiTitle = findViewById(R.id.vd_title_title);
+        uiTitleView = findViewById(R.id.vd_title);
         uiViewPager = findViewById(R.id.vd_viewpager);
         uiViewPager.setOffscreenPageLimit(2);
         uiLoadingImg = findViewById(R.id.vd_loading_img);
@@ -187,19 +187,20 @@ public class VideoActivity extends BaseActivity implements VideoDetailFragment.V
             @Override
             public void onPageSelected(int position)
             {
-                while(uiTitle.getDisplayedChild() != position)
+                while(uiTitleView.getDisplayedChild() != position)
                 {
-                    if(uiTitle.getDisplayedChild() < position)
+                    uiTitleView.show();
+                    if(uiTitleView.getDisplayedChild() < position)
                     {
-                        uiTitle.setInAnimation(ctx, R.anim.slide_in_right);
-                        uiTitle.setOutAnimation(ctx, R.anim.slide_out_left);
-                        uiTitle.showNext();
+                        uiTitleView.setInAnimation(ctx, R.anim.slide_in_right);
+                        uiTitleView.setOutAnimation(ctx, R.anim.slide_out_left);
+                        uiTitleView.showNext();
                     }
                     else
                     {
-                        uiTitle.setInAnimation(ctx, android.R.anim.slide_in_left);
-                        uiTitle.setOutAnimation(ctx, android.R.anim.slide_out_right);
-                        uiTitle.showPrevious();
+                        uiTitleView.setInAnimation(ctx, android.R.anim.slide_in_left);
+                        uiTitleView.setOutAnimation(ctx, android.R.anim.slide_out_right);
+                        uiTitleView.showPrevious();
                     }
                 }
             }
@@ -695,6 +696,18 @@ public class VideoActivity extends BaseActivity implements VideoDetailFragment.V
     public void setVideoDetailActivityListener(VideoDetailActivityListener videoDetailActivityListener)
     {
         this.videoDetailActivityListener = videoDetailActivityListener;
+    }
+
+    @Override
+    public boolean hideTitle()
+    {
+        return uiTitleView.hide();
+    }
+
+    @Override
+    public boolean showTitle()
+    {
+        return uiTitleView.show();
     }
 
     class VideoDownloadServiceConnection implements ServiceConnection

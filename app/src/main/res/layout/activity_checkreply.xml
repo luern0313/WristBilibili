@@ -1,39 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <RelativeLayout
-        android:id="@+id/cr_title_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorTitleBackground"
-        android:gravity="center_vertical"
-        android:paddingBottom="4dp"
-        android:paddingTop="10dp">
-
-        <TextView
-            android:id="@+id/cr_title_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:text="查看评论"
-            android:textColor="@color/white" />
-
-        <ImageView
-            android:id="@+id/cr_title_extraicon"
-            android:layout_width="12dp"
-            android:layout_height="19dp"
-            android:layout_marginStart="2dp"
-            android:layout_toStartOf="@+id/cr_title_title"
-            android:rotation="90"
-            android:src="@drawable/icon_extra" />
-    </RelativeLayout>
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <FrameLayout
         android:id="@+id/cr_frame"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/cr_title_layout"/>
+        android:layout_height="match_parent"/>
+
+    <cn.luern0313.wristbilibili.widget.TitleView
+        android:id="@+id/cr_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:title="@string/check_reply_title"
+        app:mode="back"/>
 
 </RelativeLayout>

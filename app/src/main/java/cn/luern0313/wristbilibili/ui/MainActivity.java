@@ -7,18 +7,19 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.liulishuo.filedownloader.FileDownloader;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import cn.luern0313.wristbilibili.R;
+import cn.luern0313.wristbilibili.api.RegionApi;
 import cn.luern0313.wristbilibili.api.StatisticsApi;
 import cn.luern0313.wristbilibili.fragment.AnimationTimelineFragment;
 import cn.luern0313.wristbilibili.fragment.DownloadFragment;
@@ -27,18 +28,21 @@ import cn.luern0313.wristbilibili.fragment.FavorBoxFragment;
 import cn.luern0313.wristbilibili.fragment.HistoryFragment;
 import cn.luern0313.wristbilibili.fragment.RankingFragment;
 import cn.luern0313.wristbilibili.fragment.RecommendFragment;
+import cn.luern0313.wristbilibili.fragment.RegionListFragment;
 import cn.luern0313.wristbilibili.fragment.SearchFragment;
 import cn.luern0313.wristbilibili.fragment.SettingFragment;
 import cn.luern0313.wristbilibili.fragment.WatchlaterFragment;
 import cn.luern0313.wristbilibili.service.DownloadService;
+import cn.luern0313.wristbilibili.util.DataProcessUtil;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
+import cn.luern0313.wristbilibili.widget.TitleView;
 
 /**
  * Created by liupe on 2018/10/25.
  * fragment.....
  */
 
-public class MainActivity extends BaseActivity
+public class MainActivity extends BaseActivity implements TitleView.TitleViewListener
 {
     Context ctx;
 
@@ -47,8 +51,20 @@ public class MainActivity extends BaseActivity
     private FragmentTransaction transaction;
     DisplayMetrics dm;
 
-    TextView titleText;
-    ImageView titleImg;
+    TitleView titleView;
+
+    private final static Class<?>[] menuFragment = new Class[]{
+            DynamicFragment.class, RecommendFragment.class, RankingFragment.class,
+            AnimationTimelineFragment.class, RegionListFragment.class, DownloadFragment.class,
+            SearchFragment.class, FavorBoxFragment.class, WatchlaterFragment.class,
+            HistoryFragment.class, SettingFragment.class
+    };
+    private final static Object[][] menuFragmentParameter = new Object[][]{
+            {true, SharedPreferencesUtil.getString(SharedPreferencesUtil.mid, "")},
+            {}, {}, {}, {}, {}, {},
+            {SharedPreferencesUtil.getString(SharedPreferencesUtil.mid, ""), true},
+            {}, {}, {}
+    };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState)
@@ -58,14 +74,11 @@ public class MainActivity extends BaseActivity
 
         ctx = this;
 
+        titleView = findViewById(R.id.main_title);
         dm = getResources().getDisplayMetrics();
         fm = getSupportFragmentManager();
         transaction = fm.beginTransaction();
-        transaction.replace(R.id.main_frame, DynamicFragment.newInstance(true, SharedPreferencesUtil.getString(SharedPreferencesUtil.mid, "")));
-        transaction.commit();
-
-        titleText = findViewById(R.id.main_title_title);
-        titleImg = findViewById(R.id.main_title_extraicon);
+        switchFragment(0);
 
         FileDownloader.setup(this);
 
@@ -116,10 +129,24 @@ public class MainActivity extends BaseActivity
         //    finish();
 
         //startActivity(VideoActivity.getActivityIntent(ctx, "78732000", ""));
+        new Thread(() -> {
+            try
+            {
+                new RegionApi().getRegionList();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }).start();
 
-        Intent intent = new Intent(ctx, UserActivity.class);
-        intent.putExtra("mid", "399460614");
+        /*Intent intent = new Intent(ctx, UserActivity.class);
+        intent.putExtra("mid", "476315827");
         startActivity(intent);
+
+        intent = new Intent(ctx, LotteryActivity.class);
+        intent.putExtra(LotteryActivity.ARG_LOTTERY_ID, "474964958500946284");
+        startActivity(intent);*/
 
         serviceIntent = new Intent(this, DownloadService.class);
         startService(serviceIntent);
@@ -131,62 +158,27 @@ public class MainActivity extends BaseActivity
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == 0 && resultCode == 0 && data != null)
         {
+            switchFragment(data.getIntExtra("activity", 0));
+        }
+    }
+
+    private void switchFragment(int choose)
+    {
+        try
+        {
+            showTitle();
             fm = getSupportFragmentManager();
             transaction = fm.beginTransaction();
-            switch (data.getIntExtra("activity", 0))
-            {
-                case 1:
-                    transaction.replace(R.id.main_frame, DynamicFragment.newInstance(true, SharedPreferencesUtil.getString(SharedPreferencesUtil.mid, "")));
-                    titleText.setText(getString(R.string.menu_dynamic));
-                    titleText.setTextSize(14);
-                    break;
-                case 2:
-                    transaction.replace(R.id.main_frame, new RecommendFragment());
-                    titleText.setText(getString(R.string.menu_recommend));
-                    titleText.setTextSize(14);
-                    break;
-                case 3:
-                    transaction.replace(R.id.main_frame, new RankingFragment());
-                    titleText.setText(getString(R.string.menu_ranking));
-                    titleText.setTextSize(14);
-                    break;
-                case 4:
-                    transaction.replace(R.id.main_frame, new AnimationTimelineFragment());
-                    titleText.setText(getString(R.string.menu_remind));
-                    titleText.setTextSize(13);
-                    break;
-                case 5:
-                    transaction.replace(R.id.main_frame, new DownloadFragment());
-                    titleText.setText(getString(R.string.menu_download));
-                    titleText.setTextSize(13);
-                    break;
-                case 6:
-                    transaction.replace(R.id.main_frame, new SearchFragment());
-                    titleText.setText(getString(R.string.menu_search));
-                    titleText.setTextSize(14);
-                    break;
-                case 7:
-                    transaction.replace(R.id.main_frame, FavorBoxFragment.newInstance(SharedPreferencesUtil.getString(SharedPreferencesUtil.mid, ""), true));
-                    titleText.setText(getString(R.string.menu_collect));
-                    titleText.setTextSize(14);
-                    break;
-                case 8:
-                    transaction.replace(R.id.main_frame, new WatchlaterFragment());
-                    titleText.setText(getString(R.string.menu_watchlater));
-                    titleText.setTextSize(13);
-                    break;
-                case 9:
-                    transaction.replace(R.id.main_frame, new HistoryFragment());
-                    titleText.setText(getString(R.string.menu_history));
-                    titleText.setTextSize(14);
-                    break;
-                case 10:
-                    transaction.replace(R.id.main_frame, new SettingFragment());
-                    titleText.setText(getString(R.string.menu_setting));
-                    titleText.setTextSize(14);
-                    break;
-            }
+            if(menuFragmentParameter[choose].length > 0)
+                transaction.replace(R.id.main_frame, (Fragment) menuFragment[choose].getDeclaredMethod("newInstance", DataProcessUtil.getParameterTypes(menuFragmentParameter[choose])).invoke(null, menuFragmentParameter[choose]));
+            else
+                transaction.replace(R.id.main_frame, (Fragment) menuFragment[choose].newInstance());
+            titleView.setTitle(getResources().getStringArray(R.array.menu_title)[choose]);
             transaction.commit();
+        }
+        catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e)
+        {
+            e.printStackTrace();
         }
     }
 
@@ -202,5 +194,17 @@ public class MainActivity extends BaseActivity
     {
         super.onDestroy();
         stopService(serviceIntent);
+    }
+
+    @Override
+    public boolean hideTitle()
+    {
+        return titleView.hide();
+    }
+
+    @Override
+    public boolean showTitle()
+    {
+        return titleView.show();
     }
 }

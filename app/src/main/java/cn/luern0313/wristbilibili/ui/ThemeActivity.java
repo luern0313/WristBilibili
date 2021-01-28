@@ -1,6 +1,7 @@
 package cn.luern0313.wristbilibili.ui;
 
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -18,20 +19,26 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.adapter.ThemeAdapter;
+import cn.luern0313.wristbilibili.util.ListViewTouchListener;
 import cn.luern0313.wristbilibili.util.ThemeUtil;
+import cn.luern0313.wristbilibili.widget.TitleView;
 
-public class ThemeActivity extends AppCompatActivity
+public class ThemeActivity extends AppCompatActivity implements TitleView.TitleViewListener
 {
     private Context ctx;
 
+    private TitleView titleView;
+
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         ThemeUtil.changeTheme(this, ThemeUtil.getCurrentTheme());
         setContentView(R.layout.activity_theme);
-
         ctx = this;
+
+        titleView = findViewById(R.id.theme_title);
 
         ThemeAdapter.ThemeAdapterListener themeAdapterListener = new ThemeAdapter.ThemeAdapterListener()
         {
@@ -53,6 +60,7 @@ public class ThemeActivity extends AppCompatActivity
         ThemeAdapter themeAdapter = new ThemeAdapter(ctx, getLayoutInflater(), themeAdapterListener, recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        recyclerView.setOnTouchListener(new ListViewTouchListener(recyclerView, (TitleView.TitleViewListener) ctx));
         recyclerView.setAdapter(themeAdapter);
     }
 
@@ -63,23 +71,13 @@ public class ThemeActivity extends AppCompatActivity
         {
             View v = group.getChildAt(i);
             if(v instanceof ViewGroup)
-            {
                 changeTheme((ViewGroup) v, primary, fore);
-            }
-            if(v.getId() == R.id.theme_title_layout)
-            {
+            if(v.getId() == R.id.theme_title)
                 animate(v, "backgroundColor", ((ColorDrawable) v.getBackground()).getColor(), primary);
-            }
             else if (v.getId() == R.id.theme_item_name)
-            {
-                //noinspection ConstantConditions
                 animate(v, "textColor", ((TextView) v).getTextColors().getDefaultColor(), fore);
-            }
             else if (v.getId() == R.id.theme_item_check)
-            {
-                //noinspection ConstantConditions
                 ((ImageView) v).getDrawable().applyTheme(getTheme());
-            }
         }
     }
 
@@ -96,5 +94,17 @@ public class ThemeActivity extends AppCompatActivity
     {
         super.finish();
         AppCompatDelegate.setDefaultNightMode(ThemeUtil.getCurrentTheme().isDarkTheme() ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
+    }
+
+    @Override
+    public boolean hideTitle()
+    {
+        return titleView.hide();
+    }
+
+    @Override
+    public boolean showTitle()
+    {
+        return titleView.show();
     }
 }

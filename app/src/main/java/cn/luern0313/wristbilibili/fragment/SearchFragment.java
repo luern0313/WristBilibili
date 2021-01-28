@@ -1,5 +1,9 @@
 package cn.luern0313.wristbilibili.fragment;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
@@ -8,12 +12,15 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,6 +28,7 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import cn.luern0313.wristbilibili.R;
@@ -30,7 +38,9 @@ import cn.luern0313.wristbilibili.models.SearchModel;
 import cn.luern0313.wristbilibili.ui.BangumiActivity;
 import cn.luern0313.wristbilibili.ui.UserActivity;
 import cn.luern0313.wristbilibili.ui.VideoActivity;
+import cn.luern0313.wristbilibili.util.ListViewTouchListener;
 import cn.luern0313.wristbilibili.util.SearchHtmlTagHandlerUtil;
+import cn.luern0313.wristbilibili.widget.TitleView;
 
 /**
  * Created by liupe on 2018/11/16.
@@ -62,12 +72,16 @@ public class SearchFragment extends Fragment
     private Runnable runnableHotWord, runnableHotWordErr, runnableNoweb, runnableUi;
     private Runnable runnableAddlist, runnableNoWebH, runnableNoresult, runnableNomore;
 
+    private ObjectAnimator searchBoxAnimator;
+
     private String[] hotWordArray;
     private ArrayList<SearchModel.SearchBaseModel> searchResult;
     private HotWordAdapter hotwordAdapter;
 
     private boolean isLoading = true;
+    private boolean isHide;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
@@ -75,147 +89,93 @@ public class SearchFragment extends Fragment
         rootLayout = inflater.inflate(R.layout.fragment_search, container, false);
         searchApi = new SearchApi();
         htmlTagHandlerUtil = new SearchHtmlTagHandlerUtil(ctx);
-        searchAdapterListener = new SearchAdapter.SearchAdapterListener()
+        searchAdapterListener = this::onViewClick;
+
+        listViewScrollListener = new ListViewTouchListener.ListViewScrollListener()
         {
             @Override
-            public void onClick(int viewId, int position)
+            public void hide()
             {
-                onViewClick(viewId, position);
+                hideSearchBox();
+            }
+
+            @Override
+            public void show()
+            {
+                showSearchBox();
             }
         };
 
-        seaHotWordText = rootLayout.findViewById(R.id.sea_hotwordtext);
+        seaHotWordText = rootLayout.findViewById(R.id.sea_hotword_text);
         seaHotWordList = rootLayout.findViewById(R.id.sea_hotword);
         seaListView = rootLayout.findViewById(R.id.sea_listview);
         loadingView = inflater.inflate(R.layout.widget_loading, null);
+        searchBox = rootLayout.findViewById(R.id.sea_box);
         seaEdittext = rootLayout.findViewById(R.id.sea_edittext);
         inButton = rootLayout.findViewById(R.id.sea_inbutton);
         seaButton = rootLayout.findViewById(R.id.sea_seabutton);
         seaLoadImg = rootLayout.findViewById(R.id.sea_searching_img);
 
-        runnableHotWord = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                hotwordAdapter = new HotWordAdapter(ctx, android.R.layout.simple_list_item_1, hotWordArray);
-                seaHotWordText.setText("大家都在搜");
-                seaHotWordList.setAdapter(hotwordAdapter);
-            }
+        runnableHotWord = () -> {
+            hotwordAdapter = new HotWordAdapter(ctx, android.R.layout.simple_list_item_1, hotWordArray);
+            seaHotWordText.setText("大家都在搜");
+            seaHotWordList.setAdapter(hotwordAdapter);
         };
 
-        runnableHotWordErr = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                seaHotWordText.setText("搜索热词加载失败");
-            }
+        runnableHotWordErr = () -> seaHotWordText.setText("搜索热词加载失败");
+
+        runnableNoweb = () -> {
+            rootLayout.findViewById(R.id.sea_noweb).setVisibility(View.VISIBLE);
+            rootLayout.findViewById(R.id.sea_searching).setVisibility(View.GONE);
+            rootLayout.findViewById(R.id.sea_nonthing).setVisibility(View.GONE);
+            rootLayout.findViewById(R.id.sea_listview).setVisibility(View.GONE);
         };
 
-        runnableNoweb = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                rootLayout.findViewById(R.id.sea_noweb).setVisibility(View.VISIBLE);
-                rootLayout.findViewById(R.id.sea_searching).setVisibility(View.GONE);
-                rootLayout.findViewById(R.id.sea_nonthing).setVisibility(View.GONE);
-                rootLayout.findViewById(R.id.sea_listview).setVisibility(View.GONE);
-            }
+        runnableNoWebH = () -> {
+            ((TextView) loadingView.findViewById(R.id.wid_load_text)).setText(getString(R.string.main_tip_no_more_web));
+            loadingView.findViewById(R.id.wid_load_button).setVisibility(View.VISIBLE);
         };
 
-        runnableNoWebH = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                ((TextView) loadingView.findViewById(R.id.wid_load_text)).setText("好像没有网络...\n检查下网络？");
-                loadingView.findViewById(R.id.wid_load_button).setVisibility(View.VISIBLE);
-            }
+        runnableUi = () -> {
+            searchAdapter = new SearchAdapter(inflater, searchResult, seaListView, searchAdapterListener, htmlTagHandlerUtil);
+            seaListView.setAdapter(searchAdapter);
+            rootLayout.findViewById(R.id.sea_noweb).setVisibility(View.GONE);
+            rootLayout.findViewById(R.id.sea_searching).setVisibility(View.GONE);
+            rootLayout.findViewById(R.id.sea_nonthing).setVisibility(View.GONE);
+            rootLayout.findViewById(R.id.sea_listview).setVisibility(View.VISIBLE);
         };
 
-        runnableUi = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                searchAdapter = new SearchAdapter(inflater, searchResult, seaListView, searchAdapterListener, htmlTagHandlerUtil);
-                seaListView.setAdapter(searchAdapter);
-                rootLayout.findViewById(R.id.sea_noweb).setVisibility(View.GONE);
-                rootLayout.findViewById(R.id.sea_searching).setVisibility(View.GONE);
-                rootLayout.findViewById(R.id.sea_nonthing).setVisibility(View.GONE);
-                rootLayout.findViewById(R.id.sea_listview).setVisibility(View.VISIBLE);
-            }
+        runnableNoresult = () -> {
+            rootLayout.findViewById(R.id.sea_noweb).setVisibility(View.GONE);
+            rootLayout.findViewById(R.id.sea_searching).setVisibility(View.GONE);
+            rootLayout.findViewById(R.id.sea_nonthing).setVisibility(View.VISIBLE);
+            rootLayout.findViewById(R.id.sea_listview).setVisibility(View.GONE);
         };
 
-        runnableNoresult = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                rootLayout.findViewById(R.id.sea_noweb).setVisibility(View.GONE);
-                rootLayout.findViewById(R.id.sea_searching).setVisibility(View.GONE);
-                rootLayout.findViewById(R.id.sea_nonthing).setVisibility(View.VISIBLE);
-                rootLayout.findViewById(R.id.sea_listview).setVisibility(View.GONE);
-            }
-        };
+        runnableNomore = () -> ((TextView) loadingView.findViewById(R.id.wid_load_text)).setText(getString(R.string.main_tip_no_more_data));
 
-        runnableNomore = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                ((TextView) loadingView.findViewById(R.id.wid_load_text)).setText("  没有更多了...");
-            }
-        };
+        runnableAddlist = () -> searchAdapter.notifyDataSetChanged();
 
-        runnableAddlist = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                searchAdapter.notifyDataSetChanged();
-            }
-        };
+        loadingView.findViewById(R.id.wid_load_button).setOnClickListener(v -> {
+            ((TextView) loadingView.findViewById(R.id.wid_load_text)).setText(getString(R.string.main_tip_no_more_data_loading));
+            loadingView.findViewById(R.id.wid_load_button).setVisibility(View.GONE);
+            getMoreSearch();
+        });
 
-        loadingView.findViewById(R.id.wid_load_button).setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
+        inButton.setOnClickListener(v -> {
+            try
             {
-                ((TextView) loadingView.findViewById(R.id.wid_load_text)).setText(" 加载中. . .");
-                loadingView.findViewById(R.id.wid_load_button).setVisibility(View.GONE);
-                getMoreSearch();
+                Intent voiceInputIntent = new Intent("com.mobvoi.ticwear.action.SPEECH");
+                voiceInputIntent.putExtra("start_mode", "start_mode_with_voice_input");
+                startActivityForResult(voiceInputIntent, 0);
+            }
+            catch (Exception e)
+            {
+                Toast.makeText(ctx, getString(R.string.main_tip_voice_input), Toast.LENGTH_SHORT).show();
             }
         });
 
-        inButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                try
-                {
-                    Intent voiceInputIntent = new Intent("com.mobvoi.ticwear.action.SPEECH");
-                    voiceInputIntent.putExtra("start_mode", "start_mode_with_voice_input");
-                    startActivityForResult(voiceInputIntent, 0);
-                }
-                catch (Exception e)
-                {
-                    Toast.makeText(ctx, "抱歉，该手表不支持语音输入", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-        seaButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                getSearch();
-            }
-        });
+        seaButton.setOnClickListener(v -> getSearch());
 
         seaListView.setOnScrollListener(new AbsListView.OnScrollListener()
         {
@@ -236,24 +196,21 @@ public class SearchFragment extends Fragment
             }
         });
 
-        new Thread(new Runnable()
-        {
-            @Override
-            public void run()
+        seaListView.setOnTouchListener(new ListViewTouchListener(seaListView, titleViewListener, listViewScrollListener));
+
+        new Thread(() -> {
+            try
             {
-                try
-                {
-                    //获取搜索关键词
-                    hotWordArray = searchApi.getHotWord();
-                    if(hotWordArray != null && hotWordArray.length != 0)
-                        handler.post(runnableHotWord);
-                    else handler.post(runnableHotWordErr);
-                }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
-                    handler.post(runnableHotWordErr);
-                }
+                //获取搜索关键词
+                hotWordArray = searchApi.getHotWord();
+                if(hotWordArray != null && hotWordArray.length != 0)
+                    handler.post(runnableHotWord);
+                else handler.post(runnableHotWordErr);
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+                handler.post(runnableHotWordErr);
             }
         }).start();
 
@@ -262,9 +219,9 @@ public class SearchFragment extends Fragment
         return rootLayout;
     }
 
-    private class HotWordAdapter extends ArrayAdapter
+    private class HotWordAdapter extends ArrayAdapter<String>
     {
-        HotWordAdapter(Context context, int resource, Object[] objects)
+        HotWordAdapter(Context context, int resource, String[] objects)
         {
             super(context, resource, objects);
         }
@@ -286,7 +243,6 @@ public class SearchFragment extends Fragment
             return convertView;
         }
 
-        //MyListener类继承OnClickListener，用来监听每个Item的点击事件
         private class MyListener implements View.OnClickListener
         {
             @Override
@@ -298,7 +254,7 @@ public class SearchFragment extends Fragment
         }
     }
 
-    void getSearch()
+    private void getSearch()
     {
         InputMethodManager inputMethodManager = (InputMethodManager) ctx.getSystemService(AppCompatActivity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(seaEdittext.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
@@ -314,59 +270,95 @@ public class SearchFragment extends Fragment
         rootLayout.findViewById(R.id.sea_searching).setVisibility(View.VISIBLE);
         rootLayout.findViewById(R.id.sea_nonthing).setVisibility(View.GONE);
         rootLayout.findViewById(R.id.sea_listview).setVisibility(View.GONE);
-        new Thread(new Runnable()
-        {
-            @Override
-            public void run()
+        new Thread(() -> {
+            try
             {
-                try
-                {
-                    searchResult = searchApi.getSearchResult();
-                    if(searchResult != null && searchResult.size() != 0)
-                        handler.post(runnableUi);
-                    else handler.post(runnableNoresult);
-                    isLoading = false;
-                }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
-                    handler.post(runnableNoweb);
-                }
+                searchResult = searchApi.getSearchResult();
+                if(searchResult != null && searchResult.size() != 0)
+                    handler.post(runnableUi);
+                else handler.post(runnableNoresult);
+                isLoading = false;
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+                handler.post(runnableNoweb);
             }
         }).start();
     }
 
-    void getMoreSearch()
+    private void getMoreSearch()
     {
-        new Thread(new Runnable()
-        {
-            @Override
-            public void run()
+        new Thread(() -> {
+            try
             {
-                try
+                ArrayList<SearchModel.SearchBaseModel> arrayList = searchApi.getSearchResult();
+                if(arrayList.size() != 0)
                 {
-                    ArrayList<SearchModel.SearchBaseModel> arrayList = searchApi.getSearchResult();
-                    if(arrayList.size() != 0)
-                    {
-                        searchResult.addAll(arrayList);
-                        isLoading = false;
-                        handler.post(runnableAddlist);
-                    }
-                    else
-                    {
-                        handler.post(runnableNomore);
-                    }
+                    searchResult.addAll(arrayList);
+                    isLoading = false;
+                    handler.post(runnableAddlist);
                 }
-                catch (IOException e)
+                else
                 {
-                    handler.post(runnableNoWebH);
-                    e.printStackTrace();
+                    handler.post(runnableNomore);
                 }
+            }
+            catch (IOException e)
+            {
+                handler.post(runnableNoWebH);
+                e.printStackTrace();
             }
         }).start();
     }
 
-    void onViewClick(int id, int position)
+    private void hideSearchBox()
+    {
+        if(!isHide)
+        {
+            searchBoxAnimator = ObjectAnimator.ofFloat(searchBox, "alpha", 0);
+            searchBoxAnimator.setDuration(200);
+            searchBoxAnimator.setInterpolator(new AccelerateInterpolator());
+            searchBoxAnimator.addListener(new AnimatorListenerAdapter()
+            {
+                boolean isCancel;
+
+                @Override
+                public void onAnimationCancel(Animator animation)
+                {
+                    isCancel = true;
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation)
+                {
+                    if(isCancel)
+                        isCancel = false;
+                    else
+                        searchBox.setVisibility(View.GONE);
+                }
+            });
+            searchBoxAnimator.start();
+            isHide = true;
+        }
+    }
+
+    private void showSearchBox()
+    {
+        if(isHide)
+        {
+            searchBox.setVisibility(View.VISIBLE);
+            if(searchBoxAnimator.isRunning())
+                searchBoxAnimator.cancel();
+            searchBoxAnimator = ObjectAnimator.ofFloat(searchBox, "alpha", 1);
+            searchBoxAnimator.setDuration(200);
+            searchBoxAnimator.setInterpolator(new DecelerateInterpolator());
+            searchBoxAnimator.start();
+            isHide = false;
+        }
+    }
+
+    private void onViewClick(int id, int position)
     {
         SearchModel.SearchBaseModel searchModel = searchResult.get(position);
         if(searchModel.getSearchMode() == 0)
@@ -403,5 +395,13 @@ public class SearchFragment extends Fragment
                 Toast.makeText(ctx, "识别失败，请重试", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context)
+    {
+        super.onAttach(context);
+        if(context instanceof TitleView.TitleViewListener)
+            titleViewListener = (TitleView.TitleViewListener) context;
     }
 }

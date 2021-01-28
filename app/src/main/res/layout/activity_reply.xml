@@ -1,94 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:ignore="SmallSp,ContentDescription,Autofill,LabelFor,TextFields">
 
-    <RelativeLayout
-        android:id="@+id/rp_title_layout"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorTitleBackground"
-        android:gravity="center_vertical"
-        android:paddingBottom="4dp"
-        android:paddingTop="10dp">
+        android:orientation="vertical"
+        android:paddingBottom="36dp">
 
-        <TextView
-            android:id="@+id/rp_title_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:text="评论"
-            android:textColor="@color/white" />
-
-        <ImageView
-            android:id="@+id/rp_title_extraicon"
-            android:layout_width="12dp"
-            android:layout_height="19dp"
-            android:layout_marginStart="2dp"
-            android:layout_toStartOf="@+id/rp_title_title"
-            android:rotation="90"
-            android:src="@drawable/icon_extra" />
-    </RelativeLayout>
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/rp_title_layout">
-
-        <LinearLayout
+        <cn.luern0313.wristbilibili.widget.TitleView
+            android:id="@+id/rp_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingBottom="36dp">
+            app:mode="back"
+            app:title="@string/reply_send_title" />
 
-            <EditText
-                android:id="@+id/rp_edittext"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="24dp"
-                android:layout_marginRight="24dp"
-                android:layout_marginTop="8dp"
-                android:textSize="15sp" />
+        <EditText
+            android:id="@+id/rp_edittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="24dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="24dp"
+            android:textSize="15sp" />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginLeft="22dp"
-                android:layout_marginRight="22dp"
-                android:layout_marginTop="8dp"
-                android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="22dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="22dp"
+            android:orientation="horizontal">
 
-                <ImageButton
-                    android:layout_width="42dp"
-                    android:layout_height="42dp"
-                    android:layout_marginRight="32dp"
-                    android:src="@drawable/icon_reply_voiceinput"
-                    android:scaleType="fitCenter"
-                    android:background="@color/alpha"
-                    android:onClick="rp_clickVoiceInput" />
+            <ImageButton
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_marginEnd="32dp"
+                android:background="@color/alpha"
+                android:onClick="rp_clickVoiceInput"
+                android:scaleType="fitCenter"
+                android:src="@drawable/icon_reply_voiceinput" />
 
-                <ImageButton
-                    android:layout_width="42dp"
-                    android:layout_height="42dp"
-                    android:src="@drawable/icon_reply_send"
-                    android:scaleType="fitCenter"
-                    android:background="@color/alpha"
-                    android:onClick="rp_clickSend" />
-
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/rp_tail"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp"
-                android:layout_marginRight="30dp"
-                android:layout_marginTop="8dp"
-                android:text="小尾巴已开启，将在评论结尾显示自定义小尾巴，你可以在设置自定义或关闭小尾巴"
-                android:textSize="11sp" />
+            <ImageButton
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:background="@color/alpha"
+                android:onClick="rp_clickSend"
+                android:scaleType="fitCenter"
+                android:src="@drawable/icon_reply_send" />
 
         </LinearLayout>
-    </ScrollView>
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/rp_tail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="30dp"
+            android:text="@string/tail_tip"
+            android:textSize="11sp" />
+
+    </LinearLayout>
+</ScrollView>
+

@@ -1,5 +1,6 @@
 package cn.luern0313.wristbilibili.fragment;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -13,6 +14,7 @@ import android.widget.ListView;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.adapter.AnimationTimelineAdapter;
@@ -20,7 +22,9 @@ import cn.luern0313.wristbilibili.api.AnimationTimelineApi;
 import cn.luern0313.wristbilibili.models.AnimationTimelineModel;
 import cn.luern0313.wristbilibili.ui.BangumiActivity;
 import cn.luern0313.wristbilibili.util.ColorUtil;
+import cn.luern0313.wristbilibili.util.ListViewTouchListener;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
+import cn.luern0313.wristbilibili.widget.TitleView;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
 /**
@@ -31,7 +35,7 @@ public class AnimationTimelineFragment extends Fragment
 {
     Context ctx;
     View rootLayout;
-    private ListView arListView;
+    private ListView uiListView;
     private WaveSwipeRefreshLayout waveSwipeRefreshLayout;
 
     public static boolean isLogin;
@@ -39,74 +43,48 @@ public class AnimationTimelineFragment extends Fragment
     private ArrayList<AnimationTimelineModel> animationTimelineList;
     AnimationTimelineAdapter adapter;
     private AnimationTimelineAdapter.AnimationTimelineListener adapterListener;
+    private TitleView.TitleViewListener titleViewListener;
 
     Handler handler = new Handler();
     private Runnable runnableUi, runnableNoWeb;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         ctx = getActivity();
         rootLayout = inflater.inflate(R.layout.fragment_aniremind, container, false);
-        arListView = rootLayout.findViewById(R.id.ar_listview);
+        uiListView = rootLayout.findViewById(R.id.ar_listview);
         waveSwipeRefreshLayout = rootLayout.findViewById(R.id.ar_swipe);
         waveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
-        //noinspection ConstantConditions
-        waveSwipeRefreshLayout.setWaveColor(ColorUtil.getColor(R.attr.colorPrimary, getContext()));
-        waveSwipeRefreshLayout.setOnRefreshListener(new WaveSwipeRefreshLayout.OnRefreshListener()
-        {
-            @Override
-            public void onRefresh()
+        waveSwipeRefreshLayout.setWaveColor(ColorUtil.getColor(R.attr.colorPrimary, ctx));
+        waveSwipeRefreshLayout.setOnRefreshListener(() -> handler.post(() -> {
+            if(isLogin)
             {
-                handler.post(new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        if(isLogin)
-                        {
-                            arListView.setVisibility(View.GONE);
-                            getAnimTimeline();
-                        }
-                        else waveSwipeRefreshLayout.setRefreshing(false);
-                    }
-                });
+                uiListView.setVisibility(View.GONE);
+                getAnimTimeline();
             }
-        });
+            else waveSwipeRefreshLayout.setRefreshing(false);
+        }));
 
-        adapterListener = new AnimationTimelineAdapter.AnimationTimelineListener()
-        {
-            @Override
-            public void onClick(int viewId, int position)
-            {
-                onViewClick(viewId, position);
-            }
+        adapterListener = this::onViewClick;
+
+        runnableUi = () -> {
+            rootLayout.findViewById(R.id.ar_nologin).setVisibility(View.GONE);
+            rootLayout.findViewById(R.id.ar_noweb).setVisibility(View.GONE);
+            adapter = new AnimationTimelineAdapter(inflater, animationTimelineList, uiListView, adapterListener);
+            uiListView.setAdapter(adapter);
+            uiListView.setVisibility(View.VISIBLE);
+            waveSwipeRefreshLayout.setRefreshing(false);
         };
 
-        runnableUi = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                rootLayout.findViewById(R.id.ar_nologin).setVisibility(View.GONE);
-                rootLayout.findViewById(R.id.ar_noweb).setVisibility(View.GONE);
-                adapter = new AnimationTimelineAdapter(inflater, animationTimelineList, arListView, adapterListener);
-                arListView.setAdapter(adapter);
-                arListView.setVisibility(View.VISIBLE);
-                waveSwipeRefreshLayout.setRefreshing(false);
-            }
+        runnableNoWeb = () -> {
+            waveSwipeRefreshLayout.setRefreshing(false);
+            rootLayout.findViewById(R.id.ar_noweb).setVisibility(View.VISIBLE);
+            rootLayout.findViewById(R.id.ar_nologin).setVisibility(View.GONE);
         };
 
-        runnableNoWeb = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                waveSwipeRefreshLayout.setRefreshing(false);
-                rootLayout.findViewById(R.id.ar_noweb).setVisibility(View.VISIBLE);
-                rootLayout.findViewById(R.id.ar_nologin).setVisibility(View.GONE);
-            }
-        };
+        uiListView.setOnTouchListener(new ListViewTouchListener(uiListView, titleViewListener));
 
         isLogin = SharedPreferencesUtil.contains(SharedPreferencesUtil.cookies);
         if(isLogin)
@@ -125,22 +103,17 @@ public class AnimationTimelineFragment extends Fragment
 
     private void getAnimTimeline()
     {
-        new Thread(new Runnable()
-        {
-            @Override
-            public void run()
+        new Thread(() -> {
+            try
             {
-                try
-                {
-                    animationTimelineApi = new AnimationTimelineApi();
-                    animationTimelineList = animationTimelineApi.getAnimTimelineList();
-                    handler.post(runnableUi);
-                }
-                catch (IOException e)
-                {
-                    handler.post(runnableNoWeb);
-                    e.printStackTrace();
-                }
+                animationTimelineApi = new AnimationTimelineApi();
+                animationTimelineList = animationTimelineApi.getAnimTimelineList();
+                handler.post(runnableUi);
+            }
+            catch (IOException e)
+            {
+                handler.post(runnableNoWeb);
+                e.printStackTrace();
             }
         }).start();
     }
@@ -158,5 +131,13 @@ public class AnimationTimelineFragment extends Fragment
         Intent intent = new Intent(ctx, BangumiActivity.class);
         intent.putExtra("season_id", animationTimelineSeasonModel.getSeasonId());
         startActivity(intent);
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context)
+    {
+        super.onAttach(context);
+        if(context instanceof TitleView.TitleViewListener)
+            titleViewListener = (TitleView.TitleViewListener) context;
     }
 }

@@ -1,5 +1,6 @@
 package cn.luern0313.wristbilibili.ui;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -22,9 +23,12 @@ import cn.luern0313.wristbilibili.adapter.ListVideoAdapter;
 import cn.luern0313.wristbilibili.api.FavorVideoApi;
 import cn.luern0313.wristbilibili.models.ListVideoModel;
 import cn.luern0313.wristbilibili.util.ColorUtil;
+import cn.luern0313.wristbilibili.util.DataProcessUtil;
+import cn.luern0313.wristbilibili.util.ListViewTouchListener;
+import cn.luern0313.wristbilibili.widget.TitleView;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
-public class FavorVideoActivity extends BaseActivity
+public class FavorVideoActivity extends BaseActivity implements TitleView.TitleViewListener
 {
     private Context ctx;
     private Intent intent;
@@ -49,6 +53,7 @@ public class FavorVideoActivity extends BaseActivity
     int page = 0;
     boolean isLoading = true;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -59,6 +64,9 @@ public class FavorVideoActivity extends BaseActivity
         inflater = getLayoutInflater();
         mid = intent.getStringExtra("mid");
         fid = intent.getStringExtra("fid");
+
+        titleView = findViewById(R.id.favor_video_title);
+        titleViewListener = this;
 
         listVideoAdapterListener = new ListVideoAdapter.ListVideoAdapterListener()
         {
@@ -103,37 +111,38 @@ public class FavorVideoActivity extends BaseActivity
         };
 
         loadingView = inflater.inflate(R.layout.widget_loading, null);
-        favvListView = findViewById(R.id.favv_listview);
-        waveSwipeRefreshLayout = findViewById(R.id.favv_swipe);
+        listView = findViewById(R.id.favor_video_listview);
+        waveSwipeRefreshLayout = findViewById(R.id.favor_video_swipe);
         waveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
         waveSwipeRefreshLayout.setWaveColor(ColorUtil.getColor(R.attr.colorPrimary, ctx));
+        waveSwipeRefreshLayout.setTopOffsetOfWave(DataProcessUtil.dip2px(33));
         waveSwipeRefreshLayout.setOnRefreshListener(() -> handler.post(() -> {
-            favvListView.setVisibility(View.GONE);
+            listView.setVisibility(View.GONE);
             getFavorVideo();
         }));
 
         runnableUi = () -> {
             isLoading = false;
-            findViewById(R.id.favv_noweb).setVisibility(View.GONE);
-            findViewById(R.id.favv_nonthing).setVisibility(View.GONE);
-            favvListView.setVisibility(View.VISIBLE);
+            findViewById(R.id.favor_video_noweb).setVisibility(View.GONE);
+            findViewById(R.id.favor_video_nonthing).setVisibility(View.GONE);
+            listView.setVisibility(View.VISIBLE);
 
             waveSwipeRefreshLayout.setRefreshing(false);
-            listVideoAdapter = new ListVideoAdapter(inflater, favorVideoList, false, favvListView, listVideoAdapterListener);
-            favvListView.setAdapter(listVideoAdapter);
+            listVideoAdapter = new ListVideoAdapter(inflater, favorVideoList, false, listView, listVideoAdapterListener);
+            listView.setAdapter(listVideoAdapter);
         };
 
         runnableNothing = () -> {
-            findViewById(R.id.favv_noweb).setVisibility(View.GONE);
-            findViewById(R.id.favv_nonthing).setVisibility(View.VISIBLE);
-            favvListView.setVisibility(View.GONE);
+            findViewById(R.id.favor_video_noweb).setVisibility(View.GONE);
+            findViewById(R.id.favor_video_nonthing).setVisibility(View.VISIBLE);
+            listView.setVisibility(View.GONE);
             waveSwipeRefreshLayout.setRefreshing(false);
         };
 
         runnableNoWeb = () -> {
-            findViewById(R.id.favv_noweb).setVisibility(View.VISIBLE);
-            findViewById(R.id.favv_nonthing).setVisibility(View.GONE);
-            favvListView.setVisibility(View.GONE);
+            findViewById(R.id.favor_video_noweb).setVisibility(View.VISIBLE);
+            findViewById(R.id.favor_video_nonthing).setVisibility(View.GONE);
+            listView.setVisibility(View.GONE);
             waveSwipeRefreshLayout.setRefreshing(false);
         };
 
@@ -155,7 +164,7 @@ public class FavorVideoActivity extends BaseActivity
             getMoreFavorVideo();
         });
 
-        favvListView.setOnScrollListener(new AbsListView.OnScrollListener()
+        listView.setOnScrollListener(new AbsListView.OnScrollListener()
         {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState)
@@ -172,12 +181,14 @@ public class FavorVideoActivity extends BaseActivity
             }
         });
 
+        listView.setOnTouchListener(new ListViewTouchListener(listView, titleViewListener));
+
         waveSwipeRefreshLayout.setRefreshing(true);
-        favvListView.addFooterView(loadingView);
+        listView.addFooterView(loadingView);
         getFavorVideo();
     }
 
-    void getFavorVideo()
+    private void getFavorVideo()
     {
         isLoading = true;
         favorVideoApi = new FavorVideoApi(mid, fid);
@@ -198,7 +209,7 @@ public class FavorVideoActivity extends BaseActivity
         }).start();
     }
 
-    void getMoreFavorVideo()
+    private void getMoreFavorVideo()
     {
         isLoading = true;
         page++;
@@ -220,5 +231,17 @@ public class FavorVideoActivity extends BaseActivity
                 e.printStackTrace();
             }
         }).start();
+    }
+
+    @Override
+    public boolean hideTitle()
+    {
+        return titleView.hide();
+    }
+
+    @Override
+    public boolean showTitle()
+    {
+        return titleView.show();
     }
 }

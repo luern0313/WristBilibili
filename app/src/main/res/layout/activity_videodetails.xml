@@ -1,82 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <RelativeLayout
-        android:id="@+id/vd_title_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorTitleBackground"
-        android:gravity="center_vertical"
-        android:paddingBottom="4dp"
-        android:paddingTop="10dp">
-
-
-        <ViewFlipper
-            android:id="@+id/vd_title_title"
-            android:layout_width="wrap_content"
-            android:layout_height="19dp"
-            android:layout_centerHorizontal="true">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="视频详情"
-                android:textColor="@color/white"
-                android:textSize="13sp"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="视频评论"
-                android:textColor="@color/white"
-                android:textSize="13sp"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="相关推荐"
-                android:textColor="@color/white"
-                android:textSize="13sp"/>
-
-        </ViewFlipper>
-
-        <ImageView
-            android:id="@+id/vd_title_extraicon"
-            android:layout_width="12dp"
-            android:layout_height="19dp"
-            android:layout_toStartOf="@+id/vd_title_title"
-            android:rotation="90"
-            android:src="@drawable/icon_extra" />
-
-        <ImageView
-            android:id="@+id/vd_title_extraicon2"
-            android:layout_width="12dp"
-            android:layout_height="19dp"
-            android:layout_toEndOf="@+id/vd_title_title"
-            android:rotation="270"
-            android:src="@drawable/icon_extra" />
-    </RelativeLayout>
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:ignore="ContentDescription">
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/vd_viewpager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/vd_title_layout"
-        android:orientation="horizontal"/>
+        android:orientation="horizontal" />
+
+    <cn.luern0313.wristbilibili.widget.TitleView
+        android:id="@+id/vd_title"
+        android:layout_width="match_parent"
+        android:layout_height="33dp"
+        app:title="@string/video_title"
+        app:mode="viewpager"/>
 
     <LinearLayout
         android:id="@+id/vd_loading"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/vd_title_layout"
+        android:layout_below="@+id/vd_title"
         android:background="?android:attr/colorBackground"
         android:clickable="true"
+        android:focusable="true"
         android:gravity="center"
         android:orientation="vertical"
         android:paddingBottom="33dp"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <ImageView
             android:id="@+id/vd_loading_img"
@@ -87,7 +41,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="加载中. . ."
+            android:text="@string/main_tip_loading"
             android:textSize="13sp" />
     </LinearLayout>
 
@@ -95,9 +49,10 @@
         android:id="@+id/vd_noweb"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/vd_title_layout"
+        android:layout_below="@+id/vd_title"
         android:background="?android:attr/colorBackground"
         android:clickable="true"
+        android:focusable="true"
         android:gravity="center"
         android:orientation="vertical"
         android:paddingBottom="33dp"
@@ -107,12 +62,12 @@
             android:layout_width="wrap_content"
             android:layout_height="92dp"
             android:padding="6dp"
-            android:src="@drawable/img_noweb" />
+            android:src="@drawable/img_no_web" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="加载失败\n可能是没有网络？"
+            android:text="@string/main_tip_no_web"
             android:textSize="13sp" />
     </LinearLayout>
 
@@ -120,9 +75,10 @@
         android:id="@+id/vd_novideo"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/vd_title_layout"
+        android:layout_below="@+id/vd_title"
         android:background="?android:attr/colorBackground"
         android:clickable="true"
+        android:focusable="true"
         android:gravity="center"
         android:orientation="vertical"
         android:paddingBottom="33dp"
@@ -137,7 +93,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="  视频不见了..."
+            android:text="@string/main_tip_no_data"
             android:textSize="13sp" />
 
     </LinearLayout>
@@ -146,9 +102,10 @@
         android:id="@+id/vd_tip"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/vd_title_layout"
+        android:layout_below="@+id/vd_title"
         android:background="@color/tipBG"
         android:clickable="true"
+        android:focusable="true"
         android:onClick="clickVdTip"
         android:visibility="gone">
 
@@ -156,8 +113,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="24dp"
-            android:layout_marginRight="24dp"
             android:layout_marginTop="-2dp"
+            android:layout_marginRight="24dp"
             android:scaleType="fitStart"
             android:src="@drawable/img_vd_tip" />
 
@@ -170,7 +127,7 @@
             android:layout_marginRight="28dp"
             android:gravity="center"
             android:paddingTop="14dp"
-            android:text="当标题栏出现左右两个箭头时，代表这个页面是可以左右滑动的！"
+            android:text="@string/main_tip_viewpager_tip"
             android:textColor="@color/white"
             android:textStyle="bold" />
 
@@ -180,7 +137,7 @@
             android:layout_below="@+id/vd_tip_text"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="18dp"
-            android:text="轻触不再显示"
+            android:text="@string/main_tip_viewpager_close"
             android:textColor="@color/white"
             android:textSize="12sp" />
     </RelativeLayout>

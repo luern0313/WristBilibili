@@ -88,7 +88,7 @@ public class BangumiDetailFragment extends Fragment implements View.OnClickListe
         uiDetailSectionsRecyclerView = rootLayout.findViewById(R.id.bgm_detail_video_other);
 
         ((TextView) rootLayout.findViewById(R.id.bgm_detail_title)).setText(bangumiModel.getTitle());
-        if(bangumiModel.getScore().equals(""))
+        if(bangumiModel.getScore() == null)
             rootLayout.findViewById(R.id.bgm_detail_score).setVisibility(View.GONE);
         else
             ((TextView) rootLayout.findViewById(R.id.bgm_detail_score)).setText(bangumiModel.getScore());
@@ -115,7 +115,7 @@ public class BangumiDetailFragment extends Fragment implements View.OnClickListe
 
         setBangumiIcon();
 
-        if(bangumiModel.getEpisodes().size() != 0)
+        if(bangumiModel.getEpisodes() != null && bangumiModel.getEpisodes().size() != 0)
         {
             rootLayout.findViewById(R.id.bgm_detail_video_part_layout).setVisibility(View.VISIBLE);
             ((TextView) rootLayout.findViewById(R.id.bgm_detail_video_part_text)).setText(String.format(getString(R.string.bangumi_episodes_title), bangumiModel.getEpisodes().size(), bangumiModel.getTypeEp()));
@@ -129,7 +129,7 @@ public class BangumiDetailFragment extends Fragment implements View.OnClickListe
                 layoutManager.scrollToPositionWithOffset(bangumiModel.getUserProgressPosition(), 0);
         }
 
-        if(bangumiModel.getSections().size() != 0)
+        if(bangumiModel.getSections() != null && bangumiModel.getSections().size() != 0)
         {
             rootLayout.findViewById(R.id.bgm_detail_video_other_layout).setVisibility(View.VISIBLE);
             ((TextView) rootLayout.findViewById(R.id.bgm_detail_video_other_text)).setText(bangumiModel.getSectionName());
@@ -143,7 +143,7 @@ public class BangumiDetailFragment extends Fragment implements View.OnClickListe
                 layoutManager.scrollToPositionWithOffset(bangumiModel.getUserProgressPosition(), 0);
         }
 
-        if(bangumiModel.getSeasons().size() > 1)
+        if(bangumiModel.getSeasons() != null && bangumiModel.getSeasons().size() > 1)
         {
             rootLayout.findViewById(R.id.bgm_detail_video_season_layout).setVisibility(View.VISIBLE);
             LinearLayout episodesLinearLayout = rootLayout.findViewById(R.id.bgm_detail_video_season);
@@ -251,14 +251,14 @@ public class BangumiDetailFragment extends Fragment implements View.OnClickListe
     private TextView getVideoSeasonButton(final BangumiModel.BangumiSeasonModel season)
     {
         TextView textView = new TextView(ctx);
-        textView.setWidth(120);
+        textView.setWidth(DataProcessUtil.dip2px(80));
         textView.setBackgroundResource(seasonId.equals(season.getSeasonId()) ? R.drawable.selector_bg_bangumi_episode_now : R.drawable.selector_bg_bangumi_episode);
         textView.setPadding(12, 6, 12, 6);
         textView.setText(season.getSeasonTitle());
         textView.setLines(1);
         textView.setEllipsize(TextUtils.TruncateAt.END);
         textView.setTextSize(14);
-        textView.setTextColor(getResources().getColor(seasonId.equals(season.getSeasonId()) ? ColorUtil.getColor(R.attr.colorPrimary, textView.getContext()) : R.color.gray_77));
+        //textView.setTextColor(seasonId.equals(season.getSeasonId()) ? ColorUtil.getColor(R.attr.colorPrimary, textView.getContext()) : getResources().getColor(R.color.gray_77));
         textView.setOnClickListener(seasonId.equals(season.getSeasonId()) ? null : (View.OnClickListener) v -> {
             Intent intent = new Intent(ctx, BangumiActivity.class);
             intent.putExtra("season_id", season.getSeasonId());

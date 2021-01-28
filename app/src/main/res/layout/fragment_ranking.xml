@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:ignore="UseCompoundDrawables,ContentDescription">
 
     <LinearLayout
         android:id="@+id/rk_noweb"
@@ -37,8 +38,10 @@
             android:id="@+id/rk_listview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:clipToPadding="false"
             android:divider="@color/alpha"
-            android:dividerHeight="0dp"/>
+            android:dividerHeight="0dp"
+            android:paddingTop="33dp" />
     </jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout>
 
 </RelativeLayout>

@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:ignore="ContentDescription">
 
     <jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout
         android:id="@+id/reply_swipe"
@@ -12,7 +14,9 @@
             android:id="@+id/reply_listview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:divider="@color/alpha" />
+            android:clipToPadding="false"
+            android:divider="@color/alpha"
+            android:paddingTop="33dp" />
 
     </jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout>
 

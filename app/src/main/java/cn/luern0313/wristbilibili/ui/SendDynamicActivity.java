@@ -15,7 +15,6 @@ import android.widget.Toast;
 
 import java.io.IOException;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.util.ImageDownloaderUtil;
@@ -55,8 +54,8 @@ public class SendDynamicActivity extends BaseActivity
         if(inIntent.getBooleanExtra("is_share", false))
         {
             findViewById(R.id.senddy_share).setVisibility(View.VISIBLE);
-            up = inIntent.hasExtra("share_up") ? inIntent.getStringExtra("share_up") : "";
-            img = inIntent.hasExtra("share_img") ? inIntent.getStringExtra("share_img") : "";
+            up = inIntent.getStringExtra("share_up");
+            img =inIntent.getStringExtra("share_img");
             title = inIntent.hasExtra("share_title") ? inIntent.getStringExtra("share_title") : "";
             text = inIntent.hasExtra("share_text") ? inIntent.getStringExtra("share_text") : "";
 
@@ -66,28 +65,23 @@ public class SendDynamicActivity extends BaseActivity
             uiShareImg = findViewById(R.id.senddy_share_img_img);
             uiShareTitle = findViewById(R.id.senddy_share_title);
 
-            if(!up.equals(""))
+            if(up != null)
                 uiShareUp.setText(Html.fromHtml("转发自 <font color=#188ad0>@" + up + "</font>："));
             else
                 uiShareUp.setVisibility(View.GONE);
             uiShareTitle.setText(title);
-            if(!img.equals(""))
+            if(img != null)
             {
                 uiShareCardview.setVisibility(View.VISIBLE);
-                new Thread(new Runnable()
-                {
-                    @Override
-                    public void run()
+                new Thread(() -> {
+                    try
                     {
-                        try
-                        {
-                            image = ImageDownloaderUtil.downloadImage(img);
-                            handler.post(runnableUi);
-                        }
-                        catch (IOException e)
-                        {
-                            e.printStackTrace();
-                        }
+                        image = ImageDownloaderUtil.downloadImage(img);
+                        handler.post(runnableUi);
+                    }
+                    catch (IOException e)
+                    {
+                        e.printStackTrace();
                     }
                 }).start();
             }
@@ -97,19 +91,14 @@ public class SendDynamicActivity extends BaseActivity
         if(!SharedPreferencesUtil.getBoolean(SharedPreferencesUtil.tail, true))
             findViewById(R.id.senddy_tail).setVisibility(View.GONE);
 
-        runnableUi = new Runnable()
-        {
-            @Override
-            public void run()
+        runnableUi = () -> {
+            try
             {
-                try
-                {
-                    uiShareImg.setImageBitmap(image);
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
+                uiShareImg.setImageBitmap(image);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
             }
         };
     }
@@ -124,7 +113,7 @@ public class SendDynamicActivity extends BaseActivity
         }
         catch (Exception e)
         {
-            Toast.makeText(ctx, "抱歉，该手表不支持语音输入", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ctx, getString(R.string.main_tip_voice_input), Toast.LENGTH_SHORT).show();
         }
     }
 

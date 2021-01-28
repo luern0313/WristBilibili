@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:ignore="UseCompoundDrawables,ContentDescription">
 
     <LinearLayout
         android:id="@+id/wl_nologin"
@@ -90,6 +92,7 @@
             android:clipToPadding="false"
             android:divider="@color/alpha"
             android:dividerHeight="3dp"
+            android:paddingTop="33dp"
             android:paddingBottom="22dp" />
     </jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout>
 

@@ -27,6 +27,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.Random;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -38,6 +39,8 @@ import cn.luern0313.wristbilibili.ui.UserActivity;
 import cn.luern0313.wristbilibili.ui.VideoActivity;
 import cn.luern0313.wristbilibili.util.ColorUtil;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
+import cn.luern0313.wristbilibili.util.ListViewTouchListener;
+import cn.luern0313.wristbilibili.widget.TitleView;
 
 public class VideoDetailFragment extends Fragment implements View.OnClickListener
 {
@@ -46,6 +49,7 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
     private Context ctx;
     private View rootLayout;
     private VideoDetailFragmentListener videoDetailFragmentListener;
+    private TitleView.TitleViewListener titleViewListener;
 
     private VideoModel videoModel;
 
@@ -181,6 +185,8 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
                 layoutManager.scrollToPositionWithOffset(videoModel.getUserProgressPosition(), 0);
         }
         else rootLayout.findViewById(R.id.vd_video_part_layout).setVisibility(View.GONE);
+
+        rootLayout.findViewById(R.id.vd_lay).setOnTouchListener(new ListViewTouchListener(rootLayout.findViewById(R.id.vd_lay), titleViewListener));
 
         rootLayout.findViewById(R.id.vd_like).setOnTouchListener((view, motionEvent) -> {
             switch (motionEvent.getAction())
@@ -367,7 +373,7 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
     }
 
     @Override
-    public void onAttach(Context context)
+    public void onAttach(@Nullable Context context)
     {
         super.onAttach(context);
         if(context instanceof VideoDetailFragmentListener)
@@ -391,6 +397,9 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
         {
             throw new RuntimeException(context.toString() + " must implement VideoDetailFragmentListener");
         }
+
+        if(context instanceof TitleView.TitleViewListener)
+            titleViewListener = (TitleView.TitleViewListener) context;
     }
 
     @Override

@@ -73,6 +73,7 @@ public class UserVideoFragment extends Fragment
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
@@ -85,7 +86,7 @@ public class UserVideoFragment extends Fragment
             @Override
             public void onListVideoAdapterClick(int viewId, int position)
             {
-                Intent intent = VideoActivity.getActivityIntent(ctx, "", listVideoModelArrayList.get(position).getVideoBvid());
+                Intent intent = VideoActivity.getActivityIntent(ctx, "", listVideoModelArrayList.get(position).getBvid());
                 startActivity(intent);
             }
 
@@ -102,78 +103,39 @@ public class UserVideoFragment extends Fragment
         uiNoWeb = rootLayout.findViewById(R.id.user_video_noweb);
         uiNothing = rootLayout.findViewById(R.id.user_video_nonthing);
 
-        runnableUi = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                uiLoading.setVisibility(View.GONE);
-                uiNoWeb.setVisibility(View.GONE);
-                uiNothing.setVisibility(View.GONE);
-                listVideoAdapter = new ListVideoAdapter(inflater, listVideoModelArrayList, uiListView, listVideoAdapterListener);
-                uiListView.setAdapter(listVideoAdapter);
-            }
+        runnableUi = () -> {
+            uiLoading.setVisibility(View.GONE);
+            uiNoWeb.setVisibility(View.GONE);
+            uiNothing.setVisibility(View.GONE);
+            listVideoAdapter = new ListVideoAdapter(inflater, listVideoModelArrayList, false, uiListView, listVideoAdapterListener);
+            uiListView.setAdapter(listVideoAdapter);
         };
 
-        runnableNoWeb = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                uiLoading.setVisibility(View.GONE);
-                uiNoWeb.setVisibility(View.VISIBLE);
-                uiNothing.setVisibility(View.GONE);
-            }
+        runnableNoWeb = () -> {
+            uiLoading.setVisibility(View.GONE);
+            uiNoWeb.setVisibility(View.VISIBLE);
+            uiNothing.setVisibility(View.GONE);
         };
 
-        runnableNothing = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                uiLoading.setVisibility(View.GONE);
-                uiNoWeb.setVisibility(View.GONE);
-                uiNothing.setVisibility(View.VISIBLE);
-            }
+        runnableNothing = () -> {
+            uiLoading.setVisibility(View.GONE);
+            uiNoWeb.setVisibility(View.GONE);
+            uiNothing.setVisibility(View.VISIBLE);
         };
 
-        runnableMore = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                listVideoAdapter.notifyDataSetChanged();
-            }
+        runnableMore = () -> listVideoAdapter.notifyDataSetChanged();
+
+        runnableMoreNoWeb = () -> {
+            ((TextView) layoutLoading.findViewById(R.id.wid_load_button)).setText("好像没有网络...\n检查下网络？");
+            layoutLoading.findViewById(R.id.wid_load_button).setVisibility(View.VISIBLE);
         };
 
-        runnableMoreNoWeb = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                ((TextView) layoutLoading.findViewById(R.id.wid_load_button)).setText("好像没有网络...\n检查下网络？");
-                layoutLoading.findViewById(R.id.wid_load_button).setVisibility(View.VISIBLE);
-            }
-        };
+        runnableMoreNothing = () -> ((TextView) layoutLoading.findViewById(R.id.wid_load_text)).setText("  没有更多了...");
 
-        runnableMoreNothing = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                ((TextView) layoutLoading.findViewById(R.id.wid_load_text)).setText("  没有更多了...");
-            }
-        };
-
-        layoutLoading.findViewById(R.id.wid_load_button).setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                ((TextView) layoutLoading.findViewById(R.id.wid_load_button)).setText("  加载中...");
-                layoutLoading.findViewById(R.id.wid_load_button).setVisibility(View.GONE);
-                getMoreVideo();
-            }
+        layoutLoading.findViewById(R.id.wid_load_button).setOnClickListener(v -> {
+            ((TextView) layoutLoading.findViewById(R.id.wid_load_button)).setText("  加载中...");
+            layoutLoading.findViewById(R.id.wid_load_button).setVisibility(View.GONE);
+            getMoreVideo();
         });
 
         uiListView.setOnScrollListener(new AbsListView.OnScrollListener()
@@ -194,33 +156,30 @@ public class UserVideoFragment extends Fragment
             }
         });
 
-        new Thread(new Runnable()
-        {
-            @Override
-            public void run()
+        uiListView.setOnTouchListener(new ListViewTouchListener(uiListView, titleViewListener));
+
+        new Thread(() -> {
+            try
             {
-                try
+                ArrayList<ListVideoModel> v = userApi.getUserVideo(page);
+                isLoading = false;
+                if(v != null && v.size() != 0)
                 {
-                    ArrayList<ListVideoModel> v = userApi.getUserVideo(page);
-                    isLoading = false;
-                    if(v != null && v.size() != 0)
-                    {
-                        listVideoModelArrayList.addAll(v);
-                        handler.post(runnableUi);
-                    }
-                    else
-                        handler.post(runnableNothing);
+                    listVideoModelArrayList.addAll(v);
+                    handler.post(runnableUi);
                 }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
-                    handler.post(runnableNoWeb);
-                }
-                catch (NullPointerException e)
-                {
-                    e.printStackTrace();
+                else
                     handler.post(runnableNothing);
-                }
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+                handler.post(runnableNoWeb);
+            }
+            catch (NullPointerException e)
+            {
+                e.printStackTrace();
+                handler.post(runnableNothing);
             }
         }).start();
 
@@ -229,31 +188,33 @@ public class UserVideoFragment extends Fragment
 
     private void getMoreVideo()
     {
-        new Thread(new Runnable()
-        {
-            @Override
-            public void run()
+        new Thread(() -> {
+            try
             {
-                try
+                page++;
+                ArrayList<ListVideoModel> v = userApi.getUserVideo(page);
+                isLoading = false;
+                if(v != null && v.size() != 0)
                 {
-                    page++;
-                    ArrayList<ListVideoModel> v = userApi.getUserVideo(page);
-                    isLoading = false;
-                    if(v != null && v.size() != 0)
-                    {
-                        listVideoModelArrayList.addAll(v);
-                        handler.post(runnableMore);
-                    }
-                    else
-                        handler.post(runnableMoreNothing);
+                    listVideoModelArrayList.addAll(v);
+                    handler.post(runnableMore);
                 }
-                catch (IOException | NullPointerException e)
-                {
-                    e.printStackTrace();
-                    handler.post(runnableMoreNoWeb);
-                }
+                else
+                    handler.post(runnableMoreNothing);
+            }
+            catch (IOException | NullPointerException e)
+            {
+                e.printStackTrace();
+                handler.post(runnableMoreNoWeb);
             }
         }).start();
     }
 
+    @Override
+    public void onAttach(@NonNull Context context)
+    {
+        super.onAttach(context);
+        if(context instanceof TitleView.TitleViewListener)
+            titleViewListener = (TitleView.TitleViewListener) context;
+    }
 }

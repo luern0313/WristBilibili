@@ -1,147 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    tools:ignore="SmallSp,ContentDescription,Autofill,LabelFor,TextFields">
 
-    <RelativeLayout
-        android:id="@+id/senddy_title_layout"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="33dp"
-        android:background="?attr/colorTitleBackground"
-        android:gravity="center_vertical"
-        android:paddingBottom="4dp"
-        android:paddingTop="10dp">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="34dp">
 
-        <TextView
-            android:id="@+id/senddy_title_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:text="发动态"
-            android:textColor="@color/white" />
-
-        <ImageView
-            android:id="@+id/senddy_title_extraicon"
-            android:layout_width="12dp"
-            android:layout_height="19dp"
-            android:layout_marginStart="2dp"
-            android:layout_toStartOf="@+id/senddy_title_title"
-            android:rotation="90"
-            android:src="@drawable/icon_extra" />
-
-    </RelativeLayout>
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/senddy_title_layout">
-
-        <LinearLayout
+        <cn.luern0313.wristbilibili.widget.TitleView
+            android:id="@+id/senddy_title_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingBottom="34dp">
+            app:mode="back"
+            app:title="@string/dynamic_send_title" />
 
-            <EditText
-                android:id="@+id/senddy_edittext"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:layout_marginLeft="24dp"
-                android:layout_marginRight="24dp"
-                android:layout_marginTop="8dp"
-                android:textSize="15sp" />
+        <EditText
+            android:id="@+id/senddy_edittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="24dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="24dp"
+            android:layout_marginBottom="4dp"
+            android:textSize="15sp" />
 
-            <RelativeLayout
-                android:id="@+id/senddy_share"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?attr/colorLayerBack"
-                android:paddingLeft="24dp"
-                android:paddingTop="6dp"
-                android:paddingRight="24dp"
-                android:paddingBottom="6dp"
-                android:visibility="gone">
-
-                <TextView
-                    android:id="@+id/senddy_share_up"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="3dp"
-                    android:textSize="13sp" />
-
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/senddy_share_img"
-                    android:layout_width="42dp"
-                    android:layout_height="42dp"
-                    android:layout_below="@+id/senddy_share_up"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="3dp"
-                    android:visibility="gone"
-                    app:cardCornerRadius="4dp"
-                    app:cardElevation="0dp">
-
-                    <ImageView
-                        android:id="@+id/senddy_share_img_img"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/img_default_animation" />
-
-                </androidx.cardview.widget.CardView>
-
-                <TextView
-                    android:id="@+id/senddy_share_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/senddy_share_up"
-                    android:layout_marginTop="0dp"
-                    android:layout_toRightOf="@+id/senddy_share_img"
-                    android:ellipsize="end"
-                    android:maxLines="3"
-                    android:textSize="12sp" />
-
-            </RelativeLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginLeft="22dp"
-                android:layout_marginRight="22dp"
-                android:layout_marginTop="8dp"
-                android:orientation="horizontal">
-
-                <ImageButton
-                    android:layout_width="42dp"
-                    android:layout_height="42dp"
-                    android:layout_marginRight="32dp"
-                    android:src="@drawable/ic_reply_voiceinput"
-                    android:scaleType="fitCenter"
-                    android:background="@color/alpha"
-                    android:onClick="senddy_clickVoiceInput" />
-
-                <ImageButton
-                    android:layout_width="42dp"
-                    android:layout_height="42dp"
-                    android:src="@drawable/ic_reply_send"
-                    android:scaleType="fitCenter"
-                    android:background="@color/alpha"
-                    android:onClick="senddy_clickSend" />
-
-            </LinearLayout>
+        <RelativeLayout
+            android:id="@+id/senddy_share"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorLayerBackground"
+            android:paddingLeft="24dp"
+            android:paddingTop="6dp"
+            android:paddingRight="24dp"
+            android:paddingBottom="6dp"
+            android:visibility="gone">
 
             <TextView
-                android:id="@+id/senddy_tail"
+                android:id="@+id/senddy_share_up"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="3dp"
+                android:textSize="13sp" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/senddy_share_img"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_below="@+id/senddy_share_up"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="3dp"
+                android:visibility="gone"
+                app:cardCornerRadius="4dp"
+                app:cardElevation="0dp">
+
+                <ImageView
+                    android:id="@+id/senddy_share_img_img"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/img_default_animation" />
+
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/senddy_share_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp"
-                android:layout_marginRight="30dp"
-                android:layout_marginTop="8dp"
-                android:text="小尾巴已开启，将在动态结尾显示自定义小尾巴，你可以在设置自定义或关闭小尾巴~"
-                android:textSize="11sp" />
+                android:layout_below="@+id/senddy_share_up"
+                android:layout_marginTop="0dp"
+                android:layout_toEndOf="@+id/senddy_share_img"
+                android:ellipsize="end"
+                android:maxLines="3"
+                android:textSize="12sp" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="22dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="22dp"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_marginEnd="32dp"
+                android:background="@color/alpha"
+                android:onClick="senddy_clickVoiceInput"
+                android:scaleType="fitCenter"
+                android:src="@drawable/icon_reply_voiceinput" />
+
+            <ImageButton
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:background="@color/alpha"
+                android:onClick="senddy_clickSend"
+                android:scaleType="fitCenter"
+                android:src="@drawable/icon_reply_send" />
 
         </LinearLayout>
-    </ScrollView>
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/senddy_tail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="30dp"
+            android:text="@string/tail_tip"
+            android:textSize="11sp" />
+
+    </LinearLayout>
+</ScrollView>
