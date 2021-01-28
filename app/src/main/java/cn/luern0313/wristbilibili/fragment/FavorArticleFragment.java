@@ -44,7 +44,7 @@ public class FavorArticleFragment extends Fragment
     private ListArticleAdapter listArticleAdapter;
     private ListArticleAdapter.ListArticleAdapterListener listArticleAdapterListener;
 
-    private Handler handler = new Handler();
+    private final Handler handler = new Handler();
     private Runnable runnableUi, runnableNoWeb, runnableNoData, runnableMore, runnableMoreNoWeb, runnableMoreNoData;
 
     private int favorPage = 1;

@@ -18,9 +18,9 @@ import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
 public class RankingApi
 {
-    private String mid;
-    private String csrf;
-    private ArrayList<String> appHeaders;
+    private final String mid;
+    private final String csrf;
+    private final ArrayList<String> appHeaders;
 
     public RankingApi()
     {

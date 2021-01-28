@@ -1,5 +1,6 @@
 package cn.luern0313.wristbilibili.fragment.user;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,12 +15,15 @@ import android.widget.TextView;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.adapter.UserListPeopleAdapter;
 import cn.luern0313.wristbilibili.api.UserApi;
 import cn.luern0313.wristbilibili.models.UserListPeopleModel;
 import cn.luern0313.wristbilibili.ui.UserActivity;
+import cn.luern0313.wristbilibili.util.ListViewTouchListener;
+import cn.luern0313.wristbilibili.widget.TitleView;
 
 public class UserListPeopleFragment extends Fragment
 {
@@ -36,6 +40,7 @@ public class UserListPeopleFragment extends Fragment
 
     private UserListPeopleAdapter userListPeopleAdapter;
     private UserListPeopleAdapter.UserListPeopleAdapterListener userListPeopleAdapterListener;
+    private TitleView.TitleViewListener titleViewListener;
 
     private final Handler handler = new Handler();
     private Runnable runnableUi, runnableNoWeb, runnableNothing, runnableMore, runnableMoreNoWeb, runnableMoreNothing;
@@ -68,6 +73,7 @@ public class UserListPeopleFragment extends Fragment
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {

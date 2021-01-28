@@ -48,7 +48,7 @@ public class FavorBoxFragment extends Fragment
 
     public static boolean isLogin;
 
-    private Handler handler = new Handler();
+    private final Handler handler = new Handler();
     private Runnable runnableUi, runnableNoWeb, runnableNoData;
 
     public FavorBoxFragment() {}

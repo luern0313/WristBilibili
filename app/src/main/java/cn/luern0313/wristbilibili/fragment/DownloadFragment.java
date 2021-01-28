@@ -52,7 +52,7 @@ public class DownloadFragment extends Fragment
     private String BASE_DOWNLOAD_PATH;
 
     private DownloadService myBinder;
-    private ServiceConnection connection = new ServiceConnection()
+    private final ServiceConnection connection = new ServiceConnection()
     {
         @Override
         public void onServiceDisconnected(ComponentName name)

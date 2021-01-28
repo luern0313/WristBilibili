@@ -32,18 +32,18 @@ import cn.luern0313.wristbilibili.widget.ExpandableTextView;
 
 public class ReplyAdapter extends BaseAdapter
 {
-    private Context ctx;
-    private LayoutInflater mInflater;
+    private final Context ctx;
+    private final LayoutInflater mInflater;
 
-    private ReplyAdapterListener replyAdapterListener;
+    private final ReplyAdapterListener replyAdapterListener;
 
-    private ArrayList<ReplyModel> replyList;
-    private ListView listView;
-    private int replyWidth;
+    private final ArrayList<ReplyModel> replyList;
+    private final ListView listView;
+    private final int replyWidth;
 
-    private boolean isShowFloor;
-    private boolean isHasRoot;
-    private int replyCount;
+    private final boolean isShowFloor;
+    private final boolean isHasRoot;
+    private final int replyCount;
 
     public ReplyAdapter(LayoutInflater inflater, ListView listView, ArrayList<ReplyModel> replyList, boolean isShowFloor, boolean isHasRoot, int replyCount, int replyWidth, ReplyAdapterListener replyAdapterListener)
     {

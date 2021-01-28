@@ -7,16 +7,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import androidx.collection.LruCache;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.models.FavorBoxModel;
 import cn.luern0313.wristbilibili.util.ImageTaskUtil;
+import cn.luern0313.wristbilibili.util.LruCacheUtil;
 import cn.luern0313.wristbilibili.util.MyApplication;
 
 /**
@@ -24,14 +25,13 @@ import cn.luern0313.wristbilibili.util.MyApplication;
  */
 public class FavorBoxAdapter extends BaseAdapter
 {
-    private Context ctx;
-    private LayoutInflater mInflater;
+    private final Context ctx;
+    private final LayoutInflater mInflater;
 
-    private LruCache<String, BitmapDrawable> mImageCache;
-    private FavorBoxAdapterListener favorBoxAdapterListener;
+    private final FavorBoxAdapterListener favorBoxAdapterListener;
 
-    private ArrayList<FavorBoxModel> favList;
-    private ListView listView;
+    private final ArrayList<FavorBoxModel> favList;
+    private final ListView listView;
 
     public FavorBoxAdapter(LayoutInflater inflater, ArrayList<FavorBoxModel> favList, ListView listView, FavorBoxAdapterListener favorBoxAdapterListener)
     {
@@ -40,25 +40,6 @@ public class FavorBoxAdapter extends BaseAdapter
         this.favList = favList;
         this.listView = listView;
         this.favorBoxAdapterListener = favorBoxAdapterListener;
-
-        int maxCache = (int) Runtime.getRuntime().maxMemory();
-        int cacheSize = maxCache / 8;
-        mImageCache = new LruCache<String, BitmapDrawable>(cacheSize)
-        {
-            @Override
-            protected int sizeOf(String key, BitmapDrawable value)
-            {
-                try
-                {
-                    return value.getBitmap().getByteCount();
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
-                return 0;
-            }
-        };
     }
 
     @Override

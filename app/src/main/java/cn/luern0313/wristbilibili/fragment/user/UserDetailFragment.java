@@ -1,5 +1,6 @@
 package cn.luern0313.wristbilibili.fragment.user;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -22,7 +24,9 @@ import cn.luern0313.wristbilibili.models.UserModel;
 import cn.luern0313.wristbilibili.ui.ImgActivity;
 import cn.luern0313.wristbilibili.util.ColorUtil;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
+import cn.luern0313.wristbilibili.util.ListViewTouchListener;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
+import cn.luern0313.wristbilibili.widget.TitleView;
 
 public class UserDetailFragment extends Fragment implements View.OnClickListener
 {
@@ -34,6 +38,7 @@ public class UserDetailFragment extends Fragment implements View.OnClickListener
     private UserModel userModel;
 
     private UserDetailFragmentListener userDetailFragmentListener;
+    private TitleView.TitleViewListener titleViewListener;
 
     public UserDetailFragment() { }
 

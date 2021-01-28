@@ -29,15 +29,15 @@ import cn.luern0313.wristbilibili.util.MyApplication;
  */
 public class DownloadAdapter extends BaseAdapter
 {
-    private Context ctx;
-    private LayoutInflater mInflater;
-    private ListView listView;
-    private String path;
+    private final Context ctx;
+    private final LayoutInflater mInflater;
+    private final ListView listView;
+    private final String path;
 
-    private LruCache<String, BitmapDrawable> mImageCache;
+    private final LruCache<String, BitmapDrawable> mImageCache;
 
-    private ArrayList<DownloadModel> downloadingItems = new ArrayList<>();
-    private ArrayList<DownloadModel> downloadedItems = new ArrayList<>();
+    private final ArrayList<DownloadModel> downloadingItems;
+    private final ArrayList<DownloadModel> downloadedItems;
 
     public DownloadAdapter(LayoutInflater inflater, ArrayList<DownloadModel> dlingList, ArrayList<DownloadModel> dledList, ListView listView, String path)
     {

@@ -17,7 +17,7 @@ import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
 public class AnimationTimelineApi
 {
-    private ArrayList<String> webHeaders;
+    private final ArrayList<String> webHeaders;
     public AnimationTimelineApi()
     {
         webHeaders = new ArrayList<String>(){{

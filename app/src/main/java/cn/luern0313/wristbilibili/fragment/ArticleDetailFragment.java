@@ -1,5 +1,6 @@
 package cn.luern0313.wristbilibili.fragment;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -19,6 +20,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.adapter.ArticleAdapter;
@@ -26,10 +28,12 @@ import cn.luern0313.wristbilibili.models.article.ArticleCardModel;
 import cn.luern0313.wristbilibili.models.article.ArticleModel;
 import cn.luern0313.wristbilibili.ui.ArticleActivity;
 import cn.luern0313.wristbilibili.ui.ImgActivity;
-import cn.luern0313.wristbilibili.ui.UserActivity;
 import cn.luern0313.wristbilibili.ui.UnsupportedLinkActivity;
+import cn.luern0313.wristbilibili.ui.UserActivity;
 import cn.luern0313.wristbilibili.util.ColorUtil;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
+import cn.luern0313.wristbilibili.util.ListViewTouchListener;
+import cn.luern0313.wristbilibili.widget.TitleView;
 
 public class ArticleDetailFragment extends Fragment implements View.OnClickListener
 {
@@ -41,6 +45,7 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
     private ArticleAdapter articleAdapter;
     private ArticleDetailFragmentListener articleDetailFragmentListener;
     private ArticleAdapter.ArticleAdapterListener articleListener;
+    private TitleView.TitleViewListener titleViewListener;
 
     private ListView uiArticleListView;
     private View layoutArticleHeader;

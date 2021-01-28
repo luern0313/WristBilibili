@@ -39,23 +39,26 @@ import cn.luern0313.wristbilibili.util.SearchHtmlTagHandlerUtil;
 
 public class SearchFragment extends Fragment
 {
-    Context ctx;
+    private Context ctx;
     private SearchApi searchApi;
     private SearchAdapter searchAdapter;
     private SearchAdapter.SearchAdapterListener searchAdapterListener;
     private SearchHtmlTagHandlerUtil htmlTagHandlerUtil;
+    private TitleView.TitleViewListener titleViewListener;
+    private ListViewTouchListener.ListViewScrollListener listViewScrollListener;
 
-    View rootLayout;
+    private View rootLayout;
     private TextView seaHotWordText;
     private GridView seaHotWordList;
     private ListView seaListView;
     private View loadingView;
+    private LinearLayout searchBox;
     private EditText seaEdittext;
     private TextView inButton;
     private TextView seaButton;
     private ImageView seaLoadImg;
 
-    Handler handler = new Handler();
+    private final Handler handler = new Handler();
     private Runnable runnableHotWord, runnableHotWordErr, runnableNoweb, runnableUi;
     private Runnable runnableAddlist, runnableNoWebH, runnableNoresult, runnableNomore;
 

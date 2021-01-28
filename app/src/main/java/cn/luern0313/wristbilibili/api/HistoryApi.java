@@ -15,7 +15,7 @@ import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
  */
 public class HistoryApi
 {
-    private ArrayList<String> webHeaders;
+    private final ArrayList<String> webHeaders;
     public HistoryApi()
     {
         webHeaders = new ArrayList<String>(){{

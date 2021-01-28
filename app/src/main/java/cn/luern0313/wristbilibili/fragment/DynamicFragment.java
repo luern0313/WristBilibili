@@ -67,8 +67,9 @@ public class DynamicFragment extends Fragment
     public static boolean isLogin = false;
     private int dynamicWidth;
 
-    final private int RESULT_DYNAMIC_SEND_DYNAMIC = 101;
-    final private int RESULT_DYNAMIC_SHARE = 102;
+    private final int RESULT_DYNAMIC_SEND_DYNAMIC = 101;
+    private final int RESULT_DYNAMIC_SHARE = 102;
+    private final int RESULT_DYNAMIC_FILTER = 103;
 
     public DynamicFragment() {}
 

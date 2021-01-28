@@ -1,12 +1,18 @@
 package cn.luern0313.wristbilibili.api;
 
+import android.content.Context;
+
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import cn.luern0313.lson.LsonUtil;
 import cn.luern0313.lson.element.LsonArray;
 import cn.luern0313.lson.element.LsonObject;
+import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.models.DynamicModel;
+import cn.luern0313.wristbilibili.util.DataProcessUtil;
+import cn.luern0313.wristbilibili.util.MyApplication;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
@@ -24,18 +30,20 @@ import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
 public class DynamicApi
 {
-    private final String DYNAMICTYPE = "268435455";
-    private String csrf;
-    private String selfMid;
-    private String mid;
+    public static final String[] DYNAMIC_TYPES = new String[]{"268435455", "1", "8", "512,4097,4098,4099,4100,4101", "64"};
+    private final Context ctx;
+    private final String csrf;
+    private final String selfMid;
+    private final String mid;
     private LsonArray dynamicJsonArray;
-    private boolean isSelf;
+    private final boolean isSelf;
 
     private String lastDynamicId;
-    private ArrayList<String> webHeaders;
+    private final ArrayList<String> webHeaders;
 
     public DynamicApi(String mid, boolean isSelf)
     {
+        this.ctx = MyApplication.getContext();
         this.csrf = SharedPreferencesUtil.getString(SharedPreferencesUtil.csrf, "");
         this.selfMid = SharedPreferencesUtil.getString(SharedPreferencesUtil.mid, "");
         this.mid = mid;

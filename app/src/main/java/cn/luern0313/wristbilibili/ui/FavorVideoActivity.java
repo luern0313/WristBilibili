@@ -26,20 +26,22 @@ import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
 public class FavorVideoActivity extends BaseActivity
 {
-    Context ctx;
-    Intent intent;
-    LayoutInflater inflater;
-    FavorVideoApi favorVideoApi;
+    private Context ctx;
+    private Intent intent;
+    private LayoutInflater inflater;
+    private FavorVideoApi favorVideoApi;
 
-    ArrayList<ListVideoModel> favorVideoList;
-    String mid;
-    String fid;
+    private ArrayList<ListVideoModel> favorVideoList;
+    private String mid;
+    private String fid;
 
-    ListVideoAdapter listVideoAdapter;
-    ListVideoAdapter.ListVideoAdapterListener listVideoAdapterListener;
-    ListView favvListView;
-    WaveSwipeRefreshLayout waveSwipeRefreshLayout;
-    View loadingView;
+    private TitleView titleView;
+    private ListVideoAdapter listVideoAdapter;
+    private ListVideoAdapter.ListVideoAdapterListener listVideoAdapterListener;
+    private ListView listView;
+    private WaveSwipeRefreshLayout waveSwipeRefreshLayout;
+    private View loadingView;
+    private TitleView.TitleViewListener titleViewListener;
 
     Handler handler = new Handler();
     Runnable runnableUi, runnableNoWeb, runnableNothing, runnableMore, runnableMoreNoWeb, runnableMoreNothing;

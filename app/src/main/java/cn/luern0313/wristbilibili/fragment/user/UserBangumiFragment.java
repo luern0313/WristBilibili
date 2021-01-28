@@ -1,5 +1,6 @@
 package cn.luern0313.wristbilibili.fragment.user;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,12 +16,15 @@ import android.widget.TextView;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.adapter.ListBangumiAdapter;
 import cn.luern0313.wristbilibili.api.UserApi;
 import cn.luern0313.wristbilibili.models.ListBangumiModel;
 import cn.luern0313.wristbilibili.ui.BangumiActivity;
+import cn.luern0313.wristbilibili.util.ListViewTouchListener;
+import cn.luern0313.wristbilibili.widget.TitleView;
 
 public class UserBangumiFragment extends Fragment
 {
@@ -31,10 +35,11 @@ public class UserBangumiFragment extends Fragment
     private String mid;
     private int mode;
     private UserApi userApi;
-    private ArrayList<ListBangumiModel> listBangumiModelArrayList = new ArrayList<>();
+    private final ArrayList<ListBangumiModel> listBangumiModelArrayList = new ArrayList<>();
     private int page = 1;
     private ListBangumiAdapter listBangumiAdapter;
     private ListBangumiAdapter.ListBangumiAdapterListener listBangumiAdapterListener;
+    private TitleView.TitleViewListener titleViewListener;
 
     private View rootLayout;
     private View layoutLoading;
@@ -43,7 +48,7 @@ public class UserBangumiFragment extends Fragment
     private LinearLayout uiNoWeb;
     private LinearLayout uiNothing;
 
-    private Handler handler = new Handler();
+    private final Handler handler = new Handler();
     private Runnable runnableUi, runnableNoWeb, runnableNothing, runnableMore, runnableMoreNoWeb, runnableMoreNothing;
 
     private boolean isLoading = true;

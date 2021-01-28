@@ -40,7 +40,7 @@ public class RecommendFragment extends Fragment
     private View uiLoadingView;
 
     private RecommendApi recommendApi;
-    private ArrayList<RecommendModel> recommendVideoArrayList = new ArrayList<>();
+    private final ArrayList<RecommendModel> recommendVideoArrayList = new ArrayList<>();
     private boolean isLoading = false;
 
     Handler handler = new Handler();

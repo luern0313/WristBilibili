@@ -59,7 +59,7 @@ public class RankingFragment extends Fragment
     private View uiLoadingView;
 
     private RankingApi rankingApi;
-    private ArrayList<RankingModel> rankingVideoArrayList = new ArrayList<>();
+    private final ArrayList<RankingModel> rankingVideoArrayList = new ArrayList<>();
     private LinkedHashMap<Integer, String> pickUpHashMap = new LinkedHashMap<>();
     private String pickupday;
     private int pn = 1;
@@ -67,10 +67,13 @@ public class RankingFragment extends Fragment
     private Bitmap bitmapPickUpUpFace;
     private Bitmap bitmapPickUpVideoCover;
 
-    Handler handler = new Handler();
+    private Handler handler = new Handler();
     private Runnable runnableUi, runnableNoWeb, runnableNoMore, runnableNoWebH, runnablePickNodata;
     private Runnable runnablePick, runnablePickUi, runnablePickImg;
 
+    private final int RESULT_RANKING_REGION = 101;
+
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(final LayoutInflater inflater, @Nullable ViewGroup container, final Bundle savedInstanceState)
     {

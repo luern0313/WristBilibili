@@ -22,11 +22,11 @@ import cn.luern0313.wristbilibili.util.ThemeUtil;
 
 public class ThemeAdapter extends RecyclerView.Adapter<ThemeAdapter.ThemeViewHolder>
 {
-    private Context ctx;
-    private LayoutInflater layoutInflater;
-    private RecyclerView recyclerView;
+    private final Context ctx;
+    private final LayoutInflater layoutInflater;
+    private final RecyclerView recyclerView;
 
-    private ThemeAdapterListener themeAdapterListener;
+    private final ThemeAdapterListener themeAdapterListener;
 
     public ThemeAdapter(Context ctx, LayoutInflater layoutInflater, ThemeAdapterListener themeAdapterListener, RecyclerView recyclerView)
     {

@@ -1,8 +1,6 @@
 package cn.luern0313.wristbilibili.api;
 
 
-import android.util.Log;
-
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -20,11 +18,11 @@ import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
 public class FavorBoxApi
 {
-    private String mid;
-    private boolean isShowOthersBox;
-    private ArrayList<String> webHeaders;
+    private final String mid;
+    private final boolean isShowOthersBox;
+    private final ArrayList<String> webHeaders;
 
-    private ArrayList<FavorBoxModel> favorBoxArrayList = new ArrayList<>();
+    private final ArrayList<FavorBoxModel> favorBoxArrayList = new ArrayList<>();
 
     public FavorBoxApi(String mid, boolean isShowOthersBox)
     {

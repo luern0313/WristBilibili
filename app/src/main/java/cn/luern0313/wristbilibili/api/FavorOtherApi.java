@@ -9,6 +9,7 @@ import cn.luern0313.lson.LsonUtil;
 import cn.luern0313.lson.element.LsonArray;
 import cn.luern0313.lson.element.LsonObject;
 import cn.luern0313.wristbilibili.R;
+import cn.luern0313.wristbilibili.models.DynamicModel;
 import cn.luern0313.wristbilibili.models.ListArticleModel;
 import cn.luern0313.wristbilibili.util.MyApplication;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
@@ -18,11 +19,11 @@ import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
  * 被 luern0313 创建于 2020/7/29.
  */
 
-public class FavorArticleApi
+public class FavorOtherApi
 {
-    private Context ctx;
-    private String csrf;
-    private ArrayList<String> webHeaders;
+    private final Context ctx;
+    private final String csrf;
+    private final ArrayList<String> webHeaders;
 
     public FavorArticleApi()
     {

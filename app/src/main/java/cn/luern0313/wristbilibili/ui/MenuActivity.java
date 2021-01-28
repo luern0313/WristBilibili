@@ -26,6 +26,12 @@ import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 public class MenuActivity extends BaseActivity
 {
     Context ctx;
+    LayoutInflater inflater;
+
+    ListView uiListView;
+    MenuAdapter menuAdapter;
+    MenuAdapter.MenuAdapterListener menuAdapterListener;
+    View layoutMenuHeader;
 
     TextView uiUserName;
     TextView uiUserCoin;
