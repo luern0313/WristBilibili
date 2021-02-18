@@ -23,7 +23,7 @@ import cn.luern0313.wristbilibili.adapter.ListBangumiAdapter;
 import cn.luern0313.wristbilibili.api.UserApi;
 import cn.luern0313.wristbilibili.models.ListBangumiModel;
 import cn.luern0313.wristbilibili.ui.BangumiActivity;
-import cn.luern0313.wristbilibili.util.ListViewTouchListener;
+import cn.luern0313.wristbilibili.util.ViewTouchListener;
 import cn.luern0313.wristbilibili.widget.TitleView;
 
 public class UserBangumiFragment extends Fragment
@@ -147,7 +147,7 @@ public class UserBangumiFragment extends Fragment
             }
         });
 
-        uiListView.setOnTouchListener(new ListViewTouchListener(uiListView, titleViewListener));
+        uiListView.setOnTouchListener(new ViewTouchListener(uiListView, titleViewListener));
 
         new Thread(() -> {
             try

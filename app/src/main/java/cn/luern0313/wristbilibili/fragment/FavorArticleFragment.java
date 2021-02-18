@@ -27,8 +27,8 @@ import cn.luern0313.wristbilibili.api.FavorOtherApi;
 import cn.luern0313.wristbilibili.models.ListArticleModel;
 import cn.luern0313.wristbilibili.ui.ArticleActivity;
 import cn.luern0313.wristbilibili.util.ColorUtil;
-import cn.luern0313.wristbilibili.util.DataProcessUtil;
-import cn.luern0313.wristbilibili.util.ListViewTouchListener;
+import cn.luern0313.wristbilibili.util.ViewScrollListener;
+import cn.luern0313.wristbilibili.util.ViewTouchListener;
 import cn.luern0313.wristbilibili.widget.TitleView;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
@@ -137,24 +137,8 @@ public class FavorArticleFragment extends Fragment
             getMoreFavorArticle();
         });
 
-        uiListView.setOnScrollListener(new AbsListView.OnScrollListener()
-        {
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState)
-            {
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
-            {
-                if(visibleItemCount + firstVisibleItem == totalItemCount && !isFavorLoading)
-                {
-                    getMoreFavorArticle();
-                }
-            }
-        });
-
-        uiListView.setOnTouchListener(new ListViewTouchListener(uiListView, titleViewListener));
+        uiListView.setOnScrollListener(new ViewScrollListener(this));
+        uiListView.setOnTouchListener(new ViewTouchListener(uiListView, titleViewListener));
 
         waveSwipeRefreshLayout.setRefreshing(true);
         getFavorArticle();

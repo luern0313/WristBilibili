@@ -22,7 +22,7 @@ import cn.luern0313.wristbilibili.api.AnimationTimelineApi;
 import cn.luern0313.wristbilibili.models.AnimationTimelineModel;
 import cn.luern0313.wristbilibili.ui.BangumiActivity;
 import cn.luern0313.wristbilibili.util.ColorUtil;
-import cn.luern0313.wristbilibili.util.ListViewTouchListener;
+import cn.luern0313.wristbilibili.util.ViewTouchListener;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 import cn.luern0313.wristbilibili.widget.TitleView;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
@@ -84,7 +84,7 @@ public class AnimationTimelineFragment extends Fragment
             rootLayout.findViewById(R.id.ar_nologin).setVisibility(View.GONE);
         };
 
-        uiListView.setOnTouchListener(new ListViewTouchListener(uiListView, titleViewListener));
+        uiListView.setOnTouchListener(new ViewTouchListener(uiListView, titleViewListener));
 
         isLogin = SharedPreferencesUtil.contains(SharedPreferencesUtil.cookies);
         if(isLogin)

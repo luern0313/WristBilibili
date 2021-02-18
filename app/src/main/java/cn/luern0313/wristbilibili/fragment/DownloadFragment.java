@@ -33,7 +33,7 @@ import cn.luern0313.wristbilibili.adapter.DownloadAdapter;
 import cn.luern0313.wristbilibili.models.DownloadModel;
 import cn.luern0313.wristbilibili.service.DownloadService;
 import cn.luern0313.wristbilibili.util.FileUtil;
-import cn.luern0313.wristbilibili.util.ListViewTouchListener;
+import cn.luern0313.wristbilibili.util.ViewTouchListener;
 import cn.luern0313.wristbilibili.widget.TitleView;
 
 public class DownloadFragment extends Fragment
@@ -199,7 +199,7 @@ public class DownloadFragment extends Fragment
             return true;
         });
 
-        uiListView.setOnTouchListener(new ListViewTouchListener(uiListView, titleViewListener));
+        uiListView.setOnTouchListener(new ViewTouchListener(uiListView, titleViewListener));
 
         uiTip.setText(String.format(getString(R.string.download_tip), BASE_DOWNLOAD_PATH));
 

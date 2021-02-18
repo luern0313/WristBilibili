@@ -34,8 +34,9 @@ import cn.luern0313.wristbilibili.ui.UnsupportedLinkActivity;
 import cn.luern0313.wristbilibili.ui.UserActivity;
 import cn.luern0313.wristbilibili.util.ColorUtil;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
-import cn.luern0313.wristbilibili.util.ListViewTouchListener;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
+import cn.luern0313.wristbilibili.util.ViewScrollListener;
+import cn.luern0313.wristbilibili.util.ViewTouchListener;
 import cn.luern0313.wristbilibili.widget.TitleView;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
@@ -195,24 +196,8 @@ public class DynamicFragment extends Fragment
             getMoreDynamic();
         });
 
-        dyListView.setOnScrollListener(new AbsListView.OnScrollListener()
-        {
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState)
-            {
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
-            {
-                if(visibleItemCount + firstVisibleItem == totalItemCount && !isLoading && isLogin)
-                {
-                    getMoreDynamic();
-                }
-            }
-        });
-
-        dyListView.setOnTouchListener(new ListViewTouchListener(dyListView, titleViewListener));
+        dyListView.setOnScrollListener(new ViewScrollListener(this));
+        dyListView.setOnTouchListener(new ViewTouchListener(dyListView, titleViewListener));
 
         sendDynamicView.findViewById(R.id.wid_dy_title).setOnClickListener(v -> {
             Intent intent = new Intent(ctx, SelectPartActivity.class);

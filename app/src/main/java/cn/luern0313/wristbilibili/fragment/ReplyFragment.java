@@ -32,7 +32,8 @@ import cn.luern0313.wristbilibili.ui.SelectPartActivity;
 import cn.luern0313.wristbilibili.ui.UserActivity;
 import cn.luern0313.wristbilibili.util.ColorUtil;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
-import cn.luern0313.wristbilibili.util.ListViewTouchListener;
+import cn.luern0313.wristbilibili.util.ViewScrollListener;
+import cn.luern0313.wristbilibili.util.ViewTouchListener;
 import cn.luern0313.wristbilibili.widget.TitleView;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
@@ -174,7 +175,8 @@ public class ReplyFragment extends Fragment
             getMoreReply();
         });
 
-        uiReplyListView.setOnTouchListener(new ListViewTouchListener(uiReplyListView, titleViewListener));
+        uiReplyListView.setOnScrollListener(new ViewScrollListener(this));
+        uiReplyListView.setOnTouchListener(new ViewTouchListener(uiReplyListView, titleViewListener));
 
         runnableUi = () -> {
             try

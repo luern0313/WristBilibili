@@ -22,7 +22,7 @@ import cn.luern0313.wristbilibili.ui.SendDynamicActivity;
 import cn.luern0313.wristbilibili.ui.UnsupportedLinkActivity;
 import cn.luern0313.wristbilibili.ui.UserActivity;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
-import cn.luern0313.wristbilibili.util.ListViewTouchListener;
+import cn.luern0313.wristbilibili.util.ViewTouchListener;
 import cn.luern0313.wristbilibili.util.MyApplication;
 import cn.luern0313.wristbilibili.widget.TitleView;
 
@@ -91,7 +91,7 @@ public class DynamicDetailFragment extends Fragment
             }
         };
 
-        rootLayout.findViewById(R.id.dynamic_detail_lay).setOnTouchListener(new ListViewTouchListener(rootLayout.findViewById(R.id.dynamic_detail_lay), titleViewListener));
+        rootLayout.findViewById(R.id.dynamic_detail_lay).setOnTouchListener(new ViewTouchListener(rootLayout.findViewById(R.id.dynamic_detail_lay), titleViewListener));
 
         rootLayout.findViewById(R.id.item_dynamic_lay).setBackground(null);
         dynamicAdapter = new DynamicAdapter(inflater, null, rootLayout, dynamicWidth, dynamicAdapterListener);

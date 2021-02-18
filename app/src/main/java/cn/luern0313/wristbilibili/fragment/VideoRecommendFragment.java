@@ -14,7 +14,7 @@ import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.adapter.VideoRecommendAdapter;
 import cn.luern0313.wristbilibili.models.VideoModel;
 import cn.luern0313.wristbilibili.ui.VideoActivity;
-import cn.luern0313.wristbilibili.util.ListViewTouchListener;
+import cn.luern0313.wristbilibili.util.ViewTouchListener;
 import cn.luern0313.wristbilibili.widget.TitleView;
 
 public class VideoRecommendFragment extends Fragment
@@ -58,8 +58,12 @@ public class VideoRecommendFragment extends Fragment
 
         uiListView = rootLayout.findViewById(R.id.vd_recommend_listview);
         uiListView.setEmptyView(rootLayout.findViewById(R.id.vd_recommend_nothing));
-        uiListView.setOnItemClickListener((parent, view, position, id) -> startActivity(VideoActivity.getActivityIntent(ctx, videoModel.getRecommendList().get(position).recommendVideoAid, "")));
-        uiListView.setOnTouchListener(new ListViewTouchListener(uiListView, titleViewListener));
+        uiListView.setOnItemClickListener((parent, view, position, id) -> {
+            Intent intent = new Intent(ctx, VideoActivity.class);
+            intent.putExtra(VideoActivity.ARG_AID, videoModel.getRecommendList().get(position).getRecommendVideoAid());
+            startActivity(intent);
+        });
+        uiListView.setOnTouchListener(new ViewTouchListener(uiListView, titleViewListener));
 
         if(videoModel.getRecommendList() != null)
         {

@@ -25,8 +25,8 @@ import cn.luern0313.wristbilibili.api.RecommendApi;
 import cn.luern0313.wristbilibili.models.RecommendModel;
 import cn.luern0313.wristbilibili.ui.VideoActivity;
 import cn.luern0313.wristbilibili.util.ColorUtil;
-import cn.luern0313.wristbilibili.util.DataProcessUtil;
-import cn.luern0313.wristbilibili.util.ListViewTouchListener;
+import cn.luern0313.wristbilibili.util.ViewScrollListener;
+import cn.luern0313.wristbilibili.util.ViewTouchListener;
 import cn.luern0313.wristbilibili.widget.TitleView;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
@@ -98,25 +98,8 @@ public class RecommendFragment extends Fragment
 
         runnableNoMore = () -> ((TextView) uiLoadingView.findViewById(R.id.wid_load_text)).setText(ctx.getString(R.string.main_tip_no_more_data));
 
-        uiListView.setOnScrollListener(new AbsListView.OnScrollListener()
-        {
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState)
-            {
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
-            {
-                if(visibleItemCount + firstVisibleItem == totalItemCount && !isLoading)
-                {
-                    isLoading = true;
-                    getRecommend(2);
-                }
-            }
-        });
-
-        uiListView.setOnTouchListener(new ListViewTouchListener(uiListView, titleViewListener));
+        uiListView.setOnScrollListener(new ViewScrollListener(this));
+        uiListView.setOnTouchListener(new ViewTouchListener(uiListView, titleViewListener));
 
         uiListView.setVisibility(View.GONE);
         uiWaveSwipeRefreshLayout.setRefreshing(true);

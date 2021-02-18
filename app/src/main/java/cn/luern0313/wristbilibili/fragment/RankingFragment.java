@@ -43,6 +43,7 @@ import cn.luern0313.wristbilibili.util.DataProcessUtil;
 import cn.luern0313.wristbilibili.util.ImageDownloaderUtil;
 import cn.luern0313.wristbilibili.util.ListViewTouchListener;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
+import cn.luern0313.wristbilibili.util.ViewTouchListener;
 import cn.luern0313.wristbilibili.widget.TitleView;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
@@ -237,25 +238,7 @@ public class RankingFragment extends Fragment
             startActivityForResult(intent, RESULT_RANKING_REGION);
         });
 
-        uiListView.setOnScrollListener(new AbsListView.OnScrollListener()
-        {
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState)
-            {
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
-            {
-                if(visibleItemCount + firstVisibleItem == totalItemCount && !isLoading)
-                {
-                    isLoading = true;
-                    getRanking();
-                }
-            }
-        });
-
-        uiListView.setOnTouchListener(new ListViewTouchListener(uiListView, titleViewListener));
+        uiListView.setOnTouchListener(new ViewTouchListener(uiListView, titleViewListener));
 
         uiListView.setVisibility(View.GONE);
         uiWaveSwipeRefreshLayout.setRefreshing(true);

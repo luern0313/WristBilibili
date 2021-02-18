@@ -17,18 +17,13 @@ import java.util.Arrays;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import cn.luern0313.wristbilibili.R;
-import cn.luern0313.wristbilibili.ui.AboutActivity;
-import cn.luern0313.wristbilibili.ui.FollowmeActivity;
-import cn.luern0313.wristbilibili.ui.JoinqqActivity;
-import cn.luern0313.wristbilibili.ui.LogsoffActivity;
-import cn.luern0313.wristbilibili.ui.OpensourceActivity;
-import cn.luern0313.wristbilibili.ui.SueActivity;
-import cn.luern0313.wristbilibili.ui.SupportActivity;
-import cn.luern0313.wristbilibili.ui.TailActivity;
-import cn.luern0313.wristbilibili.ui.TextActivity;
-import cn.luern0313.wristbilibili.ui.ThemeActivity;
-import cn.luern0313.wristbilibili.ui.VideoActivity;
-import cn.luern0313.wristbilibili.util.ListViewTouchListener;
+import cn.luern0313.wristbilibili.adapter.SettingAdapter;
+import cn.luern0313.wristbilibili.api.SettingApi;
+import cn.luern0313.wristbilibili.models.SettingModel;
+import cn.luern0313.wristbilibili.ui.BaseActivity;
+import cn.luern0313.wristbilibili.ui.SettingActivity;
+import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
+import cn.luern0313.wristbilibili.util.ViewTouchListener;
 import cn.luern0313.wristbilibili.widget.TitleView;
 
 /**

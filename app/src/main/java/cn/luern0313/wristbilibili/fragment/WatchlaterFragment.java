@@ -24,6 +24,7 @@ import cn.luern0313.wristbilibili.util.ColorUtil;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
 import cn.luern0313.wristbilibili.util.ListViewTouchListener;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
+import cn.luern0313.wristbilibili.util.ViewTouchListener;
 import cn.luern0313.wristbilibili.widget.TitleView;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
@@ -108,8 +109,12 @@ public class WatchlaterFragment extends Fragment
             rootLayout.findViewById(R.id.wl_nologin).setVisibility(View.GONE);
         };
 
-        wlListView.setOnItemClickListener((parent, view, position, id) -> startActivity(VideoActivity.getActivityIntent(ctx, watchLaterVideoArrayList.get(position).getAid(), "")));
-        wlListView.setOnTouchListener(new ListViewTouchListener(wlListView, titleViewListener));
+        wlListView.setOnItemClickListener((parent, view, position, id) -> {
+            Intent intent = new Intent(ctx, VideoActivity.class);
+            intent.putExtra(VideoActivity.ARG_AID, watchLaterVideoArrayList.get(position).getAid());
+            startActivity(intent);
+        });
+        wlListView.setOnTouchListener(new ViewTouchListener(wlListView, titleViewListener));
 
         isLogin = SharedPreferencesUtil.contains(SharedPreferencesUtil.cookies);
         if(isLogin)

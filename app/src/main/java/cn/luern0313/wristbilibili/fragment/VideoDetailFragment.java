@@ -39,7 +39,8 @@ import cn.luern0313.wristbilibili.ui.UserActivity;
 import cn.luern0313.wristbilibili.ui.VideoActivity;
 import cn.luern0313.wristbilibili.util.ColorUtil;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
-import cn.luern0313.wristbilibili.util.ListViewTouchListener;
+import cn.luern0313.wristbilibili.util.ViewTouchListener;
+import cn.luern0313.wristbilibili.widget.CircleButtonView;
 import cn.luern0313.wristbilibili.widget.TitleView;
 
 public class VideoDetailFragment extends Fragment implements View.OnClickListener
@@ -186,7 +187,7 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
         }
         else rootLayout.findViewById(R.id.vd_video_part_layout).setVisibility(View.GONE);
 
-        rootLayout.findViewById(R.id.vd_lay).setOnTouchListener(new ListViewTouchListener(rootLayout.findViewById(R.id.vd_lay), titleViewListener));
+        rootLayout.findViewById(R.id.vd_lay).setOnTouchListener(new ViewTouchListener(rootLayout.findViewById(R.id.vd_lay), titleViewListener));
 
         rootLayout.findViewById(R.id.vd_like).setOnTouchListener((view, motionEvent) -> {
             switch (motionEvent.getAction())

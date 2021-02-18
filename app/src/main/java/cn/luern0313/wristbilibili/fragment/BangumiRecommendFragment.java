@@ -18,7 +18,7 @@ import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.adapter.ListBangumiAdapter;
 import cn.luern0313.wristbilibili.models.ListBangumiModel;
 import cn.luern0313.wristbilibili.ui.BangumiActivity;
-import cn.luern0313.wristbilibili.util.ListViewTouchListener;
+import cn.luern0313.wristbilibili.util.ViewTouchListener;
 import cn.luern0313.wristbilibili.widget.TitleView;
 
 /**
@@ -69,7 +69,7 @@ public class BangumiRecommendFragment extends Fragment
 
         uiRecommendListView = rootLayout.findViewById(R.id.bgm_recommend_listview);
         uiRecommendListView.setEmptyView(rootLayout.findViewById(R.id.bgm_recommend_nothing));
-        uiRecommendListView.setOnTouchListener(new ListViewTouchListener(uiRecommendListView, titleViewListener));
+        uiRecommendListView.setOnTouchListener(new ViewTouchListener(uiRecommendListView, titleViewListener));
 
         bangumiRecommendAdapter = new ListBangumiAdapter(inflater, uiRecommendListView, bangumiRecommendModelArrayList, listBangumiAdapterListener);
         uiRecommendListView.setAdapter(bangumiRecommendAdapter);

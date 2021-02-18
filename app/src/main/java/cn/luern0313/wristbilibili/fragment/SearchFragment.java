@@ -40,6 +40,8 @@ import cn.luern0313.wristbilibili.ui.UserActivity;
 import cn.luern0313.wristbilibili.ui.VideoActivity;
 import cn.luern0313.wristbilibili.util.ListViewTouchListener;
 import cn.luern0313.wristbilibili.util.SearchHtmlTagHandlerUtil;
+import cn.luern0313.wristbilibili.util.ViewScrollListener;
+import cn.luern0313.wristbilibili.util.ViewTouchListener;
 import cn.luern0313.wristbilibili.widget.TitleView;
 
 /**
@@ -177,26 +179,8 @@ public class SearchFragment extends Fragment
 
         seaButton.setOnClickListener(v -> getSearch());
 
-        seaListView.setOnScrollListener(new AbsListView.OnScrollListener()
-        {
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState)
-            {
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
-            {
-                if(visibleItemCount + firstVisibleItem == totalItemCount && !isLoading)
-                {
-                    isLoading = true;
-                    //((TextView) loadingView.findViewById(R.id.dyload_text)).setText(" 加载中...");
-                    getMoreSearch();
-                }
-            }
-        });
-
-        seaListView.setOnTouchListener(new ListViewTouchListener(seaListView, titleViewListener, listViewScrollListener));
+        seaListView.setOnScrollListener(new ViewScrollListener(this));
+        seaListView.setOnTouchListener(new ViewTouchListener(seaListView, titleViewListener, customViewListener));
 
         new Thread(() -> {
             try

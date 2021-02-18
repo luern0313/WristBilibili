@@ -32,7 +32,8 @@ import cn.luern0313.wristbilibili.ui.UnsupportedLinkActivity;
 import cn.luern0313.wristbilibili.ui.UserActivity;
 import cn.luern0313.wristbilibili.util.ColorUtil;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
-import cn.luern0313.wristbilibili.util.ListViewTouchListener;
+import cn.luern0313.wristbilibili.util.ViewTouchListener;
+import cn.luern0313.wristbilibili.widget.CircleButtonView;
 import cn.luern0313.wristbilibili.widget.TitleView;
 
 public class ArticleDetailFragment extends Fragment implements View.OnClickListener
@@ -132,7 +133,7 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
         layoutArticleHeader.findViewById(R.id.article_article_bt_fav).setOnClickListener(this);
         layoutArticleHeader.findViewById(R.id.article_article_bt_share).setOnClickListener(this);
 
-        uiArticleListView.setOnTouchListener(new ListViewTouchListener(uiArticleListView, titleViewListener));
+        uiArticleListView.setOnTouchListener(new ViewTouchListener(uiArticleListView, titleViewListener));
 
         articleAdapter = new ArticleAdapter(inflater, img_width, articleModel.getArticleCardModelList(), uiArticleListView, articleListener);
         uiArticleListView.addHeaderView(layoutArticleHeader);

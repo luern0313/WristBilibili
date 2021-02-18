@@ -24,7 +24,7 @@ import cn.luern0313.wristbilibili.models.UserModel;
 import cn.luern0313.wristbilibili.ui.ImgActivity;
 import cn.luern0313.wristbilibili.util.ColorUtil;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
-import cn.luern0313.wristbilibili.util.ListViewTouchListener;
+import cn.luern0313.wristbilibili.util.ViewTouchListener;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 import cn.luern0313.wristbilibili.widget.TitleView;
 
@@ -83,7 +83,7 @@ public class UserDetailFragment extends Fragment implements View.OnClickListener
             startActivity(intent);
         });
 
-        ((ScrollView) rootLayout.findViewById(R.id.user_detail_lay)).setOnTouchListener(new ListViewTouchListener(rootLayout.findViewById(R.id.user_detail_lay), titleViewListener));
+        ((ScrollView) rootLayout.findViewById(R.id.user_detail_lay)).setOnTouchListener(new ViewTouchListener(rootLayout.findViewById(R.id.user_detail_lay), titleViewListener));
 
         rootLayout.findViewById(R.id.user_detail_video).setOnClickListener(this);
         rootLayout.findViewById(R.id.user_detail_favor).setOnClickListener(this);

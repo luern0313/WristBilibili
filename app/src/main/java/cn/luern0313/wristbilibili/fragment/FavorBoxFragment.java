@@ -26,6 +26,7 @@ import cn.luern0313.wristbilibili.util.ColorUtil;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
 import cn.luern0313.wristbilibili.util.ListViewTouchListener;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
+import cn.luern0313.wristbilibili.util.ViewTouchListener;
 import cn.luern0313.wristbilibili.widget.TitleView;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
@@ -152,7 +153,7 @@ public class FavorBoxFragment extends Fragment
             waveSwipeRefreshLayout.setRefreshing(false);
         };
 
-        favListView.setOnTouchListener(new ListViewTouchListener(favListView, titleViewListener));
+        favListView.setOnTouchListener(new ViewTouchListener(favListView, titleViewListener));
 
         isLogin = SharedPreferencesUtil.contains(SharedPreferencesUtil.cookies);
         if(isLogin)

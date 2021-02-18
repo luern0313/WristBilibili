@@ -24,7 +24,7 @@ import cn.luern0313.wristbilibili.adapter.ListVideoAdapter;
 import cn.luern0313.wristbilibili.api.UserApi;
 import cn.luern0313.wristbilibili.models.ListVideoModel;
 import cn.luern0313.wristbilibili.ui.VideoActivity;
-import cn.luern0313.wristbilibili.util.ListViewTouchListener;
+import cn.luern0313.wristbilibili.util.ViewTouchListener;
 import cn.luern0313.wristbilibili.widget.TitleView;
 
 public class UserVideoFragment extends Fragment
@@ -156,7 +156,7 @@ public class UserVideoFragment extends Fragment
             }
         });
 
-        uiListView.setOnTouchListener(new ListViewTouchListener(uiListView, titleViewListener));
+        uiListView.setOnTouchListener(new ViewTouchListener(uiListView, titleViewListener));
 
         new Thread(() -> {
             try
