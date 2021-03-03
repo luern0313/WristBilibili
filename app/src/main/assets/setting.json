@@ -1,0 +1,82 @@
+[
+    {
+        "name": "注销",
+        "mode": 0,
+        "goto": "LogsOffActivity"
+    },
+    {
+        "name": "主题设置",
+        "mode": 0,
+        "goto": "ThemeActivity"
+    },
+    {
+        "name": "使用方形屏幕布局",
+        "mode": 2,
+        "sp_name": "screenRound",
+        "limit_api": 23,
+        "limit_tip": "该手表不支持自定义屏幕布局"
+    },
+    {
+        "name": "自定义主界面功能顺序",
+        "mode": 0,
+        "goto": ""
+    },
+    {
+        "name": "关注作者b站账号",
+        "mode": 0,
+        "goto": "FollowMeActivity"
+    },
+    {
+        "name": "小尾巴设置",
+        "mode": 0,
+        "goto": "TailActivity"
+    },
+    {
+        "name": "腕上哔哩相关",
+        "mode": 1,
+        "sub": [
+            {
+                "name": "发动态炫耀一下",
+                "mode": 0,
+                "goto": "SueActivity"
+            },
+            {
+                "name": "查看介绍视频",
+                "mode": 0,
+                "goto": "VideoActivity",
+                "parameter": {
+                    "aid": "37132444"
+                }
+            },
+            {
+                "name": "支持作者",
+                "mode": 0,
+                "goto": "SupportActivity"
+            },
+            {
+                "name": "关于开源",
+                "mode": 0,
+                "goto": "OpenSourceActivity"
+            },
+            {
+                "name": "更新日志",
+                "mode": 0,
+                "goto": "TextActivity",
+                "parameter": {
+                    "title": "更新日志",
+                    "text": "@update"
+                }
+            },
+            {
+                "name": "联系作者&反馈BUG",
+                "mode": 0,
+                "goto": "JoinQqActivity"
+            }
+        ]
+    },
+    {
+        "name": "关于",
+        "mode": 0,
+        "goto": "AboutActivity"
+    }
+]

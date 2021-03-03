@@ -1,28 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/setting_item_lay"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="center_vertical"
-    android:orientation="horizontal"
-    android:paddingLeft="32dp"
-    android:paddingRight="32dp">
+    android:background="?android:attr/selectableItemBackground"
+    android:descendantFocusability="blocksDescendants"
+    android:minHeight="54dp"
+    android:paddingLeft="@dimen/dimen_25_10"
+    android:paddingRight="@dimen/dimen_25_10"
+    tools:ignore="ContentDescription,SmallSp">
 
-    <TextView
-        android:id="@+id/si_text"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="14dp"
-        android:paddingBottom="14dp"
-        tools:text="设置条目" />
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_toStartOf="@id/setting_item_extra_lay"
+        android:orientation="vertical"
+        android:paddingTop="9dp"
+        android:paddingBottom="9dp">
 
-    <TextView
-        android:id="@+id/si_redpoint"
-        android:layout_width="6dp"
-        android:layout_height="6dp"
-        android:layout_marginBottom="6dp"
-        android:layout_marginLeft="4dp"
-        android:background="@drawable/shape_redpoint"
-        android:visibility="gone" />
+        <TextView
+            android:id="@+id/setting_item_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="?attr/colorTitle"
+            tools:text="设置条目" />
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/setting_item_text_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textSize="11sp"
+            android:textColor="?attr/colorTitleGrey"
+            android:visibility="gone"
+            tools:text="设置条目" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/setting_item_extra_lay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true">
+
+        <ImageView
+            android:id="@+id/setting_item_extra"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:layout_alignEnd="@id/setting_item_switch"
+            android:layout_centerVertical="true"
+            android:rotation="270"
+            android:src="@drawable/icon_extra_grey"
+            android:visibility="gone" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/setting_item_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

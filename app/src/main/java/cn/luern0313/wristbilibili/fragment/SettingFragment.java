@@ -7,12 +7,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -35,11 +32,36 @@ import cn.luern0313.wristbilibili.widget.TitleView;
 
 public class SettingFragment extends Fragment
 {
-    Context ctx;
+    private static final String ARG_SETTING_MODEL_LIST = "settingModelListArg";
+    private Context ctx;
+    private SettingApi settingApi;
+    private ArrayList<SettingModel> settingModelArrayList;
 
-    View rootLayout;
-    private ListView uiListView;
+    private View rootLayout;
+    private ListView listView;
+    private SettingAdapter settingAdapter;
+    private SettingAdapter.SettingAdapterListener settingAdapterListener;
     private TitleView.TitleViewListener titleViewListener;
+
+    public static Fragment newInstance(ArrayList<SettingModel> settingModelArrayList)
+    {
+        SettingFragment fragment = new SettingFragment();
+        Bundle args = new Bundle();
+        args.putSerializable(ARG_SETTING_MODEL_LIST, settingModelArrayList);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+        if(getArguments() != null)
+        {
+            settingModelArrayList = (ArrayList<SettingModel>) getArguments().getSerializable(ARG_SETTING_MODEL_LIST);
+        }
+    }
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -47,89 +69,82 @@ public class SettingFragment extends Fragment
     {
         ctx = this.getActivity();
         rootLayout = inflater.inflate(R.layout.fragment_setting, container, false);
+        settingApi = new SettingApi();
 
-        uiListView = rootLayout.findViewById(R.id.set_listview);
-
-        final ArrayList<String> list = new ArrayList<String>(Arrays.asList("注销", "关注作者b站账号", "主题设置", "小尾巴设置", "发动态炫耀一下", "查看介绍视频", "支持作者", "关于开源", "更新日志", "联系作者", "关于"));
-        mAdapter mAdapter = new mAdapter(inflater, list);
-        uiListView.setAdapter(mAdapter);
-
-        uiListView.setOnItemClickListener((parent, view, position, id) -> {
-            switch (list.get(position))
+        settingAdapterListener = new SettingAdapter.SettingAdapterListener()
+        {
+            @Override
+            public void onItemClick(int position)
             {
-                case "注销":
-                {
-                    Intent intent = new Intent(ctx, LogsoffActivity.class);
-                    startActivity(intent);
-                    break;
-                }
-                case "关注作者b站账号":
-                {
-                    Intent intent = new Intent(ctx, FollowmeActivity.class);
-                    startActivity(intent);
-                    break;
-                }
-                case "主题设置":
-                {
-                    Intent intent = new Intent(ctx, ThemeActivity.class);
-                    startActivity(intent);
-                    break;
-                }
-                case "小尾巴设置":
-                {
-                    Intent intent = new Intent(ctx, TailActivity.class);
-                    startActivity(intent);
-                    break;
-                }
-                case "发动态炫耀一下":
-                {
-                    Intent intent = new Intent(ctx, SueActivity.class);
-                    startActivity(intent);
-                    break;
-                }
-                case "查看介绍视频":
-                    startActivity(VideoActivity.getActivityIntent(ctx, "37132444", ""));
-                    break;
-                case "支持作者":
-                {
-                    Intent intent = new Intent(ctx, SupportActivity.class);
-                    startActivity(intent);
-                    break;
-                }
-                case "关于开源":
-                {
-                    Intent intent = new Intent(ctx, OpensourceActivity.class);
-                    startActivity(intent);
-                    break;
-                }
-                case "更新日志":
-                {
-                    Intent intent = new Intent(ctx, TextActivity.class);
-                    intent.putExtra("title", "更新日志");
-                    intent.putExtra("text", getString(R.string.update));
-                    startActivity(intent);
-                    break;
-                }
-                case "联系作者":
-                {
-                    Intent intent = new Intent(ctx, JoinqqActivity.class);
-                    startActivity(intent);
-                    break;
-                }
-                case "关于":
-                {
-                    Intent intent = new Intent(ctx, AboutActivity.class);
-                    startActivity(intent);
-                    break;
-                }
-                default:
-                    throw new AssertionError();
+                itemClick(position);
             }
-        });
 
-        uiListView.setOnTouchListener(new ListViewTouchListener(uiListView, titleViewListener));
+            @Override
+            public boolean onSwitchChange(int position, boolean s)
+            {
+                return switchChange(position, s);
+            }
+        };
+        if(settingModelArrayList == null)
+            settingModelArrayList = settingApi.getSettingModelArrayList();
+        listView = rootLayout.findViewById(R.id.set_listview);
+        settingAdapter = new SettingAdapter(inflater, settingModelArrayList, listView, settingAdapterListener);
+        listView.setAdapter(settingAdapter);
+
+        listView.setOnTouchListener(new ViewTouchListener(listView, titleViewListener));
 
         return rootLayout;
+    }
+
+    private void itemClick(int position)
+    {
+        SettingModel settingModel = settingModelArrayList.get(position);
+        if(settingModel.getMode() == 0)
+        {
+            try
+            {
+                Intent intent = new Intent(ctx, Class.forName("cn.luern0313.wristbilibili.ui." + settingModel.getGotoClass()));
+                if(settingModel.getParameter() != null)
+                {
+                    for (String key : settingModel.getParameter().keySet().toArray(new String[0]))
+                    {
+                        String value = settingModel.getParameter().get(key);
+                        if(value.startsWith("@"))
+                            intent.putExtra(key, ctx.getString(R.string.class.getField(value.substring(1)).getInt(null)));
+                        else
+                            intent.putExtra(key, settingModel.getParameter().get(key));
+                    }
+                }
+                startActivity(intent);
+            }
+            catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException ignored)
+            {
+            }
+        }
+        else if(settingModel.getMode() == 1)
+        {
+            Intent intent = new Intent(ctx, SettingActivity.class);
+            intent.putExtra(SettingActivity.ARG_SETTING_MODEL_LIST, settingModel.getSub());
+            startActivity(intent);
+        }
+    }
+
+    private boolean switchChange(int position, boolean s)
+    {
+        try
+        {
+            SettingModel settingModel = settingModelArrayList.get(position);
+            SharedPreferencesUtil.putBoolean((String) SharedPreferencesUtil.class.getField(settingModel.getSpName()).get(null), s);
+
+            if(settingModel.getSpName().equals("screenRound"))
+                BaseActivity.restartAllActivity();
+
+            return true;
+        }
+        catch (IllegalAccessException | NoSuchFieldException ignored)
+        {
+        }
+        return false;
     }
 
     @Override
@@ -138,47 +153,5 @@ public class SettingFragment extends Fragment
         super.onAttach(context);
         if(context instanceof TitleView.TitleViewListener)
             titleViewListener = (TitleView.TitleViewListener) context;
-    }
-
-    private static class mAdapter extends BaseAdapter
-    {
-        private final LayoutInflater mInflater;
-        private final ArrayList<String> setList;
-        TextView text;
-
-        public mAdapter(LayoutInflater inflater, ArrayList<String> setList)
-        {
-            mInflater = inflater;
-            this.setList = setList;
-        }
-
-        @Override
-        public int getCount()
-        {
-            return setList.size();
-        }
-
-        @Override
-        public Object getItem(int position)
-        {
-            return position;
-        }
-
-        @Override
-        public long getItemId(int position)
-        {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup viewGroup)
-        {
-            convertView = mInflater.inflate(R.layout.item_setting_item, null);
-            text = convertView.findViewById(R.id.si_text);
-
-            text.setText(setList.get(position));
-            return convertView;
-        }
-
     }
 }
