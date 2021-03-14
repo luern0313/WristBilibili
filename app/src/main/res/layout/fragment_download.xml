@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:ignore="ContentDescription">
 
     <ListView
         android:id="@+id/dl_listview"
@@ -10,7 +11,8 @@
         android:layout_height="match_parent"
         android:clipToPadding="false"
         android:divider="@color/alpha"
-        android:paddingBottom="22dp" >
+        android:paddingTop="@dimen/titleHeight"
+        android:paddingBottom="22dp">
 
     </ListView>
 
@@ -45,18 +47,21 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="4dp"
         android:clickable="true"
+        android:focusable="true"
         android:src="@drawable/icon_dl_tip" />
 
     <TextView
         android:id="@+id/dl_tip"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/titleHeight"
         android:background="#C000"
         android:clickable="true"
-        android:paddingBottom="20dp"
-        android:paddingLeft="28dp"
-        android:paddingRight="28dp"
+        android:focusable="true"
+        android:paddingLeft="@dimen/dimen_28_10"
         android:paddingTop="10dp"
+        android:paddingRight="@dimen/dimen_28_10"
+        android:paddingBottom="@dimen/dimen_20_6"
         android:textColor="@color/white"
         android:textSize="12sp"
         android:visibility="gone" />

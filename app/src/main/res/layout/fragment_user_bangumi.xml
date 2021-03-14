@@ -12,8 +12,7 @@
         android:layout_height="match_parent"
         android:background="?android:attr/colorBackground"
         android:gravity="center"
-        android:orientation="vertical"
-        android:paddingBottom="33dp">
+        android:orientation="vertical">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -62,7 +61,6 @@
         android:focusable="true"
         android:gravity="center"
         android:orientation="vertical"
-        android:paddingBottom="33dp"
         android:visibility="gone">
 
         <ImageView
@@ -84,7 +82,7 @@
         android:layout_height="match_parent"
         android:divider="@color/alpha"
         android:dividerHeight="0dp"
-        android:paddingTop="33dp"
+        android:paddingTop="@dimen/titleHeight"
         android:clipToPadding="false"/>
 
 </RelativeLayout>

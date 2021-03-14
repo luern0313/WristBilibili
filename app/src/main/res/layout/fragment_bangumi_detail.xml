@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clipToPadding="false"
-    android:paddingTop="33dp"
     tools:ignore="RtlSymmetry,SmallSp,ContentDescription">
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingTop="@dimen/titleHeight">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -21,9 +22,9 @@
                 android:id="@+id/bgm_detail_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="23dp"
+                android:layout_marginLeft="@dimen/dimen_23_11"
                 android:layout_marginTop="8dp"
-                android:layout_marginRight="23dp"
+                android:layout_marginRight="@dimen/dimen_23_11"
                 android:textColor="?attr/colorTitle"
                 android:textStyle="bold"
                 tools:text="颠倒的帕特玛" />
@@ -36,9 +37,9 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:orientation="horizontal"
-                android:paddingLeft="23dp"
+                android:paddingLeft="@dimen/dimen_23_11"
                 android:paddingTop="4dp"
-                android:paddingRight="23dp"
+                android:paddingRight="@dimen/dimen_23_11"
                 android:paddingBottom="4dp">
 
                 <TextView
@@ -97,7 +98,10 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:clipToPadding="false"
+                    android:orientation="horizontal"
+                    android:paddingStart="@dimen/dimen_20_8"
+                    android:paddingEnd="@dimen/dimen_20_8">
 
                     <LinearLayout
                         android:id="@+id/bgm_detail_bt_follow_lay"
@@ -228,8 +232,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
-                    android:paddingStart="21dp"
-                    android:paddingEnd="16dp">
+                    android:paddingStart="@dimen/dimen_21_9"
+                    android:paddingEnd="@dimen/dimen_16_9">
 
                     <TextView
                         android:id="@+id/bgm_detail_video_part_text"
@@ -258,8 +262,8 @@
                     android:clipToPadding="false"
                     android:divider="@color/alpha"
                     android:dividerPadding="4dp"
-                    android:paddingLeft="21dp"
-                    android:paddingRight="21dp"
+                    android:paddingLeft="@dimen/dimen_21_9"
+                    android:paddingRight="@dimen/dimen_21_9"
                     android:scrollbars="none" />
 
             </LinearLayout>
@@ -278,8 +282,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
-                    android:paddingStart="21dp"
-                    android:paddingEnd="16dp">
+                    android:paddingStart="@dimen/dimen_21_9"
+                    android:paddingEnd="@dimen/dimen_16_9">
 
                     <TextView
                         android:id="@+id/bgm_detail_video_other_text"
@@ -308,8 +312,8 @@
                     android:clipToPadding="false"
                     android:divider="@color/alpha"
                     android:dividerPadding="4dp"
-                    android:paddingLeft="21dp"
-                    android:paddingRight="21dp"
+                    android:paddingLeft="@dimen/dimen_21_9"
+                    android:paddingRight="@dimen/dimen_21_9"
                     android:scrollbars="none" />
 
             </LinearLayout>
@@ -320,8 +324,8 @@
                 android:layout_height="match_parent"
                 android:layout_marginTop="4dp"
                 android:clipToPadding="false"
-                android:paddingLeft="21dp"
-                android:paddingRight="21dp"
+                android:paddingLeft="@dimen/dimen_21_9"
+                android:paddingRight="@dimen/dimen_21_9"
                 android:scrollbars="none"
                 android:visibility="gone"
                 tools:visibility="visible">

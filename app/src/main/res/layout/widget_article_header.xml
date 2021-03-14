@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingBottom="10dp">
+    android:paddingBottom="10dp"
+    tools:ignore="ContentDescription,RtlSymmetry,SmallSp">
 
     <TextView
         android:id="@+id/article_article_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="25dp"
+        android:layout_marginLeft="@dimen/dimen_25_10"
         android:layout_marginTop="8dp"
-        android:layout_marginRight="25dp"
+        android:layout_marginRight="@dimen/dimen_25_10"
         android:textColor="?attr/colorTitle"
         android:textStyle="bold" />
 
@@ -19,9 +22,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingLeft="25dp"
+        android:paddingLeft="@dimen/dimen_25_10"
         android:paddingTop="4dp"
-        android:paddingRight="25dp"
+        android:paddingRight="@dimen/dimen_25_10"
         android:paddingBottom="4dp">
 
         <TextView
@@ -62,7 +65,10 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:clipToPadding="false"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/dimen_20_8"
+            android:paddingEnd="@dimen/dimen_20_8">
 
             <LinearLayout
                 android:id="@+id/article_article_bt_cover"

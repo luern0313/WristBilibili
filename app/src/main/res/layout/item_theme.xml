@@ -6,7 +6,10 @@
     android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground"
     android:paddingTop="4dp"
-    android:paddingBottom="4dp">
+    android:paddingBottom="4dp"
+    android:paddingStart="@dimen/dimen_32_10"
+    android:paddingEnd="@dimen/dimen_32_10"
+    tools:ignore="ContentDescription">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/theme_item_icon"

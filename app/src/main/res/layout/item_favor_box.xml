@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/favor_lay"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -7,10 +8,11 @@
     android:clickable="true"
     android:descendantFocusability="blocksDescendants"
     android:focusable="true"
-    android:paddingLeft="19dp"
+    android:paddingLeft="@dimen/dimen_19_10"
     android:paddingTop="2dp"
-    android:paddingRight="19dp"
-    android:paddingBottom="2dp">
+    android:paddingRight="@dimen/dimen_19_10"
+    android:paddingBottom="2dp"
+    tools:ignore="RtlSymmetry,SmallSp,ContentDescription">
 
     <ImageView
         android:id="@+id/favor_img"

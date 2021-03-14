@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/item_reply_sort"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingLeft="22dp"
-    android:paddingRight="22dp"
+    android:paddingLeft="@dimen/dimen_22_10"
+    android:paddingRight="@dimen/dimen_22_10"
     android:gravity="center_vertical"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    tools:ignore="RtlSymmetry,SmallSp,ContentDescription,SpUsage">
 
     <TextView
         android:id="@+id/item_reply_sort_sign"

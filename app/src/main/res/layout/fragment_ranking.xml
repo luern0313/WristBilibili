@@ -10,11 +10,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clickable="true"
+        android:focusable="true"
         android:gravity="center"
         android:orientation="vertical"
-        android:paddingBottom="33dp"
-        android:visibility="gone"
-        tools:visibility="visible">
+        android:visibility="gone">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -39,9 +38,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
-            android:divider="@color/alpha"
+            android:divider="@null"
             android:dividerHeight="0dp"
-            android:paddingTop="33dp" />
+            android:paddingTop="@dimen/titleHeight" />
     </jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout>
 
 </RelativeLayout>

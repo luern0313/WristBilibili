@@ -4,16 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingLeft="24dp"
+    android:paddingLeft="@dimen/dimen_22_10"
     android:paddingTop="3dp"
-    android:paddingRight="24dp"
-    android:paddingBottom="3dp">
+    android:paddingRight="@dimen/dimen_22_10"
+    android:paddingBottom="3dp"
+    tools:ignore="ContentDescription,SmallSp">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:cardBackgroundColor="?attr/colorCardViewBackground"
         app:cardCornerRadius="6dp"
-        app:cardBackgroundColor="?attr/colorBackgroundColor"
         app:cardElevation="0dp">
 
         <RelativeLayout
@@ -21,8 +22,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="?android:attr/selectableItemBackground"
-            android:descendantFocusability="blocksDescendants"
             android:clickable="true"
+            android:descendantFocusability="blocksDescendants"
             android:focusable="true">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -118,10 +119,10 @@
                         android:layout_height="wrap_content"
                         android:background="@drawable/shape_bg_article_card_identity"
                         android:paddingStart="4dp"
-                        android:paddingEnd="4dp"
                         android:paddingTop="1dp"
+                        android:paddingEnd="4dp"
                         android:paddingBottom="1dp"
-                        android:text="视频"
+                        android:text="@string/article_card_video_name"
                         android:textColor="?attr/colorAccent"
                         android:textSize="10sp" />
 

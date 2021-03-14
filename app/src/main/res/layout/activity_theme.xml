@@ -11,8 +11,8 @@
         android:layout_height="match_parent"
         android:background="?android:attr/colorBackground"
         android:clipToPadding="false"
-        android:paddingTop="33dp"
-        android:paddingBottom="22dp" />
+        android:paddingTop="@dimen/titleHeight"
+        android:paddingBottom="@dimen/dimen_22_0" />
 
     <cn.luern0313.wristbilibili.widget.TitleView
         android:id="@+id/theme_title"

@@ -8,8 +8,8 @@
         android:id="@+id/dynamic_text_author"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="18dp"
-        android:layout_marginEnd="18dp"
+        android:layout_marginStart="@dimen/dimen_18_10"
+        android:layout_marginEnd="@dimen/dimen_18_10"
         android:clickable="true"
         android:focusable="true"
         android:textColor="@color/colorHyperlinks"
@@ -20,8 +20,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/dynamic_text_author"
-        android:layout_marginLeft="18dp"
-        android:layout_marginRight="18dp"
+        android:layout_marginLeft="@dimen/dimen_18_10"
+        android:layout_marginRight="@dimen/dimen_18_10"
         android:layout_marginBottom="2dp"
         app:etv_MaxLinesOnShrink="6"/>
 

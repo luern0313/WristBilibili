@@ -5,16 +5,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clipToPadding="false"
-    android:paddingTop="33dp"
+    android:paddingTop="@dimen/titleHeight"
     tools:ignore="ContentDescription,SmallSp">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="30dp"
+        android:paddingStart="@dimen/dimen_30_10"
         android:paddingTop="5dp"
-        android:paddingEnd="30dp"
-        android:paddingBottom="34dp">
+        android:paddingEnd="@dimen/dimen_30_10"
+        android:paddingBottom="@dimen/dimen_34_6">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/user_detail_head"

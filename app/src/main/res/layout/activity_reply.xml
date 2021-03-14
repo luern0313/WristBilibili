@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingBottom="36dp">
+        android:paddingBottom="@dimen/dimen_34_6">
 
         <cn.luern0313.wristbilibili.widget.TitleView
             android:id="@+id/rp_title"
@@ -23,18 +23,18 @@
             android:id="@+id/rp_edittext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="24dp"
+            android:layout_marginLeft="@dimen/dimen_24_10"
             android:layout_marginTop="8dp"
-            android:layout_marginRight="24dp"
+            android:layout_marginRight="@dimen/dimen_24_10"
             android:textSize="15sp" />
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="center_horizontal"
-            android:layout_marginLeft="22dp"
+            android:layout_marginLeft="@dimen/dimen_22_10"
             android:layout_marginTop="8dp"
-            android:layout_marginRight="22dp"
+            android:layout_marginRight="@dimen/dimen_22_10"
             android:orientation="horizontal">
 
             <ImageButton
@@ -60,9 +60,9 @@
             android:id="@+id/rp_tail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="30dp"
+            android:layout_marginLeft="@dimen/dimen_30_10"
             android:layout_marginTop="8dp"
-            android:layout_marginRight="30dp"
+            android:layout_marginRight="@dimen/dimen_30_10"
             android:text="@string/tail_tip"
             android:textSize="11sp" />
 

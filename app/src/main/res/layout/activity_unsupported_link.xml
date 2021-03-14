@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:paddingBottom="30dp">
+        android:paddingBottom="@dimen/dimen_30_6">
 
         <cn.luern0313.wristbilibili.widget.TitleView
             android:id="@+id/ul_title"
@@ -23,9 +23,9 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="22dp"
+            android:layout_marginStart="@dimen/dimen_22_10"
             android:layout_marginTop="3dp"
-            android:layout_marginEnd="22dp"
+            android:layout_marginEnd="@dimen/dimen_22_10"
             android:gravity="center_horizontal"
             android:text="@string/unsupported_link_tip" />
 
@@ -33,9 +33,9 @@
             android:id="@+id/ul_link"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
+            android:layout_marginStart="@dimen/dimen_20_10"
             android:layout_marginTop="2dp"
-            android:layout_marginEnd="20dp"
+            android:layout_marginEnd="@dimen/dimen_20_10"
             android:gravity="center_horizontal"
             android:textSize="12sp" />
 
@@ -59,8 +59,8 @@
             android:layout_marginTop="6dp"
             android:gravity="center"
             android:orientation="horizontal"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp">
+            android:paddingStart="@dimen/dimen_20_10"
+            android:paddingEnd="@dimen/dimen_20_10">
 
             <ProgressBar
                 android:layout_width="wrap_content"
@@ -77,8 +77,8 @@
             android:id="@+id/ul_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
+            android:layout_marginStart="@dimen/dimen_24_10"
+            android:layout_marginEnd="@dimen/dimen_24_10"
             android:textAppearance="@android:style/TextAppearance.Small" />
 
     </LinearLayout>

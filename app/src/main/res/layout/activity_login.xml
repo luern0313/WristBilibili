@@ -88,9 +88,9 @@
                 android:layout_below="@+id/login_change_mode"
                 android:background="?android:attr/colorBackground"
                 android:orientation="vertical"
-                android:paddingLeft="22dp"
+                android:paddingLeft="@dimen/dimen_22_10"
                 android:paddingTop="6dp"
-                android:paddingRight="22dp"
+                android:paddingRight="@dimen/dimen_22_10"
                 android:visibility="gone">
 
                 <TextView

@@ -4,8 +4,8 @@
     android:layout_height="wrap_content"
     android:background="@drawable/shape_bg_toolbar_orange"
     android:orientation="horizontal"
-    android:paddingStart="16dp"
-    android:paddingEnd="16dp">
+    android:paddingStart="@dimen/dimen_23_11"
+    android:paddingEnd="@dimen/dimen_23_11">
 
     <TextView
         android:id="@+id/reply_toolbar_total"

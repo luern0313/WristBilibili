@@ -8,10 +8,11 @@
     android:clickable="true"
     android:descendantFocusability="blocksDescendants"
     android:focusable="true"
-    android:paddingLeft="20dp"
+    android:paddingLeft="@dimen/dimen_20_10"
     android:paddingTop="2dp"
-    android:paddingRight="20dp"
-    android:paddingBottom="4dp">
+    android:paddingRight="@dimen/dimen_20_10"
+    android:paddingBottom="4dp"
+    tools:ignore="SmallSp,UseCompoundDrawables">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/item_reply_head"

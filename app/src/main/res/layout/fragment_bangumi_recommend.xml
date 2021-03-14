@@ -11,8 +11,8 @@
         android:layout_height="match_parent"
         android:clipToPadding="false"
         android:divider="@color/alpha"
-        android:paddingTop="33dp"
-        android:paddingBottom="22dp" />
+        android:paddingTop="@dimen/titleHeight"
+        android:paddingBottom="@dimen/dimen_22_0" />
 
     <LinearLayout
         android:id="@+id/bgm_recommend_nothing"
@@ -21,7 +21,6 @@
         android:background="?android:attr/colorBackground"
         android:gravity="center"
         android:orientation="vertical"
-        android:paddingBottom="33dp"
         android:visibility="gone">
 
         <ImageView

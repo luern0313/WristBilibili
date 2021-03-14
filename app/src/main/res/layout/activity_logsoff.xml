@@ -21,8 +21,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="22dp"
-            android:layout_marginRight="22dp"
+            android:layout_marginLeft="@dimen/dimen_22_10"
+            android:layout_marginRight="@dimen/dimen_22_10"
             android:gravity="center_horizontal"
             android:orientation="vertical">
 

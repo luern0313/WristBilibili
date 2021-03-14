@@ -92,7 +92,7 @@ public class FavorBoxFragment extends Fragment
         waveSwipeRefreshLayout = rootLayout.findViewById(R.id.fav_swipe);
         waveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
         waveSwipeRefreshLayout.setWaveColor(ColorUtil.getColor(R.attr.colorPrimary, ctx));
-        waveSwipeRefreshLayout.setTopOffsetOfWave(DataProcessUtil.dip2px(33));
+        waveSwipeRefreshLayout.setTopOffsetOfWave(getResources().getDimensionPixelSize(R.dimen.titleHeight));
         waveSwipeRefreshLayout.setOnRefreshListener(() -> handler.post(() -> {
             if(isLogin)
             {

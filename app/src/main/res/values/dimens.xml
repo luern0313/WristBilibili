@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="titleHeight">33dp</dimen>
+
+    <dimen name="dimen_36_18">36dp</dimen>
+    <dimen name="dimen_34_6">34dp</dimen>
+    <dimen name="dimen_32_10">32dp</dimen>
+    <dimen name="dimen_30_16">30dp</dimen>
+    <dimen name="dimen_30_12">30dp</dimen>
+    <dimen name="dimen_30_10">30dp</dimen>
+    <dimen name="dimen_30_6">30dp</dimen>
+    <dimen name="dimen_30_0">30dp</dimen>
+    <dimen name="dimen_28_10">28dp</dimen>
+    <dimen name="dimen_26_14">26dp</dimen>
+    <dimen name="dimen_25_10">25dp</dimen>
+    <dimen name="dimen_25_8">25dp</dimen>
+    <dimen name="dimen_25_6">25dp</dimen>
+    <dimen name="dimen_24_10">24dp</dimen>
+    <dimen name="dimen_23_11">23dp</dimen>
+    <dimen name="dimen_22_10">22dp</dimen>
+    <dimen name="dimen_22_6">22dp</dimen>
+    <dimen name="dimen_22_0">22dp</dimen>
+    <dimen name="dimen_21_10">21dp</dimen>
+    <dimen name="dimen_21_9">21dp</dimen>
+    <dimen name="dimen_20_12">20dp</dimen>
+    <dimen name="dimen_20_10">20dp</dimen>
+    <dimen name="dimen_20_8">20dp</dimen>
+    <dimen name="dimen_20_6">20dp</dimen>
+    <dimen name="dimen_19_11">19dp</dimen>
+    <dimen name="dimen_19_10">19dp</dimen>
+    <dimen name="dimen_19_8">19dp</dimen>
+    <dimen name="dimen_19_6">19dp</dimen>
+    <dimen name="dimen_19_2">19dp</dimen>
+    <dimen name="dimen_18_10">18dp</dimen>
+    <dimen name="dimen_18_6">18dp</dimen>
+    <dimen name="dimen_16_10">16dp</dimen>
+    <dimen name="dimen_16_9">16dp</dimen>
+    <dimen name="dimen_16_8">16dp</dimen>
+    <dimen name="dimen_16_6">16dp</dimen>
+    <dimen name="dimen_14_10">14dp</dimen>
+    <dimen name="dimen_12_0">12dp</dimen>
+    <dimen name="dimen_10_6">10dp</dimen>
+    <dimen name="dimen_10_4">10dp</dimen>
+    <dimen name="dimen_10_2">10dp</dimen>
+    <dimen name="dimen_8_4">8dp</dimen>
+    <dimen name="dimen_4_2">4dp</dimen>
+
+</resources>

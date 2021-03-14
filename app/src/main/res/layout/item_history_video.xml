@@ -5,10 +5,11 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:descendantFocusability="blocksDescendants"
-    android:paddingLeft="18dp"
+    android:paddingLeft="@dimen/dimen_18_10"
     android:paddingTop="1dp"
-    android:paddingRight="18dp"
-    android:paddingBottom="1dp">
+    android:paddingRight="@dimen/dimen_18_10"
+    android:paddingBottom="1dp"
+    tools:ignore="ContentDescription">
 
     <ImageView
         android:id="@+id/item_history_video_img"

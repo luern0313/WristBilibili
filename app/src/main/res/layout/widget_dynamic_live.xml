@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    tools:ignore="ContentDescription,SmallSp">
 
     <LinearLayout
         android:id="@+id/dynamic_live_author"
@@ -11,8 +13,8 @@
         android:gravity="center_vertical"
         android:clickable="true"
         android:focusable="true"
-        android:layout_marginStart="18dp"
-        android:layout_marginEnd="18dp"
+        android:layout_marginStart="@dimen/dimen_18_10"
+        android:layout_marginEnd="@dimen/dimen_18_10"
         android:layout_marginBottom="2dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -37,8 +39,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/dynamic_live_author"
-        android:layout_marginStart="18dp"
-        android:layout_marginEnd="18dp">
+        android:layout_marginStart="@dimen/dimen_18_10"
+        android:layout_marginEnd="@dimen/dimen_18_10">
 
         <ImageView
             android:id="@+id/dynamic_live_img"
@@ -113,8 +115,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/dynamic_live_img_lay"
-        android:layout_marginStart="18dp"
-        android:layout_marginEnd="18dp"
+        android:layout_marginStart="@dimen/dimen_18_10"
+        android:layout_marginEnd="@dimen/dimen_18_10"
         android:textColor="?attr/colorTitle"
         android:textSize="13sp" />
 

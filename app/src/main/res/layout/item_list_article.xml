@@ -1,22 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/item_list_article_lay"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
     android:descendantFocusability="blocksDescendants"
-    android:paddingLeft="18dp"
-    android:paddingTop="4dp"
-    android:paddingRight="18dp"
-    android:paddingBottom="4dp">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:divider="@drawable/shape_divider_4"
-        android:orientation="vertical"
-        android:showDividers="middle">
+    android:divider="@drawable/shape_divider_4"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/dimen_18_10"
+    android:paddingTop="6dp"
+    android:paddingRight="@dimen/dimen_18_10"
+    android:paddingBottom="6dp"
+    android:showDividers="middle"
+    tools:ignore="RtlSymmetry,SmallSp,ContentDescription">
 
         <TextView
             android:id="@+id/item_list_article_title"

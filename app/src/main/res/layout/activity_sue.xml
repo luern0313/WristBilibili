@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:paddingTop="33dp">
+        android:paddingTop="@dimen/titleHeight">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -19,14 +19,14 @@
             android:layout_marginTop="4dp"
             android:gravity="center_horizontal"
             android:orientation="vertical"
-            android:paddingBottom="22dp">
+            android:paddingBottom="@dimen/dimen_22_10">
 
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="24dp"
-                android:layout_marginRight="24dp"
+                android:layout_marginLeft="@dimen/dimen_24_10"
+                android:layout_marginRight="@dimen/dimen_24_10"
                 android:gravity="center_horizontal"
                 android:text="@string/sue_tip" />
 
@@ -36,9 +36,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:background="?attr/colorLayerBackground"
-                android:paddingLeft="20dp"
+                android:paddingLeft="@dimen/dimen_20_10"
                 android:paddingTop="10dp"
-                android:paddingRight="20dp"
+                android:paddingRight="@dimen/dimen_20_10"
                 android:paddingBottom="10dp"
                 android:textSize="13sp" />
 

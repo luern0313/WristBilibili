@@ -10,8 +10,8 @@
         android:layout_height="match_parent"
         android:clipToPadding="false"
         android:divider="@color/alpha"
-        android:paddingTop="33dp"
-        android:paddingBottom="30dp" />
+        android:paddingTop="@dimen/titleHeight"
+        android:paddingBottom="@dimen/dimen_30_0" />
 
     <cn.luern0313.wristbilibili.widget.TitleView
         android:id="@+id/sp_title"

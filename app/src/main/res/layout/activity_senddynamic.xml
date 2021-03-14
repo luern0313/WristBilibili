@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingBottom="34dp">
+        android:paddingBottom="@dimen/dimen_34_6">
 
         <cn.luern0313.wristbilibili.widget.TitleView
             android:id="@+id/senddy_title_layout"
@@ -24,9 +24,9 @@
             android:id="@+id/senddy_edittext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="24dp"
+            android:layout_marginLeft="@dimen/dimen_24_10"
             android:layout_marginTop="8dp"
-            android:layout_marginRight="24dp"
+            android:layout_marginRight="@dimen/dimen_24_10"
             android:layout_marginBottom="4dp"
             android:textSize="15sp" />
 
@@ -35,9 +35,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/colorLayerBackground"
-            android:paddingLeft="24dp"
+            android:paddingLeft="@dimen/dimen_24_10"
             android:paddingTop="6dp"
-            android:paddingRight="24dp"
+            android:paddingRight="@dimen/dimen_24_10"
             android:paddingBottom="6dp"
             android:visibility="gone">
 
@@ -84,9 +84,9 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="center_horizontal"
-            android:layout_marginLeft="22dp"
+            android:layout_marginLeft="@dimen/dimen_22_10"
             android:layout_marginTop="8dp"
-            android:layout_marginRight="22dp"
+            android:layout_marginRight="@dimen/dimen_22_10"
             android:orientation="horizontal">
 
             <ImageButton
@@ -112,9 +112,9 @@
             android:id="@+id/senddy_tail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="30dp"
+            android:layout_marginLeft="@dimen/dimen_30_10"
             android:layout_marginTop="8dp"
-            android:layout_marginRight="30dp"
+            android:layout_marginRight="@dimen/dimen_30_10"
             android:text="@string/tail_tip"
             android:textSize="11sp" />
 

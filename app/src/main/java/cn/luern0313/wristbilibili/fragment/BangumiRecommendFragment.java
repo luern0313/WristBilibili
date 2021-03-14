@@ -48,6 +48,7 @@ public class BangumiRecommendFragment extends Fragment
         return fragment;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void onCreate(Bundle savedInstanceState)
     {

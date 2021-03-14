@@ -1,0 +1,78 @@
+{
+    "video": {
+        "support": true,
+        "url": "https://www.bilibili.com/video/%s",
+        "class": "video",
+        "parameter": "aid"
+    },
+    "bangumi": {
+        "support": true,
+        "url": "https://www.bilibili.com/bangumi/play/ss%s",
+        "class": "bangumi",
+        "parameter": "season_id"
+    },
+    "article": {
+        "support": true,
+        "url": "https://www.bilibili.com/read/cv%s",
+        "class": "article",
+        "parameter": "article_id"
+    },
+    "music": {
+        "support": false,
+        "url": "https://www.bilibili.com/audio/au%s"
+    },
+    "show": {
+        "support": false,
+        "url": "https://show.bilibili.com/platform/detail.html?id=%s"
+    },
+    "mall": {
+        "support": false,
+        "url": "https://mall.bilibili.com/detail.html?itemsId=%s"
+    },
+    "manga": {
+        "support": false,
+        "url": "https://manga.bilibili.com/detail/mc%s"
+    },
+    "live": {
+        "support": false,
+        "url": "https://live.bilibili.com/%s"
+    },
+    "space": {
+        "support": true,
+        "url": "https://space.bilibili.com/%s",
+        "class": "space",
+        "parameter": "mid"
+    },
+    "pegasus": {
+        "support": false,
+        "url": "https://t.bilibili.com/topic/%s"
+    },
+    "tag": {
+        "support": false,
+        "url": "https://t.bilibili.com/topic/%s"
+    },
+    "collect": {
+        "support": true,
+        "url": "https://www.bilibili.com/medialist/detail/ml%s",
+        "class": "collect",
+        "parameter": "fid"
+    },
+    "following": {
+        "support": true,
+        "url": "https://t.bilibili.com/%s",
+        "class": "dynamic_detail",
+        "parameter": "dynamic_id"
+    },
+    "lottery": {
+        "support": true,
+        "url": "https://t.bilibili.com/lottery/h5/index/#/result?business_type=1&business_id=%s",
+        "class": "lottery",
+        "parameter": "id"
+    },
+    "region": {
+        "support": true,
+        "url": "",
+        "class": "region",
+        "parameter": "rid"
+    }
+}

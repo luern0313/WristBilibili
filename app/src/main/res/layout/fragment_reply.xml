@@ -5,21 +5,6 @@
     android:layout_height="match_parent"
     tools:ignore="ContentDescription">
 
-    <jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout
-        android:id="@+id/reply_swipe"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <ListView
-            android:id="@+id/reply_listview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:divider="@color/alpha"
-            android:paddingTop="33dp" />
-
-    </jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout>
-
     <LinearLayout
         android:id="@+id/reply_nothing"
         android:layout_width="match_parent"
@@ -27,7 +12,6 @@
         android:background="?android:attr/colorBackground"
         android:gravity="center"
         android:orientation="vertical"
-        android:paddingBottom="33dp"
         android:visibility="gone">
 
         <ImageView

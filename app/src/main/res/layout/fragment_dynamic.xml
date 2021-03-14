@@ -89,7 +89,7 @@
             android:id="@+id/dy_listview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="33dp"
+            android:paddingTop="@dimen/titleHeight"
             android:clipToPadding="false"/>
 
     </jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout>

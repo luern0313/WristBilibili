@@ -13,8 +13,8 @@
         android:id="@+id/rk_video_lay_lay"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="19dp"
-        android:paddingRight="19dp">
+        android:paddingLeft="@dimen/dimen_19_10"
+        android:paddingRight="@dimen/dimen_19_10">
 
         <TextView
             android:id="@+id/rk_video_rank"

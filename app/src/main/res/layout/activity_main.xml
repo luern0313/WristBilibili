@@ -12,7 +12,7 @@
     <cn.luern0313.wristbilibili.widget.TitleView
         android:id="@+id/main_title"
         android:layout_width="match_parent"
-        android:layout_height="33dp"
+        android:layout_height="wrap_content"
         android:onClick="buttonTitle"
         app:mode="menu"/>
 </RelativeLayout>

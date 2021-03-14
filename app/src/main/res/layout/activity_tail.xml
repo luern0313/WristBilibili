@@ -35,16 +35,16 @@
                 android:textSize="14sp" />
 
 
-            <RelativeLayout
-                android:id="@+id/tail_preetlay"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="?attr/colorLayerBackground"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingLeft="22dp"
-                android:paddingTop="4dp"
-                android:paddingRight="22dp">
+        <RelativeLayout
+            android:id="@+id/tail_preetlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?attr/colorLayerBackground"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/dimen_22_10"
+            android:paddingTop="4dp"
+            android:paddingRight="@dimen/dimen_22_10">
 
                 <ImageView
                     android:id="@+id/tail_voice"
@@ -74,16 +74,15 @@
 
             </RelativeLayout>
 
-            <TextView
-                android:id="@+id/tail_exp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="32dp"
-                android:paddingTop="6dp"
-                android:paddingRight="32dp"
-                android:paddingBottom="30dp"
-                android:text="@string/tail_rule"
-                android:textSize="12sp" />
-        </LinearLayout>
-    </ScrollView>
-</RelativeLayout>
+        <TextView
+            android:id="@+id/tail_exp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/dimen_32_10"
+            android:paddingTop="6dp"
+            android:paddingRight="@dimen/dimen_32_10"
+            android:paddingBottom="@dimen/dimen_30_6"
+            android:text="@string/tail_rule"
+            android:textSize="12sp" />
+    </LinearLayout>
+</ScrollView>

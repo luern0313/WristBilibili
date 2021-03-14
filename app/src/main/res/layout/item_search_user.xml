@@ -8,10 +8,11 @@
     android:background="?android:attr/selectableItemBackground"
     android:clickable="true"
     android:focusable="true"
+    android:paddingLeft="@dimen/dimen_19_10"
+    android:paddingTop="1dp"
+    android:paddingRight="@dimen/dimen_19_10"
     android:paddingBottom="1dp"
-    android:paddingLeft="19dp"
-    android:paddingRight="19dp"
-    android:paddingTop="1dp">
+    tools:ignore="SmallSp">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/item_search_user_face"

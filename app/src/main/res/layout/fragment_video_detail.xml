@@ -8,22 +8,22 @@
 
     <ScrollView
         android:id="@+id/vd_lay"
-        android:clipToPadding="false"
-        android:paddingTop="33dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingTop="@dimen/titleHeight">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="20dp">
+            android:paddingBottom="@dimen/dimen_20_6">
 
             <TextView
                 android:id="@+id/vd_video_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="25dp"
+                android:layout_marginStart="@dimen/dimen_25_10"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="22dp"
                 android:textColor="?attr/colorTitle"
@@ -34,9 +34,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingLeft="25dp"
+                android:paddingLeft="@dimen/dimen_25_10"
                 android:paddingTop="4dp"
-                android:paddingRight="25dp"
+                android:paddingRight="@dimen/dimen_25_10"
                 android:paddingBottom="4dp">
 
                 <TextView
@@ -82,10 +82,10 @@
 
             <LinearLayout
                 android:id="@+id/vd_video_warning"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="14dp"
-                android:layout_marginRight="14dp"
+                android:layout_marginLeft="@dimen/dimen_14_10"
+                android:layout_marginRight="@dimen/dimen_14_10"
                 android:background="@color/yellow_gray"
                 android:gravity="center"
                 android:paddingStart="2dp"
@@ -114,9 +114,9 @@
                 android:id="@+id/vd_video_details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="21dp"
+                android:layout_marginLeft="@dimen/dimen_21_10"
                 android:layout_marginTop="2dp"
-                android:layout_marginRight="21dp"
+                android:layout_marginRight="@dimen/dimen_21_10"
                 android:layout_marginBottom="6dp"
                 android:textSize="13sp"
                 app:etv_MaxLinesOnShrink="5"
@@ -139,8 +139,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
-                    android:paddingStart="20dp"
-                    android:paddingEnd="16dp">
+                    android:paddingStart="@dimen/dimen_20_8"
+                    android:paddingEnd="@dimen/dimen_16_8">
 
                     <TextView
                         android:id="@+id/vd_video_part_text"
@@ -166,8 +166,8 @@
                     android:clipToPadding="false"
                     android:divider="@color/alpha"
                     android:dividerPadding="4dp"
-                    android:paddingLeft="21dp"
-                    android:paddingRight="21dp"
+                    android:paddingLeft="@dimen/dimen_21_10"
+                    android:paddingRight="@dimen/dimen_21_10"
                     android:scrollbars="none" />
 
             </LinearLayout>
@@ -186,7 +186,9 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:paddingStart="@dimen/dimen_20_8"
+                        android:paddingEnd="@dimen/dimen_20_8">
 
                         <LinearLayout
                             android:id="@+id/vd_bt_cover"
@@ -362,7 +364,9 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:paddingStart="@dimen/dimen_20_8"
+                        android:paddingEnd="@dimen/dimen_20_8">
 
 
                         <LinearLayout
@@ -556,16 +560,18 @@
                 android:descendantFocusability="blocksDescendants"
                 android:focusable="true"
                 android:gravity="center_vertical"
-                android:paddingStart="22dp"
+                android:paddingStart="@dimen/dimen_22_10"
                 android:paddingTop="4dp"
-                android:paddingEnd="22dp"
+                android:paddingEnd="@dimen/dimen_22_10"
                 android:paddingBottom="4dp"
                 android:visibility="gone">
 
                 <ImageView
                     android:id="@+id/vd_season_img"
                     android:layout_width="49dp"
-                    android:layout_height="67dp" />
+                    android:layout_height="67dp"
+                    android:src="@drawable/img_default_animation"
+                    android:scaleType="centerCrop"/>
 
                 <TextView
                     android:id="@+id/vd_season_title"
@@ -610,7 +616,7 @@
                     android:id="@+id/vd_card_head"
                     android:layout_width="42dp"
                     android:layout_height="42dp"
-                    android:layout_marginStart="22dp"
+                    android:layout_marginStart="@dimen/dimen_22_10"
                     android:src="@drawable/img_default_animation" />
 
                 <ImageView
@@ -640,7 +646,7 @@
                     android:layout_height="34dp"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginEnd="16dp"
+                    android:layout_marginEnd="@dimen/dimen_16_6"
                     android:text="@string/video_card_follow"
                     android:textColor="@color/white"
                     android:textSize="11sp" />

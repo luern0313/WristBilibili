@@ -38,7 +38,6 @@
         android:focusable="true"
         android:gravity="center"
         android:orientation="vertical"
-        android:paddingBottom="20dp"
         android:visibility="gone">
 
         <ImageView
@@ -66,7 +65,7 @@
             android:clipToPadding="false"
             android:divider="@color/alpha"
             android:dividerHeight="1dp"
-            android:paddingTop="33dp" />
+            android:paddingTop="@dimen/titleHeight" />
     </jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout>
 
 </RelativeLayout>

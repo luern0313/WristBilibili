@@ -36,9 +36,9 @@
                 android:id="@+id/fme_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
+                android:layout_marginLeft="@dimen/dimen_16_10"
                 android:layout_marginTop="7dp"
-                android:layout_marginRight="16dp"
+                android:layout_marginRight="@dimen/dimen_16_10"
                 android:layout_marginBottom="7dp"
                 android:clickable="true"
                 android:descendantFocusability="blocksDescendants"
@@ -136,8 +136,8 @@
                 android:clickable="true"
                 android:descendantFocusability="blocksDescendants"
                 android:focusable="true"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp">
+                android:paddingLeft="@dimen/dimen_16_10"
+                android:paddingRight="@dimen/dimen_16_10">
 
                 <ImageView
                     android:id="@+id/fme_video_img"

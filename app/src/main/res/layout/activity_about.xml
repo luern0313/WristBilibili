@@ -21,11 +21,19 @@
             app:mode="back"
             app:title="@string/about_title" />
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:layout_width="92dp"
-            android:layout_height="92dp"
-            android:layout_marginTop="6dp"
-            android:src="@mipmap/ic_launcher_new2" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/dimen_19_6"
+            android:paddingRight="@dimen/dimen_19_6">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_width="92dp"
+                android:layout_height="92dp"
+                android:layout_marginTop="6dp"
+                android:src="@mipmap/ic_launcher_new2" />
 
         <TextView
             android:id="@+id/about_app_name"
@@ -63,14 +71,15 @@
             android:layout_width="120dp"
             android:layout_height="120dp" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:gravity="center_horizontal"
-            android:text="@string/about_right"
-            android:textSize="10sp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="@dimen/dimen_10_6"
+                android:gravity="center_horizontal"
+                android:text="@string/about_right"
+                android:textSize="10sp" />
+        </LinearLayout>
     </LinearLayout>
 
 </ScrollView>

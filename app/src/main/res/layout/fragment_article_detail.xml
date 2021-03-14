@@ -10,7 +10,7 @@
         android:clipToPadding="false"
         android:divider="@color/alpha"
         android:dividerHeight="0dp"
-        android:paddingTop="33dp" />
+        android:paddingTop="@dimen/titleHeight" />
 
     <LinearLayout
         android:id="@+id/article_article_loading"

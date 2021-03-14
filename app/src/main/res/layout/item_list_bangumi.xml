@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/item_list_bangumi_lay"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:descendantFocusability="blocksDescendants"
     android:background="?android:attr/selectableItemBackground"
-    android:paddingLeft="19dp"
-    android:paddingRight="19dp"
-    android:paddingTop="1dp">
+    android:descendantFocusability="blocksDescendants"
+    android:paddingLeft="@dimen/dimen_19_10"
+    android:paddingTop="1dp"
+    android:paddingRight="@dimen/dimen_19_10"
+    tools:ignore="ContentDescription,SmallSp">
 
     <ImageView
         android:id="@+id/item_list_bangumi_img"

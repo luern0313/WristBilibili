@@ -12,8 +12,7 @@
         android:layout_height="match_parent"
         android:background="?android:attr/colorBackground"
         android:gravity="center"
-        android:orientation="vertical"
-        android:paddingBottom="33dp">
+        android:orientation="vertical">
 
         <ImageView
             android:layout_width="wrap_content"

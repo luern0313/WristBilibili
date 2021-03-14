@@ -1,60 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/rk_pu_lay"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingLeft="19dp"
-    android:paddingRight="19dp"
-    android:paddingTop="4dp"
-    android:visibility="visible"
-    android:background="?android:attr/selectableItemBackground">
-
-    <RelativeLayout
-        android:id="@+id/rk_pu_date"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:clickable="true"
-        android:focusable="true">
-
-        <TextView
-            android:id="@+id/rk_pu_date_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:ellipsize="end"
-            android:lines="1"
-            android:textStyle="bold" />
-
-        <ImageView
-            android:id="@+id/rk_pu_date_pk"
-            android:layout_width="68dp"
-            android:layout_height="20dp"
-            android:layout_alignParentRight="true"
-            android:layout_marginEnd="8dp"
-            android:src="@drawable/img_ranking_pickup" />
-
-        <TextView
-            android:id="@+id/rk_pu_date_click"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="4dp"
-            android:layout_toLeftOf="@+id/rk_pu_date_pk"
-            android:background="@drawable/shape_bg_anre_followbg"
-            android:padding="2dp"
-            android:text="点这里 >"
-            android:textColor="@color/white"
-            android:textSize="10sp"
-            android:visibility="gone" />
-
-    </RelativeLayout>
+    android:background="?android:attr/selectableItemBackground"
+    android:paddingLeft="@dimen/dimen_19_10"
+    android:paddingRight="@dimen/dimen_19_10"
+    tools:ignore="ContentDescription,SmallSp">
 
     <LinearLayout
         android:id="@+id/rk_pu_video_up"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/rk_pu_date"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
@@ -66,9 +24,9 @@
 
         <TextView
             android:id="@+id/rk_pu_video_up_name"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="22dp"
-            android:layout_marginLeft="2dp"
+            android:layout_marginStart="2dp"
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:textSize="12sp" />
@@ -89,9 +47,9 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/rk_pu_video_up"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="3dp"
+        android:layout_marginStart="3dp"
         android:layout_marginTop="-2dp"
-        android:layout_toRightOf="@+id/rk_pu_video_img"
+        android:layout_toEndOf="@+id/rk_pu_video_img"
         android:orientation="vertical">
 
         <TextView
@@ -120,7 +78,7 @@
                 android:id="@+id/rk_pu_video_danmaku"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
+                android:layout_marginStart="4dp"
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:textSize="10sp" />

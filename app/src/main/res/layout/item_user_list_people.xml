@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/user_list_people_lay"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="2dp"
-    android:paddingLeft="20dp"
-    android:paddingRight="20dp"
-    android:paddingTop="2dp"
     android:background="?android:attr/selectableItemBackground"
     android:clickable="true"
-    android:focusable="true">
+    android:focusable="true"
+    android:paddingLeft="@dimen/dimen_20_10"
+    android:paddingTop="2dp"
+    android:paddingRight="@dimen/dimen_20_10"
+    android:paddingBottom="2dp"
+    tools:ignore="SmallSp">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/user_list_people_face"

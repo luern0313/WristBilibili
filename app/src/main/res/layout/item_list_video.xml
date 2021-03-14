@@ -5,11 +5,16 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:descendantFocusability="blocksDescendants"
-    android:background="?android:attr/selectableItemBackground"
-    android:paddingBottom="1dp"
-    android:paddingLeft="18dp"
-    android:paddingRight="18dp"
-    android:paddingTop="1dp">
+    tools:ignore="ContentDescription,SmallSp">
+
+    <RelativeLayout
+        android:id="@+id/item_list_video_detail_lay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/dimen_18_10"
+        android:paddingTop="1dp"
+        android:paddingRight="@dimen/dimen_18_10"
+        android:paddingBottom="1dp">
 
     <ImageView
         android:id="@+id/item_list_video_img"

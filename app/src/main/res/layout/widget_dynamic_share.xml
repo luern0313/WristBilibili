@@ -8,8 +8,8 @@
         android:id="@+id/dynamic_share_dynamic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="19dp"
-        android:layout_marginEnd="19dp"
+        android:layout_marginStart="@dimen/dimen_19_11"
+        android:layout_marginEnd="@dimen/dimen_19_11"
         android:layout_marginBottom="2dp"
         android:textSize="13sp"
         app:etv_MaxLinesOnShrink="6"/>

@@ -9,10 +9,10 @@
         android:id="@+id/sea_hotwordtext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="34dp"
-        android:paddingLeft="30dp"
-        android:paddingTop="33dp"
-        android:paddingRight="30dp"
+        android:layout_marginTop="36dp"
+        android:paddingLeft="@dimen/dimen_30_16"
+        android:paddingTop="@dimen/titleHeight"
+        android:paddingRight="@dimen/dimen_30_16"
         android:text="@string/search_hotword_loading" />
 
     <GridView
@@ -22,8 +22,8 @@
         android:layout_below="@+id/sea_hotword_text"
         android:clipToPadding="false"
         android:numColumns="2"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
+        android:paddingLeft="@dimen/dimen_20_10"
+        android:paddingRight="@dimen/dimen_20_10"
         android:paddingBottom="26dp"
         android:scrollbars="none" />
 
@@ -32,9 +32,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="?android:attr/colorBackground"
+        android:clipToPadding="false"
         android:divider="@color/alpha"
         android:dividerHeight="2dp"
-        android:paddingTop="34dp"
+        android:paddingTop="67dp"
         android:visibility="gone" />
 
     <LinearLayout
@@ -43,6 +44,7 @@
         android:layout_height="match_parent"
         android:background="?android:attr/colorBackground"
         android:clickable="true"
+        android:focusable="true"
         android:gravity="center"
         android:orientation="vertical"
         android:paddingTop="32dp"
@@ -63,6 +65,7 @@
         android:layout_height="match_parent"
         android:background="?android:attr/colorBackground"
         android:clickable="true"
+        android:focusable="true"
         android:gravity="center"
         android:orientation="vertical"
         android:paddingTop="32dp"
@@ -83,6 +86,7 @@
         android:layout_height="match_parent"
         android:background="?android:attr/colorBackground"
         android:clickable="true"
+        android:focusable="true"
         android:gravity="center"
         android:orientation="vertical"
         android:paddingTop="32dp"
@@ -105,9 +109,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="30dp"
-        android:layout_marginLeft="22dp"
-        android:layout_marginRight="22dp"
-        android:layout_marginTop="2dp"
+        android:layout_marginLeft="@dimen/dimen_22_10"
+        android:layout_marginTop="35dp"
+        android:layout_marginRight="@dimen/dimen_22_10"
         android:layout_marginBottom="2dp"
         android:background="@drawable/shape_search"
         android:gravity="center_vertical"
@@ -115,7 +119,7 @@
 
         <EditText
             android:id="@+id/sea_edittext"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
             android:layout_weight="1"

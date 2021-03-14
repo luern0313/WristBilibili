@@ -4,10 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingLeft="24dp"
+    android:paddingLeft="@dimen/dimen_22_10"
     android:paddingTop="3dp"
-    android:paddingRight="24dp"
-    android:paddingBottom="3dp">
+    android:paddingRight="@dimen/dimen_22_10"
+    android:paddingBottom="3dp"
+    tools:ignore="ContentDescription,SmallSp">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"

@@ -12,13 +12,18 @@
     <LinearLayout
         android:id="@+id/img_tab"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="2dp"
-        android:background="#88666666"
-        android:clickable="true"
-        android:focusable="true"
-        android:gravity="center_horizontal">
+        android:layout_height="wrap_content"
+        android:background="#88666666">
+
+        <LinearLayout
+            android:id="@+id/img_tab_title"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/titleHeight"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_horizontal"
+            android:paddingTop="@dimen/dimen_10_4"
+            android:paddingBottom="@dimen/dimen_4_2">
 
         <ViewFlipper
             android:id="@+id/img_viewflipper"

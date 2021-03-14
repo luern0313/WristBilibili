@@ -4,10 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingLeft="24dp"
+    android:paddingLeft="@dimen/dimen_22_10"
     android:paddingTop="3dp"
-    android:paddingRight="24dp"
-    android:paddingBottom="3dp">
+    android:paddingRight="@dimen/dimen_22_10"
+    android:paddingBottom="3dp"
+    tools:ignore="ContentDescription,SmallSp">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -99,8 +100,8 @@
                     android:layout_marginTop="3dp"
                     android:background="@drawable/shape_bg_article_card_identity"
                     android:paddingStart="4dp"
-                    android:paddingEnd="4dp"
                     android:paddingTop="1dp"
+                    android:paddingEnd="4dp"
                     android:paddingBottom="1dp"
                     android:text="番剧"
                     android:textColor="?attr/colorAccent"

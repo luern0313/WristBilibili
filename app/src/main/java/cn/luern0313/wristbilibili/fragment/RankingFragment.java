@@ -99,7 +99,7 @@ public class RankingFragment extends Fragment
         uiWaveSwipeRefreshLayout = rootLayout.findViewById(R.id.rk_swipe);
         uiWaveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
         uiWaveSwipeRefreshLayout.setWaveColor(ColorUtil.getColor(R.attr.colorPrimary, ctx));
-        uiWaveSwipeRefreshLayout.setTopOffsetOfWave(DataProcessUtil.dip2px(33));
+        uiWaveSwipeRefreshLayout.setTopOffsetOfWave(getResources().getDimensionPixelSize(R.dimen.titleHeight));
         uiWaveSwipeRefreshLayout.setOnRefreshListener(() -> handler.post(() -> {
             isLoading = true;
             rankingVideoArrayList.clear();

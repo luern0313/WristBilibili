@@ -83,7 +83,7 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
         WindowManager manager = getActivity().getWindowManager();
         DisplayMetrics outMetrics = new DisplayMetrics();
         manager.getDefaultDisplay().getMetrics(outMetrics);
-        int img_width = outMetrics.widthPixels - DataProcessUtil.dip2px(28) * 2;
+        int img_width = outMetrics.widthPixels - getResources().getDimensionPixelSize(R.dimen.dimen_26_14) * 2;
 
         articleListener = new ArticleAdapter.ArticleAdapterListener()
         {
@@ -122,8 +122,7 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
         else if(articleModel.getUpOfficial() == 1)
             layoutArticleHeader.findViewById(R.id.article_card_off_2).setVisibility(View.VISIBLE);
 
-        layoutArticleHeader.findViewById(R.id.article_card_follow).setOnClickListener(
-                v -> articleDetailFragmentListener.onArticleDetailFragmentViewClick(v.getId()));
+        layoutArticleHeader.findViewById(R.id.article_card_follow).setOnClickListener(v -> articleDetailFragmentListener.onArticleDetailFragmentViewClick(v.getId()));
 
         setArticleIcon();
 
