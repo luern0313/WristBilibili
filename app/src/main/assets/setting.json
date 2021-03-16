@@ -19,7 +19,7 @@
     {
         "name": "自定义主界面功能顺序",
         "mode": 0,
-        "goto": ""
+        "goto": "OrderMenuActivity"
     },
     {
         "name": "关注作者b站账号",
