@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    tools:ignore="ContentDescription">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:background="@drawable/layer_bg_joinqq_report"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:onClick="clickReportBug"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/dimen_26_14"
+        android:paddingTop="10dp"
+        android:paddingEnd="@dimen/dimen_26_14"
+        android:paddingBottom="10dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/join_qq_report_bug" />
+
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:rotation="270"
+            android:src="@drawable/icon_extra_grey" />
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/dimen_22_10"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="@dimen/dimen_22_10"
+        android:gravity="center_horizontal"
+        android:text="@string/join_qq_tip"
+        android:textSize="12sp" />
+
+</LinearLayout>

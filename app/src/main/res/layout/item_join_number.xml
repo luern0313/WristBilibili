@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tool="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground"
+    android:descendantFocusability="blocksDescendants"
+    android:paddingStart="@dimen/dimen_22_6"
+    android:paddingTop="2dp"
+    android:paddingEnd="@dimen/dimen_22_6"
+    android:paddingBottom="2dp"
+    tool:ignore="ContentDescription,SmallSp">
+
+    <ImageView
+        android:id="@+id/item_join_num_img"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_centerVertical="true"
+        android:padding="4dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/icon_join_qq" />
+
+    <ImageView
+        android:id="@+id/item_join_num_expand"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/icon_extra_grey" />
+
+    <TextView
+        android:id="@+id/item_join_num_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="6dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="2dp"
+        android:layout_toStartOf="@id/item_join_num_expand"
+        android:layout_toEndOf="@id/item_join_num_img"
+        android:clickable="false"
+        android:focusable="false"
+        android:textColor="?attr/colorTitle"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:typeface="monospace"
+        tool:text="A群 123456789123456789" />
+
+</RelativeLayout>
