@@ -21,7 +21,6 @@ import java.net.ConnectException;
 import java.net.UnknownHostException;
 import java.util.List;
 
-import androidx.appcompat.app.AppCompatActivity;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.UserLoginApi;
 import cn.luern0313.wristbilibili.fragment.AnimationTimelineFragment;
@@ -76,173 +75,136 @@ public class LoginActivity extends BaseActivity
         uiLoginButton = findViewById(R.id.login_pw_login);
         userLoginApi = new UserLoginApi();
 
+        uiLoginUser.setText(SharedPreferencesUtil.getString(SharedPreferencesUtil.loginUserName, ""));
+
         reusltIntent.putExtra("isLogin", false);
         setResult(0, reusltIntent);
 
-        new Thread(new Runnable()
-        {
-            public void run()
+        new Thread(() -> {
+            try
             {
-                try
-                {
-                    QRImage = userLoginApi.getLoginQR();
-                    UIhandler.post(runnableUi);
-                    getLoginThread.start();
-                } catch (ConnectException | UnknownHostException e)
-                {
-                    Looper.prepare();
-                    Toast.makeText(ctx, "好像没有网络连接呢...", Toast.LENGTH_SHORT).show();
-                    Looper.loop();
-                    e.printStackTrace();
-                } catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
+                QRImage = userLoginApi.getLoginQR();
+                UIhandler.post(runnableUi);
+                getLoginThread.start();
+            } catch (ConnectException | UnknownHostException e)
+            {
+                Looper.prepare();
+                Toast.makeText(ctx, "好像没有网络连接呢...", Toast.LENGTH_SHORT).show();
+                Looper.loop();
+                e.printStackTrace();
+            } catch (Exception e)
+            {
+                e.printStackTrace();
             }
         }).start();
 
-        runnableUi = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                loginQR.setImageBitmap(QRImage);
-            }
+        runnableUi = () -> loginQR.setImageBitmap(QRImage);
+
+        runnableDone = () -> {
+            findViewById(R.id.login_qrdone).setVisibility(View.VISIBLE);
+            ((TextView) findViewById(R.id.login_tip)).setText("已扫描，请在手机上继续操作");
+        };
+        runnableTimeout = () -> {
+            stopFlag = true;
+            findViewById(R.id.login_qrerr).setVisibility(View.VISIBLE);
+            ((TextView) findViewById(R.id.login_tip)).setText("二维码失效，请重进登录界面刷新");
         };
 
-        runnableDone = new Runnable()
-        {
-            @Override
-            public void run()
+        runnableLoginDone = () -> {
+            findViewById(R.id.login_pw_loading).setVisibility(View.GONE);
+            if(err.equals(""))
             {
-                findViewById(R.id.login_qrdone).setVisibility(View.VISIBLE);
-                ((TextView) findViewById(R.id.login_tip)).setText("已扫描，请在手机上继续操作");
+                SharedPreferencesUtil.putString(SharedPreferencesUtil.loginUserName, uiLoginUser.getText().toString());
+                Intent intent1 = new Intent(ctx, FollowMeActivity.class);
+                startActivity(intent1);
+                Intent intent2 = new Intent(ctx, SueActivity.class);
+                startActivity(intent2);
+                reusltIntent.putExtra("isLogin", true);
+                setResult(0, reusltIntent);
+                finish();
             }
-        };
-        runnableTimeout = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                stopFlag = true;
-                findViewById(R.id.login_qrerr).setVisibility(View.VISIBLE);
-                ((TextView) findViewById(R.id.login_tip)).setText("二维码失效，请重进登录界面刷新");
-            }
+            else
+                Toast.makeText(ctx, err, Toast.LENGTH_LONG).show();
         };
 
-        runnableLoginDone = new Runnable()
-        {
-            @Override
-            public void run()
+        uiChangeMode.setOnClickListener(v -> {
+            if(loginMode == 1)
             {
-                findViewById(R.id.login_pw_loading).setVisibility(View.GONE);
-                if(err.equals(""))
-                {
-                    Intent intent1 = new Intent(ctx, FollowmeActivity.class);
-                    startActivity(intent1);
-                    Intent intent2 = new Intent(ctx, SueActivity.class);
-                    startActivity(intent2);
-                    reusltIntent.putExtra("isLogin", true);
-                    setResult(0, reusltIntent);
-                    finish();
-                }
-                else
-                    Toast.makeText(ctx, err, Toast.LENGTH_LONG).show();
+                uiPwLayout.setVisibility(View.VISIBLE);
+                uiChangeMode.setText("扫码登录 >");
+                loginMode = 0;
             }
-        };
-
-        uiChangeMode.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
+            else
             {
-                if(loginMode == 1)
-                {
-                    uiPwLayout.setVisibility(View.VISIBLE);
-                    uiChangeMode.setText("扫码登录 >");
-                    loginMode = 0;
-                }
-                else
-                {
-                    uiPwLayout.setVisibility(View.GONE);
-                    uiChangeMode.setText("账号密码登录 >");
-                    loginMode = 1;
-                }
+                uiPwLayout.setVisibility(View.GONE);
+                uiChangeMode.setText("账号密码登录 >");
+                loginMode = 1;
             }
         });
 
-        uiLoginButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
+        uiLoginButton.setOnClickListener(v -> {
+            if(uiLoginUser.getText().toString().equals(""))
+                Toast.makeText(ctx, "用户名为空！", Toast.LENGTH_SHORT).show();
+            else if(uiLoginPw.getText().toString().equals(""))
+                Toast.makeText(ctx, "密码为空！", Toast.LENGTH_SHORT).show();
+            else
             {
-                if(uiLoginUser.getText().toString().equals(""))
-                    Toast.makeText(ctx, "用户名为空！", Toast.LENGTH_SHORT).show();
-                else if(uiLoginPw.getText().toString().equals(""))
-                    Toast.makeText(ctx, "密码为空！", Toast.LENGTH_SHORT).show();
-                else
-                {
-                    login_pw(uiLoginUser.getText().toString(), uiLoginPw.getText().toString());
-                }
+                login_pw(uiLoginUser.getText().toString(), uiLoginPw.getText().toString());
             }
         });
 
-        getLoginThread = new Thread(new Runnable()
-        {
-            public void run()
+        getLoginThread = new Thread(() -> {
+            try
             {
-                try
+                JSONObject loginJson;
+                while (!stopFlag)//不要停下来啊（指登录）
                 {
-                    JSONObject loginJson;
-                    while (!stopFlag)//不要停下来啊（指登录）
+                    timeoutHandler.postDelayed(runnableTimeout, 170000);
+                    Response response = userLoginApi.getLoginState();
+                    loginJson = new JSONObject(response.body().string());
+                    if(!(Boolean) loginJson.get("status"))
                     {
-                        timeoutHandler.postDelayed(runnableTimeout, 170000);
-                        Response response = userLoginApi.getLoginState();
-                        loginJson = new JSONObject(response.body().string());
-                        if(!(Boolean) loginJson.get("status"))
-                        {
-                            if((int) loginJson.get("data") == -5) UIhandler.post(runnableDone);
-                        }
-                        else if((Boolean) loginJson.get("status"))
-                        {
-                            timeoutHandler.removeCallbacks(runnableTimeout);
-                            StringBuilder cookies = new StringBuilder();
-                            List<String> cookiesList = response.headers("Set-Cookie");
-                            for (int i = 0; i < cookiesList.size(); i++)
-                                cookies.append(cookiesList.get(i).split("; ")[0]).append("; ");
-                            cookies = new StringBuilder(cookies.substring(0, cookies.length() - 2));
-
-                            SharedPreferencesUtil.putString(SharedPreferencesUtil.accessKey, userLoginApi.getAccessKey(cookies.toString()));
-                            SharedPreferencesUtil.putString(SharedPreferencesUtil.refreshToken, userLoginApi.getAccessKey(cookies.toString()));
-                            SharedPreferencesUtil.putString(SharedPreferencesUtil.cookies, cookies.toString());
-                            SharedPreferencesUtil.putString(SharedPreferencesUtil.mid, getInfoFromCookie("DedeUserID", cookies.toString()));
-                            SharedPreferencesUtil.putString(SharedPreferencesUtil.csrf, getInfoFromCookie("bili_jct", cookies.toString()));
-                            stopFlag = true;
-
-                            DynamicFragment.isLogin = true;
-                            AnimationTimelineFragment.isLogin = true;
-
-                            Intent intent1 = new Intent(ctx, FollowmeActivity.class);
-                            startActivity(intent1);
-                            Intent intent2 = new Intent(ctx, SueActivity.class);
-                            startActivity(intent2);
-                            reusltIntent.putExtra("isLogin", true);
-                            setResult(0, reusltIntent);
-                            finish();
-                            overridePendingTransition(R.anim.anim_activity_out_right, 0);
-                        }
-                        Thread.sleep(3000);
+                        if((int) loginJson.get("data") == -5) UIhandler.post(runnableDone);
                     }
-                } catch (ConnectException | UnknownHostException e)
-                {
-                    Looper.prepare();
-                    Toast.makeText(ctx, "好像没有网络连接呢...", Toast.LENGTH_SHORT).show();
-                    Looper.loop();
-                    e.printStackTrace();
-                } catch (Exception e)
-                {
-                    e.printStackTrace();
+                    else if((Boolean) loginJson.get("status"))
+                    {
+                        timeoutHandler.removeCallbacks(runnableTimeout);
+                        StringBuilder cookies = new StringBuilder();
+                        List<String> cookiesList = response.headers("Set-Cookie");
+                        for (int i = 0; i < cookiesList.size(); i++)
+                            cookies.append(cookiesList.get(i).split("; ")[0]).append("; ");
+                        cookies = new StringBuilder(cookies.substring(0, cookies.length() - 2));
+
+                        SharedPreferencesUtil.putString(SharedPreferencesUtil.accessKey, userLoginApi.getAccessKey(cookies.toString()));
+                        SharedPreferencesUtil.putString(SharedPreferencesUtil.refreshToken, userLoginApi.getAccessKey(cookies.toString()));
+                        SharedPreferencesUtil.putString(SharedPreferencesUtil.cookies, cookies.toString());
+                        SharedPreferencesUtil.putString(SharedPreferencesUtil.mid, getInfoFromCookie("DedeUserID", cookies.toString()));
+                        SharedPreferencesUtil.putString(SharedPreferencesUtil.csrf, getInfoFromCookie("bili_jct", cookies.toString()));
+                        stopFlag = true;
+
+                        DynamicFragment.isLogin = true;
+                        AnimationTimelineFragment.isLogin = true;
+
+                        Intent intent1 = new Intent(ctx, FollowMeActivity.class);
+                        startActivity(intent1);
+                        Intent intent2 = new Intent(ctx, SueActivity.class);
+                        startActivity(intent2);
+                        reusltIntent.putExtra("isLogin", true);
+                        setResult(0, reusltIntent);
+                        finish();
+                        overridePendingTransition(R.anim.anim_activity_out_right, 0);
+                    }
+                    Thread.sleep(3000);
                 }
+            } catch (ConnectException | UnknownHostException e)
+            {
+                Looper.prepare();
+                Toast.makeText(ctx, "好像没有网络连接呢...", Toast.LENGTH_SHORT).show();
+                Looper.loop();
+                e.printStackTrace();
+            } catch (Exception e)
+            {
+                e.printStackTrace();
             }
         });
     }
@@ -250,14 +212,9 @@ public class LoginActivity extends BaseActivity
     private void login_pw(final String user, final String pw)
     {
         findViewById(R.id.login_pw_loading).setVisibility(View.VISIBLE);
-        new Thread(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                err = userLoginApi.Login(user, pw);
-                UIhandler.post(runnableLoginDone);
-            }
+        new Thread(() -> {
+            err = userLoginApi.Login(user, pw);
+            UIhandler.post(runnableLoginDone);
         }).start();
     }
 
