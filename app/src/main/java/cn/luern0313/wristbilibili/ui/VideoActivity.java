@@ -4,15 +4,12 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
@@ -24,7 +21,6 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
-import cn.luern0313.lson.element.LsonObject;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.FavorBoxApi;
 import cn.luern0313.wristbilibili.api.OnlineVideoApi;
@@ -36,6 +32,7 @@ import cn.luern0313.wristbilibili.models.FavorBoxModel;
 import cn.luern0313.wristbilibili.models.VideoModel;
 import cn.luern0313.wristbilibili.service.DownloadService;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
+import cn.luern0313.wristbilibili.widget.ExceptionHandlerView;
 import cn.luern0313.wristbilibili.widget.TitleView;
 
 public class VideoActivity extends BaseActivity implements VideoDetailFragment.VideoDetailFragmentListener, TitleView.TitleViewListener
@@ -51,36 +48,24 @@ public class VideoActivity extends BaseActivity implements VideoDetailFragment.V
     VideoDetailActivityListener videoDetailActivityListener;
 
     Handler handler = new Handler();
-    Runnable runnableNoWeb, runnableUi, runnableNodata;
-
-    AnimationDrawable loadingImgAnim;
+    Runnable runnableUi;
 
     TitleView uiTitleView;
+    ExceptionHandlerView uiExceptionHandlerView;
     ViewPager uiViewPager;
     View layoutSendReply, layoutLoading;
-    ImageView uiLoadingImg;
-    LinearLayout uiLoading;
-    LinearLayout uiNoWeb;
 
     boolean isLogin = false;
 
-    final private static String ARG_AID = "aid";
-    final private static String ARG_BVID = "bvid";
-    final private int RESULT_VD_FAVOR = 101;
-    final private int RESULT_VD_DOWNLOAD = 102;
-    final private int RESULT_VD_PART = 103;
-    final private int RESULT_VD_SHARE = 104;
+    public final static String ARG_AID = "aid";
+    public final static String ARG_BVID = "bvid";
+    private final int RESULT_VD_FAVOR = 101;
+    private final int RESULT_VD_DOWNLOAD = 102;
+    private final int RESULT_VD_PART = 103;
+    private final int RESULT_VD_SHARE = 104;
 
     private DownloadService.MyBinder myBinder;
     private final VideoDownloadServiceConnection connection = new VideoDownloadServiceConnection();
-
-    public static Intent getActivityIntent(Context ctx, String aid, String bvid)
-    {
-        Intent intent = new Intent(ctx, VideoActivity.class);
-        intent.putExtra(ARG_AID, aid);
-        intent.putExtra(ARG_BVID, bvid);
-        return intent;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -99,51 +84,21 @@ public class VideoActivity extends BaseActivity implements VideoDetailFragment.V
         layoutLoading = inflater.inflate(R.layout.widget_loading, null);
 
         uiTitleView = findViewById(R.id.vd_title);
+        uiExceptionHandlerView = findViewById(R.id.vd_exception);
         uiViewPager = findViewById(R.id.vd_viewpager);
         uiViewPager.setOffscreenPageLimit(2);
-        uiLoadingImg = findViewById(R.id.vd_loading_img);
-        uiLoading = findViewById(R.id.vd_loading);
-        uiNoWeb = findViewById(R.id.vd_noweb);
 
         isLogin = !SharedPreferencesUtil.getString(SharedPreferencesUtil.cookies, "").equals("");
         videoApi = new VideoApi(intent.getStringExtra(ARG_AID), intent.getStringExtra(ARG_BVID));
 
-        uiLoadingImg.setImageResource(R.drawable.anim_loading);
-        loadingImgAnim = (AnimationDrawable) uiLoadingImg.getDrawable();
-        loadingImgAnim.start();
-        uiLoading.setVisibility(View.VISIBLE);
-
-        if(SharedPreferencesUtil.getBoolean(SharedPreferencesUtil.tipVd, true)) findViewById(R.id.vd_tip).setVisibility(View.VISIBLE);
-
-        runnableNoWeb = () -> {
-            try
-            {
-                uiLoading.setVisibility(View.GONE);
-                uiNoWeb.setVisibility(View.VISIBLE);
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-        };
+        if(SharedPreferencesUtil.getBoolean(SharedPreferencesUtil.tipVd, true))
+            findViewById(R.id.vd_tip).setVisibility(View.VISIBLE);
 
         runnableUi = () -> {
             try
             {
-                uiLoading.setVisibility(View.GONE);
-                uiNoWeb.setVisibility(View.GONE);
+                uiExceptionHandlerView.hideAllView();
                 uiViewPager.setAdapter(pagerAdapter);
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-        };
-
-        runnableNodata = () -> {
-            try
-            {
-                findViewById(R.id.vd_novideo).setVisibility(View.VISIBLE);
             }
             catch (Exception e)
             {
@@ -211,18 +166,14 @@ public class VideoActivity extends BaseActivity implements VideoDetailFragment.V
             {
                 videoModel = videoApi.getVideoDetails();
                 if(videoModel != null)
-                {
                     handler.post(runnableUi);
-                }
                 else
-                {
-                    handler.post(runnableNodata);
-                }
+                    uiExceptionHandlerView.noData();
             }
             catch (IOException e)
             {
                 e.printStackTrace();
-                handler.post(runnableNoWeb);
+                uiExceptionHandlerView.noWeb();
             }
         }).start();
     }
@@ -306,34 +257,6 @@ public class VideoActivity extends BaseActivity implements VideoDetailFragment.V
             intent.putExtra("options_name", videoPartNames);
             intent.putExtra("options_id", videoPartCids);
             startActivityForResult(intent, RESULT_VD_DOWNLOAD);
-        }
-        else if(viewId == R.id.vd_bt_history)
-        {
-            new Thread(() -> {
-                try
-                {
-                    String result = videoApi.playHistory();
-                    if(result.equals(""))
-                    {
-                        Looper.prepare();
-                        Toast.makeText(ctx, "已添加至历史记录！你可以在历史记录找到", Toast.LENGTH_SHORT).show();
-                        Looper.loop();
-                    }
-                    else
-                    {
-                        Looper.prepare();
-                        Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
-                        Looper.loop();
-                    }
-                }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
-                    Looper.prepare();
-                    Toast.makeText(ctx, "未成功添加至历史记录！请检查网络再试", Toast.LENGTH_SHORT).show();
-                    Looper.loop();
-                }
-            }).start();
         }
         else if(viewId == R.id.vd_bt_share)
         {
@@ -470,7 +393,7 @@ public class VideoActivity extends BaseActivity implements VideoDetailFragment.V
                 try
                 {
                     FavorBoxApi favorBoxApi = new FavorBoxApi(SharedPreferencesUtil.getString(SharedPreferencesUtil.mid, ""), false);
-                    ArrayList<FavorBoxModel> favorBoxArrayList = favorBoxApi.getFavorBox();
+                    ArrayList<FavorBoxModel.BoxModel> favorBoxArrayList = favorBoxApi.getFavorBox().getBoxModelArrayList();
                     String[] favorBoxNames = new String[favorBoxArrayList.size()];
                     for (int i = 0; i < favorBoxArrayList.size(); i++)
                         favorBoxNames[i] = favorBoxArrayList.get(i).getTitle();
@@ -569,27 +492,29 @@ public class VideoActivity extends BaseActivity implements VideoDetailFragment.V
         new Thread(() -> {
             try
             {
-                LsonObject result = videoApi.tripleVideo();
-                if(result.getInt("code") == 0)
+                VideoModel.VideoTripleModel videoTripleModel = videoApi.tripleVideo();
+                if(videoTripleModel != null)
                 {
-                    LsonObject data = result.getJsonObject("data");
-                    videoModel.setUserLike(data.getBoolean("like"));
-                    videoModel.setUserCoin(videoModel.getUserCoin() + data.getInt("multiply"));
-                    videoModel.setUserFav(data.getBoolean("fav"));
+                    videoModel.setUserLike(videoTripleModel.isLike());
+                    videoModel.setUserCoin(videoModel.getUserCoin() + videoTripleModel.getMultiply());
+                    videoModel.setUserFav(videoTripleModel.isFav());
+                    videoModel.setDetailLike(videoModel.getDetailLike() + (videoTripleModel.isLike() ? 1 : 0));
+                    videoModel.setDetailCoin(videoModel.getDetailCoin() + videoTripleModel.getMultiply());
+                    videoModel.setDetailFav(videoModel.getDetailFav() + (videoTripleModel.isFav() ? 1 : 0));
                     Looper.prepare();
                     Toast.makeText(ctx, "三连成功！", Toast.LENGTH_SHORT).show();
                 }
                 else
                 {
                     Looper.prepare();
-                    Toast.makeText(ctx, "未知错误", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ctx, getString(R.string.main_error_unknown), Toast.LENGTH_SHORT).show();
                 }
             }
             catch (IOException e)
             {
                 e.printStackTrace();
                 Looper.prepare();
-                Toast.makeText(ctx, "三连失败！请检查你的网络..", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ctx, getString(R.string.main_error_web), Toast.LENGTH_SHORT).show();
             }
             finally
             {

@@ -10,7 +10,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,12 +22,13 @@ import cn.luern0313.wristbilibili.adapter.ListVideoAdapter;
 import cn.luern0313.wristbilibili.api.FavorVideoApi;
 import cn.luern0313.wristbilibili.models.ListVideoModel;
 import cn.luern0313.wristbilibili.util.ColorUtil;
-import cn.luern0313.wristbilibili.util.DataProcessUtil;
-import cn.luern0313.wristbilibili.util.ListViewTouchListener;
+import cn.luern0313.wristbilibili.util.ViewScrollListener;
+import cn.luern0313.wristbilibili.util.ViewTouchListener;
+import cn.luern0313.wristbilibili.widget.ExceptionHandlerView;
 import cn.luern0313.wristbilibili.widget.TitleView;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
-public class FavorVideoActivity extends BaseActivity implements TitleView.TitleViewListener
+public class FavorVideoActivity extends BaseActivity implements TitleView.TitleViewListener, ViewScrollListener.CustomScrollResult
 {
     private Context ctx;
     private Intent intent;
@@ -40,18 +40,18 @@ public class FavorVideoActivity extends BaseActivity implements TitleView.TitleV
     private String fid;
 
     private TitleView titleView;
+    private ExceptionHandlerView exceptionHandlerView;
     private ListVideoAdapter listVideoAdapter;
     private ListVideoAdapter.ListVideoAdapterListener listVideoAdapterListener;
     private ListView listView;
     private WaveSwipeRefreshLayout waveSwipeRefreshLayout;
     private View loadingView;
-    private TitleView.TitleViewListener titleViewListener;
 
-    Handler handler = new Handler();
-    Runnable runnableUi, runnableNoWeb, runnableNothing, runnableMore, runnableMoreNoWeb, runnableMoreNothing;
+    private final Handler handler = new Handler();
+    private Runnable runnableUi, runnableMore, runnableMoreNoWeb, runnableMoreNothing;
 
-    int page = 0;
-    boolean isLoading = true;
+    private int page = 0;
+    private boolean isLoading = true;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -66,14 +66,15 @@ public class FavorVideoActivity extends BaseActivity implements TitleView.TitleV
         fid = intent.getStringExtra("fid");
 
         titleView = findViewById(R.id.favor_video_title);
-        titleViewListener = this;
+        exceptionHandlerView = findViewById(R.id.favor_video_exception);
 
         listVideoAdapterListener = new ListVideoAdapter.ListVideoAdapterListener()
         {
             @Override
             public void onListVideoAdapterClick(int viewId, int position)
             {
-                Intent intent = VideoActivity.getActivityIntent(ctx, favorVideoList.get(position).getAid(), "");
+                Intent intent = new Intent(ctx, VideoActivity.class);
+                intent.putExtra(VideoActivity.ARG_AID, favorVideoList.get(position).getAid());
                 startActivity(intent);
             }
 
@@ -123,27 +124,12 @@ public class FavorVideoActivity extends BaseActivity implements TitleView.TitleV
 
         runnableUi = () -> {
             isLoading = false;
-            findViewById(R.id.favor_video_noweb).setVisibility(View.GONE);
-            findViewById(R.id.favor_video_nonthing).setVisibility(View.GONE);
+            exceptionHandlerView.hideAllView();
             listView.setVisibility(View.VISIBLE);
 
             waveSwipeRefreshLayout.setRefreshing(false);
             listVideoAdapter = new ListVideoAdapter(inflater, favorVideoList, false, listView, listVideoAdapterListener);
             listView.setAdapter(listVideoAdapter);
-        };
-
-        runnableNothing = () -> {
-            findViewById(R.id.favor_video_noweb).setVisibility(View.GONE);
-            findViewById(R.id.favor_video_nonthing).setVisibility(View.VISIBLE);
-            listView.setVisibility(View.GONE);
-            waveSwipeRefreshLayout.setRefreshing(false);
-        };
-
-        runnableNoWeb = () -> {
-            findViewById(R.id.favor_video_noweb).setVisibility(View.VISIBLE);
-            findViewById(R.id.favor_video_nonthing).setVisibility(View.GONE);
-            listView.setVisibility(View.GONE);
-            waveSwipeRefreshLayout.setRefreshing(false);
         };
 
         runnableMoreNoWeb = () -> {
@@ -164,24 +150,8 @@ public class FavorVideoActivity extends BaseActivity implements TitleView.TitleV
             getMoreFavorVideo();
         });
 
-        listView.setOnScrollListener(new AbsListView.OnScrollListener()
-        {
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState)
-            {
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
-            {
-                if(visibleItemCount + firstVisibleItem == totalItemCount && !isLoading)
-                {
-                    getMoreFavorVideo();
-                }
-            }
-        });
-
-        listView.setOnTouchListener(new ListViewTouchListener(listView, titleViewListener));
+        listView.setOnScrollListener(new ViewScrollListener(this));
+        listView.setOnTouchListener(new ViewTouchListener(listView, this));
 
         waveSwipeRefreshLayout.setRefreshing(true);
         listView.addFooterView(loadingView);
@@ -199,11 +169,12 @@ public class FavorVideoActivity extends BaseActivity implements TitleView.TitleV
                 favorVideoList = favorVideoApi.getFavorVideo(page);
                 if(favorVideoList != null && favorVideoList.size() != 0)
                     handler.post(runnableUi);
-                else handler.post(runnableNothing);
+                else
+                    exceptionHandlerView.noData();
             }
             catch (IOException e)
             {
-                handler.post(runnableNoWeb);
+                exceptionHandlerView.noWeb();
                 e.printStackTrace();
             }
         }).start();
@@ -243,5 +214,17 @@ public class FavorVideoActivity extends BaseActivity implements TitleView.TitleV
     public boolean showTitle()
     {
         return titleView.show();
+    }
+
+    @Override
+    public boolean rule()
+    {
+        return !isLoading;
+    }
+
+    @Override
+    public void result()
+    {
+        getMoreFavorVideo();
     }
 }

@@ -2,13 +2,10 @@ package cn.luern0313.wristbilibili.ui;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
@@ -30,6 +27,7 @@ import cn.luern0313.wristbilibili.fragment.user.UserListPeopleFragment;
 import cn.luern0313.wristbilibili.fragment.user.UserVideoFragment;
 import cn.luern0313.wristbilibili.models.UserModel;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
+import cn.luern0313.wristbilibili.widget.ExceptionHandlerView;
 import cn.luern0313.wristbilibili.widget.TitleView;
 
 /**
@@ -50,11 +48,11 @@ public class UserActivity extends BaseActivity implements UserDetailFragment.Use
     UserApi userApi;
 
     Handler handler = new Handler();
-    Runnable runnableUi, runnableNoWeb, runnableNothing;
+    Runnable runnableUi;
 
     TitleView uiTitleView;
+    ExceptionHandlerView uiExceptionHandlerView;
     ViewPager uiViewPager;
-    ImageView uiLoading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -68,49 +66,17 @@ public class UserActivity extends BaseActivity implements UserDetailFragment.Use
 
         userApi = new UserApi(intent.getStringExtra("mid"));
         uiTitleView = findViewById(R.id.user_title);
+        uiExceptionHandlerView = findViewById(R.id.user_exception);
         uiViewPager = findViewById(R.id.user_viewpager);
-        uiLoading = findViewById(R.id.ou_loading_img);
 
         runnableUi = () -> {
+            uiExceptionHandlerView.hideAllView();
             uiViewPager.setOffscreenPageLimit(userModel.getTab().size() - 1);
-            findViewById(R.id.user_loading).setVisibility(View.GONE);
-            findViewById(R.id.user_nothing).setVisibility(View.GONE);
-            findViewById(R.id.user_noweb).setVisibility(View.GONE);
 
             for (int i = 1; i < userModel.getTab().size(); i++)
                 uiTitleView.addTitle(userModel.getTab().get(i).get(1));
             uiViewPager.setAdapter(pagerAdapter);
         };
-
-        runnableNoWeb = () -> {
-            try
-            {
-                findViewById(R.id.user_loading).setVisibility(View.GONE);
-                findViewById(R.id.user_nothing).setVisibility(View.GONE);
-                findViewById(R.id.user_noweb).setVisibility(View.VISIBLE);
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-        };
-
-        runnableNothing = () -> {
-            try
-            {
-                findViewById(R.id.user_loading).setVisibility(View.GONE);
-                findViewById(R.id.user_nothing).setVisibility(View.VISIBLE);
-                findViewById(R.id.user_noweb).setVisibility(View.GONE);
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-        };
-
-        uiLoading.setImageResource(R.drawable.anim_loading);
-        AnimationDrawable loadingImgAnim = (AnimationDrawable) uiLoading.getDrawable();
-        loadingImgAnim.start();
 
         pagerAdapter = new UserFragmentPagerAdapter(getSupportFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT,
                                                     SharedPreferencesUtil.getString(SharedPreferencesUtil.mid, ""));
@@ -153,13 +119,15 @@ public class UserActivity extends BaseActivity implements UserDetailFragment.Use
             try
             {
                 userModel = userApi.getUserInfo();
-                if(userModel != null) handler.post(runnableUi);
-                else handler.post(runnableNothing);
+                if(userModel != null)
+                    handler.post(runnableUi);
+                else
+                    uiExceptionHandlerView.noData();
             }
             catch (IOException e)
             {
                 e.printStackTrace();
-                handler.post(runnableNoWeb);
+                uiExceptionHandlerView.noWeb();
             }
         }).start();
     }

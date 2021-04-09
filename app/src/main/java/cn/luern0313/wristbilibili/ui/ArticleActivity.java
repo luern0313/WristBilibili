@@ -2,7 +2,6 @@ package cn.luern0313.wristbilibili.ui;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -10,8 +9,6 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
@@ -29,6 +26,7 @@ import cn.luern0313.wristbilibili.fragment.ArticleDetailFragment;
 import cn.luern0313.wristbilibili.fragment.ReplyFragment;
 import cn.luern0313.wristbilibili.models.article.ArticleModel;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
+import cn.luern0313.wristbilibili.widget.ExceptionHandlerView;
 import cn.luern0313.wristbilibili.widget.TitleView;
 
 
@@ -45,18 +43,14 @@ public class ArticleActivity extends BaseActivity implements ArticleDetailFragme
     ArticleDetailActivityListener articleDetailActivityListener;
 
     TitleView uiTitleView;
+    ExceptionHandlerView exceptionHandlerView;
     ViewPager uiViewPager;
-    ImageView uiLoadingImg;
-    LinearLayout uiLoading;
-    LinearLayout uiNoWeb;
     View layoutReplyLoading;
 
     boolean isLogin = false;
 
-    AnimationDrawable loadingImgAnim;
-
     Handler handler = new Handler();
-    Runnable runnableUi, runnableNoWeb, runnableNodata, runnableLoadingFin;
+    Runnable runnableUi;
 
     final private int RESULT_DETAIL_SHARE = 101;
     @Override
@@ -76,58 +70,25 @@ public class ArticleActivity extends BaseActivity implements ArticleDetailFragme
         layoutReplyLoading = inflater.inflate(R.layout.widget_loading, null);
 
         uiTitleView = findViewById(R.id.art_title);
+        exceptionHandlerView = findViewById(R.id.art_exception);
         uiViewPager = findViewById(R.id.art_viewpager);
         uiViewPager.setOffscreenPageLimit(1);
-        uiLoadingImg = findViewById(R.id.art_loading_img);
-        uiLoading = findViewById(R.id.art_loading);
-        uiNoWeb = findViewById(R.id.art_noweb);
 
         isLogin = SharedPreferencesUtil.contains(SharedPreferencesUtil.cookies);
         articleApi = new ArticleApi(article_id, outMetrics.widthPixels);
 
-        uiLoadingImg.setImageResource(R.drawable.anim_loading);
-        loadingImgAnim = (AnimationDrawable) uiLoadingImg.getDrawable();
-        loadingImgAnim.start();
-        uiLoading.setVisibility(View.VISIBLE);
-
         runnableUi = () -> {
             try
             {
-                uiLoading.setVisibility(View.GONE);
-                uiNoWeb.setVisibility(View.GONE);
+                exceptionHandlerView.hideAllView();
                 uiViewPager.setAdapter(pagerAdapter);
             }
             catch (Exception e)
             {
                 e.printStackTrace();
-                handler.post(runnableNodata);
+                exceptionHandlerView.noData();
             }
         };
-
-        runnableNoWeb = () -> {
-            try
-            {
-                uiLoading.setVisibility(View.GONE);
-                uiNoWeb.setVisibility(View.VISIBLE);
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-        };
-
-        runnableNodata = () -> {
-            try
-            {
-                ArticleActivity.this.findViewById(R.id.art_novideo).setVisibility(View.VISIBLE);
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-        };
-
-        runnableLoadingFin = () -> ArticleActivity.this.findViewById(R.id.article_article_loading).setVisibility(View.GONE);
 
         pagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager())
         {
@@ -186,12 +147,12 @@ public class ArticleActivity extends BaseActivity implements ArticleDetailFragme
                 if(articleModel != null)
                     handler.post(runnableUi);
                 else
-                    handler.post(runnableNodata);
+                    exceptionHandlerView.noData();
             }
             catch (IOException e)
             {
                 e.printStackTrace();
-                handler.post(runnableNoWeb);
+                exceptionHandlerView.noWeb();
             }
         }).start();
     }
@@ -248,7 +209,7 @@ public class ArticleActivity extends BaseActivity implements ArticleDetailFragme
                         }
                     }
                 }
-                catch (IOException e)
+                catch (Exception e)
                 {
                     e.printStackTrace();
                     Looper.prepare();

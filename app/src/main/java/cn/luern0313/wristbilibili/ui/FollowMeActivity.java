@@ -1,6 +1,7 @@
 package cn.luern0313.wristbilibili.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -23,13 +24,14 @@ import cn.luern0313.wristbilibili.api.VideoApi;
 import cn.luern0313.wristbilibili.models.ListVideoModel;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
+import cn.luern0313.wristbilibili.widget.ExceptionHandlerView;
 
 /**
  * Created by liupe on 2018/11/11.
  * 关注我~
  */
 
-public class FollowmeActivity extends BaseActivity
+public class FollowMeActivity extends BaseActivity
 {
     Context ctx;
 
@@ -108,14 +110,14 @@ public class FollowmeActivity extends BaseActivity
         };
 
         if(!SharedPreferencesUtil.contains(SharedPreferencesUtil.cookies))
-            findViewById(R.id.fme_nologin).setVisibility(View.VISIBLE);
+            ((ExceptionHandlerView) findViewById(R.id.fme_exception)).noLogin();
         else
         {
             new Thread(() -> {
                 try
                 {
                     listVideoModel = userApi.getUserVideo(1).get(0);
-                    videoDetail = new VideoApi("", listVideoModel.getBvid());
+                    videoDetail = new VideoApi(null, listVideoModel.getBvid());
                     handler.post(runnVideo);
 
                     byte[] picByte = NetWorkUtil.readStream(NetWorkUtil.get(listVideoModel.getCover()).body().byteStream());
@@ -149,7 +151,11 @@ public class FollowmeActivity extends BaseActivity
 
         uiVideo.setOnClickListener(v -> {
             if(videoDetail != null)
-                startActivity(VideoActivity.getActivityIntent(ctx, "", videoDetail.bvid));
+            {
+                Intent intent = new Intent(ctx, VideoActivity.class);
+                intent.putExtra(VideoActivity.ARG_BVID, videoDetail.bvid);
+                startActivity(intent);
+            }
         });
 
         uiVote.setOnClickListener(v -> {

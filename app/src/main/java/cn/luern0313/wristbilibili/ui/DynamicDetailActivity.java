@@ -1,12 +1,9 @@
 package cn.luern0313.wristbilibili.ui;
 
 import android.content.Context;
-import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.view.View;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
@@ -26,21 +23,22 @@ import cn.luern0313.wristbilibili.fragment.ReplyFragment;
 import cn.luern0313.wristbilibili.models.DynamicModel;
 import cn.luern0313.wristbilibili.util.MyApplication;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
+import cn.luern0313.wristbilibili.widget.ExceptionHandlerView;
 import cn.luern0313.wristbilibili.widget.TitleView;
 
 public class DynamicDetailActivity extends BaseActivity implements DynamicDetailFragment.DynamicDetailFragmentListener, TitleView.TitleViewListener
 {
-    Context ctx;
-    FragmentPagerAdapter pagerAdapter;
-    DynamicApi dynamicApi;
-    DynamicModel.DynamicBaseModel dynamicModel;
+    private Context ctx;
+    private FragmentPagerAdapter pagerAdapter;
+    private DynamicApi dynamicApi;
+    private DynamicModel.DynamicBaseModel dynamicModel;
 
-    TitleView uiTitleView;
-    ViewPager uiViewPager;
-    ImageView uiLoading;
+    private TitleView uiTitleView;
+    private ExceptionHandlerView uiExceptionHandlerView;
+    private ViewPager uiViewPager;
 
-    Handler handler = new Handler();
-    Runnable runnableUi, runnableNoWeb, runnableNothing;
+    private Handler handler = new Handler();
+    private Runnable runnableUi;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -50,48 +48,15 @@ public class DynamicDetailActivity extends BaseActivity implements DynamicDetail
         dynamicApi = new DynamicApi(SharedPreferencesUtil.getString(SharedPreferencesUtil.mid, ""), false);
 
         uiTitleView = findViewById(R.id.dynamic_detail_title);
+        uiExceptionHandlerView = findViewById(R.id.dynamic_detail_exception);
         uiViewPager = findViewById(R.id.dynamic_detail_viewpager);
-        uiLoading = findViewById(R.id.dynamic_detail_loading_img);
 
         runnableUi = () -> {
-            findViewById(R.id.dynamic_detail_loading).setVisibility(View.GONE);
-            findViewById(R.id.dynamic_detail_nothing).setVisibility(View.GONE);
-            findViewById(R.id.dynamic_detail_noweb).setVisibility(View.GONE);
-
+            uiExceptionHandlerView.hideAllView();
             uiViewPager.setAdapter(pagerAdapter);
             if(getIntent().hasExtra("page"))
                 uiViewPager.setCurrentItem(Integer.parseInt(getIntent().getStringExtra("page")));
         };
-
-        runnableNoWeb = () -> {
-            try
-            {
-                findViewById(R.id.dynamic_detail_loading).setVisibility(View.GONE);
-                findViewById(R.id.dynamic_detail_nothing).setVisibility(View.GONE);
-                findViewById(R.id.dynamic_detail_noweb).setVisibility(View.VISIBLE);
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-        };
-
-        runnableNothing = () -> {
-            try
-            {
-                findViewById(R.id.dynamic_detail_loading).setVisibility(View.GONE);
-                findViewById(R.id.dynamic_detail_nothing).setVisibility(View.VISIBLE);
-                findViewById(R.id.dynamic_detail_noweb).setVisibility(View.GONE);
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-        };
-
-        uiLoading.setImageResource(R.drawable.anim_loading);
-        AnimationDrawable loadingImgAnim = (AnimationDrawable) uiLoading.getDrawable();
-        loadingImgAnim.start();
 
         pagerAdapter = new DynamicDetailFragmentPagerAdapter(getSupportFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
 
@@ -136,12 +101,12 @@ public class DynamicDetailActivity extends BaseActivity implements DynamicDetail
                 if(dynamicModel != null)
                     handler.post(runnableUi);
                 else
-                    handler.post(runnableNothing);
+                    uiExceptionHandlerView.noData();
             }
             catch (IOException e)
             {
                 e.printStackTrace();
-                handler.post(runnableNoWeb);
+                uiExceptionHandlerView.noWeb();
             }
         }).start();
     }

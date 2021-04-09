@@ -10,9 +10,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
@@ -34,6 +31,7 @@ import cn.luern0313.wristbilibili.models.BangumiModel;
 import cn.luern0313.wristbilibili.models.ListBangumiModel;
 import cn.luern0313.wristbilibili.service.DownloadService;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
+import cn.luern0313.wristbilibili.widget.ExceptionHandlerView;
 import cn.luern0313.wristbilibili.widget.TitleView;
 
 public class BangumiActivity extends BaseActivity implements BangumiDetailFragment.BangumiDetailFragmentListener, TitleView.TitleViewListener
@@ -51,10 +49,8 @@ public class BangumiActivity extends BaseActivity implements BangumiDetailFragme
     ArrayList<ListBangumiModel> bangumiRecommendModelArrayList;
 
     TitleView uiTitleView;
+    ExceptionHandlerView uiExceptionHandlerView;
     ViewPager uiViewPager;
-    ImageView uiLoadingImg;
-    LinearLayout uiLoading;
-    LinearLayout uiNoWeb;
 
     boolean isLogin = false;
 
@@ -62,8 +58,6 @@ public class BangumiActivity extends BaseActivity implements BangumiDetailFragme
 
     Handler handler = new Handler();
     Runnable runnableUi;
-    Runnable runnableNoWeb;
-    Runnable runnableNoData;
 
     private final int RESULT_DETAIL_DOWNLOAD = 101;
     private final int RESULT_DETAIL_SHARE = 102;
@@ -86,51 +80,19 @@ public class BangumiActivity extends BaseActivity implements BangumiDetailFragme
         inflater = getLayoutInflater();
 
         uiTitleView = findViewById(R.id.bgm_title);
+        uiExceptionHandlerView = findViewById(R.id.bgm_exception);
         uiViewPager = findViewById(R.id.bgm_viewpager);
         uiViewPager.setOffscreenPageLimit(2);
-        uiLoadingImg = findViewById(R.id.bgm_loading_img);
-        uiLoading = findViewById(R.id.bgm_loading);
-        uiNoWeb = findViewById(R.id.bgm_noweb);
 
         isLogin = SharedPreferencesUtil.contains(SharedPreferencesUtil.cookies);
         bangumiApi = new BangumiApi(seasonId);
 
-        uiLoadingImg.setImageResource(R.drawable.anim_loading);
-        loadingImgAnim = (AnimationDrawable) uiLoadingImg.getDrawable();
-        loadingImgAnim.start();
-        uiLoading.setVisibility(View.VISIBLE);
-
         runnableUi = () -> {
+            uiExceptionHandlerView.hideAllView();
             uiTitleView.setTitle(0, String.format(getString(R.string.bangumi_title_detail), bangumiModel.getTypeName()));
             uiTitleView.setTitle(1, String.format(getString(R.string.bangumi_title_reply), bangumiModel.getTypeEp()));
 
-            uiLoading.setVisibility(View.GONE);
-            uiNoWeb.setVisibility(View.GONE);
-
             uiViewPager.setAdapter(pagerAdapter);
-        };
-
-        runnableNoWeb = () -> {
-            try
-            {
-                uiLoading.setVisibility(View.GONE);
-                uiNoWeb.setVisibility(View.VISIBLE);
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-        };
-
-        runnableNoData = () -> {
-            try
-            {
-                findViewById(R.id.bgm_novideo).setVisibility(View.VISIBLE);
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
         };
 
         pagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager())
@@ -195,18 +157,14 @@ public class BangumiActivity extends BaseActivity implements BangumiDetailFragme
                 bangumiModel = bangumiApi.getBangumiInfo();
                 bangumiRecommendModelArrayList = bangumiApi.getBangumiRecommend();
                 if(bangumiModel != null)
-                {
                     handler.post(runnableUi);
-                }
                 else
-                {
-                    handler.post(runnableNoData);
-                }
+                    uiExceptionHandlerView.noData();
             }
             catch(IOException e)
             {
                 e.printStackTrace();
-                handler.post(runnableNoWeb);
+                uiExceptionHandlerView.noWeb();
             }
         }).start();
     }
@@ -270,7 +228,7 @@ public class BangumiActivity extends BaseActivity implements BangumiDetailFragme
     @Override
     public void onBangumiDetailFragmentViewClick(int viewId)
     {
-        if(viewId == R.id.bgm_detail_bt_follow_lay)
+        if(viewId == R.id.bgm_detail_bt_follow)
         {
             new Thread(() -> {
                 try
@@ -292,13 +250,13 @@ public class BangumiActivity extends BaseActivity implements BangumiDetailFragme
                 }
             }).start();
         }
-        else if(viewId == R.id.bgm_detail_bt_cover_lay)
+        else if(viewId == R.id.bgm_detail_bt_cover)
         {
             Intent intent = new Intent(ctx, ImgActivity.class);
             intent.putExtra("imgUrl", new String[]{bangumiModel.getCover()});
             startActivity(intent);
         }
-        else if(viewId == R.id.bgm_detail_bt_download_lay)
+        else if(viewId == R.id.bgm_detail_bt_download)
         {
             if(bangumiModel.isRightDownload())
             {
@@ -316,7 +274,7 @@ public class BangumiActivity extends BaseActivity implements BangumiDetailFragme
             else
                 Toast.makeText(ctx, String.format(getString(R.string.bangumi_download_notallow), bangumiModel.getTypeName()), Toast.LENGTH_SHORT).show();
         }
-        else if(viewId == R.id. bgm_detail_bt_share_lay)
+        else if(viewId == R.id. bgm_detail_bt_share)
         {
             Intent intent = new Intent(ctx, SendDynamicActivity.class);
             intent.putExtra("is_share", true);

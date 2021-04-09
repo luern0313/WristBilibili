@@ -14,8 +14,9 @@ import java.io.IOException;
 
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.api.SendDynamicApi;
-import cn.luern0313.wristbilibili.util.ListViewTouchListener;
+import cn.luern0313.wristbilibili.util.ViewTouchListener;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
+import cn.luern0313.wristbilibili.widget.ExceptionHandlerView;
 import cn.luern0313.wristbilibili.widget.TitleView;
 
 public class SueActivity extends BaseActivity implements TitleView.TitleViewListener
@@ -24,9 +25,9 @@ public class SueActivity extends BaseActivity implements TitleView.TitleViewList
     SendDynamicApi sendDynamicApi;
 
     TitleView titleView;
+    ExceptionHandlerView exceptionHandlerView;
     TextView uiText;
     LinearLayout uiLoading;
-    LinearLayout uiNoLogin;
 
     Handler handler = new Handler();
     Runnable runnableUi;
@@ -38,16 +39,16 @@ public class SueActivity extends BaseActivity implements TitleView.TitleViewList
         ctx = this;
 
         titleView = findViewById(R.id.sue_title);
+        exceptionHandlerView = findViewById(R.id.sue_exception);
         uiText = findViewById(R.id.sue_text);
         uiLoading = findViewById(R.id.sue_loading);
-        uiNoLogin = findViewById(R.id.dt_nologin);
         sendDynamicApi = new SendDynamicApi();
         uiText.setText(Html.fromHtml("<font color=\"#188ad0\">#腕上哔哩# #用手表上b站# </font>" + sendDynamicApi.getNextShareText()));
 
         if(!SharedPreferencesUtil.contains(SharedPreferencesUtil.cookies))
-            uiNoLogin.setVisibility(View.VISIBLE);
+            exceptionHandlerView.noLogin();
 
-        findViewById(R.id.sue_lay).setOnTouchListener(new ListViewTouchListener(findViewById(R.id.sue_lay), (TitleView.TitleViewListener) ctx));
+        findViewById(R.id.sue_lay).setOnTouchListener(new ViewTouchListener(findViewById(R.id.sue_lay), (TitleView.TitleViewListener) ctx));
 
         runnableUi = () -> uiLoading.setVisibility(View.GONE);
     }
