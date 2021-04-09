@@ -23,6 +23,7 @@ import cn.luern0313.wristbilibili.api.UserApi;
 import cn.luern0313.wristbilibili.models.UserListPeopleModel;
 import cn.luern0313.wristbilibili.ui.UserActivity;
 import cn.luern0313.wristbilibili.util.ViewTouchListener;
+import cn.luern0313.wristbilibili.widget.ExceptionHandlerView;
 import cn.luern0313.wristbilibili.widget.TitleView;
 
 public class UserListPeopleFragment extends Fragment
@@ -43,10 +44,11 @@ public class UserListPeopleFragment extends Fragment
     private TitleView.TitleViewListener titleViewListener;
 
     private final Handler handler = new Handler();
-    private Runnable runnableUi, runnableNoWeb, runnableNothing, runnableMore, runnableMoreNoWeb, runnableMoreNothing;
+    private Runnable runnableUi, runnableMore, runnableMoreNoWeb, runnableMoreNothing;
 
     private View layoutLoadingMore;
-    private ListView uiListView;
+    private ExceptionHandlerView exceptionHandlerView;
+    private ListView listView;
 
     private boolean isLoading = true;
 
@@ -88,25 +90,14 @@ public class UserListPeopleFragment extends Fragment
         };
 
         layoutLoadingMore = inflater.inflate(R.layout.widget_loading, null);
-        uiListView = rootLayout.findViewById(R.id.user_list_people_listview);
-        uiListView.addFooterView(layoutLoadingMore);
+        exceptionHandlerView = rootLayout.findViewById(R.id.user_list_people_exception);
+        listView = rootLayout.findViewById(R.id.user_list_people_listview);
+        listView.addFooterView(layoutLoadingMore);
 
         runnableUi = () -> {
             isLoading = false;
-            rootLayout.findViewById(R.id.user_list_people_no_web).setVisibility(View.GONE);
-            rootLayout.findViewById(R.id.user_list_people_nothing).setVisibility(View.GONE);
-            userListPeopleAdapter = new UserListPeopleAdapter(inflater, userListPeopleModelArrayList, mode, uiListView, userListPeopleAdapterListener);
-            uiListView.setAdapter(userListPeopleAdapter);
-        };
-
-        runnableNoWeb = () -> {
-            rootLayout.findViewById(R.id.user_list_people_no_web).setVisibility(View.VISIBLE);
-            rootLayout.findViewById(R.id.user_list_people_nothing).setVisibility(View.GONE);
-        };
-
-        runnableNothing = () -> {
-            rootLayout.findViewById(R.id.user_list_people_no_web).setVisibility(View.GONE);
-            rootLayout.findViewById(R.id.user_list_people_nothing).setVisibility(View.VISIBLE);
+            userListPeopleAdapter = new UserListPeopleAdapter(inflater, userListPeopleModelArrayList, mode, listView, userListPeopleAdapterListener);
+            listView.setAdapter(userListPeopleAdapter);
         };
 
         runnableMore = () -> userListPeopleAdapter.notifyDataSetChanged();
@@ -124,7 +115,7 @@ public class UserListPeopleFragment extends Fragment
             getMoreListPeople();
         });
 
-        uiListView.setOnScrollListener(new AbsListView.OnScrollListener()
+        listView.setOnScrollListener(new AbsListView.OnScrollListener()
         {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState)
@@ -142,7 +133,7 @@ public class UserListPeopleFragment extends Fragment
             }
         });
 
-        uiListView.setOnTouchListener(new ViewTouchListener(uiListView, titleViewListener));
+        listView.setOnTouchListener(new ViewTouchListener(listView, titleViewListener));
 
         new Thread(() -> {
             try
@@ -160,12 +151,12 @@ public class UserListPeopleFragment extends Fragment
                     handler.post(runnableUi);
                 }
                 else
-                    handler.post(runnableNothing);
+                    exceptionHandlerView.noData();
             }
             catch (RuntimeException | IOException e)
             {
                 e.printStackTrace();
-                handler.post(runnableNoWeb);
+                exceptionHandlerView.noWeb();
             }
         }).start();
 

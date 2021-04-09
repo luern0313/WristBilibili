@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -23,10 +22,9 @@ import cn.luern0313.wristbilibili.models.FavorBoxModel;
 import cn.luern0313.wristbilibili.ui.FavorOtherActivity;
 import cn.luern0313.wristbilibili.ui.FavorVideoActivity;
 import cn.luern0313.wristbilibili.util.ColorUtil;
-import cn.luern0313.wristbilibili.util.DataProcessUtil;
-import cn.luern0313.wristbilibili.util.ListViewTouchListener;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 import cn.luern0313.wristbilibili.util.ViewTouchListener;
+import cn.luern0313.wristbilibili.widget.ExceptionHandlerView;
 import cn.luern0313.wristbilibili.widget.TitleView;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
@@ -45,18 +43,19 @@ public class FavorBoxFragment extends Fragment
     private String mid;
     private boolean isShowOtherBox;
     private FavorBoxApi favorBoxApi;
-    private ArrayList<FavorBoxModel> favorBoxArrayList;
+    private FavorBoxModel favorBoxModel;
     private FavorBoxAdapter.FavorBoxAdapterListener favorBoxAdapterListener;
     private TitleView.TitleViewListener titleViewListener;
 
     private View rootLayout;
-    private ListView favListView;
+    private ExceptionHandlerView exceptionHandlerView;
+    private ListView listView;
     private WaveSwipeRefreshLayout waveSwipeRefreshLayout;
 
     public static boolean isLogin;
 
     private final Handler handler = new Handler();
-    private Runnable runnableUi, runnableNoWeb, runnableNoData;
+    private Runnable runnableUi;
 
     public FavorBoxFragment() {}
 
@@ -88,7 +87,8 @@ public class FavorBoxFragment extends Fragment
         ctx = getActivity();
         rootLayout = inflater.inflate(R.layout.fragment_favor_box, container, false);
 
-        favListView = rootLayout.findViewById(R.id.fav_listview);
+        exceptionHandlerView = rootLayout.findViewById(R.id.fav_exception);
+        listView = rootLayout.findViewById(R.id.fav_listview);
         waveSwipeRefreshLayout = rootLayout.findViewById(R.id.fav_swipe);
         waveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
         waveSwipeRefreshLayout.setWaveColor(ColorUtil.getColor(R.attr.colorPrimary, ctx));
@@ -96,7 +96,7 @@ public class FavorBoxFragment extends Fragment
         waveSwipeRefreshLayout.setOnRefreshListener(() -> handler.post(() -> {
             if(isLogin)
             {
-                favListView.setVisibility(View.GONE);
+                listView.setVisibility(View.GONE);
                 getFavorBox();
             }
             else waveSwipeRefreshLayout.setRefreshing(false);
@@ -105,21 +105,21 @@ public class FavorBoxFragment extends Fragment
         favorBoxAdapterListener = (viewId, position) -> {
             if(viewId == R.id.favor_lay)
             {
-                FavorBoxModel favorBoxModel = favorBoxArrayList.get(position);
-                if(favorBoxModel.getMode() == 0)
+                FavorBoxModel.BoxModel boxModel = favorBoxModel.getBoxModelArrayList().get(position);
+                if(boxModel.getMode() == 0)
                 {
                     Intent intent = new Intent(ctx, FavorVideoActivity.class);
-                    intent.putExtra("fid", favorBoxArrayList.get(position).getFid());
+                    intent.putExtra("fid", boxModel.getFid());
                     intent.putExtra("mid", mid);
                     startActivity(intent);
                 }
-                else if(favorBoxModel.getMode() == 1)
+                else if(boxModel.getMode() == 1)
                 {
                     Intent intent = new Intent(ctx, FavorOtherActivity.class);
                     intent.putExtra("mode", 0);
                     startActivity(intent);
                 }
-                else if(favorBoxModel.getMode() == 2)
+                else if(boxModel.getMode() == 2)
                 {
                     Intent intent = new Intent(ctx, FavorOtherActivity.class);
                     intent.putExtra("mode", 1);
@@ -129,31 +129,12 @@ public class FavorBoxFragment extends Fragment
         };
 
         runnableUi = () -> {
-            rootLayout.findViewById(R.id.fav_nologin).setVisibility(View.GONE);
-            rootLayout.findViewById(R.id.fav_noweb).setVisibility(View.GONE);
-            rootLayout.findViewById(R.id.fav_nonthing).setVisibility(View.GONE);
-            favListView.setAdapter(new FavorBoxAdapter(inflater, favorBoxArrayList, favListView, favorBoxAdapterListener));
-            favListView.setVisibility(View.VISIBLE);
-            waveSwipeRefreshLayout.setRefreshing(false);
+            exceptionHandlerView.hideAllView();
+            listView.setAdapter(new FavorBoxAdapter(inflater, favorBoxModel, listView, favorBoxAdapterListener));
+            listView.setVisibility(View.VISIBLE);
         };
 
-        runnableNoWeb = () -> {
-            rootLayout.findViewById(R.id.fav_nologin).setVisibility(View.GONE);
-            rootLayout.findViewById(R.id.fav_noweb).setVisibility(View.VISIBLE);
-            rootLayout.findViewById(R.id.fav_nonthing).setVisibility(View.GONE);
-            favListView.setVisibility(View.GONE);
-            waveSwipeRefreshLayout.setRefreshing(false);
-        };
-
-        runnableNoData = () -> {
-            rootLayout.findViewById(R.id.fav_nologin).setVisibility(View.GONE);
-            rootLayout.findViewById(R.id.fav_noweb).setVisibility(View.GONE);
-            rootLayout.findViewById(R.id.fav_nonthing).setVisibility(View.VISIBLE);
-            favListView.setVisibility(View.GONE);
-            waveSwipeRefreshLayout.setRefreshing(false);
-        };
-
-        favListView.setOnTouchListener(new ViewTouchListener(favListView, titleViewListener));
+        listView.setOnTouchListener(new ViewTouchListener(listView, titleViewListener));
 
         isLogin = SharedPreferencesUtil.contains(SharedPreferencesUtil.cookies);
         if(isLogin)
@@ -162,10 +143,7 @@ public class FavorBoxFragment extends Fragment
             getFavorBox();
         }
         else
-        {
-            rootLayout.findViewById(R.id.fav_noweb).setVisibility(View.GONE);
-            rootLayout.findViewById(R.id.fav_nologin).setVisibility(View.VISIBLE);
-        }
+            exceptionHandlerView.noLogin();
 
         return rootLayout;
     }
@@ -176,20 +154,20 @@ public class FavorBoxFragment extends Fragment
             try
             {
                 favorBoxApi = new FavorBoxApi(mid, isShowOtherBox);
-                favorBoxArrayList = favorBoxApi.getFavorBox();
-                if(favorBoxArrayList != null && favorBoxArrayList.size() != 0)
+                favorBoxModel = favorBoxApi.getFavorBox();
+                if(favorBoxModel != null)
                     handler.post(runnableUi);
                 else
-                    handler.post(runnableNoData);
+                    exceptionHandlerView.noData();
             }
             catch (NullPointerException e)
             {
-                handler.post(runnableNoData);
+                exceptionHandlerView.noData();
                 e.printStackTrace();
             }
             catch (IOException e)
             {
-                handler.post(runnableNoWeb);
+                exceptionHandlerView.noWeb();
                 e.printStackTrace();
             }
         }).start();

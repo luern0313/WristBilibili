@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -25,6 +24,7 @@ import cn.luern0313.wristbilibili.api.UserApi;
 import cn.luern0313.wristbilibili.models.ListVideoModel;
 import cn.luern0313.wristbilibili.ui.VideoActivity;
 import cn.luern0313.wristbilibili.util.ViewTouchListener;
+import cn.luern0313.wristbilibili.widget.ExceptionHandlerView;
 import cn.luern0313.wristbilibili.widget.TitleView;
 
 public class UserVideoFragment extends Fragment
@@ -42,13 +42,11 @@ public class UserVideoFragment extends Fragment
 
     private View rootLayout;
     private View layoutLoading;
-    private ListView uiListView;
-    private LinearLayout uiLoading;
-    private LinearLayout uiNoWeb;
-    private LinearLayout uiNothing;
+    private ExceptionHandlerView exceptionHandlerView;
+    private ListView listView;
 
     private final Handler handler = new Handler();
-    private Runnable runnableUi, runnableNoWeb, runnableNothing, runnableMore, runnableMoreNoWeb, runnableMoreNothing;
+    private Runnable runnableUi, runnableMore, runnableMoreNoWeb, runnableMoreNothing;
 
     private boolean isLoading = true;
 
@@ -86,7 +84,9 @@ public class UserVideoFragment extends Fragment
             @Override
             public void onListVideoAdapterClick(int viewId, int position)
             {
-                Intent intent = VideoActivity.getActivityIntent(ctx, "", listVideoModelArrayList.get(position).getBvid());
+
+                Intent intent = new Intent(ctx, VideoActivity.class);
+                intent.putExtra(VideoActivity.ARG_BVID, listVideoModelArrayList.get(position).getBvid());
                 startActivity(intent);
             }
 
@@ -98,29 +98,13 @@ public class UserVideoFragment extends Fragment
         };
 
         layoutLoading = inflater.inflate(R.layout.widget_loading, null, false);
-        uiListView = rootLayout.findViewById(R.id.user_video_listview);
-        uiLoading = rootLayout.findViewById(R.id.user_video_loading);
-        uiNoWeb = rootLayout.findViewById(R.id.user_video_noweb);
-        uiNothing = rootLayout.findViewById(R.id.user_video_nonthing);
+        exceptionHandlerView = rootLayout.findViewById(R.id.user_video_exception);
+        listView = rootLayout.findViewById(R.id.user_video_listview);
 
         runnableUi = () -> {
-            uiLoading.setVisibility(View.GONE);
-            uiNoWeb.setVisibility(View.GONE);
-            uiNothing.setVisibility(View.GONE);
-            listVideoAdapter = new ListVideoAdapter(inflater, listVideoModelArrayList, false, uiListView, listVideoAdapterListener);
-            uiListView.setAdapter(listVideoAdapter);
-        };
-
-        runnableNoWeb = () -> {
-            uiLoading.setVisibility(View.GONE);
-            uiNoWeb.setVisibility(View.VISIBLE);
-            uiNothing.setVisibility(View.GONE);
-        };
-
-        runnableNothing = () -> {
-            uiLoading.setVisibility(View.GONE);
-            uiNoWeb.setVisibility(View.GONE);
-            uiNothing.setVisibility(View.VISIBLE);
+            exceptionHandlerView.hideAllView();
+            listVideoAdapter = new ListVideoAdapter(inflater, listVideoModelArrayList, false, listView, listVideoAdapterListener);
+            listView.setAdapter(listVideoAdapter);
         };
 
         runnableMore = () -> listVideoAdapter.notifyDataSetChanged();
@@ -138,7 +122,7 @@ public class UserVideoFragment extends Fragment
             getMoreVideo();
         });
 
-        uiListView.setOnScrollListener(new AbsListView.OnScrollListener()
+        listView.setOnScrollListener(new AbsListView.OnScrollListener()
         {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState)
@@ -156,7 +140,7 @@ public class UserVideoFragment extends Fragment
             }
         });
 
-        uiListView.setOnTouchListener(new ViewTouchListener(uiListView, titleViewListener));
+        listView.setOnTouchListener(new ViewTouchListener(listView, titleViewListener));
 
         new Thread(() -> {
             try
@@ -169,17 +153,17 @@ public class UserVideoFragment extends Fragment
                     handler.post(runnableUi);
                 }
                 else
-                    handler.post(runnableNothing);
+                    exceptionHandlerView.noData();
             }
             catch (IOException e)
             {
                 e.printStackTrace();
-                handler.post(runnableNoWeb);
+                exceptionHandlerView.noWeb();
             }
             catch (NullPointerException e)
             {
                 e.printStackTrace();
-                handler.post(runnableNothing);
+                exceptionHandlerView.noData();
             }
         }).start();
 

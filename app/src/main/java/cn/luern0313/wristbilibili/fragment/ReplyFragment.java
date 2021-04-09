@@ -34,6 +34,7 @@ import cn.luern0313.wristbilibili.util.ColorUtil;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
 import cn.luern0313.wristbilibili.util.ViewScrollListener;
 import cn.luern0313.wristbilibili.util.ViewTouchListener;
+import cn.luern0313.wristbilibili.widget.ExceptionHandlerView;
 import cn.luern0313.wristbilibili.widget.TitleView;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
@@ -59,8 +60,9 @@ public class ReplyFragment extends Fragment
     private int position;
     private ReplyApi replyApi;
 
+    private ExceptionHandlerView exceptionHandlerView;
+    private ListView listView;
     private WaveSwipeRefreshLayout waveSwipeRefreshLayout;
-    private ListView uiReplyListView;
     private View layoutLoading;
 
     private ReplyAdapter replyAdapter;
@@ -68,7 +70,7 @@ public class ReplyFragment extends Fragment
     private TitleView.TitleViewListener titleViewListener;
 
     private final Handler handler = new Handler();
-    private Runnable runnableUi, runnableNoWeb, runnableNothing, runnableMoreNoMore, runnableMoreErr, runnableUpdate;
+    private Runnable runnableUi, runnableMoreErr, runnableUpdate;
 
     private int replyPage = 1;
     private boolean isReplyLoading = true;
@@ -139,26 +141,10 @@ public class ReplyFragment extends Fragment
         };
 
         layoutLoading = inflater.inflate(R.layout.widget_loading, null);
-        uiReplyListView = rootLayout.findViewById(R.id.reply_listview);
-        uiReplyListView.addFooterView(layoutLoading, null, true);
-        uiReplyListView.setHeaderDividersEnabled(false);
-        uiReplyListView.setOnScrollListener(new AbsListView.OnScrollListener()
-        {
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState)
-            {
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
-            {
-                if(visibleItemCount + firstVisibleItem == totalItemCount && !isReplyLoading && !replyApi.replyIsEnd)
-                {
-                    getMoreReply();
-                }
-            }
-        });
-
+        exceptionHandlerView = rootLayout.findViewById(R.id.reply_exception);
+        listView = rootLayout.findViewById(R.id.reply_listview);
+        listView.addFooterView(layoutLoading, null, true);
+        listView.setHeaderDividersEnabled(false);
 
         waveSwipeRefreshLayout = rootLayout.findViewById(R.id.reply_swipe);
         waveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
@@ -182,10 +168,7 @@ public class ReplyFragment extends Fragment
             try
             {
                 isReplyLoading = false;
-                waveSwipeRefreshLayout.setRefreshing(false);
-                rootLayout.findViewById(R.id.reply_nothing).setVisibility(View.GONE);
-                rootLayout.findViewById(R.id.reply_noweb).setVisibility(View.GONE);
-                rootLayout.findViewById(R.id.reply_loading).setVisibility(View.GONE);
+                exceptionHandlerView.hideAllView();
                 rootLayout.findViewById(R.id.reply_listview).setVisibility(View.VISIBLE);
                 replyAdapter = new ReplyAdapter(inflater, uiReplyListView, replyApi.replyArrayList, replyApi.replyIsShowFloor, root != null, replyApi.replyCount, replyWidth, replyAdapterListener);
                 uiReplyListView.setAdapter(replyAdapter);
@@ -196,24 +179,9 @@ public class ReplyFragment extends Fragment
             }
         };
 
-        runnableNoWeb = () -> {
-            rootLayout.findViewById(R.id.reply_nothing).setVisibility(View.GONE);
-            rootLayout.findViewById(R.id.reply_noweb).setVisibility(View.VISIBLE);
-            rootLayout.findViewById(R.id.reply_loading).setVisibility(View.GONE);
-        };
-
-        runnableNothing = () -> {
-            rootLayout.findViewById(R.id.reply_nothing).setVisibility(View.GONE);
-            rootLayout.findViewById(R.id.reply_noweb).setVisibility(View.GONE);
-            rootLayout.findViewById(R.id.reply_loading).setVisibility(View.GONE);
-        };
-
-        runnableMoreNoMore = () -> ((TextView) layoutLoading.findViewById(R.id.wid_load_text)).setText(getString(R.string.main_tip_no_more_data));
-
         runnableMoreErr = () -> {
             ((TextView) layoutLoading.findViewById(R.id.wid_load_text)).setText(getString(R.string.main_tip_no_more_web));
             layoutLoading.findViewById(R.id.wid_load_button).setVisibility(View.VISIBLE);
-            isReplyLoading = false;
         };
 
         runnableUpdate = () -> {
@@ -260,7 +228,7 @@ public class ReplyFragment extends Fragment
             catch (IOException | NullPointerException e)
             {
                 e.printStackTrace();
-                handler.post(runnableNoWeb);
+                exceptionHandlerView.noWeb();
             }
         }).start();
     }

@@ -11,7 +11,6 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,6 +28,7 @@ import cn.luern0313.wristbilibili.ui.ArticleActivity;
 import cn.luern0313.wristbilibili.util.ColorUtil;
 import cn.luern0313.wristbilibili.util.ViewScrollListener;
 import cn.luern0313.wristbilibili.util.ViewTouchListener;
+import cn.luern0313.wristbilibili.widget.ExceptionHandlerView;
 import cn.luern0313.wristbilibili.widget.TitleView;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
@@ -36,11 +36,12 @@ import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
  * 被 luern0313 创建于 2020/7/29.
  */
 
-public class FavorArticleFragment extends Fragment
+public class FavorArticleFragment extends Fragment implements ViewScrollListener.CustomScrollResult
 {
     private Context ctx;
     private View rootLayout;
-    private ListView uiListView;
+    private ExceptionHandlerView exceptionHandlerView;
+    private ListView listView;
     private View layoutLoading;
     private WaveSwipeRefreshLayout waveSwipeRefreshLayout;
 
@@ -51,7 +52,7 @@ public class FavorArticleFragment extends Fragment
     private TitleView.TitleViewListener titleViewListener;
 
     private final Handler handler = new Handler();
-    private Runnable runnableUi, runnableNoWeb, runnableNoData, runnableMore, runnableMoreNoWeb, runnableMoreNoData;
+    private Runnable runnableUi, runnableMore, runnableMoreNoWeb, runnableMoreNoData;
 
     private int favorPage = 1;
     private boolean isFavorLoading = true;
@@ -68,7 +69,8 @@ public class FavorArticleFragment extends Fragment
         ctx = getActivity();
         rootLayout = inflater.inflate(R.layout.fragment_favor_article, container, false);
 
-        uiListView = rootLayout.findViewById(R.id.favor_article_listview);
+        exceptionHandlerView = rootLayout.findViewById(R.id.favor_article_exception);
+        listView = rootLayout.findViewById(R.id.favor_article_listview);
         layoutLoading = inflater.inflate(R.layout.widget_loading, null);
         waveSwipeRefreshLayout = rootLayout.findViewById(R.id.favor_article_swipe);
         waveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
@@ -78,8 +80,8 @@ public class FavorArticleFragment extends Fragment
             getFavorArticle();
             waveSwipeRefreshLayout.setRefreshing(false);
         }));
-        uiListView.addFooterView(layoutLoading, null, true);
-        uiListView.setHeaderDividersEnabled(false);
+        listView.addFooterView(layoutLoading, null, true);
+        listView.setHeaderDividersEnabled(false);
 
         listArticleAdapterListener = new ListArticleAdapter.ListArticleAdapterListener()
         {
@@ -98,23 +100,10 @@ public class FavorArticleFragment extends Fragment
 
         runnableUi = () -> {
             isFavorLoading = false;
-            rootLayout.findViewById(R.id.favor_article_no_web).setVisibility(View.GONE);
-            rootLayout.findViewById(R.id.favor_article_no_data).setVisibility(View.GONE);
-            listArticleAdapter = new ListArticleAdapter(inflater, listArticleModelArrayList, uiListView, listArticleAdapterListener);
-            uiListView.setAdapter(listArticleAdapter);
-            uiListView.setVisibility(View.VISIBLE);
-            waveSwipeRefreshLayout.setRefreshing(false);
-        };
-
-        runnableNoWeb = () -> {
-            rootLayout.findViewById(R.id.favor_article_no_web).setVisibility(View.VISIBLE);
-            rootLayout.findViewById(R.id.favor_article_no_data).setVisibility(View.GONE);
-            waveSwipeRefreshLayout.setRefreshing(false);
-        };
-
-        runnableNoData = () -> {
-            rootLayout.findViewById(R.id.favor_article_no_web).setVisibility(View.GONE);
-            rootLayout.findViewById(R.id.favor_article_no_data).setVisibility(View.VISIBLE);
+            exceptionHandlerView.hideAllView();
+            listArticleAdapter = new ListArticleAdapter(inflater, listArticleModelArrayList, listView, listArticleAdapterListener);
+            listView.setAdapter(listArticleAdapter);
+            listView.setVisibility(View.VISIBLE);
             waveSwipeRefreshLayout.setRefreshing(false);
         };
 
@@ -137,8 +126,8 @@ public class FavorArticleFragment extends Fragment
             getMoreFavorArticle();
         });
 
-        uiListView.setOnScrollListener(new ViewScrollListener(this));
-        uiListView.setOnTouchListener(new ViewTouchListener(uiListView, titleViewListener));
+        listView.setOnScrollListener(new ViewScrollListener(this));
+        listView.setOnTouchListener(new ViewTouchListener(listView, titleViewListener));
 
         waveSwipeRefreshLayout.setRefreshing(true);
         getFavorArticle();
@@ -158,11 +147,11 @@ public class FavorArticleFragment extends Fragment
                 if(listArticleModelArrayList != null && listArticleModelArrayList.size() > 0)
                     handler.post(runnableUi);
                 else
-                    handler.post(runnableNoData);
+                    exceptionHandlerView.noData();
             }
             catch (IOException e)
             {
-                handler.post(runnableNoWeb);
+                exceptionHandlerView.noWeb();
                 e.printStackTrace();
             }
         }).start();
@@ -242,5 +231,17 @@ public class FavorArticleFragment extends Fragment
         super.onAttach(context);
         if(context instanceof TitleView.TitleViewListener)
             titleViewListener = (TitleView.TitleViewListener) context;
+    }
+
+    @Override
+    public boolean rule()
+    {
+        return !isFavorLoading;
+    }
+
+    @Override
+    public void result()
+    {
+        getMoreFavorArticle();
     }
 }

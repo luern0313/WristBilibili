@@ -2,6 +2,7 @@ package cn.luern0313.wristbilibili.fragment;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,17 +16,19 @@ import cn.luern0313.wristbilibili.adapter.VideoRecommendAdapter;
 import cn.luern0313.wristbilibili.models.VideoModel;
 import cn.luern0313.wristbilibili.ui.VideoActivity;
 import cn.luern0313.wristbilibili.util.ViewTouchListener;
+import cn.luern0313.wristbilibili.widget.ExceptionHandlerView;
 import cn.luern0313.wristbilibili.widget.TitleView;
 
 public class VideoRecommendFragment extends Fragment
 {
     private static final String ARG_VIDEO_MODEL = "videoModelArg";
 
-    Context ctx;
-    View rootLayout;
+    private Context ctx;
+    private View rootLayout;
     private VideoModel videoModel;
 
-    private ListView uiListView;
+    private ExceptionHandlerView exceptionHandlerView;
+    private ListView listView;
     private TitleView.TitleViewListener titleViewListener;
 
     public VideoRecommendFragment() {}
@@ -56,22 +59,22 @@ public class VideoRecommendFragment extends Fragment
         ctx = getActivity();
         rootLayout = inflater.inflate(R.layout.fragment_video_recommend, container, false);
 
-        uiListView = rootLayout.findViewById(R.id.vd_recommend_listview);
-        uiListView.setEmptyView(rootLayout.findViewById(R.id.vd_recommend_nothing));
-        uiListView.setOnItemClickListener((parent, view, position, id) -> {
+        exceptionHandlerView = rootLayout.findViewById(R.id.vd_recommend_exception);
+        listView = rootLayout.findViewById(R.id.vd_recommend_listview);
+        listView.setOnItemClickListener((parent, view, position, id) -> {
             Intent intent = new Intent(ctx, VideoActivity.class);
             intent.putExtra(VideoActivity.ARG_AID, videoModel.getRecommendList().get(position).getRecommendVideoAid());
             startActivity(intent);
         });
-        uiListView.setOnTouchListener(new ViewTouchListener(uiListView, titleViewListener));
+        listView.setOnTouchListener(new ViewTouchListener(listView, titleViewListener));
 
-        if(videoModel.getRecommendList() != null)
+        if(videoModel.getRecommendList() != null && videoModel.getRecommendList().size() > 0)
         {
-            VideoRecommendAdapter recommendAdapter = new VideoRecommendAdapter(inflater, videoModel.getRecommendList(), uiListView);
-            uiListView.setAdapter(recommendAdapter);
+            VideoRecommendAdapter recommendAdapter = new VideoRecommendAdapter(inflater, videoModel.getRecommendList(), listView);
+            listView.setAdapter(recommendAdapter);
         }
         else
-            rootLayout.findViewById(R.id.vd_recommend_nothing).setVisibility(View.VISIBLE);
+            exceptionHandlerView.noData();
 
         return rootLayout;
     }

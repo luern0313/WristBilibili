@@ -53,17 +53,19 @@ import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
 public class RankingFragment extends Fragment
 {
-    Context ctx;
-    View rootLayout;
+    private static final String ARG_RID = "ridArg";
+
+    private Context ctx;
+    private View rootLayout;
     private RankingAdapter rankingAdapter;
     private VideoApi videoDetailsApi;
     private VideoModel videoModel;
     private TitleView.TitleViewListener titleViewListener;
 
-    private ListView uiListView;
-    private WaveSwipeRefreshLayout uiWaveSwipeRefreshLayout;
-    private View uiPickUpView, uiToolbarView, sendDynamicView;
-    private View uiLoadingView;
+    private ExceptionHandlerView exceptionHandlerView;
+    private ListView listView;
+    private WaveSwipeRefreshLayout waveSwipeRefreshLayout;
+    private View uiToolbarView, uiLoadingView;
 
     private RankingApi rankingApi;
     private final ArrayList<RankingModel> rankingVideoArrayList = new ArrayList<>();
@@ -74,9 +76,8 @@ public class RankingFragment extends Fragment
     private Bitmap bitmapPickUpUpFace;
     private Bitmap bitmapPickUpVideoCover;
 
-    private Handler handler = new Handler();
-    private Runnable runnableUi, runnableNoWeb, runnableNoMore, runnableNoWebH, runnablePickNodata;
-    private Runnable runnablePick, runnablePickUi, runnablePickImg;
+    private final Handler handler = new Handler();
+    private Runnable runnableUi, runnableNoMore, runnableMoreNoWeb, runnablePick, runnablePickUi;
 
     private final int RESULT_RANKING_REGION = 101;
 
@@ -91,20 +92,16 @@ public class RankingFragment extends Fragment
         uiPickUpView = inflater.inflate(R.layout.widget_ranking_pickup, null, false);
         uiToolbarView = inflater.inflate(R.layout.widget_ranking_toolbar, null, false);
         uiLoadingView = inflater.inflate(R.layout.widget_loading, null, false);
-        sendDynamicView = uiToolbarView.findViewById(R.id.widget_ranking_toolbar_title);
-        uiListView = rootLayout.findViewById(R.id.rk_listview);
-        uiListView.addFooterView(uiLoadingView);
-        uiListView.addHeaderView(uiToolbarView);
-        uiListView.addHeaderView(uiPickUpView);
-        uiWaveSwipeRefreshLayout = rootLayout.findViewById(R.id.rk_swipe);
-        uiWaveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
-        uiWaveSwipeRefreshLayout.setWaveColor(ColorUtil.getColor(R.attr.colorPrimary, ctx));
-        uiWaveSwipeRefreshLayout.setTopOffsetOfWave(getResources().getDimensionPixelSize(R.dimen.titleHeight));
-        uiWaveSwipeRefreshLayout.setOnRefreshListener(() -> handler.post(() -> {
-            isLoading = true;
-            rankingVideoArrayList.clear();
-            pn = 1;
-            uiListView.setVisibility(View.GONE);
+        exceptionHandlerView = rootLayout.findViewById(R.id.rk_exception);
+        listView = rootLayout.findViewById(R.id.rk_listview);
+        listView.addFooterView(uiLoadingView);
+        listView.addHeaderView(uiToolbarView);
+        waveSwipeRefreshLayout = rootLayout.findViewById(R.id.rk_swipe);
+        waveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
+        waveSwipeRefreshLayout.setWaveColor(ColorUtil.getColor(R.attr.colorPrimary, ctx));
+        waveSwipeRefreshLayout.setTopOffsetOfWave(getResources().getDimensionPixelSize(R.dimen.titleHeight));
+        waveSwipeRefreshLayout.setOnRefreshListener(() -> handler.post(() -> {
+            listView.setVisibility(View.GONE);
             getRanking();
         }));
 
@@ -127,14 +124,12 @@ public class RankingFragment extends Fragment
             isLoading = false;
         };
 
-        runnableNoWebH = () -> {
+        runnableMoreNoWeb = () -> {
             ((TextView) uiLoadingView.findViewById(R.id.wid_load_button)).setText(ctx.getString(R.string.main_tip_no_more_web));
             uiLoadingView.findViewById(R.id.wid_load_button).setVisibility(View.VISIBLE);
         };
 
         runnableNoMore = () -> ((TextView) uiLoadingView.findViewById(R.id.wid_load_text)).setText(ctx.getString(R.string.main_tip_no_more_data));
-
-        runnablePickNodata = () -> uiListView.removeHeaderView(uiPickUpView);
 
         runnablePick = () -> {
             SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
@@ -153,8 +148,6 @@ public class RankingFragment extends Fragment
                             videoModel = videoDetailsApi.getVideoDetails();
                             if(videoModel != null)
                                 handler.post(runnablePickUi);
-                            else
-                                handler.post(runnablePickNodata);
                         }
                         catch (IOException e)
                         {
@@ -257,20 +250,16 @@ public class RankingFragment extends Fragment
                 pickUpHashMap = rankingApi.getPickUpVideo();
                 if(rankingModelArrayList != null && rankingModelArrayList.size() != 0)
                 {
-                    rankingVideoArrayList.addAll(rankingModelArrayList);
-                    pn++;
                     handler.post(runnableUi);
-                    if(pickUpHashMap == null || pickUpHashMap.size() == 0)
-                        handler.post(runnablePickNodata);
-                    else
+                    if(pickUpHashMap != null && pickUpHashMap.size() != 0)
                         handler.post(runnablePick);
                 }
                 else
-                    handler.post(runnableNoMore);
+                    exceptionHandlerView.noData();
             }
             catch (IOException e)
             {
-                handler.post(runnableNoWeb);
+                exceptionHandlerView.noWeb();
                 e.printStackTrace();
             }
         }).start();

@@ -60,7 +60,8 @@ public class DynamicFragment extends Fragment
     private int dynamicType = 0;
 
     private View rootLayout;
-    private ListView dyListView;
+    private ExceptionHandlerView exceptionHandlerView;
+    private ListView listView;
     private WaveSwipeRefreshLayout waveSwipeRefreshLayout;
     private View sendDynamicView;
     private TextView sendDynamicButton;
@@ -108,7 +109,8 @@ public class DynamicFragment extends Fragment
         ctx = getActivity();
         rootLayout = inflater.inflate(R.layout.fragment_dynamic, container, false);
 
-        dyListView = rootLayout.findViewById(R.id.dy_listview);
+        exceptionHandlerView = rootLayout.findViewById(R.id.dy_exception);
+        listView = rootLayout.findViewById(R.id.dy_listview);
         loadingView = inflater.inflate(R.layout.widget_loading, null);
         sendDynamicView = inflater.inflate(R.layout.widget_dy_senddynamic, null);
         sendDynamicButton = sendDynamicView.findViewById(R.id.wid_dy_send);

@@ -9,7 +9,6 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -27,6 +26,7 @@ import cn.luern0313.wristbilibili.ui.VideoActivity;
 import cn.luern0313.wristbilibili.util.ColorUtil;
 import cn.luern0313.wristbilibili.util.ViewScrollListener;
 import cn.luern0313.wristbilibili.util.ViewTouchListener;
+import cn.luern0313.wristbilibili.widget.ExceptionHandlerView;
 import cn.luern0313.wristbilibili.widget.TitleView;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
@@ -34,23 +34,25 @@ import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
  * 被 luern0313 创建于 2020/1/15.
  */
 
-public class RecommendFragment extends Fragment
+public class RecommendFragment extends Fragment implements ViewScrollListener.CustomScrollResult
 {
-    Context ctx;
-    View rootLayout;
+    private Context ctx;
+    private View rootLayout;
     private RecommendAdapter recommendAdapter;
     private RecommendAdapter.RecommendAdapterListener adapterListener;
-    private ListView uiListView;
-    private WaveSwipeRefreshLayout uiWaveSwipeRefreshLayout;
-    private View uiLoadingView;
+
+    private ExceptionHandlerView exceptionHandlerView;
+    private ListView listView;
+    private WaveSwipeRefreshLayout waveSwipeRefreshLayout;
+    private View loadingView;
     private TitleView.TitleViewListener titleViewListener;
 
     private RecommendApi recommendApi;
     private final ArrayList<RecommendModel> recommendVideoArrayList = new ArrayList<>();
-    private boolean isLoading = false;
+    private boolean isLoading = true;
 
-    Handler handler = new Handler();
-    private Runnable runnableUi, runnableNoWeb, runnableNoMore, RunnableNoWebH;
+    private final Handler handler = new Handler();
+    private Runnable runnableUi, runnableNoMore, runnableMoreNoWeb;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -60,49 +62,49 @@ public class RecommendFragment extends Fragment
         rootLayout = inflater.inflate(R.layout.fragment_recommend, container, false);
         recommendApi = new RecommendApi();
 
-        uiLoadingView = inflater.inflate(R.layout.widget_loading, null, false);
-        uiListView = rootLayout.findViewById(R.id.rc_listview);
-        uiListView.addFooterView(uiLoadingView);
-        uiWaveSwipeRefreshLayout = rootLayout.findViewById(R.id.rc_swipe);
-        uiWaveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
-        uiWaveSwipeRefreshLayout.setWaveColor(ColorUtil.getColor(R.attr.colorPrimary, ctx));
-        uiWaveSwipeRefreshLayout.setTopOffsetOfWave(getResources().getDimensionPixelSize(R.dimen.titleHeight));
-        uiWaveSwipeRefreshLayout.setOnRefreshListener(() -> handler.post(() -> {
-            isLoading = true;
+        loadingView = inflater.inflate(R.layout.widget_loading, null, false);
+        exceptionHandlerView = rootLayout.findViewById(R.id.rc_exception);
+        listView = rootLayout.findViewById(R.id.rc_listview);
+        listView.addFooterView(loadingView);
+        waveSwipeRefreshLayout = rootLayout.findViewById(R.id.rc_swipe);
+        waveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
+        waveSwipeRefreshLayout.setWaveColor(ColorUtil.getColor(R.attr.colorPrimary, ctx));
+        waveSwipeRefreshLayout.setTopOffsetOfWave(getResources().getDimensionPixelSize(R.dimen.titleHeight));
+        waveSwipeRefreshLayout.setOnRefreshListener(() -> handler.post(() -> {
             getRecommend(1);
         }));
 
         adapterListener = this::onViewClick;
 
-        recommendAdapter = new RecommendAdapter(inflater, recommendVideoArrayList, uiListView, adapterListener);
-        uiListView.setAdapter(recommendAdapter);
+        recommendAdapter = new RecommendAdapter(inflater, recommendVideoArrayList, listView, adapterListener);
+        listView.setAdapter(recommendAdapter);
 
         runnableUi = () -> {
-            rootLayout.findViewById(R.id.rc_noweb).setVisibility(View.GONE);
-            uiListView.setVisibility(View.VISIBLE);
-            uiWaveSwipeRefreshLayout.setRefreshing(false);
+
+            listView.setVisibility(View.VISIBLE);
+            waveSwipeRefreshLayout.setRefreshing(false);
             isLoading = false;
             recommendAdapter.notifyDataSetChanged();
         };
 
-        runnableNoWeb = () -> {
-            uiWaveSwipeRefreshLayout.setRefreshing(false);
-            rootLayout.findViewById(R.id.rc_noweb).setVisibility(View.VISIBLE);
-            isLoading = false;
+        runnableMoreNoWeb = () -> {
+            ((TextView) loadingView.findViewById(R.id.wid_load_button)).setText(ctx.getString(R.string.main_tip_no_more_web));
+            loadingView.findViewById(R.id.wid_load_button).setVisibility(View.VISIBLE);
         };
 
-        RunnableNoWebH = () -> {
-            ((TextView) uiLoadingView.findViewById(R.id.wid_load_button)).setText(ctx.getString(R.string.main_tip_no_more_web));
-            uiLoadingView.findViewById(R.id.wid_load_button).setVisibility(View.VISIBLE);
-        };
+        runnableNoMore = () -> ((TextView) loadingView.findViewById(R.id.wid_load_text)).setText(ctx.getString(R.string.main_tip_no_more_data));
 
-        runnableNoMore = () -> ((TextView) uiLoadingView.findViewById(R.id.wid_load_text)).setText(ctx.getString(R.string.main_tip_no_more_data));
+        loadingView.findViewById(R.id.wid_load_button).setOnClickListener(v -> {
+            ((TextView) loadingView.findViewById(R.id.wid_load_button)).setText(getString(R.string.main_tip_no_more_data_loading));
+            loadingView.findViewById(R.id.wid_load_button).setVisibility(View.GONE);
+            getRecommend(1);
+        });
 
-        uiListView.setOnScrollListener(new ViewScrollListener(this));
-        uiListView.setOnTouchListener(new ViewTouchListener(uiListView, titleViewListener));
+        listView.setOnScrollListener(new ViewScrollListener(this));
+        listView.setOnTouchListener(new ViewTouchListener(listView, titleViewListener));
 
-        uiListView.setVisibility(View.GONE);
-        uiWaveSwipeRefreshLayout.setRefreshing(true);
+        listView.setVisibility(View.GONE);
+        waveSwipeRefreshLayout.setRefreshing(true);
         getRecommend(2);
 
         return rootLayout;
@@ -110,6 +112,7 @@ public class RecommendFragment extends Fragment
 
     private void getRecommend(final int mode) //1上 2下
     {
+        isLoading = true;
         new Thread(() -> {
             try
             {
@@ -126,13 +129,14 @@ public class RecommendFragment extends Fragment
                     handler.post(runnableUi);
                 }
                 else
-                {
                     handler.post(runnableNoMore);
-                }
             }
             catch (IOException e)
             {
-                handler.post(runnableNoWeb);
+                if(recommendVideoArrayList.size() == 0)
+                    exceptionHandlerView.noWeb();
+                else
+                    handler.post(runnableMoreNoWeb);
                 e.printStackTrace();
             }
         }).start();
@@ -144,15 +148,15 @@ public class RecommendFragment extends Fragment
         {
             if(!recommendVideoArrayList.get(position).getAid().equals(""))
             {
-                Intent intent = VideoActivity.getActivityIntent(ctx, recommendVideoArrayList.get(position).getAid(), "");
+                Intent intent = new Intent(ctx, VideoActivity.class);
+                intent.putExtra(VideoActivity.ARG_AID, recommendVideoArrayList.get(position).getAid());
                 startActivity(intent);
             }
         }
         else if(viewId == R.id.widget_recommend_update_lay)
         {
-            uiListView.smoothScrollToPositionFromTop(0, 0);
-            uiWaveSwipeRefreshLayout.setRefreshing(true);
-            isLoading = true;
+            listView.smoothScrollToPositionFromTop(0, 0);
+            waveSwipeRefreshLayout.setRefreshing(true);
             recommendVideoArrayList.remove(position);
             getRecommend(1);
         }
@@ -164,5 +168,17 @@ public class RecommendFragment extends Fragment
         super.onAttach(context);
         if(context instanceof TitleView.TitleViewListener)
             titleViewListener = (TitleView.TitleViewListener) context;
+    }
+
+    @Override
+    public boolean rule()
+    {
+        return !isLoading;
+    }
+
+    @Override
+    public void result()
+    {
+        getRecommend(2);
     }
 }

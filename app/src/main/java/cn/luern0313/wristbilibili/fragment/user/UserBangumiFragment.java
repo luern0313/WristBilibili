@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -24,6 +23,7 @@ import cn.luern0313.wristbilibili.api.UserApi;
 import cn.luern0313.wristbilibili.models.ListBangumiModel;
 import cn.luern0313.wristbilibili.ui.BangumiActivity;
 import cn.luern0313.wristbilibili.util.ViewTouchListener;
+import cn.luern0313.wristbilibili.widget.ExceptionHandlerView;
 import cn.luern0313.wristbilibili.widget.TitleView;
 
 public class UserBangumiFragment extends Fragment
@@ -43,13 +43,11 @@ public class UserBangumiFragment extends Fragment
 
     private View rootLayout;
     private View layoutLoading;
-    private ListView uiListView;
-    private LinearLayout uiLoading;
-    private LinearLayout uiNoWeb;
-    private LinearLayout uiNothing;
+    private ExceptionHandlerView exceptionHandlerView;
+    private ListView listView;
 
     private final Handler handler = new Handler();
-    private Runnable runnableUi, runnableNoWeb, runnableNothing, runnableMore, runnableMoreNoWeb, runnableMoreNothing;
+    private Runnable runnableUi, runnableMore, runnableMoreNoWeb, runnableMoreNothing;
 
     private boolean isLoading = true;
 
@@ -87,31 +85,15 @@ public class UserBangumiFragment extends Fragment
         listBangumiAdapterListener = this::onViewClick;
 
         layoutLoading = inflater.inflate(R.layout.widget_loading, null, false);
-        uiListView = rootLayout.findViewById(R.id.user_bangumi_listview);
-        uiLoading = rootLayout.findViewById(R.id.user_bangumi_loading);
-        uiNoWeb = rootLayout.findViewById(R.id.user_bangumi_noweb);
-        uiNothing = rootLayout.findViewById(R.id.user_bangumi_nonthing);
+        exceptionHandlerView = rootLayout.findViewById(R.id.user_bangumi_exception);
+        listView = rootLayout.findViewById(R.id.user_bangumi_listview);
 
-        uiListView.addFooterView(layoutLoading);
+        listView.addFooterView(layoutLoading);
 
         runnableUi = () -> {
-            uiLoading.setVisibility(View.GONE);
-            uiNoWeb.setVisibility(View.GONE);
-            uiNothing.setVisibility(View.GONE);
-            listBangumiAdapter = new ListBangumiAdapter(inflater, uiListView, listBangumiModelArrayList, listBangumiAdapterListener);
-            uiListView.setAdapter(listBangumiAdapter);
-        };
-
-        runnableNoWeb = () -> {
-            uiLoading.setVisibility(View.GONE);
-            uiNoWeb.setVisibility(View.VISIBLE);
-            uiNothing.setVisibility(View.GONE);
-        };
-
-        runnableNothing = () -> {
-            uiLoading.setVisibility(View.GONE);
-            uiNoWeb.setVisibility(View.GONE);
-            uiNothing.setVisibility(View.VISIBLE);
+            exceptionHandlerView.hideAllView();
+            listBangumiAdapter = new ListBangumiAdapter(inflater, listView, listBangumiModelArrayList, listBangumiAdapterListener);
+            listView.setAdapter(listBangumiAdapter);
         };
 
         runnableMore = () -> listBangumiAdapter.notifyDataSetChanged();
@@ -129,7 +111,7 @@ public class UserBangumiFragment extends Fragment
             getMoreBangumi();
         });
 
-        uiListView.setOnScrollListener(new AbsListView.OnScrollListener()
+        listView.setOnScrollListener(new AbsListView.OnScrollListener()
         {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState)
@@ -147,7 +129,7 @@ public class UserBangumiFragment extends Fragment
             }
         });
 
-        uiListView.setOnTouchListener(new ViewTouchListener(uiListView, titleViewListener));
+        listView.setOnTouchListener(new ViewTouchListener(listView, titleViewListener));
 
         new Thread(() -> {
             try
@@ -160,12 +142,12 @@ public class UserBangumiFragment extends Fragment
                     handler.post(runnableUi);
                 }
                 else
-                    handler.post(runnableNothing);
+                    exceptionHandlerView.noData();
             }
             catch (IOException e)
             {
                 e.printStackTrace();
-                handler.post(runnableNoWeb);
+                exceptionHandlerView.noWeb();
             }
         }).start();
 

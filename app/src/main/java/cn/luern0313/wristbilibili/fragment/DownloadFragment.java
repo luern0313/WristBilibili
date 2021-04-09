@@ -16,7 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,17 +33,18 @@ import cn.luern0313.wristbilibili.models.DownloadModel;
 import cn.luern0313.wristbilibili.service.DownloadService;
 import cn.luern0313.wristbilibili.util.FileUtil;
 import cn.luern0313.wristbilibili.util.ViewTouchListener;
+import cn.luern0313.wristbilibili.widget.ExceptionHandlerView;
 import cn.luern0313.wristbilibili.widget.TitleView;
 
 public class DownloadFragment extends Fragment
 {
-    Context ctx;
-    View rootLayout;
-    LayoutInflater inflater;
+    private Context ctx;
+    private View rootLayout;
+    private LayoutInflater inflater;
 
-    private ListView uiListView;
-    private LinearLayout uiListViewEmpty;
-    private TextView uiTip;
+    private ExceptionHandlerView exceptionHandlerView;
+    private ListView listView;
+    private TextView tip;
     private DownloadAdapter downloadAdapter;
     private TitleView.TitleViewListener titleViewListener;
 
@@ -72,11 +72,11 @@ public class DownloadFragment extends Fragment
 
             if(downloadingItems.size() + downloadedItems.size() > 2)
             {
-                downloadAdapter = new DownloadAdapter(inflater, downloadingItems, downloadedItems, uiListView, BASE_DOWNLOAD_PATH);
-                uiListView.setAdapter(downloadAdapter);
+                downloadAdapter = new DownloadAdapter(inflater, downloadingItems, downloadedItems, listView, BASE_DOWNLOAD_PATH);
+                listView.setAdapter(downloadAdapter);
             }
             else
-                uiListViewEmpty.setVisibility(View.VISIBLE);
+                exceptionHandlerView.noData();
 
             myBinder.setOnProgressListener(new DownloadService.downloadListener()
             {
@@ -110,7 +110,7 @@ public class DownloadFragment extends Fragment
                     downloadAdapter.notifyDataSetChanged();
                 }
             });
-            rootLayout.findViewById(R.id.dl_loading).setVisibility(View.GONE);
+            exceptionHandlerView.loadingEnd();
         }
     };
 
@@ -122,18 +122,17 @@ public class DownloadFragment extends Fragment
         rootLayout = inflater.inflate(R.layout.fragment_download, container, false);
         this.inflater = inflater;
 
-        uiListView = rootLayout.findViewById(R.id.dl_listview);
-        uiListViewEmpty = rootLayout.findViewById(R.id.dl_nothing);
-        uiListView.setEmptyView(uiListViewEmpty);
-        ImageView uiTipBtu = rootLayout.findViewById(R.id.dl_tip_btu);
-        uiTip = rootLayout.findViewById(R.id.dl_tip);
+        exceptionHandlerView = rootLayout.findViewById(R.id.dl_exception);
+        listView = rootLayout.findViewById(R.id.dl_listview);
+        ImageView tipBtu = rootLayout.findViewById(R.id.dl_tip_btu);
+        tip = rootLayout.findViewById(R.id.dl_tip);
 
         BASE_DOWNLOAD_PATH = ctx.getExternalFilesDir(null) + "/download/";
 
         Intent intent = new Intent(ctx, DownloadService.class);
         getActivity().bindService(intent, connection, Context.BIND_AUTO_CREATE);
 
-        uiListView.setOnItemClickListener((parent, view, position, id) -> {
+        listView.setOnItemClickListener((parent, view, position, id) -> {
             if(position == 0 || position == downloadingItems.size())
                 return;
             if(position < downloadingItems.size())
@@ -170,7 +169,7 @@ public class DownloadFragment extends Fragment
             }
         });
 
-        uiListView.setOnItemLongClickListener((parent, view, position, id) -> {
+        listView.setOnItemLongClickListener((parent, view, position, id) -> {
             if(position == 0 || position == downloadingItems.size())
                 return false;
             new AlertDialog.Builder(ctx)
@@ -199,18 +198,18 @@ public class DownloadFragment extends Fragment
             return true;
         });
 
-        uiListView.setOnTouchListener(new ViewTouchListener(uiListView, titleViewListener));
+        listView.setOnTouchListener(new ViewTouchListener(listView, titleViewListener));
 
-        uiTip.setText(String.format(getString(R.string.download_tip), BASE_DOWNLOAD_PATH));
+        tip.setText(String.format(getString(R.string.download_tip), BASE_DOWNLOAD_PATH));
 
-        uiTipBtu.setOnClickListener(v -> {
-            uiTip.setVisibility(View.VISIBLE);
-            ObjectAnimator.ofFloat(uiTip, "alpha", 0.0f, 1.0f).setDuration(500).start();
+        tipBtu.setOnClickListener(v -> {
+            tip.setVisibility(View.VISIBLE);
+            ObjectAnimator.ofFloat(tip, "alpha", 0.0f, 1.0f).setDuration(500).start();
         });
 
-        uiTip.setOnClickListener(v -> tipAnim.start());
+        tip.setOnClickListener(v -> tipAnim.start());
 
-        tipAnim = ObjectAnimator.ofFloat(uiTip, "alpha", 1.0f, 0.0f);
+        tipAnim = ObjectAnimator.ofFloat(tip, "alpha", 1.0f, 0.0f);
         tipAnim.setDuration(500);
         tipAnim.addListener(new AnimatorListenerAdapter()
         {
@@ -218,7 +217,7 @@ public class DownloadFragment extends Fragment
             public void onAnimationEnd(Animator animation)
             {
                 super.onAnimationEnd(animation);
-                uiTip.setVisibility(View.GONE);
+                tip.setVisibility(View.GONE);
             }
         });
 

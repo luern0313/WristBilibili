@@ -57,12 +57,14 @@ public class SearchFragment extends Fragment
     private SearchAdapter.SearchAdapterListener searchAdapterListener;
     private SearchHtmlTagHandlerUtil htmlTagHandlerUtil;
     private TitleView.TitleViewListener titleViewListener;
-    private ListViewTouchListener.ListViewScrollListener listViewScrollListener;
+    private ViewTouchListener.CustomViewListener customViewListener;
 
     private View rootLayout;
     private TextView seaHotWordText;
     private GridView seaHotWordList;
+    private ExceptionHandlerView exceptionHandlerView;
     private ListView seaListView;
+    private WaveSwipeRefreshLayout waveSwipeRefreshLayout;
     private View loadingView;
     private LinearLayout searchBox;
     private EditText seaEdittext;
@@ -71,8 +73,8 @@ public class SearchFragment extends Fragment
     private ImageView seaLoadImg;
 
     private final Handler handler = new Handler();
-    private Runnable runnableHotWord, runnableHotWordErr, runnableNoweb, runnableUi;
-    private Runnable runnableAddlist, runnableNoWebH, runnableNoresult, runnableNomore;
+    private Runnable runnableHotWord, runnableHotWordErr, runnableUi;
+    private Runnable runnableAddlist, runnableMoreNoWeb, runnableNomore;
 
     private ObjectAnimator searchBoxAnimator;
 
@@ -93,7 +95,7 @@ public class SearchFragment extends Fragment
         htmlTagHandlerUtil = new SearchHtmlTagHandlerUtil(ctx);
         searchAdapterListener = this::onViewClick;
 
-        listViewScrollListener = new ListViewTouchListener.ListViewScrollListener()
+        customViewListener = new ViewTouchListener.CustomViewListener()
         {
             @Override
             public void hide()
@@ -108,8 +110,18 @@ public class SearchFragment extends Fragment
             }
         };
 
+        waveSwipeRefreshLayout = rootLayout.findViewById(R.id.sea_swipe);
+        waveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
+        waveSwipeRefreshLayout.setWaveColor(ColorUtil.getColor(R.attr.colorPrimary, ctx));
+        waveSwipeRefreshLayout.setTopOffsetOfWave(getResources().getDimensionPixelSize(R.dimen.titleHeight));
+        waveSwipeRefreshLayout.setOnRefreshListener(() -> handler.post(() -> {
+            seaListView.setVisibility(View.GONE);
+            getSearch();
+        }));
+
         seaHotWordText = rootLayout.findViewById(R.id.sea_hotword_text);
         seaHotWordList = rootLayout.findViewById(R.id.sea_hotword);
+        exceptionHandlerView = rootLayout.findViewById(R.id.sea_exception);
         seaListView = rootLayout.findViewById(R.id.sea_listview);
         loadingView = inflater.inflate(R.layout.widget_loading, null);
         searchBox = rootLayout.findViewById(R.id.sea_box);
@@ -126,32 +138,18 @@ public class SearchFragment extends Fragment
 
         runnableHotWordErr = () -> seaHotWordText.setText("搜索热词加载失败");
 
-        runnableNoweb = () -> {
-            rootLayout.findViewById(R.id.sea_noweb).setVisibility(View.VISIBLE);
-            rootLayout.findViewById(R.id.sea_searching).setVisibility(View.GONE);
-            rootLayout.findViewById(R.id.sea_nonthing).setVisibility(View.GONE);
-            rootLayout.findViewById(R.id.sea_listview).setVisibility(View.GONE);
-        };
-
-        runnableNoWebH = () -> {
+        runnableMoreNoWeb = () -> {
             ((TextView) loadingView.findViewById(R.id.wid_load_text)).setText(getString(R.string.main_tip_no_more_web));
             loadingView.findViewById(R.id.wid_load_button).setVisibility(View.VISIBLE);
         };
 
         runnableUi = () -> {
+            exceptionHandlerView.hideAllView();
             searchAdapter = new SearchAdapter(inflater, searchResult, seaListView, searchAdapterListener, htmlTagHandlerUtil);
             seaListView.setAdapter(searchAdapter);
-            rootLayout.findViewById(R.id.sea_noweb).setVisibility(View.GONE);
             rootLayout.findViewById(R.id.sea_searching).setVisibility(View.GONE);
-            rootLayout.findViewById(R.id.sea_nonthing).setVisibility(View.GONE);
-            rootLayout.findViewById(R.id.sea_listview).setVisibility(View.VISIBLE);
-        };
-
-        runnableNoresult = () -> {
-            rootLayout.findViewById(R.id.sea_noweb).setVisibility(View.GONE);
-            rootLayout.findViewById(R.id.sea_searching).setVisibility(View.GONE);
-            rootLayout.findViewById(R.id.sea_nonthing).setVisibility(View.VISIBLE);
-            rootLayout.findViewById(R.id.sea_listview).setVisibility(View.GONE);
+            seaListView.setVisibility(View.VISIBLE);
+            waveSwipeRefreshLayout.setVisibility(View.VISIBLE);
         };
 
         runnableNomore = () -> ((TextView) loadingView.findViewById(R.id.wid_load_text)).setText(getString(R.string.main_tip_no_more_data));
@@ -250,23 +248,22 @@ public class SearchFragment extends Fragment
         AnimationDrawable loadingImgAnim = (AnimationDrawable) seaLoadImg.getDrawable();
         loadingImgAnim.start();
 
-        rootLayout.findViewById(R.id.sea_noweb).setVisibility(View.GONE);
         rootLayout.findViewById(R.id.sea_searching).setVisibility(View.VISIBLE);
-        rootLayout.findViewById(R.id.sea_nonthing).setVisibility(View.GONE);
-        rootLayout.findViewById(R.id.sea_listview).setVisibility(View.GONE);
+        waveSwipeRefreshLayout.setVisibility(View.GONE);
         new Thread(() -> {
             try
             {
                 searchResult = searchApi.getSearchResult();
                 if(searchResult != null && searchResult.size() != 0)
                     handler.post(runnableUi);
-                else handler.post(runnableNoresult);
+                else
+                    exceptionHandlerView.noData();
                 isLoading = false;
             }
             catch (IOException e)
             {
                 e.printStackTrace();
-                handler.post(runnableNoweb);
+                exceptionHandlerView.noWeb();
             }
         }).start();
     }
@@ -290,7 +287,7 @@ public class SearchFragment extends Fragment
             }
             catch (IOException e)
             {
-                handler.post(runnableNoWebH);
+                handler.post(runnableMoreNoWeb);
                 e.printStackTrace();
             }
         }).start();

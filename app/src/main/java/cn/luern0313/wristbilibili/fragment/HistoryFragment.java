@@ -9,7 +9,6 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -24,25 +23,25 @@ import cn.luern0313.wristbilibili.api.HistoryApi;
 import cn.luern0313.wristbilibili.models.ListVideoModel;
 import cn.luern0313.wristbilibili.ui.VideoActivity;
 import cn.luern0313.wristbilibili.util.ColorUtil;
-import cn.luern0313.wristbilibili.util.DataProcessUtil;
-import cn.luern0313.wristbilibili.util.ListViewTouchListener;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 import cn.luern0313.wristbilibili.util.ViewScrollListener;
 import cn.luern0313.wristbilibili.util.ViewTouchListener;
+import cn.luern0313.wristbilibili.widget.ExceptionHandlerView;
 import cn.luern0313.wristbilibili.widget.TitleView;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
-public class HistoryFragment extends Fragment
+public class HistoryFragment extends Fragment implements ViewScrollListener.CustomScrollResult
 {
-    Context ctx;
-    View rootLayout;
+    private Context ctx;
+    private View rootLayout;
+    private ExceptionHandlerView exceptionHandlerView;
+    private ListView listView;
     private WaveSwipeRefreshLayout waveSwipeRefreshLayout;
     private HistoryApi historyApi;
 
     private View uiLoadingView;
     private ListVideoAdapter listVideoAdapter;
     private ListVideoAdapter.ListVideoAdapterListener listVideoAdapterListener;
-    private ListView uiListView;
     private TitleView.TitleViewListener titleViewListener;
 
     private final ArrayList<ListVideoModel> historyArrayList = new ArrayList<>();
@@ -51,7 +50,7 @@ public class HistoryFragment extends Fragment
     private boolean isLoading = true;
 
     private final Handler handler = new Handler();
-    private Runnable runnableUi, runnableNoWeb, runnableNoData, runnableMore, runnableMoreNoData, runnableMoreNoWeb;
+    private Runnable runnableUi, runnableMore, runnableMoreNoData, runnableMoreNoWeb;
 
     private int pn;
 
@@ -69,9 +68,10 @@ public class HistoryFragment extends Fragment
         ctx = getActivity();
 
         rootLayout = inflater.inflate(R.layout.fragment_history, container, false);
-        uiListView = rootLayout.findViewById(R.id.history_listview);
+        exceptionHandlerView = rootLayout.findViewById(R.id.history_exception);
+        listView = rootLayout.findViewById(R.id.history_listview);
         uiLoadingView = inflater.inflate(R.layout.widget_loading, null, false);
-        uiListView.addFooterView(uiLoadingView);
+        listView.addFooterView(uiLoadingView);
         waveSwipeRefreshLayout = rootLayout.findViewById(R.id.history_swipe);
         waveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
         waveSwipeRefreshLayout.setWaveColor(ColorUtil.getColor(R.attr.colorPrimary, ctx));
@@ -79,7 +79,7 @@ public class HistoryFragment extends Fragment
         waveSwipeRefreshLayout.setOnRefreshListener(() -> handler.post(() -> {
             if(isLogin)
             {
-                uiListView.setVisibility(View.GONE);
+                listView.setVisibility(View.GONE);
                 getHistory();
             }
             else waveSwipeRefreshLayout.setRefreshing(false);
@@ -90,11 +90,11 @@ public class HistoryFragment extends Fragment
             @Override
             public void onListVideoAdapterClick(int viewId, int position)
             {
-                Intent intent;
+                Intent intent = new Intent(ctx, VideoActivity.class);
                 if(historyArrayList.get(position).getBvid() != null && !historyArrayList.get(position).getBvid().equals(""))
-                    intent = VideoActivity.getActivityIntent(ctx, "", historyArrayList.get(position).getBvid());
+                    intent.putExtra(VideoActivity.ARG_BVID, historyArrayList.get(position).getBvid());
                 else
-                    intent = VideoActivity.getActivityIntent(ctx, historyArrayList.get(position).getAid(), "");
+                    intent.putExtra(VideoActivity.ARG_AID, historyArrayList.get(position).getAid());
                 startActivity(intent);
             }
 
@@ -107,28 +107,11 @@ public class HistoryFragment extends Fragment
 
         runnableUi = () -> {
             isLoading = false;
-            rootLayout.findViewById(R.id.history_nologin).setVisibility(View.GONE);
-            rootLayout.findViewById(R.id.history_noweb).setVisibility(View.GONE);
-            rootLayout.findViewById(R.id.history_nonthing).setVisibility(View.GONE);
-
-            listVideoAdapter = new ListVideoAdapter(inflater, historyArrayList, true, uiListView, listVideoAdapterListener);
-            uiListView.setAdapter(listVideoAdapter);
-            uiListView.setVisibility(View.VISIBLE);
+            exceptionHandlerView.hideAllView();
+            listVideoAdapter = new ListVideoAdapter(inflater, historyArrayList, true, listView, listVideoAdapterListener);
+            listView.setAdapter(listVideoAdapter);
+            listView.setVisibility(View.VISIBLE);
             waveSwipeRefreshLayout.setRefreshing(false);
-        };
-
-        runnableNoWeb = () -> {
-            waveSwipeRefreshLayout.setRefreshing(false);
-            rootLayout.findViewById(R.id.history_noweb).setVisibility(View.VISIBLE);
-            rootLayout.findViewById(R.id.history_nologin).setVisibility(View.GONE);
-            rootLayout.findViewById(R.id.history_nonthing).setVisibility(View.GONE);
-        };
-
-        runnableNoData = () -> {
-            waveSwipeRefreshLayout.setRefreshing(false);
-            rootLayout.findViewById(R.id.history_nonthing).setVisibility(View.VISIBLE);
-            rootLayout.findViewById(R.id.history_noweb).setVisibility(View.GONE);
-            rootLayout.findViewById(R.id.history_nologin).setVisibility(View.GONE);
         };
 
         runnableMore = () -> {
@@ -143,24 +126,8 @@ public class HistoryFragment extends Fragment
 
         runnableMoreNoData = () -> ((TextView) uiLoadingView.findViewById(R.id.wid_load_text)).setText("  没有更多了...");
 
-        uiListView.setOnScrollListener(new AbsListView.OnScrollListener()
-        {
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState)
-            {
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
-            {
-                if(visibleItemCount + firstVisibleItem == totalItemCount && !isLoading)
-                {
-                    getMoreHistory();
-                }
-            }
-        });
-
-        uiListView.setOnTouchListener(new ListViewTouchListener(uiListView, titleViewListener));
+        listView.setOnScrollListener(new ViewScrollListener(this));
+        listView.setOnTouchListener(new ViewTouchListener(listView, titleViewListener));
 
         isLogin = SharedPreferencesUtil.contains(SharedPreferencesUtil.cookies);
         if(isLogin)
@@ -169,10 +136,7 @@ public class HistoryFragment extends Fragment
             getHistory();
         }
         else
-        {
-            rootLayout.findViewById(R.id.history_noweb).setVisibility(View.GONE);
-            rootLayout.findViewById(R.id.history_nologin).setVisibility(View.VISIBLE);
-        }
+            exceptionHandlerView.noLogin();
 
         return rootLayout;
     }
@@ -192,12 +156,12 @@ public class HistoryFragment extends Fragment
                     handler.post(runnableUi);
                 }
                 else
-                    handler.post(runnableNoData);
+                    exceptionHandlerView.noData();
             }
             catch (IOException e)
             {
                 e.printStackTrace();
-                handler.post(runnableNoWeb);
+                exceptionHandlerView.noWeb();
             }
         }).start();
     }
@@ -232,5 +196,17 @@ public class HistoryFragment extends Fragment
         super.onAttach(context);
         if(context instanceof TitleView.TitleViewListener)
             titleViewListener = (TitleView.TitleViewListener) context;
+    }
+
+    @Override
+    public boolean rule()
+    {
+        return !isLoading;
+    }
+
+    @Override
+    public void result()
+    {
+        getMoreHistory();
     }
 }

@@ -19,6 +19,7 @@ import cn.luern0313.wristbilibili.adapter.ListBangumiAdapter;
 import cn.luern0313.wristbilibili.models.ListBangumiModel;
 import cn.luern0313.wristbilibili.ui.BangumiActivity;
 import cn.luern0313.wristbilibili.util.ViewTouchListener;
+import cn.luern0313.wristbilibili.widget.ExceptionHandlerView;
 import cn.luern0313.wristbilibili.widget.TitleView;
 
 /**
@@ -28,10 +29,11 @@ public class BangumiRecommendFragment extends Fragment
 {
     private static final String ARG_BANGUMI_RECOMMEND = "bangumiRecommendArg";
 
-    Context ctx;
-    View rootLayout;
+    private Context ctx;
+    private View rootLayout;
 
-    private ListView uiRecommendListView;
+    private ExceptionHandlerView exceptionHandlerView;
+    private ListView listView;
     private ListBangumiAdapter bangumiRecommendAdapter;
     private ArrayList<ListBangumiModel> bangumiRecommendModelArrayList;
     private ListBangumiAdapter.ListBangumiAdapterListener listBangumiAdapterListener;
@@ -68,12 +70,17 @@ public class BangumiRecommendFragment extends Fragment
 
         listBangumiAdapterListener = this::onViewClick;
 
-        uiRecommendListView = rootLayout.findViewById(R.id.bgm_recommend_listview);
-        uiRecommendListView.setEmptyView(rootLayout.findViewById(R.id.bgm_recommend_nothing));
-        uiRecommendListView.setOnTouchListener(new ViewTouchListener(uiRecommendListView, titleViewListener));
+        exceptionHandlerView = rootLayout.findViewById(R.id.bgm_recommend_exception);
+        listView = rootLayout.findViewById(R.id.bgm_recommend_listview);
+        listView.setOnTouchListener(new ViewTouchListener(listView, titleViewListener));
 
-        bangumiRecommendAdapter = new ListBangumiAdapter(inflater, uiRecommendListView, bangumiRecommendModelArrayList, listBangumiAdapterListener);
-        uiRecommendListView.setAdapter(bangumiRecommendAdapter);
+        if(bangumiRecommendModelArrayList != null && bangumiRecommendModelArrayList.size() > 0)
+        {
+            bangumiRecommendAdapter = new ListBangumiAdapter(inflater, listView, bangumiRecommendModelArrayList, listBangumiAdapterListener);
+            listView.setAdapter(bangumiRecommendAdapter);
+        }
+        else
+            exceptionHandlerView.noData();
 
         return rootLayout;
     }

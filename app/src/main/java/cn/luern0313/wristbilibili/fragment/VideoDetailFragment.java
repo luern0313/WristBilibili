@@ -41,6 +41,7 @@ import cn.luern0313.wristbilibili.util.ColorUtil;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
 import cn.luern0313.wristbilibili.util.ViewTouchListener;
 import cn.luern0313.wristbilibili.widget.CircleButtonView;
+import cn.luern0313.wristbilibili.widget.ExceptionHandlerView;
 import cn.luern0313.wristbilibili.widget.TitleView;
 
 public class VideoDetailFragment extends Fragment implements View.OnClickListener
@@ -49,20 +50,16 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
 
     private Context ctx;
     private View rootLayout;
+    private ExceptionHandlerView exceptionHandlerView;
     private VideoDetailFragmentListener videoDetailFragmentListener;
     private TitleView.TitleViewListener titleViewListener;
 
     private VideoModel videoModel;
 
-    private ImageView uiVideoDoLike, uiVideoDoCoin, uiVideoDoFav;
-    private CircleProgressView uiVideoCoinProgress, uiVideoFavProgress;
+    private CircleButtonView uiVideoDoLike, uiVideoDoCoin, uiVideoDoFav;
     private VideoPartAdapter videoPartAdapter;
-    private VideoPartAdapter.VideoPartListener videoPartListener;
     private AnimatorSet animatorSet, animatorCancelSet, animatorEndSet;
     private CircleProgressView.OnChangeListener onChangeListener;
-
-    private final Handler handler = new Handler();
-    private Runnable runnableLoadingStart, runnableLoadingFin;
 
     public VideoDetailFragment() {}
 
@@ -92,37 +89,13 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
         ctx = getActivity();
         rootLayout = inflater.inflate(R.layout.fragment_video_detail, container, false);
 
-        runnableLoadingStart = () -> {
-            try
-            {
-                rootLayout.findViewById(R.id.vd_vd_loading).setVisibility(View.VISIBLE);
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-        };
+        exceptionHandlerView = rootLayout.findViewById(R.id.vd_exception);
+        uiVideoDoLike = rootLayout.findViewById(R.id.vd_like);
+        uiVideoDoCoin = rootLayout.findViewById(R.id.vd_coin);
+        uiVideoDoFav = rootLayout.findViewById(R.id.vd_fav);
 
-        runnableLoadingFin = () -> {
-            try
-            {
-                rootLayout.findViewById(R.id.vd_vd_loading).setVisibility(View.GONE);
-                setIcon();
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-        };
-
-        uiVideoDoLike = rootLayout.findViewById(R.id.vd_like_img);
-        uiVideoDoCoin = rootLayout.findViewById(R.id.vd_coin_img);
-        uiVideoDoFav = rootLayout.findViewById(R.id.vd_fav_img);
-        uiVideoCoinProgress = rootLayout.findViewById(R.id.vd_coin_progress);
-        uiVideoFavProgress = rootLayout.findViewById(R.id.vd_fav_progress);
-
-        Drawable playDrawable = getResources().getDrawable(R.drawable.icon_number_play);
-        Drawable danmakuDrawable = getResources().getDrawable(R.drawable.icon_number_danmu);
+        Drawable playDrawable = ResourcesCompat.getDrawable(getResources(), R.drawable.icon_number_play, null);
+        Drawable danmakuDrawable = ResourcesCompat.getDrawable(getResources(), R.drawable.icon_number_danmu, null);
         playDrawable.setBounds(0,0, DataProcessUtil.dip2px(11), DataProcessUtil.dip2px(11));
         danmakuDrawable.setBounds(0,0, DataProcessUtil.dip2px(11), DataProcessUtil.dip2px(11));
         ((TextView) rootLayout.findViewById(R.id.vd_video_play)).setCompoundDrawables(playDrawable,null, null,null);
@@ -150,7 +123,7 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
         ((TextView) rootLayout.findViewById(R.id.vd_card_name)).setText(videoModel.getUpName());
         ((TextView) rootLayout.findViewById(R.id.vd_card_sen)).setText(String.format(getString(R.string.video_card_fans), DataProcessUtil.getView(videoModel.getUpFanNum())));
         if(videoModel.getUpVip() == 2)
-            ((TextView) rootLayout.findViewById(R.id.vd_card_name)).setTextColor(ColorUtil.getColor(R.attr.colorVip, getContext()));
+            ((TextView) rootLayout.findViewById(R.id.vd_card_name)).setTextColor(ColorUtil.getColor(R.attr.colorVip, ctx));
         if(videoModel.getUpOfficial() == 0)
             rootLayout.findViewById(R.id.vd_card_off_1).setVisibility(View.VISIBLE);
         else if(videoModel.getUpOfficial() == 1)

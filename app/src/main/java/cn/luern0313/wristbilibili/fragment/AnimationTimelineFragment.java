@@ -24,6 +24,7 @@ import cn.luern0313.wristbilibili.ui.BangumiActivity;
 import cn.luern0313.wristbilibili.util.ColorUtil;
 import cn.luern0313.wristbilibili.util.ViewTouchListener;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
+import cn.luern0313.wristbilibili.widget.ExceptionHandlerView;
 import cn.luern0313.wristbilibili.widget.TitleView;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
@@ -33,20 +34,21 @@ import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
 public class AnimationTimelineFragment extends Fragment
 {
-    Context ctx;
-    View rootLayout;
-    private ListView uiListView;
+    private Context ctx;
+    private View rootLayout;
+    private ExceptionHandlerView exceptionHandlerView;
+    private ListView listView;
     private WaveSwipeRefreshLayout waveSwipeRefreshLayout;
 
     public static boolean isLogin;
     private AnimationTimelineApi animationTimelineApi;
     private ArrayList<AnimationTimelineModel> animationTimelineList;
-    AnimationTimelineAdapter adapter;
+    private AnimationTimelineAdapter adapter;
     private AnimationTimelineAdapter.AnimationTimelineListener adapterListener;
     private TitleView.TitleViewListener titleViewListener;
 
-    Handler handler = new Handler();
-    private Runnable runnableUi, runnableNoWeb;
+    private final Handler handler = new Handler();
+    private Runnable runnableUi;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -54,7 +56,8 @@ public class AnimationTimelineFragment extends Fragment
     {
         ctx = getActivity();
         rootLayout = inflater.inflate(R.layout.fragment_aniremind, container, false);
-        uiListView = rootLayout.findViewById(R.id.ar_listview);
+        exceptionHandlerView = rootLayout.findViewById(R.id.ar_exception);
+        listView = rootLayout.findViewById(R.id.ar_listview);
         waveSwipeRefreshLayout = rootLayout.findViewById(R.id.ar_swipe);
         waveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
         waveSwipeRefreshLayout.setWaveColor(ColorUtil.getColor(R.attr.colorPrimary, ctx));
@@ -62,7 +65,7 @@ public class AnimationTimelineFragment extends Fragment
         waveSwipeRefreshLayout.setOnRefreshListener(() -> handler.post(() -> {
             if(isLogin)
             {
-                uiListView.setVisibility(View.GONE);
+                listView.setVisibility(View.GONE);
                 getAnimTimeline();
             }
             else waveSwipeRefreshLayout.setRefreshing(false);
@@ -71,21 +74,13 @@ public class AnimationTimelineFragment extends Fragment
         adapterListener = this::onViewClick;
 
         runnableUi = () -> {
-            rootLayout.findViewById(R.id.ar_nologin).setVisibility(View.GONE);
-            rootLayout.findViewById(R.id.ar_noweb).setVisibility(View.GONE);
-            adapter = new AnimationTimelineAdapter(inflater, animationTimelineList, uiListView, adapterListener);
-            uiListView.setAdapter(adapter);
-            uiListView.setVisibility(View.VISIBLE);
-            waveSwipeRefreshLayout.setRefreshing(false);
+            exceptionHandlerView.hideAllView();
+            adapter = new AnimationTimelineAdapter(inflater, animationTimelineList, listView, adapterListener);
+            listView.setAdapter(adapter);
+            listView.setVisibility(View.VISIBLE);
         };
 
-        runnableNoWeb = () -> {
-            waveSwipeRefreshLayout.setRefreshing(false);
-            rootLayout.findViewById(R.id.ar_noweb).setVisibility(View.VISIBLE);
-            rootLayout.findViewById(R.id.ar_nologin).setVisibility(View.GONE);
-        };
-
-        uiListView.setOnTouchListener(new ViewTouchListener(uiListView, titleViewListener));
+        listView.setOnTouchListener(new ViewTouchListener(listView, titleViewListener));
 
         isLogin = SharedPreferencesUtil.contains(SharedPreferencesUtil.cookies);
         if(isLogin)
@@ -94,10 +89,7 @@ public class AnimationTimelineFragment extends Fragment
             getAnimTimeline();
         }
         else
-        {
-            rootLayout.findViewById(R.id.ar_noweb).setVisibility(View.GONE);
-            rootLayout.findViewById(R.id.ar_nologin).setVisibility(View.VISIBLE);
-        }
+            exceptionHandlerView.noLogin();
 
         return rootLayout;
     }
@@ -113,7 +105,7 @@ public class AnimationTimelineFragment extends Fragment
             }
             catch (IOException e)
             {
-                handler.post(runnableNoWeb);
+                exceptionHandlerView.noWeb();
                 e.printStackTrace();
             }
         }).start();
