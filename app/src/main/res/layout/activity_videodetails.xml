@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:ignore="ContentDescription">
 
     <androidx.viewpager.widget.ViewPager
@@ -12,91 +12,11 @@
         android:layout_height="match_parent"
         android:orientation="horizontal" />
 
-    <cn.luern0313.wristbilibili.widget.TitleView
-        android:id="@+id/vd_title"
-        android:layout_width="match_parent"
-        android:layout_height="33dp"
-        app:title="@string/video_title"
-        app:mode="viewpager"/>
-
-    <LinearLayout
-        android:id="@+id/vd_loading"
+    <cn.luern0313.wristbilibili.widget.ExceptionHandlerView
+        android:id="@+id/vd_exception"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/vd_title"
-        android:background="?android:attr/colorBackground"
-        android:clickable="true"
-        android:focusable="true"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:paddingBottom="33dp"
-        android:visibility="visible">
-
-        <ImageView
-            android:id="@+id/vd_loading_img"
-            android:layout_width="wrap_content"
-            android:layout_height="92dp"
-            android:padding="6dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/main_tip_loading"
-            android:textSize="13sp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/vd_noweb"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/vd_title"
-        android:background="?android:attr/colorBackground"
-        android:clickable="true"
-        android:focusable="true"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:paddingBottom="33dp"
-        android:visibility="gone">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="92dp"
-            android:padding="6dp"
-            android:src="@drawable/img_no_web" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/main_tip_no_web"
-            android:textSize="13sp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/vd_novideo"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/vd_title"
-        android:background="?android:attr/colorBackground"
-        android:clickable="true"
-        android:focusable="true"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:paddingBottom="33dp"
-        android:visibility="gone">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="92dp"
-            android:padding="6dp"
-            android:src="@drawable/img_videonotfound" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/main_tip_no_data"
-            android:textSize="13sp" />
-
-    </LinearLayout>
+        app:show_loading="true" />
 
     <RelativeLayout
         android:id="@+id/vd_tip"
@@ -141,4 +61,11 @@
             android:textColor="@color/white"
             android:textSize="12sp" />
     </RelativeLayout>
+
+    <cn.luern0313.wristbilibili.widget.TitleView
+        android:id="@+id/vd_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:mode="viewpager"
+        app:title="@string/video_title" />
 </RelativeLayout>

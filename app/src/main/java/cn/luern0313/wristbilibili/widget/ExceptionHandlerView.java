@@ -7,7 +7,6 @@ import android.graphics.drawable.AnimationDrawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -136,7 +135,6 @@ public class ExceptionHandlerView extends FrameLayout
         if(isMainThread())
         {
             hideAllView();
-            Log.w("bilibili", "nodata");
             viewWeb.setVisibility(VISIBLE);
         }
         else

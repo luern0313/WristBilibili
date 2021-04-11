@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:ignore="ContentDescription">
 
     <TextView
-        android:id="@+id/sea_hotwordtext"
+        android:id="@+id/sea_hotword_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="36dp"
@@ -26,38 +27,6 @@
         android:paddingRight="@dimen/dimen_20_10"
         android:paddingBottom="26dp"
         android:scrollbars="none" />
-
-    <ListView
-        android:id="@+id/sea_listview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="?android:attr/colorBackground"
-        android:clipToPadding="false"
-        android:divider="@color/alpha"
-        android:dividerHeight="2dp"
-        android:paddingTop="67dp"
-        android:visibility="gone" />
-
-    <LinearLayout
-        android:id="@+id/sea_noweb"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="?android:attr/colorBackground"
-        android:clickable="true"
-        android:focusable="true"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:paddingTop="32dp"
-        android:paddingBottom="20dp"
-        android:visibility="gone">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="108dp"
-            android:padding="6dp"
-            android:src="@drawable/img_search_no" />
-
-    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/sea_searching"
@@ -80,33 +49,33 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/sea_nonthing"
+    <cn.luern0313.wristbilibili.widget.ExceptionHandlerView
+        android:id="@+id/sea_exception"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?android:attr/colorBackground"
-        android:clickable="true"
-        android:focusable="true"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:paddingTop="32dp"
-        android:paddingBottom="20dp"
+        app:wave_swipe_refresh_view="@id/sea_swipe" />
+
+    <jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout
+        android:id="@+id/sea_swipe"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:visibility="gone">
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="94dp"
-            android:padding="6dp"
-            android:src="@drawable/img_nodata" />
+        <ListView
+            android:id="@+id/sea_listview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?android:attr/colorBackground"
+            android:clipToPadding="false"
+            android:divider="@color/alpha"
+            android:dividerHeight="2dp"
+            android:paddingTop="67dp"
+            android:visibility="gone" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="什么都没找到. . ." />
-
-    </LinearLayout>
+    </jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout>
 
     <LinearLayout
+        android:id="@+id/sea_box"
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:layout_marginLeft="@dimen/dimen_22_10"
@@ -121,11 +90,11 @@
             android:id="@+id/sea_edittext"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
             android:layout_weight="1"
             android:background="@color/alpha"
             android:ellipsize="end"
-            android:hint="点这里输入~"
+            android:hint="@string/search_box_hint"
             android:inputType="text"
             android:maxLines="1"
             android:textSize="12sp" />
@@ -134,18 +103,20 @@
             android:id="@+id/sea_inbutton"
             android:layout_width="22dp"
             android:layout_height="22dp"
-            android:layout_marginLeft="2dp"
-            android:layout_marginRight="4dp"
-            android:background="@drawable/ic_voiceinput_search"
-            android:clickable="true" />
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="2dp"
+            android:background="@drawable/icon_voiceinput_search"
+            android:clickable="true"
+            android:focusable="true" />
 
         <TextView
             android:id="@+id/sea_seabutton"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginRight="10dp"
-            android:background="@drawable/ic_search"
-            android:clickable="true" />
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_marginEnd="14dp"
+            android:background="@drawable/icon_search"
+            android:clickable="true"
+            android:focusable="true" />
     </LinearLayout>
 
 </RelativeLayout>

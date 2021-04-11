@@ -1,99 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:ignore="UseCompoundDrawables,ContentDescription">
+    android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/wl_nologin"
+    <cn.luern0313.wristbilibili.widget.ExceptionHandlerView
+        android:id="@+id/watchlater_exception"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clickable="true"
-        android:focusable="true"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:paddingBottom="33dp"
-        android:visibility="gone">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="92dp"
-            android:padding="6dp"
-            android:src="@drawable/img_nologin" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="你好像还没有登录...\n点上面的按钮试试吧"
-            android:textSize="13sp" />
-
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/wl_noweb"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clickable="true"
-        android:focusable="true"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:paddingBottom="33dp"
-        android:visibility="gone">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="92dp"
-            android:padding="6dp"
-            android:src="@drawable/img_noweb" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="好像没有网络...\n检查一下网络连接？"
-            android:textSize="13sp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/wl_nonthing"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="?android:attr/colorBackground"
-        android:clickable="true"
-        android:focusable="true"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:paddingBottom="33dp"
-        android:visibility="gone">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="94dp"
-            android:padding="6dp"
-            android:src="@drawable/img_nodata" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=" 什么都没找到..." />
-
-    </LinearLayout>
+        android:layout_height="match_parent" />
 
     <jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout
-        android:id="@+id/wl_swipe"
+        android:id="@+id/watchlater_swipe"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <ListView
-            android:id="@+id/wl_listview"
+            android:id="@+id/watchlater_listview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:divider="@color/alpha"
             android:dividerHeight="3dp"
-            android:paddingTop="33dp"
-            android:paddingBottom="22dp" />
+            android:paddingTop="@dimen/titleHeight"
+            android:paddingBottom="@dimen/dimen_22_0" />
+
     </jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout>
 
 </RelativeLayout>

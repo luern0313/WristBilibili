@@ -11,89 +11,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <cn.luern0313.wristbilibili.widget.ExceptionHandlerView
+        android:id="@+id/art_exception"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:show_loading="true"/>
+
     <cn.luern0313.wristbilibili.widget.TitleView
         android:id="@+id/art_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:mode="viewpager"
         app:title="@string/article_title" />
-
-    <LinearLayout
-        android:id="@+id/art_loading"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/art_title"
-        android:background="?android:attr/colorBackground"
-        android:clickable="true"
-        android:focusable="true"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:paddingBottom="33dp"
-        android:visibility="gone">
-
-        <ImageView
-            android:id="@+id/art_loading_img"
-            android:layout_width="wrap_content"
-            android:layout_height="92dp"
-            android:padding="6dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/main_tip_loading"
-            android:textSize="13sp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/art_noweb"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/art_title"
-        android:background="?android:attr/colorBackground"
-        android:clickable="true"
-        android:focusable="true"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:paddingBottom="33dp"
-        android:visibility="gone">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="92dp"
-            android:padding="6dp"
-            android:src="@drawable/img_no_web" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/main_tip_no_web"
-            android:textSize="13sp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/art_novideo"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/art_title"
-        android:background="?android:attr/colorBackground"
-        android:clickable="true"
-        android:focusable="true"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:paddingBottom="33dp"
-        android:visibility="gone">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="92dp"
-            android:padding="6dp"
-            android:src="@drawable/img_videonotfound" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/main_tip_no_data"
-            android:textSize="13sp" />
-    </LinearLayout>
 
 </RelativeLayout>

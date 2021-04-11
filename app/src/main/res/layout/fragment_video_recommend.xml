@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:ignore="ContentDescription">
+    android:layout_height="match_parent">
+
+    <cn.luern0313.wristbilibili.widget.ExceptionHandlerView
+        android:id="@+id/vd_recommend_exception"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <ListView
         android:id="@+id/vd_recommend_listview"
@@ -14,27 +17,4 @@
         android:paddingTop="@dimen/titleHeight"
         android:paddingBottom="@dimen/dimen_22_0" />
 
-    <LinearLayout
-        android:id="@+id/vd_recommend_nothing"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="?android:attr/colorBackground"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:paddingBottom="33dp"
-        android:visibility="gone">
-
-        <ImageView
-            android:layout_width="97dp"
-            android:layout_height="92dp"
-            android:padding="6dp"
-            android:src="@drawable/img_nodata" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="这里没有任何内容. . ."
-            android:textSize="13sp" />
-
-    </LinearLayout>
 </RelativeLayout>

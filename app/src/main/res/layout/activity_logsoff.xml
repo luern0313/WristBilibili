@@ -6,13 +6,6 @@
     android:layout_height="match_parent"
     tools:ignore="ContentDescription">
 
-    <cn.luern0313.wristbilibili.widget.TitleView
-        android:id="@+id/logs_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:mode="back"
-        app:title="@string/logs_off_title" />
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -47,31 +40,16 @@
         </LinearLayout>
     </ScrollView>
 
-    <LinearLayout
-        android:id="@+id/logs_nologin"
+    <cn.luern0313.wristbilibili.widget.ExceptionHandlerView
+        android:id="@+id/logs_exception"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/logs_title"
-        android:layout_centerInParent="true"
-        android:background="?android:attr/colorBackground"
-        android:clickable="true"
-        android:focusable="true"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:paddingTop="20dp"
-        android:visibility="gone">
+        android:layout_height="match_parent"/>
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="88dp"
-            android:layout_gravity="center_horizontal"
-            android:src="@drawable/img_videonotfound" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="@string/main_tip_no_login2" />
-    </LinearLayout>
+    <cn.luern0313.wristbilibili.widget.TitleView
+        android:id="@+id/logs_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:mode="back"
+        app:title="@string/logs_off_title" />
 
 </RelativeLayout>

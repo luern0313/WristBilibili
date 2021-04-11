@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -15,29 +16,6 @@
         android:paddingBottom="22dp">
 
     </ListView>
-
-    <LinearLayout
-        android:id="@+id/dl_nothing"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="?android:attr/colorBackground"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:paddingBottom="33dp"
-        android:visibility="visible">
-
-        <ImageView
-            android:layout_width="97dp"
-            android:layout_height="92dp"
-            android:padding="6dp"
-            android:src="@drawable/img_nodata" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="这里没有任何内容. . ."
-            android:textSize="13sp" />
-    </LinearLayout>
 
     <ImageView
         android:id="@+id/dl_tip_btu"
@@ -66,26 +44,10 @@
         android:textSize="12sp"
         android:visibility="gone" />
 
-    <LinearLayout
-        android:id="@+id/dl_loading"
+    <cn.luern0313.wristbilibili.widget.ExceptionHandlerView
+        android:id="@+id/dl_exception"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?android:attr/colorBackground"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:paddingBottom="20dp">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="92dp"
-            android:padding="6dp"
-            android:src="@drawable/img_loading_1" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:text="  加载中.." />
-    </LinearLayout>
+        app:show_loading="true" />
 
 </RelativeLayout>
