@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black">
+    android:background="@color/black"
+    tools:ignore="UseCompoundDrawables,ContentDescription,RtlSymmetry">
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/img_viewpager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/img_tab"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -25,18 +27,98 @@
             android:paddingTop="@dimen/dimen_10_4"
             android:paddingBottom="@dimen/dimen_4_2">
 
-        <ViewFlipper
-            android:id="@+id/img_viewflipper"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            <ViewFlipper
+                android:id="@+id/img_viewflipper"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
-        <TextView
-            android:id="@+id/img_imgcount"
-            android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/img_imgcount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/img_title_default"
+                android:textColor="@color/white" />
+        </LinearLayout>
+
+        <View
+            android:id="@+id/img_tab_split"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_below="@id/img_tab_title"
+            android:background="@color/black" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text=" / 99"
-            android:textColor="@color/white"/>
-    </LinearLayout>
+            android:layout_below="@id/img_tab_split"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
 
+            <LinearLayout
+                android:id="@+id/img_tab_exit"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:descendantFocusability="blocksDescendants"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/dimen_22_0"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp">
 
+                <ImageView
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:src="@drawable/icon_img_exit" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:text="@string/img_tab_exit"
+                    android:textColor="@color/white"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="0.5dp"
+                android:layout_height="match_parent"
+                android:background="@color/black" />
+
+            <LinearLayout
+                android:id="@+id/img_tab_download"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:descendantFocusability="blocksDescendants"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingTop="4dp"
+                android:paddingEnd="@dimen/dimen_22_0"
+                android:paddingBottom="4dp">
+
+                <ImageView
+                    android:id="@+id/img_tab_download_icon"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:src="@drawable/icon_img_download" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:text="@string/img_tab_download"
+                    android:textColor="@color/white"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+        </LinearLayout>
+    </RelativeLayout>
 </RelativeLayout>
