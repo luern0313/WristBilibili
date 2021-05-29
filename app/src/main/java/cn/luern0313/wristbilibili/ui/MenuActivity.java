@@ -25,28 +25,29 @@ import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.adapter.MenuAdapter;
 import cn.luern0313.wristbilibili.api.UserInfoApi;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
+import cn.luern0313.wristbilibili.widget.BannerView;
 
 public class MenuActivity extends BaseActivity
 {
-    Context ctx;
-    Intent intent;
-    LayoutInflater inflater;
+    private Context ctx;
+    private LayoutInflater inflater;
 
-    ListView uiListView;
-    MenuAdapter menuAdapter;
-    MenuAdapter.MenuAdapterListener menuAdapterListener;
-    View layoutMenuHeader;
+    private ListView uiListView;
+    private MenuAdapter menuAdapter;
+    private MenuAdapter.MenuAdapterListener menuAdapterListener;
+    private View layoutMenuHeader;
+    private BannerView bannerView;
 
-    TextView uiUserName;
-    TextView uiUserCoin;
-    TextView uiUserLV;
-    ImageView uiUserHead;
-    ImageView uiUserVip;
+    private TextView uiUserName;
+    private TextView uiUserCoin;
+    private TextView uiUserLV;
+    private ImageView uiUserHead;
+    private ImageView uiUserVip;
 
-    Handler handler = new Handler();
-    Runnable runnableUi;
+    private final Handler handler = new Handler();
+    private Runnable runnableUi;
 
-    Bitmap head;
+    private Bitmap head;
     private Intent resultIntent;
 
     @Override
@@ -55,12 +56,14 @@ public class MenuActivity extends BaseActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
         ctx = this;
-        intent = getIntent();
+        Intent intent = getIntent();
         inflater = getLayoutInflater();
 
         uiListView = findViewById(R.id.menu_listview);
         layoutMenuHeader = inflater.inflate(R.layout.widget_menu_header, null);
+        bannerView = new BannerView(ctx);
         uiListView.addHeaderView(layoutMenuHeader);
+        uiListView.addHeaderView(bannerView);
 
         menuAdapterListener = this::onClick;
 

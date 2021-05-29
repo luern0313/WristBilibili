@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/banner_lay"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:ignore="ContentDescription,SmallSp">
+
+    <ImageView
+        android:id="@+id/banner_img"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:scaleType="centerCrop" />
+
+    <TextView
+        android:id="@+id/banner_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:drawablePadding="2dp"
+        android:ellipsize="marquee"
+        android:focusable="true"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:paddingStart="@dimen/dimen_30_12"
+        android:paddingTop="4dp"
+        android:paddingEnd="@dimen/dimen_30_12"
+        android:paddingBottom="4dp"
+        android:singleLine="true"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        app:drawableStartCompat="@drawable/icon_notice_small" />
+
+    <TextView
+        android:id="@+id/banner_tip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@id/banner_img"
+        android:layout_alignTop="@id/banner_img"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/shape_bg_banner_tip"
+        android:paddingStart="5dp"
+        android:paddingTop="2dp"
+        android:paddingEnd="5dp"
+        android:paddingBottom="2dp"
+        android:text="@string/banner_tip"
+        android:textColor="@color/white"
+        android:textSize="11sp"
+        android:visibility="gone" />
+
+</RelativeLayout>

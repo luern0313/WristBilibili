@@ -16,6 +16,7 @@ import android.widget.TextView;
 import cn.luern0313.lson.LsonUtil;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.ui.MainActivity;
+import cn.luern0313.wristbilibili.util.DataProcessUtil;
 import cn.luern0313.wristbilibili.util.MyApplication;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 import cn.luern0313.wristbilibili.widget.StripeDrawable;
@@ -77,21 +78,24 @@ public class MenuAdapter extends BaseAdapter
 
     public void replace(int from, int to)
     {
+        int fromIndex = sort[MainActivity.currentPage];
         int direction = to > from ? 1 : -1;
         int temp = sort[from];
         for(int i = from; i != to; i += direction)
             sort[i] = sort[i + direction];
         sort[to] = temp;
         this.notifyDataSetChanged();
-        MainActivity.currentPage = sort[MainActivity.currentPage];
+        MainActivity.currentPage = DataProcessUtil.getPositionInList(sort, fromIndex);
         SharedPreferencesUtil.putString(SharedPreferencesUtil.menuSort, LsonUtil.toJson(sort));
     }
 
     public void reset()
     {
+        int fromIndex = sort[MainActivity.currentPage];
         for (int i = 0; i < sort.length; i++)
             sort[i] = i;
         this.notifyDataSetChanged();
+        MainActivity.currentPage = DataProcessUtil.getPositionInList(sort, fromIndex);
         SharedPreferencesUtil.removeValue(SharedPreferencesUtil.menuSort);
     }
 

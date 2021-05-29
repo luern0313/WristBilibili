@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/menu_user_lay"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="2dp"
+    android:background="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:onClick="buttonUser"
+    android:paddingLeft="@dimen/dimen_30_10"
+    android:paddingRight="@dimen/dimen_30_10"
+    tools:ignore="ContentDescription,SmallSp">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/menu_user_img"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="2dp"
+        android:src="@drawable/img_default_avatar" />
+
+    <ImageView
+        android:id="@+id/menu_user_vip"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_alignEnd="@+id/menu_user_img"
+        android:layout_alignBottom="@+id/menu_user_img"
+        android:src="@drawable/icon_vip"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/menu_username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="4dp"
+        android:layout_toEndOf="@+id/menu_user_img"
+        android:text="@string/menu_default_login"
+        android:textColor="@color/white" />
+
+    <TextView
+        android:id="@+id/menu_user_lv"
+        android:layout_width="wrap_content"
+        android:layout_height="13dp"
+        android:layout_below="@+id/menu_username"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="10dp"
+        android:layout_toEndOf="@+id/menu_user_img"
+        android:background="@drawable/shape_bg_menu_lv"
+        android:paddingLeft="4dp"
+        android:paddingTop="1dp"
+        android:paddingRight="4dp"
+        android:paddingBottom="1dp"
+        android:text="@string/menu_default_lv"
+        android:textColor="@color/alpha_ee_ff"
+        android:textSize="8sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/menu_user_coin"
+        android:layout_width="wrap_content"
+        android:layout_height="13dp"
+        android:layout_below="@+id/menu_username"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="9dp"
+        android:layout_toEndOf="@+id/menu_user_lv"
+        android:text="@string/menu_default_coin"
+        android:textColor="@color/alpha_ee_ff"
+        android:textSize="10sp" />
+
+</RelativeLayout>
