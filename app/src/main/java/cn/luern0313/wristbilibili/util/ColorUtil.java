@@ -9,6 +9,11 @@ import androidx.annotation.ColorInt;
 
 public class ColorUtil
 {
+    public static String getColorString(@AttrRes int attr, Context context)
+    {
+        return String.format("#%06X", 0xFFFFFF & getColor(attr, context.getTheme()));
+    }
+
     public static @ColorInt int getColor(@AttrRes int attr, Context context)
     {
         return getColor(attr, context.getTheme());

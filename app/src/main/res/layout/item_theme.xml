@@ -15,8 +15,7 @@
         android:id="@+id/theme_item_icon"
         android:layout_width="20dp"
         android:layout_height="0dp"
-        android:layout_marginStart="32dp"
-        android:elevation="0dp"
+        android:elevation="10dp"
         app:cardCornerRadius="4dp"
         app:layout_constraintBottom_toBottomOf="@+id/theme_item_name"
         app:layout_constraintStart_toStartOf="parent"
@@ -29,6 +28,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="12dp"
         android:layout_marginBottom="12dp"
+        android:textColor="?attr/colorTitle"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/theme_item_check"
@@ -40,11 +40,10 @@
         android:id="@+id/theme_item_check"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_marginEnd="32dp"
         android:scaleType="centerInside"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@+id/theme_item_name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/theme_item_name"
-        app:srcCompat="@drawable/ic_check_12" />
+        app:srcCompat="@drawable/icon_check_12" />
 </androidx.constraintlayout.widget.ConstraintLayout>

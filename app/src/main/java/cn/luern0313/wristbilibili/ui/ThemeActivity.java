@@ -12,18 +12,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.ColorInt;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.adapter.ThemeAdapter;
-import cn.luern0313.wristbilibili.util.ListViewTouchListener;
 import cn.luern0313.wristbilibili.util.ThemeUtil;
+import cn.luern0313.wristbilibili.util.ViewTouchListener;
 import cn.luern0313.wristbilibili.widget.TitleView;
 
-public class ThemeActivity extends AppCompatActivity implements TitleView.TitleViewListener
+public class ThemeActivity extends BaseActivity implements TitleView.TitleViewListener
 {
     private Context ctx;
 
@@ -60,7 +59,7 @@ public class ThemeActivity extends AppCompatActivity implements TitleView.TitleV
         ThemeAdapter themeAdapter = new ThemeAdapter(ctx, getLayoutInflater(), themeAdapterListener, recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        recyclerView.setOnTouchListener(new ListViewTouchListener(recyclerView, (TitleView.TitleViewListener) ctx));
+        recyclerView.setOnTouchListener(new ViewTouchListener(recyclerView, (TitleView.TitleViewListener) ctx));
         recyclerView.setAdapter(themeAdapter);
     }
 
@@ -72,11 +71,11 @@ public class ThemeActivity extends AppCompatActivity implements TitleView.TitleV
             View v = group.getChildAt(i);
             if(v instanceof ViewGroup)
                 changeTheme((ViewGroup) v, primary, fore);
-            if(v.getId() == R.id.theme_title)
-                animate(v, "backgroundColor", ((ColorDrawable) v.getBackground()).getColor(), primary);
-            else if (v.getId() == R.id.theme_item_name)
+            if(v.getId() == R.id.theme_title && v instanceof TitleView)
+                animate(v.findViewById(R.id.title_layout), "backgroundColor", ((ColorDrawable) v.findViewById(R.id.title_layout).getBackground()).getColor(), primary);
+            else if (v.getId() == R.id.theme_item_name && v instanceof TextView)
                 animate(v, "textColor", ((TextView) v).getTextColors().getDefaultColor(), fore);
-            else if (v.getId() == R.id.theme_item_check)
+            else if (v.getId() == R.id.theme_item_check && v instanceof ImageView)
                 ((ImageView) v).getDrawable().applyTheme(getTheme());
         }
     }

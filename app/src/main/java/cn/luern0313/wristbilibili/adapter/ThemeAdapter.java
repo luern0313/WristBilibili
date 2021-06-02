@@ -44,27 +44,21 @@ public class ThemeAdapter extends RecyclerView.Adapter<ThemeAdapter.ThemeViewHol
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final ThemeViewHolder holder, int position)
+    public void onBindViewHolder(@NonNull final ThemeViewHolder holder, final int position)
     {
         holder.checkView.setVisibility(ThemeUtil.getCurrentThemePos() == position ? View.VISIBLE : View.INVISIBLE);
         holder.nameView.setText(ThemeUtil.themes[position].getName());
         holder.colorView.setCardBackgroundColor(ctx.getResources().getColor(ThemeUtil.themes[position].getPreviewColor()));
-        final int finalPos = position;
 
-        holder.itemView.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                ThemeUtil.changeCurrentTheme(ThemeUtil.themes[finalPos]);
-                ThemeUtil.changeTheme(ctx, ThemeUtil.getCurrentTheme());
-                int primary = ColorUtil.getColor(R.attr.colorPrimary, ctx);
-                int back = ColorUtil.getColor(android.R.attr.colorBackground, ctx);
-                int fore = ColorUtil.getColor(android.R.attr.textColor, ctx);
-                themeAdapterListener.onChangeTheme((ViewGroup) ((Activity) ctx).findViewById(R.id.theme_root), primary, fore);
-                themeAdapterListener.onAnimate(recyclerView, "backgroundColor", ((ColorDrawable) recyclerView.getBackground()).getColor(), back);
-                notifyDataSetChanged();
-            }
+        holder.itemView.setOnClickListener(v -> {
+            ThemeUtil.changeCurrentTheme(ThemeUtil.themes[position]);
+            ThemeUtil.changeTheme(ctx, ThemeUtil.getCurrentTheme());
+            int primary = ColorUtil.getColor(R.attr.colorPrimary, ctx);
+            int back = ColorUtil.getColor(android.R.attr.colorBackground, ctx);
+            int fore = ColorUtil.getColor(R.attr.colorTitle, ctx);
+            themeAdapterListener.onChangeTheme(((Activity) ctx).findViewById(R.id.theme_root), primary, fore);
+            themeAdapterListener.onAnimate(recyclerView, "backgroundColor", ((ColorDrawable) recyclerView.getBackground()).getColor(), back);
+            notifyDataSetChanged();
         });
     }
 
