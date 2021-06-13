@@ -2,10 +2,13 @@ package cn.luern0313.wristbilibili.models;
 
 import java.util.ArrayList;
 
+import cn.luern0313.lson.annotation.field.LsonBooleanFormatAsNumber;
+import cn.luern0313.lson.annotation.field.LsonNumberOperations;
 import cn.luern0313.lson.annotation.field.LsonPath;
 import cn.luern0313.wristbilibili.util.json.ImageUrlFormat;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * 被 luern0313 创建于 2020/1/15.
@@ -13,13 +16,19 @@ import lombok.Setter;
 
 @Getter
 @Setter
+@ToString
 public class AnimationTimelineModel
 {
-    @LsonPath("date")
+    @LsonPath
     private String date;
 
-    @LsonPath("is_today")
-    private int isToday;
+    @LsonBooleanFormatAsNumber(equal = 1)
+    @LsonPath
+    private boolean isToday;
+
+    @LsonNumberOperations(operator = LsonNumberOperations.Operator.MINUS, number = 1)
+    @LsonPath
+    private int dayOfWeek;
 
     @LsonPath("seasons")
     private ArrayList<AnimationTimelineSeasonModel> seasonModelArrayList;
@@ -28,10 +37,10 @@ public class AnimationTimelineModel
     @Setter
     public class AnimationTimelineSeasonModel
     {
-        @LsonPath("season_id")
+        @LsonPath
         private String seasonId;
 
-        @LsonPath("title")
+        @LsonPath
         private String title;
 
         @ImageUrlFormat
@@ -52,7 +61,7 @@ public class AnimationTimelineModel
             return date;
         }
 
-        public int getIsToday()
+        public boolean isToday()
         {
             return isToday;
         }

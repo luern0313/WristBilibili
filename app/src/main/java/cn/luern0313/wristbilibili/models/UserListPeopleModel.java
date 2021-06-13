@@ -34,7 +34,7 @@ public class UserListPeopleModel implements Serializable
     private String mtime;
 
     @LsonPath("official_verify.type")
-    private String verifyType;
+    private String verifyType = "-1";
 
     @LsonPath("official_verify.desc")
     private String verifyName;

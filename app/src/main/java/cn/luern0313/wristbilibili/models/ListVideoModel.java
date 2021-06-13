@@ -15,7 +15,7 @@ import lombok.Setter;
 @Setter
 public class ListVideoModel
 {
-    @LsonPath("aid")
+    @LsonPath({"aid", "param"})
     private String aid;
 
     @LsonPath("bvid")
@@ -26,7 +26,7 @@ public class ListVideoModel
 
     @UrlFormat
     @ImageUrlFormat
-    @LsonPath("pic")
+    @LsonPath({"pic", "cover"})
     private String cover;
 
     @ViewFormat
@@ -34,10 +34,10 @@ public class ListVideoModel
     private String play;
 
     @ViewFormat
-    @LsonPath({"stat.danmaku", "video_review"})
+    @LsonPath({"stat.danmaku", "video_review", "danmaku"})
     private String danmaku;
 
-    @LsonPath({"owner.name", "author"})
+    @LsonPath({"owner.name", "author", "name"})
     private String ownerName;
 
     @LsonPath("duration")

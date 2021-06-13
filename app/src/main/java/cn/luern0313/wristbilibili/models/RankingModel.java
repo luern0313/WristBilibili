@@ -1,5 +1,7 @@
 package cn.luern0313.wristbilibili.models;
 
+import java.util.ArrayList;
+
 import cn.luern0313.lson.annotation.field.LsonPath;
 import cn.luern0313.wristbilibili.util.json.ImageUrlFormat;
 import lombok.Getter;
@@ -13,35 +15,46 @@ import lombok.Setter;
 @Setter
 public class RankingModel
 {
-    @LsonPath("goto")
-    private String identification;
+    @LsonPath("list[*]")
+    private ArrayList<RankingVideoModel> videoModelArrayList;
 
-    @LsonPath("param")
-    private String aid;
+    @LsonPath
+    private String note;
 
-    @LsonPath("title")
-    private String title;
+    @Getter
+    @Setter
+    public static class RankingVideoModel
+    {
+        @LsonPath("aid")
+        private String aid;
 
-    @ImageUrlFormat
-    @LsonPath("cover")
-    private String pic;
+        @LsonPath("bvid")
+        private String bvid;
 
-    @LsonPath("pts")
-    private String score;
+        @LsonPath("title")
+        private String title;
 
-    @LsonPath("play")
-    private int play;
+        @ImageUrlFormat
+        @LsonPath("pic")
+        private String pic;
 
-    @LsonPath("danmaku")
-    private int danmaku;
+        @LsonPath("score")
+        private String score;
 
-    @LsonPath("mid")
-    private String mid;
+        @LsonPath("stat.view")
+        private int play;
 
-    @LsonPath("name")
-    private String name;
+        @LsonPath("stat.danmaku")
+        private int danmaku;
 
-    @ImageUrlFormat
-    @LsonPath("face")
-    private String face;
+        @LsonPath("owner.mid")
+        private String mid;
+
+        @LsonPath("owner.name")
+        private String name;
+
+        @ImageUrlFormat
+        @LsonPath("owner.face")
+        private String face;
+    }
 }
