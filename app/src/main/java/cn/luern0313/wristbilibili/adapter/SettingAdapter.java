@@ -104,8 +104,8 @@ public class SettingAdapter extends BaseAdapter
 
             if(settingModel.getSpName().equals("screenRound"))
                 viewHolder.switch_compat.setChecked(SharedPreferencesUtil.getBoolean(
-                        SharedPreferencesUtil.screenRound, !(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-                                ctx.getResources().getConfiguration().isScreenRound())));
+                        SharedPreferencesUtil.screenRound, Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+                                !ctx.getResources().getConfiguration().isScreenRound()));
 
             if(Build.VERSION.SDK_INT < settingModel.getLimitApi())
             {
