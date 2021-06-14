@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import cn.luern0313.lson.LsonUtil;
-import cn.luern0313.lson.element.LsonArray;
-import cn.luern0313.lson.element.LsonObject;
+import cn.luern0313.lson.TypeReference;
+import cn.luern0313.wristbilibili.models.BaseModel;
 import cn.luern0313.wristbilibili.models.FavorBoxModel;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
@@ -22,7 +22,7 @@ public class FavorBoxApi
     private final boolean isShowOthersBox;
     private final ArrayList<String> webHeaders;
 
-    private final ArrayList<FavorBoxModel> favorBoxArrayList = new ArrayList<>();
+    private FavorBoxModel favorBoxModel;
 
     public FavorBoxApi(String mid, boolean isShowOthersBox)
     {
@@ -35,24 +35,19 @@ public class FavorBoxApi
         }};
     }
 
-    public ArrayList<FavorBoxModel> getFavorBox() throws IOException
+    public FavorBoxModel getFavorBox() throws IOException
     {
         String url = "http://space.bilibili.com/ajax/fav/getBoxList";
         String arg = "mid=" + mid;
         String a = NetWorkUtil.get(url + "?" + arg, webHeaders).body().string();
-        Log.w("bilibili", a);
-        LsonObject result = LsonUtil.parseAsObject(a);
-        if(result.getAsBoolean("status", false))
-        {
-            LsonArray favorBoxJSONArray = result.getAsJsonObject("data").getAsJsonArray("list");
-            for(int i = 0; i < favorBoxJSONArray.size(); i++)
-                favorBoxArrayList.add(LsonUtil.fromJson(favorBoxJSONArray.getAsJsonObject(i), FavorBoxModel.class));
-        }
+        BaseModel<FavorBoxModel> baseModel = LsonUtil.fromJson(LsonUtil.parse(a), new TypeReference<BaseModel<FavorBoxModel>>(){});
+        if(baseModel.isSuccess())
+            favorBoxModel = baseModel.getData();
         if(isShowOthersBox)
         {
-            favorBoxArrayList.add(new FavorBoxModel(1));
-            favorBoxArrayList.add(new FavorBoxModel(2));
+            favorBoxModel.getBoxModelArrayList().add(new FavorBoxModel.BoxModel(1));
+            favorBoxModel.getBoxModelArrayList().add(new FavorBoxModel.BoxModel(2));
         }
-        return favorBoxArrayList;
+        return favorBoxModel;
     }
 }

@@ -5,8 +5,10 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import cn.luern0313.lson.LsonUtil;
+import cn.luern0313.lson.TypeReference;
 import cn.luern0313.lson.element.LsonObject;
 import cn.luern0313.wristbilibili.R;
+import cn.luern0313.wristbilibili.models.BaseModel;
 import cn.luern0313.wristbilibili.models.VideoModel;
 import cn.luern0313.wristbilibili.util.MyApplication;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
@@ -54,7 +56,7 @@ public class VideoApi
     {
         String url = "https://app.bilibili.com/x/v2/view";
         String temp_per;
-        if(!bvid.equals(""))
+        if(bvid != null)
             temp_per = "access_key=" + access_key + "&appkey=" + ConfInfoApi.getConf("appkey") +
                     "&build=" + ConfInfoApi.getConf("build") + "&bvid=" + bvid + "&mobi_app=" + ConfInfoApi.getConf("mobi_app") +
                     "&plat=0&platform=" + ConfInfoApi.getConf("platform") + "&ts=" + (int) (System.currentTimeMillis() / 1000);
@@ -103,11 +105,14 @@ public class VideoApi
         return "未知错误";
     }
 
-    public LsonObject tripleVideo() throws IOException
+    public VideoModel.VideoTripleModel tripleVideo() throws IOException
     {
         String url = "https://api.bilibili.com/x/web-interface/archive/like/triple";
         String per = "aid=" + aid + "&csrf=" + csrf;
-        return LsonUtil.parseAsObject(NetWorkUtil.post(url, per, webHeaders).body().string());
+        BaseModel<VideoModel.VideoTripleModel> baseModel = LsonUtil.fromJson(LsonUtil.parse(NetWorkUtil.post(url, per, webHeaders).body().string()), new TypeReference<BaseModel<VideoModel.VideoTripleModel>>(){});
+        if(baseModel.isSuccess())
+            return baseModel.getData();
+        return null;
     }
 
     public String playLater() throws IOException

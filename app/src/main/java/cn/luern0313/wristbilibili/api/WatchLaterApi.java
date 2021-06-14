@@ -1,12 +1,18 @@
 package cn.luern0313.wristbilibili.api;
 
+import android.content.Context;
+
 import java.io.IOException;
 import java.util.ArrayList;
 
 import cn.luern0313.lson.LsonUtil;
+import cn.luern0313.lson.TypeReference;
 import cn.luern0313.lson.element.LsonArray;
 import cn.luern0313.lson.element.LsonObject;
+import cn.luern0313.wristbilibili.R;
+import cn.luern0313.wristbilibili.models.BaseModel;
 import cn.luern0313.wristbilibili.models.ListVideoModel;
+import cn.luern0313.wristbilibili.util.MyApplication;
 import cn.luern0313.wristbilibili.util.NetWorkUtil;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
@@ -18,6 +24,7 @@ import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
 public class WatchLaterApi
 {
+    private final Context ctx;
     private final String csrf;
     private final String mid;
 
@@ -25,6 +32,7 @@ public class WatchLaterApi
 
     public WatchLaterApi()
     {
+        this.ctx = MyApplication.getContext();
         this.csrf = SharedPreferencesUtil.getString(SharedPreferencesUtil.csrf, "");
         this.mid = SharedPreferencesUtil.getString(SharedPreferencesUtil.mid, "");
         webHeaders = new ArrayList<String>(){{
@@ -46,5 +54,15 @@ public class WatchLaterApi
                 videoArrayList.add(LsonUtil.fromJson(list.getJsonObject(i), ListVideoModel.class));
         }
         return videoArrayList;
+    }
+
+    public String delWatchLater(String aid) throws IOException
+    {
+        String url = "https://api.bilibili.com/x/v2/history/toview/del";
+        String per = "aid=" + aid + "&csrf=" + csrf;
+        BaseModel<?> baseModel = LsonUtil.fromJson(LsonUtil.parse(NetWorkUtil.post(url, per, webHeaders).body().string()), new TypeReference<BaseModel<?>>(){});
+        if(baseModel.isSuccess())
+            return "";
+        return ctx.getString(R.string.main_error_unknown);
     }
 }
