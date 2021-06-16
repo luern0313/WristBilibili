@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -28,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -170,8 +170,8 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
                     if(animatorSet != null)
                         animatorSet.cancel();
                     tripleAnimCancel();
-                    uiVideoCoinProgress.setVisibility(View.GONE);
-                    uiVideoFavProgress.setVisibility(View.GONE);
+                    uiVideoDoCoin.getProgress().setVisibility(View.GONE);
+                    uiVideoDoFav.getProgress().setVisibility(View.GONE);
                     break;
             }
             return false;
@@ -181,11 +181,11 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
             if(!videoModel.isUserLike() || !videoModel.isUserFav() || videoModel.getUserCoin() == 0)
             {
                 tripleAnim();
-                uiVideoCoinProgress.setVisibility(View.VISIBLE);
-                uiVideoFavProgress.setVisibility(View.VISIBLE);
-                uiVideoCoinProgress.setOnChangeListener(onChangeListener);
-                uiVideoCoinProgress.showAnimation(0, 100, 3000);
-                uiVideoFavProgress.showAnimation(0, 100, 3000);
+                uiVideoDoCoin.getProgress().setVisibility(View.VISIBLE);
+                uiVideoDoFav.getProgress().setVisibility(View.VISIBLE);
+                uiVideoDoCoin.getProgress().setOnChangeListener(onChangeListener);
+                uiVideoDoCoin.getProgress().showAnimation(0, 100, 3000);
+                uiVideoDoFav.getProgress().showAnimation(0, 100, 3000);
             }
             else Toast.makeText(ctx, "已完成三连", Toast.LENGTH_SHORT).show();
             return true;
@@ -207,6 +207,7 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
         rootLayout.findViewById(R.id.vd_coin).setOnClickListener(this);
         rootLayout.findViewById(R.id.vd_fav).setOnClickListener(this);
         rootLayout.findViewById(R.id.vd_dislike).setOnClickListener(this);
+        rootLayout.findViewById(R.id.vd_card_follow).setOnClickListener(this);
 
         rootLayout.findViewById(R.id.vd_card_lay).setOnClickListener(v -> {
             Intent intent = new Intent(ctx, UserActivity.class);
@@ -215,13 +216,13 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
         });
 
         onChangeListener = (progress, max) -> {
-            if(progress == max && uiVideoCoinProgress.getVisibility() == View.VISIBLE)
+            if(progress == max && uiVideoDoCoin.getProgress().getVisibility() == View.VISIBLE)
             {
                 animatorSet.cancel();
                 tripleAnimCancel();
                 tripleAnimEnd();
-                uiVideoCoinProgress.setVisibility(View.GONE);
-                uiVideoFavProgress.setVisibility(View.GONE);
+                uiVideoDoCoin.getProgress().setVisibility(View.GONE);
+                uiVideoDoFav.getProgress().setVisibility(View.GONE);
                 videoDetailFragmentListener.onVideoDetailFragmentTriple();
             }
         };
@@ -241,10 +242,10 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
         {
             float tX = DataProcessUtil.getFloatRandom(r, -3, 3);
             float tY = DataProcessUtil.getFloatRandom(r, -3, 3);
-            objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoCoin, "translationX", translationX, tX));
-            objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoCoin, "translationY", translationY, tY));
-            objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoFav, "translationX", translationX, tX));
-            objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoFav, "translationY", translationY, tY));
+            objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoCoin.getImg(), "translationX", translationX, tX));
+            objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoCoin.getImg(), "translationY", translationY, tY));
+            objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoFav.getImg(), "translationX", translationX, tX));
+            objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoFav.getImg(), "translationY", translationY, tY));
             if(i == 0)
                 animatorSet.play(objectAnimatorArrayList.get(0)).with(objectAnimatorArrayList.get(1)).with(objectAnimatorArrayList.get(2))
                         .with(objectAnimatorArrayList.get(3));
@@ -262,10 +263,10 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
     {
         animatorCancelSet = new AnimatorSet();
         ArrayList<ObjectAnimator> objectAnimatorArrayList = new ArrayList<>();
-        objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoCoin, "translationX", 0));
-        objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoCoin, "translationY", 0));
-        objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoFav, "translationX", 0));
-        objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoFav, "translationY", 0));
+        objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoCoin.getImg(), "translationX", 0));
+        objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoCoin.getImg(), "translationY", 0));
+        objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoFav.getImg(), "translationX", 0));
+        objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoFav.getImg(), "translationY", 0));
         animatorCancelSet.play(objectAnimatorArrayList.get(0)).with(objectAnimatorArrayList.get(1)).with(objectAnimatorArrayList.get(2))
                     .with(objectAnimatorArrayList.get(3));
         animatorCancelSet.setDuration(30);
@@ -276,10 +277,10 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
     {
         animatorEndSet = new AnimatorSet();
         ArrayList<ObjectAnimator> objectAnimatorArrayList = new ArrayList<>();
-        objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoCoin, "scaleX", 1.0f, 1.42f, 1.0f));
-        objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoCoin, "scaleY", 1.0f, 1.42f, 1.0f));
-        objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoFav, "scaleX", 1.0f, 1.42f, 1.0f));
-        objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoFav, "scaleY", 1.0f, 1.42f, 1.0f));
+        objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoCoin.getImg(), "scaleX", 1.0f, 1.42f, 1.0f));
+        objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoCoin.getImg(), "scaleY", 1.0f, 1.42f, 1.0f));
+        objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoFav.getImg(), "scaleX", 1.0f, 1.42f, 1.0f));
+        objectAnimatorArrayList.add(0, ObjectAnimator.ofFloat(uiVideoDoFav.getImg(), "scaleY", 1.0f, 1.42f, 1.0f));
         animatorEndSet.play(objectAnimatorArrayList.get(0)).with(objectAnimatorArrayList.get(1)).with(objectAnimatorArrayList.get(2))
                 .with(objectAnimatorArrayList.get(3));
         animatorEndSet.setDuration(500);
@@ -288,62 +289,28 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
 
     private void setIcon()
     {
-        ((TextView) rootLayout.findViewById(R.id.vd_like_text)).setText(videoModel.getDetailLike() == 0 ? getString(R.string.video_control_like) : DataProcessUtil.getView(videoModel.getDetailLike()));
-        ((TextView) rootLayout.findViewById(R.id.vd_coin_text)).setText(videoModel.getDetailCoin() == 0 ? getString(R.string.video_control_coin) : DataProcessUtil.getView(videoModel.getDetailCoin()));
-        ((TextView) rootLayout.findViewById(R.id.vd_fav_text)).setText(videoModel.getDetailFav() == 0 ? getString(R.string.video_control_fav) : DataProcessUtil.getView(videoModel.getDetailFav()));
+        ((CircleButtonView) rootLayout.findViewById(R.id.vd_like)).setNameNumber(videoModel.getDetailLike());
+        ((CircleButtonView) rootLayout.findViewById(R.id.vd_coin)).setNameNumber(videoModel.getDetailCoin());
+        ((CircleButtonView) rootLayout.findViewById(R.id.vd_fav)).setNameNumber(videoModel.getDetailFav());
 
         if(videoModel.isUserFollowUp())
             rootLayout.findViewById(R.id.vd_card_follow).setVisibility(View.GONE);
 
-        if(videoModel.isUserLike())
-        {
-            ((ImageView) rootLayout.findViewById(R.id.vd_like_img)).setImageResource(R.drawable.icon_vdd_do_like_yes_nobg);
-            ((ImageView) rootLayout.findViewById(R.id.vd_like_img_bg)).setImageResource(R.drawable.icon_vdd_do_yes_bg);
-            ((ImageView) rootLayout.findViewById(R.id.vd_dislike_img)).setImageResource(R.drawable.icon_vdd_do_dislike_no);
-        }
-        else if(videoModel.isUserDislike())
-        {
-            ((ImageView) rootLayout.findViewById(R.id.vd_like_img)).setImageResource(R.drawable.icon_vdd_do_like_no_nobg);
-            ((ImageView) rootLayout.findViewById(R.id.vd_like_img_bg)).setImageResource(R.drawable.icon_vdd_do_no_bg);
-            ((ImageView) rootLayout.findViewById(R.id.vd_dislike_img)).setImageResource(R.drawable.icon_vdd_do_dislike_yes);
-        }
-        else
-        {
-            ((ImageView) rootLayout.findViewById(R.id.vd_like_img)).setImageResource(R.drawable.icon_vdd_do_like_no_nobg);
-            ((ImageView) rootLayout.findViewById(R.id.vd_like_img_bg)).setImageResource(R.drawable.icon_vdd_do_no_bg);
-            ((ImageView) rootLayout.findViewById(R.id.vd_dislike_img)).setImageResource(R.drawable.icon_vdd_do_dislike_no);
-        }
+        ((CircleButtonView) rootLayout.findViewById(R.id.vd_like)).setChecked(videoModel.isUserLike());
+        ((CircleButtonView) rootLayout.findViewById(R.id.vd_dislike)).setChecked(videoModel.isUserDislike());
 
-        if(videoModel.getUserCoin() > 0)
-        {
-            ((ImageView) rootLayout.findViewById(R.id.vd_coin_img)).setImageResource(R.drawable.icon_vdd_do_coin_yes_nobg);
-            ((ImageView) rootLayout.findViewById(R.id.vd_coin_img_bg)).setImageResource(R.drawable.icon_vdd_do_yes_bg);
-        }
-        else
-        {
-            ((ImageView) rootLayout.findViewById(R.id.vd_coin_img)).setImageResource(R.drawable.icon_vdd_do_coin_no_nobg);
-            ((ImageView) rootLayout.findViewById(R.id.vd_coin_img_bg)).setImageResource(R.drawable.icon_vdd_do_no_bg);
-        }
-
-        if(videoModel.isUserFav())
-        {
-            ((ImageView) rootLayout.findViewById(R.id.vd_fav_img)).setImageResource(R.drawable.icon_vdd_do_fav_yes_nobg);
-            ((ImageView) rootLayout.findViewById(R.id.vd_fav_img_bg)).setImageResource(R.drawable.icon_vdd_do_yes_bg);
-        }
-        else
-        {
-            ((ImageView) rootLayout.findViewById(R.id.vd_fav_img)).setImageResource(R.drawable.icon_vdd_do_fav_no_nobg);
-            ((ImageView) rootLayout.findViewById(R.id.vd_fav_img_bg)).setImageResource(R.drawable.icon_vdd_do_no_bg);
-        }
+        ((CircleButtonView) rootLayout.findViewById(R.id.vd_coin)).setChecked(videoModel.getUserCoin() > 0);
+        ((CircleButtonView) rootLayout.findViewById(R.id.vd_fav)).setChecked(videoModel.isUserFav());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(VideoModel videoModel)
     {
         this.videoModel = videoModel;
-        rootLayout.findViewById(R.id.vd_vd_loading).setVisibility(View.GONE);
+        exceptionHandlerView.loadingEnd();
         setIcon();
-        videoPartAdapter.notifyDataSetChanged();
+        if(videoPartAdapter != null)
+            videoPartAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -357,13 +324,14 @@ public class VideoDetailFragment extends Fragment implements View.OnClickListene
                 @Override
                 public void onVideoDetailActivityLoadingStart()
                 {
-                    handler.post(runnableLoadingStart);
+                    exceptionHandlerView.loadingStart();
                 }
 
                 @Override
                 public void onVideoDetailActivityLoadingFin()
                 {
-                    handler.post(runnableLoadingFin);
+                    exceptionHandlerView.loadingEnd();
+                    setIcon();
                 }
             });
         }

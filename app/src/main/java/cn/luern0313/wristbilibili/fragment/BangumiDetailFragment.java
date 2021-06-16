@@ -8,7 +8,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -19,6 +18,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,6 +31,7 @@ import cn.luern0313.wristbilibili.ui.SelectPartActivity;
 import cn.luern0313.wristbilibili.ui.TextActivity;
 import cn.luern0313.wristbilibili.util.ColorUtil;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
+import cn.luern0313.wristbilibili.widget.CircleButtonView;
 
 /**
  * 被 luern0313 创建于 2020/3/20.
@@ -102,12 +103,12 @@ public class BangumiDetailFragment extends Fragment implements View.OnClickListe
 
         if(!bangumiModel.isRightDownload())
         {
-            rootLayout.findViewById(R.id.bgm_detail_bt_download_lay).setAlpha(0.5f);
-            ((TextView) rootLayout.findViewById(R.id.bgm_detail_bt_download_text)).setText(R.string.bangumi_control_download_notallow);
+            rootLayout.findViewById(R.id.bgm_detail_bt_download).setAlpha(0.5f);
+            ((CircleButtonView) rootLayout.findViewById(R.id.bgm_detail_bt_download)).setDefaultName(getString(R.string.bangumi_control_download_notallow));
         }
 
-        Drawable playNumDrawable = getResources().getDrawable(R.drawable.icon_number_play);
-        Drawable danmakuNumDrawable = getResources().getDrawable(R.drawable.icon_number_like);
+        Drawable playNumDrawable = ResourcesCompat.getDrawable(ctx.getResources(), R.drawable.icon_number_play, null);
+        Drawable danmakuNumDrawable = ResourcesCompat.getDrawable(ctx.getResources(), R.drawable.icon_number_like, null);
         playNumDrawable.setBounds(0, 0, DataProcessUtil.dip2px(12), DataProcessUtil.dip2px(12));
         danmakuNumDrawable.setBounds(0, 0, DataProcessUtil.dip2px(12), DataProcessUtil.dip2px(12));
         ((TextView) rootLayout.findViewById(R.id.bgm_detail_play)).setCompoundDrawables(playNumDrawable, null, null, null);
@@ -158,10 +159,10 @@ public class BangumiDetailFragment extends Fragment implements View.OnClickListe
             startActivity(intent);
         });
 
-        rootLayout.findViewById(R.id.bgm_detail_bt_follow_lay).setOnClickListener(this);
-        rootLayout.findViewById(R.id.bgm_detail_bt_cover_lay).setOnClickListener(this);
-        rootLayout.findViewById(R.id.bgm_detail_bt_download_lay).setOnClickListener(this);
-        rootLayout.findViewById(R.id.bgm_detail_bt_share_lay).setOnClickListener(this);
+        rootLayout.findViewById(R.id.bgm_detail_bt_follow).setOnClickListener(this);
+        rootLayout.findViewById(R.id.bgm_detail_bt_cover).setOnClickListener(this);
+        rootLayout.findViewById(R.id.bgm_detail_bt_download).setOnClickListener(this);
+        rootLayout.findViewById(R.id.bgm_detail_bt_share).setOnClickListener(this);
         rootLayout.findViewById(R.id.bgm_detail_video_part_more).setOnClickListener(this::clickBangumiMorePart);
         rootLayout.findViewById(R.id.bgm_detail_video_other_more).setOnClickListener(this::clickBangumiMoreOther);
 
@@ -170,18 +171,11 @@ public class BangumiDetailFragment extends Fragment implements View.OnClickListe
 
     private void setBangumiIcon()
     {
-        rootLayout.findViewById(R.id.bgm_detail_loading).setVisibility(View.GONE);
+        ((CircleButtonView) rootLayout.findViewById(R.id.bgm_detail_bt_follow)).setChecked(bangumiModel.isUserIsFollow());
         if(bangumiModel.isUserIsFollow())
-        {
-            ((ImageView) rootLayout.findViewById(R.id.bgm_detail_bt_follow)).setImageResource(R.drawable.icon_vdd_do_follow_yes);
-            ((ImageView) rootLayout.findViewById(R.id.bgm_detail_bt_follow)).setColorFilter(ColorUtil.getColor(R.attr.colorAccent, ctx));
-            ((TextView) rootLayout.findViewById(R.id.bgm_detail_bt_follow_text)).setText(String.format(getString(R.string.bangumi_control_follow_unfollow), bangumiModel.getTypeFollow()));
-        }
+            ((CircleButtonView) rootLayout.findViewById(R.id.bgm_detail_bt_follow)).setDefaultName(String.format(getString(R.string.bangumi_control_follow_unfollow), bangumiModel.getTypeFollow()));
         else
-        {
-            ((ImageView) rootLayout.findViewById(R.id.bgm_detail_bt_follow)).setImageResource(R.drawable.icon_vdd_do_follow_no);
-            ((TextView) rootLayout.findViewById(R.id.bgm_detail_bt_follow_text)).setText(bangumiModel.getTypeFollow());
-        }
+            ((CircleButtonView) rootLayout.findViewById(R.id.bgm_detail_bt_follow)).setDefaultName(bangumiModel.getTypeFollow());
     }
 
     private void clickBangumiMorePart(View view)
@@ -272,21 +266,22 @@ public class BangumiDetailFragment extends Fragment implements View.OnClickListe
 
     private String getBangumiInfo()
     {
+        String colorTitle = ColorUtil.getColorString(R.attr.colorTitle, ctx);
         ArrayList<String> detail_info = new ArrayList<>();
-        detail_info.add("<b><big><font color=\"#000000\">" + bangumiModel.getTitle() + "</font></big></b>");
+        detail_info.add("<b><big><font color=\"" + colorTitle + "\">" + bangumiModel.getTitle() + "</font></big></b>");
         detail_info.add("");
         detail_info.add(bangumiModel.getTypeName() + " | " + bangumiModel.getDetailAreas());
         detail_info.add(bangumiModel.getDetailPublishDate());
         detail_info.add(bangumiModel.getDetailPublishEp());
         detail_info.add("风格：" + bangumiModel.getDetailStyles());
         detail_info.add("");
-        detail_info.add("<big><font color=\"#000000\">简介</font></big>");
+        detail_info.add("<big><font color=\"" + colorTitle + "\">简介</font></big>");
         detail_info.add(bangumiModel.getDetailEvaluate());
         detail_info.add("");
-        detail_info.add("<big><font color=\"#000000\">" + bangumiModel.getDetailActorTitle() + "</font></big>");
+        detail_info.add("<big><font color=\"" + colorTitle + "\">" + bangumiModel.getDetailActorTitle() + "</font></big>");
         detail_info.add(bangumiModel.getDetailActorInfo().replaceAll("\n", "<br/>"));
         detail_info.add("");
-        detail_info.add("<big><font color=\"#000000\">" + bangumiModel.getDetailStaffTitle() + "</font></big>");
+        detail_info.add("<big><font color=\"" + colorTitle + "\">" + bangumiModel.getDetailStaffTitle() + "</font></big>");
         detail_info.add(bangumiModel.getDetailStaffInfo().replaceAll("\n", "<br/>"));
         return DataProcessUtil.joinArrayList(detail_info, "<br/>");
     }

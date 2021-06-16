@@ -70,150 +70,43 @@
             android:paddingStart="@dimen/dimen_20_8"
             android:paddingEnd="@dimen/dimen_20_8">
 
-            <LinearLayout
+            <cn.luern0313.wristbilibili.widget.CircleButtonView
                 android:id="@+id/article_article_bt_cover"
-                android:layout_width="55dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="2dp"
-                android:background="?android:attr/selectableItemBackground"
-                android:clickable="true"
-                android:descendantFocusability="blocksDescendants"
-                android:focusable="true"
-                android:gravity="center_horizontal"
-                android:orientation="vertical"
-                android:padding="3dp">
+                app:name_default="@string/article_button_cover"
+                app:src_unchecked="@drawable/icon_vdd_play_cover" />
 
-                <ImageView
-                    android:layout_width="38dp"
-                    android:layout_height="38dp"
-                    android:src="@drawable/icon_vdd_play_cover" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="查看封面"
-                    android:textSize="12sp" />
-
-            </LinearLayout>
-
-
-            <LinearLayout
+            <cn.luern0313.wristbilibili.widget.CircleButtonView
                 android:id="@+id/article_article_bt_like"
-                android:layout_width="55dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="2dp"
-                android:background="?android:attr/selectableItemBackground"
-                android:clickable="true"
-                android:descendantFocusability="blocksDescendants"
-                android:focusable="true"
-                android:gravity="center_horizontal"
-                android:orientation="vertical"
-                android:padding="3dp">
+                app:name_default="@string/article_button_like"
+                app:src_checked="@drawable/icon_vdd_do_like_yes"
+                app:src_unchecked="@drawable/icon_vdd_do_like_no" />
 
-                <ImageView
-                    android:id="@+id/article_article_bt_like_img"
-                    android:layout_width="38dp"
-                    android:layout_height="38dp"
-                    android:src="@drawable/icon_vdd_do_like_no" />
-
-                <TextView
-                    android:id="@+id/article_article_bt_like_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="点赞"
-                    android:textSize="12sp" />
-
-            </LinearLayout>
-
-
-            <LinearLayout
+            <cn.luern0313.wristbilibili.widget.CircleButtonView
                 android:id="@+id/article_article_bt_coin"
-                android:layout_width="55dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="2dp"
-                android:background="?android:attr/selectableItemBackground"
-                android:clickable="true"
-                android:descendantFocusability="blocksDescendants"
-                android:focusable="true"
-                android:gravity="center_horizontal"
-                android:orientation="vertical"
-                android:padding="3dp">
+                app:name_default="@string/article_button_coin"
+                app:src_checked="@drawable/icon_vdd_do_coin_yes"
+                app:src_unchecked="@drawable/icon_vdd_do_coin_no" />
 
-                <ImageView
-                    android:id="@+id/article_article_bt_coin_img"
-                    android:layout_width="38dp"
-                    android:layout_height="38dp"
-                    android:src="@drawable/icon_vdd_do_coin_no" />
-
-                <TextView
-                    android:id="@+id/article_article_bt_coin_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="投币"
-                    android:textSize="12sp" />
-
-            </LinearLayout>
-
-
-            <LinearLayout
+            <cn.luern0313.wristbilibili.widget.CircleButtonView
                 android:id="@+id/article_article_bt_fav"
-                android:layout_width="55dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="2dp"
-                android:background="?android:attr/selectableItemBackground"
-                android:clickable="true"
-                android:descendantFocusability="blocksDescendants"
-                android:focusable="true"
-                android:gravity="center_horizontal"
-                android:orientation="vertical"
-                android:padding="3dp">
+                app:name_default="@string/article_button_favor"
+                app:src_checked="@drawable/icon_vdd_do_fav_yes"
+                app:src_unchecked="@drawable/icon_vdd_do_fav_no" />
 
-                <ImageView
-                    android:id="@+id/article_article_bt_fav_img"
-                    android:layout_width="38dp"
-                    android:layout_height="38dp"
-                    android:src="@drawable/icon_vdd_do_fav_no" />
-
-                <TextView
-                    android:id="@+id/article_article_bt_fav_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="收藏"
-                    android:textSize="12sp" />
-
-            </LinearLayout>
-
-            <LinearLayout
+            <cn.luern0313.wristbilibili.widget.CircleButtonView
                 android:id="@+id/article_article_bt_share"
-                android:layout_width="55dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="20dp"
-                android:background="?android:attr/selectableItemBackground"
-                android:clickable="true"
-                android:descendantFocusability="blocksDescendants"
-                android:focusable="true"
-                android:gravity="center_horizontal"
-                android:orientation="vertical"
-                android:padding="3dp">
-
-                <ImageView
-                    android:layout_width="38dp"
-                    android:layout_height="38dp"
-                    android:src="@drawable/icon_vdd_play_share" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="转发"
-                    android:textSize="12sp" />
-
-            </LinearLayout>
+                app:name_default="@string/article_button_share"
+                app:src_unchecked="@drawable/icon_vdd_play_share" />
 
         </LinearLayout>
     </HorizontalScrollView>
@@ -226,11 +119,11 @@
         android:layout_marginBottom="10dp"
         android:background="?android:attr/selectableItemBackground"
         android:clickable="true"
-        android:focusable="true"
         android:descendantFocusability="blocksDescendants"
-        android:paddingStart="22dp"
-        android:paddingEnd="22dp"
+        android:focusable="true"
+        android:paddingStart="@dimen/dimen_22_10"
         android:paddingTop="4dp"
+        android:paddingEnd="@dimen/dimen_22_10"
         android:paddingBottom="4dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -243,10 +136,9 @@
             android:id="@+id/article_card_off_1"
             android:layout_width="16dp"
             android:layout_height="16dp"
-            android:layout_marginEnd="-2dp"
-            android:layout_marginBottom="-2dp"
             android:layout_alignEnd="@id/article_card_head"
             android:layout_alignBottom="@id/article_card_head"
+            android:layout_marginEnd="-2dp"
             android:src="@drawable/icon_ou_ver_1"
             android:visibility="gone" />
 
@@ -254,10 +146,9 @@
             android:id="@+id/article_card_off_2"
             android:layout_width="16dp"
             android:layout_height="16dp"
-            android:layout_marginEnd="-2dp"
-            android:layout_marginBottom="-2dp"
             android:layout_alignEnd="@id/article_card_head"
             android:layout_alignBottom="@id/article_card_head"
+            android:layout_marginEnd="-2dp"
             android:src="@drawable/icon_ou_ver_2"
             android:visibility="gone" />
 
@@ -269,17 +160,17 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_marginEnd="-6dp"
-            android:text="+关注"
+            android:text="@string/article_author_follow"
             android:textColor="@color/white"
             android:textSize="11sp" />
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:layout_marginStart="5dp"
             android:layout_toStartOf="@id/article_card_follow"
             android:layout_toEndOf="@id/article_card_head"
-            android:layout_centerVertical="true"
             android:orientation="vertical">
 
             <TextView

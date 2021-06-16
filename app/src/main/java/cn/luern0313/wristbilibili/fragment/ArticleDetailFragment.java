@@ -40,8 +40,8 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
 {
     private static final String ARG_ARTICLE_MODEL = "articleModelArg";
 
-    Context ctx;
-    View rootLayout;
+    private Context ctx;
+    private View rootLayout;
     private ArticleModel articleModel;
     private ArticleAdapter articleAdapter;
     private ArticleDetailFragmentListener articleDetailFragmentListener;
@@ -156,36 +156,13 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
 
     private void setArticleIcon()
     {
-        rootLayout.findViewById(R.id.article_article_loading).setVisibility(View.GONE);
-        if(articleModel.isUserLike())
-            ((ImageView) layoutArticleHeader.findViewById(R.id.article_article_bt_like_img)).setImageResource(R.drawable.icon_vdd_do_like_yes);
-        else
-            ((ImageView) layoutArticleHeader.findViewById(R.id.article_article_bt_like_img)).setImageResource(R.drawable.icon_vdd_do_like_no);
+        ((CircleButtonView) layoutArticleHeader.findViewById(R.id.article_article_bt_like)).setChecked(articleModel.isUserLike());
+        ((CircleButtonView) layoutArticleHeader.findViewById(R.id.article_article_bt_coin)).setChecked(articleModel.getUserCoin() == 1);
+        ((CircleButtonView) layoutArticleHeader.findViewById(R.id.article_article_bt_fav)).setChecked(articleModel.isUserFavor());
 
-        if(articleModel.getUserCoin() == 1)
-            ((ImageView) layoutArticleHeader.findViewById(R.id.article_article_bt_coin_img)).setImageResource(R.drawable.icon_vdd_do_coin_yes);
-        else
-            ((ImageView) layoutArticleHeader.findViewById(R.id.article_article_bt_coin_img)).setImageResource(R.drawable.icon_vdd_do_coin_no);
-
-        if(articleModel.isUserFavor())
-            ((ImageView) layoutArticleHeader.findViewById(R.id.article_article_bt_fav_img)).setImageResource(R.drawable.icon_vdd_do_fav_yes);
-        else
-            ((ImageView) layoutArticleHeader.findViewById(R.id.article_article_bt_fav_img)).setImageResource(R.drawable.icon_vdd_do_fav_no);
-
-        if(articleModel.getLike() == 0)
-            ((TextView) layoutArticleHeader.findViewById(R.id.article_article_bt_like_text)).setText("点赞");
-        else
-            ((TextView) layoutArticleHeader.findViewById(R.id.article_article_bt_like_text)).setText(DataProcessUtil.getView(articleModel.getLike()));
-
-        if(articleModel.getCoin() == 0)
-            ((TextView) layoutArticleHeader.findViewById(R.id.article_article_bt_coin_text)).setText("投币");
-        else
-            ((TextView) layoutArticleHeader.findViewById(R.id.article_article_bt_coin_text)).setText(DataProcessUtil.getView(articleModel.getCoin()));
-
-        if(articleModel.getFavor() == 0)
-            ((TextView) layoutArticleHeader.findViewById(R.id.article_article_bt_fav_text)).setText("收藏");
-        else
-            ((TextView) layoutArticleHeader.findViewById(R.id.article_article_bt_fav_text)).setText(DataProcessUtil.getView(articleModel.getFavor()));
+        ((CircleButtonView) layoutArticleHeader.findViewById(R.id.article_article_bt_like)).setNameNumber(articleModel.getLike());
+        ((CircleButtonView) layoutArticleHeader.findViewById(R.id.article_article_bt_coin)).setNameNumber(articleModel.getCoin());
+        ((CircleButtonView) layoutArticleHeader.findViewById(R.id.article_article_bt_fav)).setNameNumber(articleModel.getFavor());
 
         if(articleModel.isUserFollowUp())
             layoutArticleHeader.findViewById(R.id.article_card_follow).setVisibility(View.GONE);
@@ -213,7 +190,7 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
         {
             Uri uri = Uri.parse(articleCardModel.getCardUrl());
             Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-            intent.setClass(getContext(), UnsupportedLinkActivity.class);
+            intent.setClass(ctx, UnsupportedLinkActivity.class);
             startActivity(intent);
         }
     }
@@ -228,7 +205,6 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
     public void onEventMainThread(ArticleModel articleModel)
     {
         this.articleModel = articleModel;
-        rootLayout.findViewById(R.id.article_article_loading).setVisibility(View.GONE);
         setArticleIcon();
     }
 

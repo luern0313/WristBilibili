@@ -190,168 +190,40 @@
                         android:paddingStart="@dimen/dimen_20_8"
                         android:paddingEnd="@dimen/dimen_20_8">
 
-                        <LinearLayout
+                        <cn.luern0313.wristbilibili.widget.CircleButtonView
                             android:id="@+id/vd_bt_cover"
-                            android:layout_width="55dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="20dp"
-                            android:layout_marginEnd="2dp"
-                            android:background="?android:attr/selectableItemBackground"
-                            android:clickable="true"
-                            android:descendantFocusability="blocksDescendants"
-                            android:focusable="true"
-                            android:gravity="center_horizontal"
-                            android:orientation="vertical"
-                            android:padding="3dp">
+                            app:name_default="@string/video_control_cover"
+                            app:src_unchecked="@drawable/icon_vdd_play_cover" />
 
-                            <ImageView
-                                android:layout_width="38dp"
-                                android:layout_height="38dp"
-                                android:src="@drawable/icon_vdd_play_cover" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="6dp"
-                                android:text="@string/video_control_cover"
-                                android:textSize="12sp" />
-
-                        </LinearLayout>
-
-                        <LinearLayout
+                        <cn.luern0313.wristbilibili.widget.CircleButtonView
                             android:id="@+id/vd_bt_play"
-                            android:layout_width="55dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginEnd="2dp"
-                            android:background="?android:attr/selectableItemBackground"
-                            android:clickable="true"
-                            android:descendantFocusability="blocksDescendants"
-                            android:focusable="true"
-                            android:gravity="center_horizontal"
-                            android:orientation="vertical"
-                            android:padding="3dp">
+                            app:name_default="@string/video_control_play"
+                            app:src_unchecked="@drawable/icon_vdd_play_play" />
 
-                            <ImageView
-                                android:layout_width="38dp"
-                                android:layout_height="38dp"
-                                android:src="@drawable/icon_vdd_play_play" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="6dp"
-                                android:text="@string/video_control_play"
-                                android:textSize="12sp" />
-
-                        </LinearLayout>
-
-                        <LinearLayout
+                        <cn.luern0313.wristbilibili.widget.CircleButtonView
                             android:id="@+id/vd_bt_watchlater"
-                            android:layout_width="55dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginEnd="2dp"
-                            android:background="?android:attr/selectableItemBackground"
-                            android:clickable="true"
-                            android:descendantFocusability="blocksDescendants"
-                            android:focusable="true"
-                            android:gravity="center_horizontal"
-                            android:orientation="vertical"
-                            android:padding="3dp">
+                            app:name_default="@string/video_control_watchlater"
+                            app:src_unchecked="@drawable/icon_vdd_play_later" />
 
-                            <ImageView
-                                android:layout_width="38dp"
-                                android:layout_height="38dp"
-                                android:src="@drawable/icon_vdd_play_later" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="6dp"
-                                android:text="@string/video_control_watchlater"
-                                android:textSize="12sp" />
-
-                        </LinearLayout>
-
-                        <LinearLayout
+                        <cn.luern0313.wristbilibili.widget.CircleButtonView
                             android:id="@+id/vd_bt_download"
-                            android:layout_width="55dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginEnd="2dp"
-                            android:background="?android:attr/selectableItemBackground"
-                            android:clickable="true"
-                            android:descendantFocusability="blocksDescendants"
-                            android:focusable="true"
-                            android:gravity="center_horizontal"
-                            android:orientation="vertical"
-                            android:padding="3dp">
+                            app:name_default="@string/video_control_download"
+                            app:src_unchecked="@drawable/icon_vdd_play_download" />
 
-                            <ImageView
-                                android:layout_width="38dp"
-                                android:layout_height="38dp"
-                                android:src="@drawable/icon_vdd_play_download" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="6dp"
-                                android:text="@string/video_control_download"
-                                android:textSize="12sp" />
-
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:id="@+id/vd_bt_history"
-                            android:layout_width="55dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="2dp"
-                            android:background="?android:attr/selectableItemBackground"
-                            android:clickable="true"
-                            android:descendantFocusability="blocksDescendants"
-                            android:focusable="true"
-                            android:gravity="center_horizontal"
-                            android:orientation="vertical"
-                            android:padding="3dp">
-
-                            <ImageView
-                                android:layout_width="38dp"
-                                android:layout_height="38dp"
-                                android:src="@drawable/icon_vdd_play_histoty" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="6dp"
-                                android:text="@string/video_control_history"
-                                android:textSize="12sp" />
-                        </LinearLayout>
-
-                        <LinearLayout
+                        <cn.luern0313.wristbilibili.widget.CircleButtonView
                             android:id="@+id/vd_bt_share"
-                            android:layout_width="55dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginEnd="20dp"
-                            android:background="?android:attr/selectableItemBackground"
-                            android:clickable="true"
-                            android:descendantFocusability="blocksDescendants"
-                            android:focusable="true"
-                            android:gravity="center_horizontal"
-                            android:orientation="vertical"
-                            android:padding="3dp">
-
-                            <ImageView
-                                android:layout_width="38dp"
-                                android:layout_height="38dp"
-                                android:src="@drawable/icon_vdd_play_share" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="6dp"
-                                android:text="@string/video_control_share"
-                                android:textSize="12sp" />
-
-                        </LinearLayout>
-
+                            app:name_default="@string/video_control_share"
+                            app:src_unchecked="@drawable/icon_vdd_play_share" />
                     </LinearLayout>
                 </HorizontalScrollView>
 
@@ -368,184 +240,39 @@
                         android:paddingStart="@dimen/dimen_20_8"
                         android:paddingEnd="@dimen/dimen_20_8">
 
-
-                        <LinearLayout
+                        <cn.luern0313.wristbilibili.widget.CircleButtonView
                             android:id="@+id/vd_like"
-                            android:layout_width="55dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="20dp"
-                            android:layout_marginEnd="2dp"
-                            android:background="?android:attr/selectableItemBackground"
-                            android:clickable="true"
-                            android:descendantFocusability="blocksDescendants"
-                            android:focusable="true"
-                            android:gravity="center_horizontal"
-                            android:orientation="vertical"
-                            android:padding="3dp">
+                            app:name_default="@string/video_control_like"
+                            app:src_checked="@drawable/icon_vdd_do_like_yes"
+                            app:src_unchecked="@drawable/icon_vdd_do_like_no" />
 
-                            <RelativeLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content">
-
-                                <ImageView
-                                    android:id="@+id/vd_like_img"
-                                    android:layout_width="38dp"
-                                    android:layout_height="38dp"
-                                    android:src="@drawable/icon_vdd_do_like_no_nobg" />
-
-                                <ImageView
-                                    android:id="@+id/vd_like_img_bg"
-                                    android:layout_width="38dp"
-                                    android:layout_height="38dp"
-                                    android:src="@drawable/icon_vdd_do_no_bg" />
-
-                            </RelativeLayout>
-
-                            <TextView
-                                android:id="@+id/vd_like_text"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="6dp"
-                                android:text="@string/video_control_like"
-                                android:textSize="12sp" />
-
-                        </LinearLayout>
-
-
-                        <LinearLayout
+                        <cn.luern0313.wristbilibili.widget.CircleButtonView
                             android:id="@+id/vd_coin"
-                            android:layout_width="55dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginEnd="2dp"
-                            android:background="?android:attr/selectableItemBackground"
-                            android:clickable="true"
-                            android:descendantFocusability="blocksDescendants"
-                            android:focusable="true"
-                            android:gravity="center_horizontal"
-                            android:orientation="vertical"
-                            android:padding="3dp">
+                            app:is_progress="true"
+                            app:name_default="@string/video_control_coin"
+                            app:src_checked="@drawable/icon_vdd_do_coin_yes"
+                            app:src_unchecked="@drawable/icon_vdd_do_coin_no" />
 
-                            <RelativeLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content">
-
-                                <ImageView
-                                    android:id="@+id/vd_coin_img"
-                                    android:layout_width="38dp"
-                                    android:layout_height="38dp"
-                                    android:src="@drawable/icon_vdd_do_coin_no_nobg" />
-
-                                <ImageView
-                                    android:id="@+id/vd_coin_img_bg"
-                                    android:layout_width="38dp"
-                                    android:layout_height="38dp"
-                                    android:src="@drawable/icon_vdd_do_no_bg" />
-
-                                <com.king.view.circleprogressview.CircleProgressView
-                                    android:id="@+id/vd_coin_progress"
-                                    android:layout_width="38dp"
-                                    android:layout_height="38dp"
-                                    android:visibility="gone"
-                                    app:cpvCirclePadding="0dp"
-                                    app:cpvNormalColor="#00000000"
-                                    app:cpvProgressColor="?attr/colorAccent"
-                                    app:cpvShowLabel="false"
-                                    app:cpvShowTick="false"
-                                    app:cpvStrokeWidth="3dp" />
-
-                            </RelativeLayout>
-
-                            <TextView
-                                android:id="@+id/vd_coin_text"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="6dp"
-                                android:text="@string/video_control_coin"
-                                android:textSize="12sp" />
-
-                        </LinearLayout>
-
-                        <LinearLayout
+                        <cn.luern0313.wristbilibili.widget.CircleButtonView
                             android:id="@+id/vd_fav"
-                            android:layout_width="55dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginEnd="2dp"
-                            android:background="?android:attr/selectableItemBackground"
-                            android:clickable="true"
-                            android:descendantFocusability="blocksDescendants"
-                            android:focusable="true"
-                            android:gravity="center_horizontal"
-                            android:orientation="vertical"
-                            android:padding="3dp">
+                            app:is_progress="true"
+                            app:name_default="@string/video_control_fav"
+                            app:src_checked="@drawable/icon_vdd_do_fav_yes"
+                            app:src_unchecked="@drawable/icon_vdd_do_fav_no" />
 
-                            <RelativeLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content">
-
-                                <ImageView
-                                    android:id="@+id/vd_fav_img"
-                                    android:layout_width="38dp"
-                                    android:layout_height="38dp"
-                                    android:src="@drawable/icon_vdd_do_fav_no_nobg" />
-
-                                <ImageView
-                                    android:id="@+id/vd_fav_img_bg"
-                                    android:layout_width="38dp"
-                                    android:layout_height="38dp"
-                                    android:src="@drawable/icon_vdd_do_no_bg" />
-
-                                <com.king.view.circleprogressview.CircleProgressView
-                                    android:id="@+id/vd_fav_progress"
-                                    android:layout_width="38dp"
-                                    android:layout_height="38dp"
-                                    android:visibility="gone"
-                                    app:cpvCirclePadding="0dp"
-                                    app:cpvNormalColor="#00000000"
-                                    app:cpvProgressColor="?attr/colorAccent"
-                                    app:cpvShowLabel="false"
-                                    app:cpvShowTick="false"
-                                    app:cpvStrokeWidth="3dp" />
-
-                            </RelativeLayout>
-
-                            <TextView
-                                android:id="@+id/vd_fav_text"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="6dp"
-                                android:text="@string/video_control_fav"
-                                android:textSize="12sp" />
-
-                        </LinearLayout>
-
-                        <LinearLayout
+                        <cn.luern0313.wristbilibili.widget.CircleButtonView
                             android:id="@+id/vd_dislike"
-                            android:layout_width="55dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginEnd="20dp"
-                            android:background="?android:attr/selectableItemBackground"
-                            android:clickable="true"
-                            android:descendantFocusability="blocksDescendants"
-                            android:focusable="true"
-                            android:gravity="center_horizontal"
-                            android:orientation="vertical"
-                            android:padding="3dp">
-
-                            <ImageView
-                                android:id="@+id/vd_dislike_img"
-                                android:layout_width="38dp"
-                                android:layout_height="38dp"
-                                android:src="@drawable/icon_vdd_do_dislike_no" />
-
-                            <TextView
-                                android:id="@+id/vd_dislike_text"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="6dp"
-                                android:text="@string/video_control_dislike"
-                                android:textSize="12sp" />
-
-                        </LinearLayout>
+                            app:name_default="@string/video_control_dislike"
+                            app:src_checked="@drawable/icon_vdd_do_dislike_yes"
+                            app:src_unchecked="@drawable/icon_vdd_do_dislike_no" />
 
                     </LinearLayout>
                 </HorizontalScrollView>

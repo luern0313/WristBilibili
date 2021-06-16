@@ -1,369 +1,254 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:paddingTop="@dimen/titleHeight"
     tools:ignore="RtlSymmetry,SmallSp,ContentDescription">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:paddingTop="@dimen/titleHeight">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingBottom="28dp">
-
-            <TextView
-                android:id="@+id/bgm_detail_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/dimen_23_11"
-                android:layout_marginTop="8dp"
-                android:layout_marginRight="@dimen/dimen_23_11"
-                android:textColor="?attr/colorTitle"
-                android:textStyle="bold"
-                tools:text="颠倒的帕特玛" />
-
-            <cn.luern0313.wristbilibili.widget.AutoLineLayout
-                android:id="@+id/bgm_detail_info"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?android:attr/selectableItemBackground"
-                android:clickable="true"
-                android:focusable="true"
-                android:orientation="horizontal"
-                android:paddingLeft="@dimen/dimen_23_11"
-                android:paddingTop="4dp"
-                android:paddingRight="@dimen/dimen_23_11"
-                android:paddingBottom="4dp">
-
-                <TextView
-                    android:id="@+id/bgm_detail_score"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingEnd="6dp"
-                    android:textColor="@color/orange"
-                    android:textSize="12sp"
-                    tools:text="9.7分" />
-
-                <TextView
-                    android:id="@+id/bgm_detail_play"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingEnd="6dp"
-                    android:textSize="12sp"
-                    tools:text="151.9万" />
-
-                <TextView
-                    android:id="@+id/bgm_detail_like"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingEnd="6dp"
-                    android:textSize="12sp"
-                    tools:text="18.7万" />
-
-                <TextView
-                    android:id="@+id/bgm_detail_series"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingEnd="6dp"
-                    android:textSize="12sp"
-                    tools:text="已完结，全一话" />
-
-                <TextView
-                    android:id="@+id/bgm_detail_needvip"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingEnd="6dp"
-                    android:textSize="12sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/bangumi_detail_more"
-                    android:textColor="?attr/colorAccent"
-                    android:textSize="12sp" />
-            </cn.luern0313.wristbilibili.widget.AutoLineLayout>
-
-            <HorizontalScrollView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:scrollbars="none">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:clipToPadding="false"
-                    android:orientation="horizontal"
-                    android:paddingStart="@dimen/dimen_20_8"
-                    android:paddingEnd="@dimen/dimen_20_8">
-
-                    <LinearLayout
-                        android:id="@+id/bgm_detail_bt_follow_lay"
-                        android:layout_width="55dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginEnd="2dp"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:clickable="true"
-                        android:descendantFocusability="blocksDescendants"
-                        android:focusable="true"
-                        android:gravity="center_horizontal"
-                        android:orientation="vertical"
-                        android:padding="3dp">
-
-                        <ImageView
-                            android:id="@+id/bgm_detail_bt_follow"
-                            android:layout_width="38dp"
-                            android:layout_height="38dp"
-                            android:src="@drawable/icon_vdd_do_follow_no" />
-
-                        <TextView
-                            android:id="@+id/bgm_detail_bt_follow_text"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="6dp"
-                            android:textSize="12sp" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/bgm_detail_bt_cover_lay"
-                        android:layout_width="55dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="2dp"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:clickable="true"
-                        android:descendantFocusability="blocksDescendants"
-                        android:focusable="true"
-                        android:gravity="center_horizontal"
-                        android:orientation="vertical"
-                        android:padding="3dp">
-
-                        <ImageView
-                            android:layout_width="38dp"
-                            android:layout_height="38dp"
-                            android:src="@drawable/icon_vdd_play_cover" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="6dp"
-                            android:text="查看封面"
-                            android:textSize="12sp" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/bgm_detail_bt_download_lay"
-                        android:layout_width="55dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="2dp"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:clickable="true"
-                        android:descendantFocusability="blocksDescendants"
-                        android:focusable="true"
-                        android:gravity="center_horizontal"
-                        android:orientation="vertical"
-                        android:padding="3dp">
-
-                        <ImageView
-                            android:id="@+id/bgm_detail_bt_download_img"
-                            android:layout_width="38dp"
-                            android:layout_height="38dp"
-                            android:src="@drawable/icon_vdd_play_download" />
-
-                        <TextView
-                            android:id="@+id/bgm_detail_bt_download_text"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="6dp"
-                            android:text="缓存"
-                            android:textSize="12sp" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/bgm_detail_bt_share_lay"
-                        android:layout_width="55dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="20dp"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:clickable="true"
-                        android:descendantFocusability="blocksDescendants"
-                        android:focusable="true"
-                        android:gravity="center_horizontal"
-                        android:orientation="vertical"
-                        android:padding="3dp">
-
-                        <ImageView
-                            android:layout_width="38dp"
-                            android:layout_height="38dp"
-                            android:src="@drawable/icon_vdd_play_share" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="6dp"
-                            android:text="转发"
-                            android:textSize="12sp" />
-
-                    </LinearLayout>
-
-                </LinearLayout>
-            </HorizontalScrollView>
-
-            <LinearLayout
-                android:id="@+id/bgm_detail_video_part_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:gravity="center_vertical"
-                android:orientation="vertical"
-                android:visibility="gone"
-                tools:visibility="visible">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:paddingStart="@dimen/dimen_21_9"
-                    android:paddingEnd="@dimen/dimen_16_9">
-
-                    <TextView
-                        android:id="@+id/bgm_detail_video_part_text"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:ellipsize="end"
-                        android:lines="1"
-                        android:textColor="?android:attr/textColorHint"
-                        android:textSize="13sp"
-                        tools:text="正片-共1话" />
-
-                    <TextView
-                        android:id="@+id/bgm_detail_video_part_more"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="查看全部>"
-                        android:textColor="?android:attr/textColorHint"
-                        android:textSize="12sp" />
-                </LinearLayout>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/bgm_detail_video_part"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:clipToPadding="false"
-                    android:divider="@color/alpha"
-                    android:dividerPadding="4dp"
-                    android:paddingLeft="@dimen/dimen_21_9"
-                    android:paddingRight="@dimen/dimen_21_9"
-                    android:scrollbars="none" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/bgm_detail_video_other_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:gravity="center_vertical"
-                android:orientation="vertical"
-                android:visibility="gone"
-                tools:visibility="visible">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:paddingStart="@dimen/dimen_21_9"
-                    android:paddingEnd="@dimen/dimen_16_9">
-
-                    <TextView
-                        android:id="@+id/bgm_detail_video_other_text"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:ellipsize="end"
-                        android:lines="1"
-                        android:textColor="?android:attr/textColorHint"
-                        android:textSize="13sp"
-                        tools:text="其他" />
-
-                    <TextView
-                        android:id="@+id/bgm_detail_video_other_more"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="查看全部>"
-                        android:textColor="?android:attr/textColorHint"
-                        android:textSize="12sp" />
-                </LinearLayout>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/bgm_detail_video_other"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:clipToPadding="false"
-                    android:divider="@color/alpha"
-                    android:dividerPadding="4dp"
-                    android:paddingLeft="@dimen/dimen_21_9"
-                    android:paddingRight="@dimen/dimen_21_9"
-                    android:scrollbars="none" />
-
-            </LinearLayout>
-
-            <HorizontalScrollView
-                android:id="@+id/bgm_detail_video_season_layout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="4dp"
-                android:clipToPadding="false"
-                android:paddingLeft="@dimen/dimen_21_9"
-                android:paddingRight="@dimen/dimen_21_9"
-                android:scrollbars="none"
-                android:visibility="gone"
-                tools:visibility="visible">
-
-                <LinearLayout
-                    android:id="@+id/bgm_detail_video_season"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:divider="@color/alpha"
-                    android:dividerPadding="4dp"
-                    android:orientation="horizontal" />
-
-            </HorizontalScrollView>
-        </LinearLayout>
-
-    </ScrollView>
-
     <LinearLayout
-        android:id="@+id/bgm_detail_loading"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/tipBG"
-        android:clickable="true"
-        android:focusable="true"
-        android:gravity="center"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:visibility="gone">
-
-        <ProgressBar
-            style="?android:attr/progressBarStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+        android:paddingBottom="28dp">
 
         <TextView
+            android:id="@+id/bgm_detail_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dimen_23_11"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="@dimen/dimen_23_11"
+            android:textColor="?attr/colorTitle"
+            android:textStyle="bold"
+            tools:text="颠倒的帕特玛" />
+
+        <cn.luern0313.wristbilibili.widget.AutoLineLayout
+            android:id="@+id/bgm_detail_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/dimen_23_11"
             android:paddingTop="4dp"
-            android:text="  加载中..."
-            android:textColor="@color/white" />
+            android:paddingRight="@dimen/dimen_23_11"
+            android:paddingBottom="4dp">
+
+            <TextView
+                android:id="@+id/bgm_detail_score"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="6dp"
+                android:textColor="@color/orange"
+                android:textSize="12sp"
+                tools:text="9.7分" />
+
+            <TextView
+                android:id="@+id/bgm_detail_play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="6dp"
+                android:textSize="12sp"
+                tools:text="151.9万" />
+
+            <TextView
+                android:id="@+id/bgm_detail_like"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="6dp"
+                android:textSize="12sp"
+                tools:text="18.7万" />
+
+            <TextView
+                android:id="@+id/bgm_detail_series"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="6dp"
+                android:textSize="12sp"
+                tools:text="已完结，全一话" />
+
+            <TextView
+                android:id="@+id/bgm_detail_needvip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="6dp"
+                android:textSize="12sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/bangumi_detail_more"
+                android:textColor="?attr/colorAccent"
+                android:textSize="12sp" />
+        </cn.luern0313.wristbilibili.widget.AutoLineLayout>
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/dimen_20_8"
+                android:paddingEnd="@dimen/dimen_20_8">
+
+                <cn.luern0313.wristbilibili.widget.CircleButtonView
+                    android:id="@+id/bgm_detail_bt_follow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:src_checked="@drawable/icon_vdd_do_follow_yes"
+                    app:src_unchecked="@drawable/icon_vdd_do_follow_no" />
+
+                <cn.luern0313.wristbilibili.widget.CircleButtonView
+                    android:id="@+id/bgm_detail_bt_cover"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:name_default="@string/bangumi_control_cover"
+                    app:src_unchecked="@drawable/icon_vdd_play_cover" />
+
+                <cn.luern0313.wristbilibili.widget.CircleButtonView
+                    android:id="@+id/bgm_detail_bt_download"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:name_default="@string/bangumi_control_download_allow"
+                    app:src_unchecked="@drawable/icon_vdd_play_download" />
+
+                <cn.luern0313.wristbilibili.widget.CircleButtonView
+                    android:id="@+id/bgm_detail_bt_share"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:name_default="@string/bangumi_control_share"
+                    app:src_unchecked="@drawable/icon_vdd_play_share" />
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <LinearLayout
+            android:id="@+id/bgm_detail_video_part_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:paddingStart="@dimen/dimen_21_9"
+                android:paddingEnd="@dimen/dimen_16_9">
+
+                <TextView
+                    android:id="@+id/bgm_detail_video_part_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:lines="1"
+                    android:textColor="?android:attr/textColorHint"
+                    android:textSize="13sp"
+                    tools:text="正片-共1话" />
+
+                <TextView
+                    android:id="@+id/bgm_detail_video_part_more"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/bangumi_part_more"
+                    android:textColor="?android:attr/textColorHint"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/bgm_detail_video_part"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:divider="@color/alpha"
+                android:dividerPadding="4dp"
+                android:paddingLeft="@dimen/dimen_21_9"
+                android:paddingRight="@dimen/dimen_21_9"
+                android:scrollbars="none" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/bgm_detail_video_other_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:paddingStart="@dimen/dimen_21_9"
+                android:paddingEnd="@dimen/dimen_16_9">
+
+                <TextView
+                    android:id="@+id/bgm_detail_video_other_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:lines="1"
+                    android:textColor="?android:attr/textColorHint"
+                    android:textSize="13sp"
+                    tools:text="其他" />
+
+                <TextView
+                    android:id="@+id/bgm_detail_video_other_more"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/bangumi_part_more"
+                    android:textColor="?android:attr/textColorHint"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/bgm_detail_video_other"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:divider="@color/alpha"
+                android:dividerPadding="4dp"
+                android:paddingLeft="@dimen/dimen_21_9"
+                android:paddingRight="@dimen/dimen_21_9"
+                android:scrollbars="none" />
+
+        </LinearLayout>
+
+        <HorizontalScrollView
+            android:id="@+id/bgm_detail_video_season_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="4dp"
+            android:clipToPadding="false"
+            android:paddingLeft="@dimen/dimen_21_9"
+            android:paddingRight="@dimen/dimen_21_9"
+            android:scrollbars="none"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <LinearLayout
+                android:id="@+id/bgm_detail_video_season"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:divider="@color/alpha"
+                android:dividerPadding="4dp"
+                android:orientation="horizontal" />
+
+        </HorizontalScrollView>
     </LinearLayout>
-</RelativeLayout>
+</ScrollView>
