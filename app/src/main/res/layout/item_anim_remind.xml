@@ -2,71 +2,77 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/anre_lay"
+    android:id="@+id/item_anim_remind_lay"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingLeft="20dp"
-    android:paddingRight="20dp"
+    android:background="?android:attr/selectableItemBackground"
     android:clickable="true"
-    android:focusable="true"
     android:descendantFocusability="blocksDescendants"
-    android:background="?android:attr/selectableItemBackground">
+    android:focusable="true"
+    android:paddingLeft="@dimen/dimen_20_10"
+    android:paddingRight="@dimen/dimen_20_10"
+    tools:ignore="ContentDescription,SmallSp">
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/anre_imgc"
+        android:id="@+id/item_anim_remind_img_lay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:layout_marginRight="4dp"
         android:layout_marginTop="2dp"
-        app:cardCornerRadius="8dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="2dp"
+        app:cardCornerRadius="4dp"
         app:cardElevation="0dp">
 
         <ImageView
-            android:id="@+id/anre_img"
+            android:id="@+id/item_anim_remind_img"
             android:layout_width="56dp"
             android:layout_height="56dp"
             android:src="@drawable/img_default_animation" />
     </androidx.cardview.widget.CardView>
 
     <TextView
-        android:id="@+id/anre_name"
+        android:id="@+id/item_anim_remind_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:layout_toRightOf="@+id/anre_imgc" />
+        android:layout_marginTop="1dp"
+        android:layout_toEndOf="@+id/item_anim_remind_img_lay"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:textColor="?attr/colorTitle"
+        android:textSize="13sp"
+        android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/anre_isfollow"
+        android:id="@+id/item_anim_remind_follow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/anre_name"
+        android:layout_below="@+id/item_anim_remind_name"
         android:layout_marginTop="2dp"
-        android:layout_toRightOf="@+id/anre_imgc"
+        android:layout_toEndOf="@+id/item_anim_remind_img_lay"
         android:background="@drawable/shape_bg_anre_followbg"
-        android:paddingBottom="1dp"
-        android:paddingEnd="3dp"
         android:paddingStart="3dp"
         android:paddingTop="1dp"
-        android:text="已追番"
+        android:paddingEnd="3dp"
+        android:paddingBottom="1dp"
+        android:text="@string/animation_timeline_follow"
         android:textColor="@color/white"
         android:textSize="10sp" />
 
     <TextView
-        android:id="@+id/anre_last"
+        android:id="@+id/item_anim_remind_last"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/anre_isfollow"
-        android:layout_toRightOf="@+id/anre_imgc"
+        android:layout_below="@+id/item_anim_remind_follow"
+        android:layout_toEndOf="@+id/item_anim_remind_img_lay"
         android:textColor="?attr/colorAccent"
         android:textSize="11sp"
         tools:text="12:00" />
 
     <TextView
-        android:id="@+id/anre_time"
+        android:id="@+id/item_anim_remind_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/anre_last"
-        android:layout_toRightOf="@+id/anre_imgc"
-        android:textSize="11sp" />
+        android:layout_below="@+id/item_anim_remind_last"
+        android:layout_toEndOf="@+id/item_anim_remind_img_lay"
+        android:textSize="12sp" />
 </RelativeLayout>

@@ -22,8 +22,8 @@ import cn.luern0313.wristbilibili.api.AnimationTimelineApi;
 import cn.luern0313.wristbilibili.models.AnimationTimelineModel;
 import cn.luern0313.wristbilibili.ui.BangumiActivity;
 import cn.luern0313.wristbilibili.util.ColorUtil;
-import cn.luern0313.wristbilibili.util.ViewTouchListener;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
+import cn.luern0313.wristbilibili.util.ViewTouchListener;
 import cn.luern0313.wristbilibili.widget.ExceptionHandlerView;
 import cn.luern0313.wristbilibili.widget.TitleView;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
@@ -78,6 +78,20 @@ public class AnimationTimelineFragment extends Fragment
             adapter = new AnimationTimelineAdapter(inflater, animationTimelineList, listView, adapterListener);
             listView.setAdapter(adapter);
             listView.setVisibility(View.VISIBLE);
+
+            int position = 0;
+            for (int i = 0; i < animationTimelineList.size(); i++)
+            {
+                if(!animationTimelineList.get(i).isToday())
+                    position += animationTimelineList.get(i).getSeasonModelArrayList().size() + 1;
+                else
+                    break;
+            }
+            int finalPosition = position;
+            listView.post(() -> {
+                listView.smoothScrollToPosition(finalPosition);
+                listView.postDelayed(() -> listView.setSelection(finalPosition), 300);
+            });
         };
 
         listView.setOnTouchListener(new ViewTouchListener(listView, titleViewListener));
@@ -101,7 +115,10 @@ public class AnimationTimelineFragment extends Fragment
             {
                 animationTimelineApi = new AnimationTimelineApi();
                 animationTimelineList = animationTimelineApi.getAnimTimelineList();
-                handler.post(runnableUi);
+                if(animationTimelineList != null && animationTimelineList.size() > 0)
+                    handler.post(runnableUi);
+                else
+                    exceptionHandlerView.noData();
             }
             catch (IOException e)
             {
@@ -116,10 +133,13 @@ public class AnimationTimelineFragment extends Fragment
         AnimationTimelineModel.AnimationTimelineSeasonModel animationTimelineSeasonModel = null;
         for (int i = 0; i < animationTimelineList.size(); i++)
         {
-            if(position > animationTimelineList.get(i).getSeasonModelArrayList().size())
-                position -= animationTimelineList.get(i).getSeasonModelArrayList().size();
+            if(position > animationTimelineList.get(i).getSeasonModelArrayList().size() + 1)
+                position -= animationTimelineList.get(i).getSeasonModelArrayList().size() + 1;
             else
-                animationTimelineSeasonModel = animationTimelineList.get(i).getSeasonModelArrayList().get(position);
+            {
+                animationTimelineSeasonModel = animationTimelineList.get(i).getSeasonModelArrayList().get(position - 1);
+                break;
+            }
         }
         Intent intent = new Intent(ctx, BangumiActivity.class);
         intent.putExtra("season_id", animationTimelineSeasonModel.getSeasonId());

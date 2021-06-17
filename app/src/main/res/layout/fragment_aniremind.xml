@@ -21,7 +21,7 @@
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:divider="@color/alpha"
-            android:dividerHeight="3dp"
+            android:dividerHeight="0dp"
             android:paddingTop="@dimen/titleHeight"
             android:paddingBottom="22dp" />
 
