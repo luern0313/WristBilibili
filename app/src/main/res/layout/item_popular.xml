@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/popular_item_video"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:descendantFocusability="blocksDescendants"
+    android:background="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:paddingBottom="1dp"
+    android:paddingLeft="@dimen/dimen_19_10"
+    android:paddingRight="@dimen/dimen_19_10"
+    android:paddingTop="1dp"
+    tools:ignore="ContentDescription,SmallSp">
+
+    <ImageView
+        android:id="@+id/popular_item_video_img"
+        android:layout_width="68dp"
+        android:layout_height="44dp"
+        android:layout_marginTop="2dp"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/img_default_vid" />
+
+    <TextView
+        android:id="@+id/popular_item_video_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/popular_item_video_img"
+        android:layout_alignBottom="@+id/popular_item_video_img"
+        android:layout_alignParentBottom="false"
+        android:background="@drawable/shape_bg_recommend_video_time"
+        android:gravity="end"
+        android:paddingStart="2dp"
+        android:paddingEnd="2dp"
+        android:textColor="@color/white"
+        android:textSize="10sp"
+        tools:text="1:11" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="3dp"
+        android:layout_toEndOf="@+id/popular_item_video_img"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/popular_item_video_video_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:lines="2"
+            android:textColor="?attr/colorTitle"
+            android:textSize="12sp"
+            tools:text="标题" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/popular_item_video_video_play"
+                android:layout_width="wrap_content"
+                android:layout_height="14dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textSize="10sp"
+                tools:text="1.3万" />
+
+            <TextView
+                android:id="@+id/popular_item_video_video_danmaku"
+                android:layout_width="wrap_content"
+                android:layout_height="14dp"
+                android:layout_marginStart="6dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textSize="10sp"
+                tools:text="6819" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/popular_item_video_video_reason"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="3dp"
+            android:layout_marginStart="1dp"
+            android:layout_marginTop="1dp"
+            android:background="@drawable/shape_bg_rc_reason"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingBottom="1dp"
+            android:paddingEnd="3dp"
+            android:paddingStart="3dp"
+            android:paddingTop="1dp"
+            android:textColor="@color/white"
+            android:textSize="10sp"
+            tools:text="已关注" />
+
+    </LinearLayout>
+</RelativeLayout>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="false"
+    android:focusable="false"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/dimen_19_2"
+    android:paddingTop="2dp"
+    android:paddingEnd="@dimen/dimen_19_2">
+
+    <cn.luern0313.wristbilibili.widget.CircleButtonView
+        android:id="@+id/popular_header_ranking"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:clickable="true"
+        android:focusable="true"
+        app:fill_bg_color="#fb7299"
+        app:is_fill_bg="true"
+        app:name_color="?attr/colorTitle"
+        app:name_default="@string/popular_ranking_title"
+        app:src_unchecked="@drawable/icon_popular_rank" />
+
+    <cn.luern0313.wristbilibili.widget.CircleButtonView
+        android:id="@+id/popular_header_weekly"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:clickable="true"
+        android:focusable="true"
+        app:fill_bg_color="#FFC822"
+        app:is_fill_bg="true"
+        app:name_color="?attr/colorTitle"
+        app:name_default="@string/popular_weekly_title"
+        app:src_unchecked="@drawable/icon_popular_weekly" />
+
+    <cn.luern0313.wristbilibili.widget.CircleButtonView
+        android:id="@+id/popular_header_history"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:clickable="true"
+        android:focusable="true"
+        app:fill_bg_color="#f0900b"
+        app:is_fill_bg="true"
+        app:name_color="?attr/colorTitle"
+        app:name_default="@string/popular_history_title"
+        app:src_unchecked="@drawable/icon_popular_history" />
+
+</LinearLayout>
