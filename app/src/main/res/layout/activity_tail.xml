@@ -1,88 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:ignore="ContentDescription,Autofill,LabelFor">
+    android:layout_height="match_parent">
 
-    <ScrollView
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/tail_viewpager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="horizontal" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+    <cn.luern0313.wristbilibili.widget.TitleView
+        android:id="@+id/tail_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:mode="viewpager"
+        app:title="@string/tail_title" />
 
-            <cn.luern0313.wristbilibili.widget.TitleView
-                android:id="@+id/tail_title_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:mode="back"
-                app:title="@string/tail_title" />
-
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/tail_switch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="44dp"
-                android:paddingTop="8dp"
-                android:paddingRight="44dp"
-                android:paddingBottom="6dp"
-                android:text="@string/tail_switch"
-                android:textColor="?android:attr/colorForeground"
-                android:textSize="14sp" />
-
-
-        <RelativeLayout
-            android:id="@+id/tail_preetlay"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="?attr/colorLayerBackground"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingLeft="@dimen/dimen_22_10"
-            android:paddingTop="4dp"
-            android:paddingRight="@dimen/dimen_22_10">
-
-                <ImageView
-                    android:id="@+id/tail_voice"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_alignParentEnd="true"
-                    android:src="@drawable/icon_voiceinput_search" />
-
-                <TextView
-                    android:id="@+id/tail_pretext"
-                    android:layout_width="wrap_content"
-                    android:layout_height="24dp"
-                    android:layout_marginStart="4dp"
-                    android:layout_toStartOf="@id/tail_voice"
-                    android:text="@string/tail_edit" />
-
-                <EditText
-                    android:id="@+id/tail_preview"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/tail_pretext"
-                    android:layout_marginTop="0dp"
-                    android:inputType="textMultiLine"
-                    android:maxLength="70"
-                    android:paddingTop="0dp"
-                    android:textSize="14sp" />
-
-            </RelativeLayout>
-
-        <TextView
-            android:id="@+id/tail_exp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/dimen_32_10"
-            android:paddingTop="6dp"
-            android:paddingRight="@dimen/dimen_32_10"
-            android:paddingBottom="@dimen/dimen_30_6"
-            android:text="@string/tail_rule"
-            android:textSize="12sp" />
-    </LinearLayout>
-</ScrollView>
+</RelativeLayout>

@@ -1,26 +1,27 @@
 package cn.luern0313.wristbilibili.ui;
 
 import android.content.Context;
-import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.appcompat.widget.SwitchCompat;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 import cn.luern0313.wristbilibili.R;
-import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
+import cn.luern0313.wristbilibili.fragment.ReplyFragment;
+import cn.luern0313.wristbilibili.fragment.TailFragment;
+import cn.luern0313.wristbilibili.widget.TitleView;
 
 public class TailActivity extends BaseActivity
 {
-    Context ctx;
-    SwitchCompat uiSwitch;
-    EditText uiEditText;
-    ImageView uiVoice;
+    public final static String[] TAIL_REPLY_ARRAY = new String[]{"506346600911397312", "506347021818194631"};
+
+    private Context ctx;
+    private FragmentPagerAdapter pagerAdapter;
+
+    private TitleView titleView;
+    private ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -29,79 +30,74 @@ public class TailActivity extends BaseActivity
         setContentView(R.layout.activity_tail);
         ctx = this;
 
-        uiSwitch = findViewById(R.id.tail_switch);
-        uiEditText = findViewById(R.id.tail_preview);
-        uiVoice = findViewById(R.id.tail_voice);
-        ((SwitchCompat) findViewById(R.id.tail_switch)).setChecked(SharedPreferencesUtil.getBoolean(SharedPreferencesUtil.tail, true));
-        ((TextView) findViewById(R.id.tail_preview)).setText(getTail(false));
+        titleView = findViewById(R.id.tail_title);
+        viewPager = findViewById(R.id.tail_viewpager);
 
-        uiVoice.setOnClickListener(v -> {
-            Intent voiceInputIntent = new Intent("com.mobvoi.ticwear.action.SPEECH");
-            voiceInputIntent.putExtra("start_mode", "start_mode_with_voice_input");
-            try
-            {
-                startActivityForResult(voiceInputIntent, 0);
-            }
-            catch (Exception e)
-            {
-                Toast.makeText(ctx, getString(R.string.main_tip_voice_input), Toast.LENGTH_SHORT).show();
-            }
-        });
+        pagerAdapter = new TailFragmentPagerAdapter(getSupportFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
 
-        uiEditText.addTextChangedListener(new TextWatcher()
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener()
         {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count)
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels)
             {
-                SharedPreferencesUtil.putString(SharedPreferencesUtil.tailCustom, uiEditText.getText().toString());
             }
 
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void onPageScrollStateChanged(int state)
+            {
+            }
+
+            @Override
+            public void onPageSelected(int position)
+            {
+                while(titleView.getDisplayedChild() != position)
+                {
+                    titleView.show();
+                    if(titleView.getDisplayedChild() < position)
+                    {
+                        titleView.setInAnimation(ctx, R.anim.slide_in_right);
+                        titleView.setOutAnimation(ctx, R.anim.slide_out_left);
+                        titleView.showNext();
+                    }
+                    else
+                    {
+                        titleView.setInAnimation(ctx, android.R.anim.slide_in_left);
+                        titleView.setOutAnimation(ctx, android.R.anim.slide_out_right);
+                        titleView.showPrevious();
+                    }
+                }
+            }
         });
 
-        uiSwitch.setChecked(SharedPreferencesUtil.getBoolean(SharedPreferencesUtil.tail, true));
-        uiSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> SharedPreferencesUtil.putBoolean(SharedPreferencesUtil.tail, isChecked));
+        viewPager.setAdapter(pagerAdapter);
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    private static class TailFragmentPagerAdapter extends FragmentPagerAdapter
     {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == 0)
+        TailFragmentPagerAdapter(@NonNull FragmentManager fm, int behavior)
         {
-            if(data != null)
-            {
-                String result = data.getExtras().getString("speech_content");
-                if(result.endsWith("。")) result = result.substring(0, result.length() - 1);
-                uiEditText.setText(uiEditText.getText().toString() + result);
-            }
+            super(fm, behavior);
+        }
+
+        @Override
+        public int getCount()
+        {
+            return 2;
+        }
+
+        @NonNull
+        @Override
+        public Fragment getItem(int position)
+        {
+            if(position == 0)
+                return TailFragment.newInstance();
             else
-            {
-                Toast.makeText(ctx, "识别失败，请重试", Toast.LENGTH_SHORT).show();
-            }
+                return ReplyFragment.newInstanceForTail();
         }
     }
 
-    public static String getTail(boolean isChange)
+    public void tailMarket()
     {
-        if(!SharedPreferencesUtil.contains(SharedPreferencesUtil.tailCustom))
-        {
-            SharedPreferencesUtil.putString(SharedPreferencesUtil.tailCustom, "————该评论来自" + SharedPreferencesUtil.getString(SharedPreferencesUtil.tailModel, "") + "{{device}}端{{appname}}" + (SharedPreferencesUtil.getBoolean(SharedPreferencesUtil.tailAuthor, true) ? "，{{appauthor}} {{videoid}}" : ""));
-            SharedPreferencesUtil.removeValue(SharedPreferencesUtil.tailModel);
-            SharedPreferencesUtil.removeValue(SharedPreferencesUtil.tailAuthor);
-        }
-        String tail = SharedPreferencesUtil.getString(SharedPreferencesUtil.tailCustom, "");
-        if(isChange)
-        {
-            tail = tail.replace("{{device}}", Build.MODEL);
-            tail = tail.replace("{{appname}}", "腕上哔哩");
-            tail = tail.replace("{{appauthor}}", "@luern0313 ");
-            tail = tail.replace("{{videoid}}", "av37132444 ");
-        }
-        return tail;
+        viewPager.setCurrentItem(1, true);
     }
 }

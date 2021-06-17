@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:paddingTop="@dimen/titleHeight"
+    tools:ignore="ContentDescription,Autofill,LabelFor">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/tail_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:paddingTop="8dp"
+            android:paddingBottom="6dp"
+            android:text="@string/tail_switch"
+            android:textColor="?android:attr/colorForeground"
+            android:textSize="14sp" />
+
+        <RelativeLayout
+            android:id="@+id/tail_preetlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?attr/colorLayerBackground"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/dimen_22_10"
+            android:paddingTop="4dp"
+            android:paddingRight="@dimen/dimen_22_10">
+
+            <ImageView
+                android:id="@+id/tail_voice"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/icon_voiceinput_search" />
+
+            <TextView
+                android:id="@+id/tail_pretext"
+                android:layout_width="wrap_content"
+                android:layout_height="24dp"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="4dp"
+                android:layout_toStartOf="@id/tail_voice"
+                android:text="@string/tail_edit" />
+
+            <EditText
+                android:id="@+id/tail_preview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tail_pretext"
+                android:layout_marginTop="0dp"
+                android:inputType="textMultiLine"
+                android:maxLength="70"
+                android:paddingTop="0dp"
+                android:textSize="14sp" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingLeft="@dimen/dimen_32_10"
+            android:paddingTop="6dp"
+            android:paddingRight="@dimen/dimen_32_10"
+            android:text="@string/tail_market_tip"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/tail_market"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_gravity="center_horizontal"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:text="@string/tail_market"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:id="@+id/tail_exp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/dimen_32_10"
+            android:paddingTop="6dp"
+            android:paddingRight="@dimen/dimen_32_10"
+            android:paddingBottom="6dp"
+            android:text="@string/tail_rule"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/tail_remove"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="@dimen/dimen_20_6"
+            android:text="@string/tail_remove"
+            android:textSize="12sp"/>
+    </LinearLayout>
+</ScrollView>

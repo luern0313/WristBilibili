@@ -15,13 +15,12 @@ import java.util.regex.Pattern;
 import cn.luern0313.lson.LsonUtil;
 import cn.luern0313.lson.annotation.field.LsonAddPrefix;
 import cn.luern0313.lson.annotation.field.LsonBooleanFormatAsNumber;
-import cn.luern0313.lson.annotation.field.LsonDateFormat;
-import cn.luern0313.lson.annotation.field.LsonFieldCallMethod;
 import cn.luern0313.lson.annotation.field.LsonPath;
 import cn.luern0313.lson.annotation.method.LsonCallMethod;
 import cn.luern0313.lson.element.LsonArray;
 import cn.luern0313.lson.element.LsonObject;
 import cn.luern0313.wristbilibili.R;
+import cn.luern0313.wristbilibili.util.json.DateFormat;
 import cn.luern0313.wristbilibili.util.json.ImageUrlFormat;
 import lombok.Getter;
 import lombok.Setter;
@@ -39,13 +38,14 @@ public class ReplyModel implements Serializable
     @LsonPath("rpid_str")
     private String id;
 
-    @LsonFieldCallMethod(deserialization = "handlerText")
-    @LsonPath("content.")
+    @LsonPath("content.message")
+    private String textOrg;
+
     private String text;
 
     private boolean textExpend;
 
-    @LsonDateFormat("yyyy-MM-dd HH:mm")
+    @DateFormat
     @LsonPath("ctime")
     private String time;
 
@@ -176,7 +176,7 @@ public class ReplyModel implements Serializable
                         textNode.before(tag);
                         textNode.text(textNode.getWholeText().substring(textNode.getWholeText().indexOf(key) + key.length()));
                         textNodes = document.textNodes();
-                        i--;
+                        j--;
                     }
                 }
             }

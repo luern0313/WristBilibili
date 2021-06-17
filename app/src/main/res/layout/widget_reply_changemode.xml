@@ -26,6 +26,6 @@
         android:clickable="true"
         android:focusable="true"
         android:gravity="center_vertical"
-        android:text="切换"
+        android:text="@string/reply_sort_change"
         android:textSize="12dp" />
 </LinearLayout>

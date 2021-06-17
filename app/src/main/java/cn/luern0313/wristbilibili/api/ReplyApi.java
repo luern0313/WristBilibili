@@ -110,7 +110,7 @@ public class ReplyApi
 
             return l;
         }
-        return 0;
+        return -1;
     }
 
     public String sendReply(String rpid, String text) throws IOException

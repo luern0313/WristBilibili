@@ -1,6 +1,7 @@
 package cn.luern0313.wristbilibili.fragment;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -9,10 +10,10 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,15 +24,18 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.adapter.ReplyAdapter;
+import cn.luern0313.wristbilibili.adapter.TailReplyAdapter;
 import cn.luern0313.wristbilibili.api.ReplyApi;
 import cn.luern0313.wristbilibili.models.ReplyModel;
 import cn.luern0313.wristbilibili.ui.BangumiActivity;
 import cn.luern0313.wristbilibili.ui.CheckreplyActivity;
 import cn.luern0313.wristbilibili.ui.ReplyActivity;
 import cn.luern0313.wristbilibili.ui.SelectPartActivity;
+import cn.luern0313.wristbilibili.ui.TailActivity;
 import cn.luern0313.wristbilibili.ui.UserActivity;
 import cn.luern0313.wristbilibili.util.ColorUtil;
 import cn.luern0313.wristbilibili.util.DataProcessUtil;
+import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 import cn.luern0313.wristbilibili.util.ViewScrollListener;
 import cn.luern0313.wristbilibili.util.ViewTouchListener;
 import cn.luern0313.wristbilibili.widget.ExceptionHandlerView;
@@ -41,8 +45,9 @@ import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 /**
  * 被 luern0313 创建于 2020/3/7.
  */
-public class ReplyFragment extends Fragment
+public class ReplyFragment extends Fragment implements ViewScrollListener.CustomScrollResult
 {
+    private static final String ARG_TAIL_MODE = "tailModeArg";
     private static final String ARG_OID = "oidArg";
     private static final String ARG_TYPE = "typeArg";
     private static final String ARG_ROOT = "rootArg";
@@ -55,6 +60,7 @@ public class ReplyFragment extends Fragment
     private View rootLayout;
     private Intent resultIntent;
 
+    private int tailMode;
     private String oid, type, sort;
     private ReplyModel root;
     private int position;
@@ -88,14 +94,26 @@ public class ReplyFragment extends Fragment
         return fragment;
     }
 
+    public static Fragment newInstanceForTail()
+    {
+        ReplyFragment fragment = new ReplyFragment();
+        Bundle args = new Bundle();
+        args.putBoolean(ARG_TAIL_MODE, true);
+        args.putString(ARG_OID, TailActivity.TAIL_REPLY_ARRAY[0]);
+        args.putString(ARG_TYPE, "17");
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         if(getArguments() != null)
         {
-            oid = getArguments().getString(ARG_OID);
-            type = getArguments().getString(ARG_TYPE);
+            tailMode = getArguments().getBoolean(ARG_TAIL_MODE) ? 0 : -1;
+            oid = getArguments().getString(ARG_OID, "0");
+            type = getArguments().getString(ARG_TYPE, "0");
             root = (ReplyModel) getArguments().getSerializable(ARG_ROOT);
             position = getArguments().getInt(ARG_POSITION);
             sort = root == null ? "2" : "0";
@@ -115,7 +133,10 @@ public class ReplyFragment extends Fragment
         resultIntent = new Intent();
         resultIntent.putExtra("position", position);
         getActivity().setResult(-1, resultIntent);
-        replyApi = new ReplyApi(oid, type);
+        if(tailMode == -1)
+            replyApi = new ReplyApi(oid, type);
+        else
+            replyApi = new ReplyApi(TailActivity.TAIL_REPLY_ARRAY[0], "17");
 
         WindowManager manager = getActivity().getWindowManager();
         DisplayMetrics outMetrics = new DisplayMetrics();
@@ -135,7 +156,6 @@ public class ReplyFragment extends Fragment
             {
                 sort = sort.equals("0") ? "2" : "0";
                 waveSwipeRefreshLayout.setRefreshing(true);
-                isReplyLoading = true;
                 getReply(oid, type, sort);
             }
         };
@@ -161,8 +181,12 @@ public class ReplyFragment extends Fragment
             getMoreReply();
         });
 
-        uiReplyListView.setOnScrollListener(new ViewScrollListener(this));
-        uiReplyListView.setOnTouchListener(new ViewTouchListener(uiReplyListView, titleViewListener));
+        listView.setOnScrollListener(new ViewScrollListener(this));
+        listView.setOnTouchListener(new ViewTouchListener(listView, titleViewListener).setViewTouchListener((v, event) -> {
+            if(event.getAction() == MotionEvent.ACTION_DOWN)
+                v.clearFocus();
+            return false;
+        }));
 
         runnableUi = () -> {
             try
@@ -170,8 +194,13 @@ public class ReplyFragment extends Fragment
                 isReplyLoading = false;
                 exceptionHandlerView.hideAllView();
                 rootLayout.findViewById(R.id.reply_listview).setVisibility(View.VISIBLE);
-                replyAdapter = new ReplyAdapter(inflater, uiReplyListView, replyApi.replyArrayList, replyApi.replyIsShowFloor, root != null, replyApi.replyCount, replyWidth, replyAdapterListener);
-                uiReplyListView.setAdapter(replyAdapter);
+                if(tailMode == -1)
+                    replyAdapter = new ReplyAdapter(inflater, listView, replyApi.replyArrayList, replyApi.replyIsShowFloor, root != null, replyApi.replyCount, replyWidth, replyAdapterListener);
+                else
+                    replyAdapter = new TailReplyAdapter(inflater, listView, replyApi.replyArrayList, replyApi.replyIsShowFloor, false, replyApi.replyCount, replyWidth, replyAdapterListener);
+                listView.setAdapter(replyAdapter);
+                if(replyApi.replyIsEnd)
+                    ((TextView) layoutLoading.findViewById(R.id.wid_load_text)).setText(getString(R.string.main_tip_no_more_data));
             }
             catch (Exception e)
             {
@@ -213,16 +242,22 @@ public class ReplyFragment extends Fragment
 
     private void getReply(String oid, String type, final String sort)
     {
+        isReplyLoading = true;
         this.oid = oid;
         this.type = type;
         replyPage = 1;
         new Thread(() -> {
             try
             {
-                if(!replyApi.getOid().equals(oid) || !replyApi.getType().equals(type))
+                if(!oid.equals(replyApi.getOid()) || !type.equals(replyApi.getType()))
                     replyApi = new ReplyApi(oid, type);
                 ReplyModel r = (root != null ? (replyApi.replyArrayList.size() > 0 ? replyApi.replyArrayList.get(0) : root) : null);
                 int l = replyApi.getReply(1, sort, 0, r);
+                if(l == -1 && tailMode > -1 && tailMode <= TailActivity.TAIL_REPLY_ARRAY.length - 2)
+                {
+                    tailMode++;
+                    getReply(TailActivity.TAIL_REPLY_ARRAY[tailMode], "17", sort);
+                }
                 handler.post(runnableUi);
             }
             catch (IOException | NullPointerException e)
@@ -241,11 +276,8 @@ public class ReplyFragment extends Fragment
             try
             {
                 ReplyModel r = (root != null ? (replyApi.replyArrayList.size() > 0 ? replyApi.replyArrayList.get(0) : root) : null);
-                int l = replyApi.getReply(replyPage, sort, 0, r);
-                if(l != 0)
-                    handler.post(runnableUpdate);
-                else
-                    handler.post(runnableMoreNoMore);
+                replyApi.getReply(replyPage, sort, 0, r);
+                handler.post(runnableUpdate);
             }
             catch (IOException e)
             {
@@ -320,18 +352,57 @@ public class ReplyFragment extends Fragment
                     replyIntent.putExtra("rpid", replyApi.replyArrayList.get(position).getId());
                     replyIntent.putExtra("type", type);
                     if(position != 0)
-                        replyIntent.putExtra("text", String.format(getString(R.string.reply_reply_template),
-                                                         replyApi.replyArrayList.get(position).getOwnerName()));
+                        replyIntent.putExtra("text", String.format(getString(R.string.reply_reply_template), replyApi.replyArrayList.get(position).getOwnerName()));
                     startActivityForResult(replyIntent, RESULT_SEND);
                 }
+            }
+            else if(viewId == R.id.item_reply_tail_apply)
+            {
+                SharedPreferencesUtil.putString(SharedPreferencesUtil.tailCustom, replyApi.replyArrayList.get(position).getTextOrg());
             }
         }
         else if(mode == 1)
         {
-            Intent replyIntent = new Intent(ctx, ReplyActivity.class);
-            replyIntent.putExtra("rpid", root != null ? root.getId() : "");
-            replyIntent.putExtra("type", type);
-            startActivityForResult(replyIntent, RESULT_SEND);
+            if(viewId == R.id.reply_toolbar_sendreply)
+            {
+                Intent replyIntent = new Intent(ctx, ReplyActivity.class);
+                replyIntent.putExtra("rpid", root != null ? root.getId() : "");
+                replyIntent.putExtra("type", type);
+                startActivityForResult(replyIntent, RESULT_SEND);
+            }
+            else if(viewId == R.id.reply_tail_toolbar_sendreply)
+            {
+                new AlertDialog.Builder(ctx)
+                        .setMessage(getString(R.string.tail_reply_toolbar_send_tip))
+                        .setPositiveButton("分享", (dialog, which) -> {
+                            if(!TailFragment.isDefault())
+                            {
+                                new Thread(() -> {
+                                    String flag = null;
+                                    for (int i = 0; i < TailActivity.TAIL_REPLY_ARRAY.length; i++)
+                                    {
+                                        try
+                                        {
+                                            String result = new ReplyApi(TailActivity.TAIL_REPLY_ARRAY[i], "17").sendReply("", TailFragment.getTail(false));
+                                            if(i == tailMode)
+                                                flag = result.equals("") ? "发送成功！" : result;
+                                        }
+                                        catch (IOException e)
+                                        {
+                                            e.printStackTrace();
+                                            if(i == tailMode)
+                                                flag = getString(R.string.main_error_web);
+                                        }
+                                    }
+                                    getReply(oid, type, sort);
+                                    showToast(ctx, flag);
+                                }).start();
+                            }
+                            else
+                                Toast.makeText(ctx, getString(R.string.tail_reply_toolbar_send_err), Toast.LENGTH_LONG).show();
+                        })
+                        .setNegativeButton("取消", null).show();
+            }
         }
     }
 
@@ -341,6 +412,23 @@ public class ReplyFragment extends Fragment
         super.onAttach(context);
         if(context instanceof TitleView.TitleViewListener)
             titleViewListener = (TitleView.TitleViewListener) context;
+    }
+
+    public static void showToast(Context context, String text)
+    {
+        Looper myLooper = Looper.myLooper();
+        if(myLooper == null)
+        {
+            Looper.prepare();
+            myLooper = Looper.myLooper();
+        }
+
+        Toast.makeText(context, text, Toast.LENGTH_LONG).show();
+        if(myLooper != null)
+        {
+            Looper.loop();
+            myLooper.quit();
+        }
     }
 
     @Override
@@ -415,6 +503,18 @@ public class ReplyFragment extends Fragment
                 }
             }).start();
         }
+    }
+
+    @Override
+    public boolean rule()
+    {
+        return !isReplyLoading && !replyApi.replyIsEnd;
+    }
+
+    @Override
+    public void result()
+    {
+        getMoreReply();
     }
 }
 

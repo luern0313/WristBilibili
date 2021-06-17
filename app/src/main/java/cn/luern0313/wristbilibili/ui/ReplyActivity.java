@@ -9,6 +9,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import cn.luern0313.wristbilibili.R;
+import cn.luern0313.wristbilibili.fragment.TailFragment;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 
 public class ReplyActivity extends BaseActivity
@@ -53,7 +54,7 @@ public class ReplyActivity extends BaseActivity
         {
             String s = uiEditText.getText().toString();
             if(SharedPreferencesUtil.getBoolean(SharedPreferencesUtil.tail, true))
-                s += "\n\n" + TailActivity.getTail(true);
+                s += "\n\n" + TailFragment.getTail(true);
             inIntent.putExtra("text", s);
             setResult(0, inIntent);
             finish();
