@@ -11,11 +11,14 @@ import androidx.fragment.app.FragmentTransaction;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.fragment.SettingFragment;
 import cn.luern0313.wristbilibili.models.SettingModel;
+import cn.luern0313.wristbilibili.widget.TitleView;
 
-public class SettingActivity extends BaseActivity
+public class SettingActivity extends BaseActivity implements TitleView.TitleViewListener
 {
-    Context ctx;
-    Intent intent;
+    private Context ctx;
+    private Intent intent;
+
+    private TitleView titleView;
 
     public final static String ARG_SETTING_MODEL_LIST = "settingModelListArg";
 
@@ -28,9 +31,23 @@ public class SettingActivity extends BaseActivity
         ctx = this;
         intent = getIntent();
 
+        titleView = findViewById(R.id.setting_title);
+
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
         transaction.replace(R.id.setting_frame, SettingFragment.newInstance((ArrayList<SettingModel>) intent.getSerializableExtra(ARG_SETTING_MODEL_LIST)));
         transaction.commit();
+    }
+
+    @Override
+    public boolean hideTitle()
+    {
+        return titleView.hide();
+    }
+
+    @Override
+    public boolean showTitle()
+    {
+        return titleView.show();
     }
 }

@@ -63,8 +63,8 @@
                 "mode": 0,
                 "goto": "TextActivity",
                 "parameter": {
-                    "title": "更新日志",
-                    "text": "@update"
+                    "title": "@update_title",
+                    "text": "$public_update_log.txt"
                 }
             },
             {

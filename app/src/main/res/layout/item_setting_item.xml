@@ -35,7 +35,7 @@
             android:layout_marginTop="2dp"
             android:textSize="11sp"
             android:textColor="?attr/colorTitleGrey"
-            android:visibility="gone"
+            android:visibility="visible"
             tools:text="设置条目" />
     </LinearLayout>
 
@@ -60,6 +60,7 @@
             android:id="@+id/setting_item_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="-4dp"
             android:clickable="false"
             android:visibility="gone" />
 

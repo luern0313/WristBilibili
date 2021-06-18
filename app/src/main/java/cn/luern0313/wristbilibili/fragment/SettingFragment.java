@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,8 @@ import cn.luern0313.wristbilibili.api.SettingApi;
 import cn.luern0313.wristbilibili.models.SettingModel;
 import cn.luern0313.wristbilibili.ui.BaseActivity;
 import cn.luern0313.wristbilibili.ui.SettingActivity;
+import cn.luern0313.wristbilibili.util.FileUtil;
+import cn.luern0313.wristbilibili.util.MyApplication;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
 import cn.luern0313.wristbilibili.util.ViewTouchListener;
 import cn.luern0313.wristbilibili.widget.TitleView;
@@ -111,13 +114,15 @@ public class SettingFragment extends Fragment
                         String value = settingModel.getParameter().get(key);
                         if(value.startsWith("@"))
                             intent.putExtra(key, ctx.getString(R.string.class.getField(value.substring(1)).getInt(null)));
+                        else if(value.startsWith("$"))
+                            intent.putExtra(key, FileUtil.fileReader(MyApplication.getContext().getAssets().open(value.substring(1))).replaceAll("\n", "<br>"));
                         else
                             intent.putExtra(key, settingModel.getParameter().get(key));
                     }
                 }
                 startActivity(intent);
             }
-            catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException ignored)
+            catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException | IOException ignored)
             {
             }
         }
