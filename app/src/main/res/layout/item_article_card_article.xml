@@ -13,8 +13,7 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
-        app:cardBackgroundColor="?attr/colorBackgroundColor"
+        app:cardBackgroundColor="?attr/colorCardViewBackground"
         app:cardCornerRadius="6dp"
         app:cardElevation="0dp">
 
@@ -108,10 +107,10 @@
                         android:layout_height="wrap_content"
                         android:background="@drawable/shape_bg_article_card_identity"
                         android:paddingStart="4dp"
-                        android:paddingEnd="4dp"
                         android:paddingTop="1dp"
+                        android:paddingEnd="4dp"
                         android:paddingBottom="1dp"
-                        android:text="专栏"
+                        android:text="@string/article_card_article_name"
                         android:textColor="?attr/colorAccent"
                         android:textSize="10sp" />
 

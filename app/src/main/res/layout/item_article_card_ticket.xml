@@ -13,7 +13,7 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="96dp"
-        app:cardBackgroundColor="?attr/colorBackgroundColor"
+        app:cardBackgroundColor="?attr/colorCardViewBackground"
         app:cardCornerRadius="6dp"
         app:cardElevation="0dp">
 
@@ -94,7 +94,7 @@
                             android:paddingTop="1dp"
                             android:paddingEnd="4dp"
                             android:paddingBottom="1dp"
-                            android:text="票务"
+                            android:text="@string/article_card_ticket_name"
                             android:textColor="?attr/colorAccent"
                             android:textSize="10sp" />
 
