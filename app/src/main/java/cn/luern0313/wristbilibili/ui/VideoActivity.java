@@ -32,6 +32,7 @@ import cn.luern0313.wristbilibili.models.FavorBoxModel;
 import cn.luern0313.wristbilibili.models.VideoModel;
 import cn.luern0313.wristbilibili.service.DownloadService;
 import cn.luern0313.wristbilibili.util.SharedPreferencesUtil;
+import cn.luern0313.wristbilibili.util.TitleViewPagerChangeListener;
 import cn.luern0313.wristbilibili.widget.ExceptionHandlerView;
 import cn.luern0313.wristbilibili.widget.TitleView;
 
@@ -127,39 +128,7 @@ public class VideoActivity extends BaseActivity implements VideoDetailFragment.V
             }
         };
 
-        uiViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener()
-        {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels)
-            {
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state)
-            {
-            }
-
-            @Override
-            public void onPageSelected(int position)
-            {
-                while(uiTitleView.getDisplayedChild() != position)
-                {
-                    uiTitleView.show();
-                    if(uiTitleView.getDisplayedChild() < position)
-                    {
-                        uiTitleView.setInAnimation(ctx, R.anim.slide_in_right);
-                        uiTitleView.setOutAnimation(ctx, R.anim.slide_out_left);
-                        uiTitleView.showNext();
-                    }
-                    else
-                    {
-                        uiTitleView.setInAnimation(ctx, android.R.anim.slide_in_left);
-                        uiTitleView.setOutAnimation(ctx, android.R.anim.slide_out_right);
-                        uiTitleView.showPrevious();
-                    }
-                }
-            }
-        });
+        uiViewPager.addOnPageChangeListener(new TitleViewPagerChangeListener(ctx, uiTitleView));
 
         new Thread(() -> {
             try

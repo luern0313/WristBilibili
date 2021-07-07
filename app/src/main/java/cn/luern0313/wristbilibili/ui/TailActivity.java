@@ -11,6 +11,7 @@ import androidx.viewpager.widget.ViewPager;
 import cn.luern0313.wristbilibili.R;
 import cn.luern0313.wristbilibili.fragment.ReplyFragment;
 import cn.luern0313.wristbilibili.fragment.TailFragment;
+import cn.luern0313.wristbilibili.util.TitleViewPagerChangeListener;
 import cn.luern0313.wristbilibili.widget.TitleView;
 
 public class TailActivity extends BaseActivity
@@ -35,39 +36,7 @@ public class TailActivity extends BaseActivity
 
         pagerAdapter = new TailFragmentPagerAdapter(getSupportFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
 
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener()
-        {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels)
-            {
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state)
-            {
-            }
-
-            @Override
-            public void onPageSelected(int position)
-            {
-                while(titleView.getDisplayedChild() != position)
-                {
-                    titleView.show();
-                    if(titleView.getDisplayedChild() < position)
-                    {
-                        titleView.setInAnimation(ctx, R.anim.slide_in_right);
-                        titleView.setOutAnimation(ctx, R.anim.slide_out_left);
-                        titleView.showNext();
-                    }
-                    else
-                    {
-                        titleView.setInAnimation(ctx, android.R.anim.slide_in_left);
-                        titleView.setOutAnimation(ctx, android.R.anim.slide_out_right);
-                        titleView.showPrevious();
-                    }
-                }
-            }
-        });
+        viewPager.addOnPageChangeListener(new TitleViewPagerChangeListener(ctx, titleView));
 
         viewPager.setAdapter(pagerAdapter);
     }
