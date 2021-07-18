@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tool="http://schemas.android.com/tools"
+    android:id="@+id/item_lottery_user"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground"
+    android:descendantFocusability="blocksDescendants"
+    android:paddingStart="@dimen/dimen_20_12"
+    android:paddingTop="2dp"
+    android:paddingEnd="@dimen/dimen_20_12"
+    android:paddingBottom="2dp">
+
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/item_lottery_user_img"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:src="@drawable/img_default_avatar"
+        app:riv_oval="true" />
+
+    <TextView
+        android:id="@+id/item_lottery_user_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="4dp"
+        android:layout_toEndOf="@id/item_lottery_user_img"
+        android:ellipsize="end"
+        android:lines="1"
+        android:textColor="?attr/colorTitle"
+        tool:text="啊啊啊啊啊" />
+
+</RelativeLayout>

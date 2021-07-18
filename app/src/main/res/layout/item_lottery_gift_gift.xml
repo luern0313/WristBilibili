@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tool="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground"
+    android:descendantFocusability="blocksDescendants"
+    android:paddingStart="@dimen/dimen_18_10"
+    android:paddingTop="2dp"
+    android:paddingEnd="@dimen/dimen_18_10"
+    android:paddingBottom="2dp"
+    tool:ignore="ContentDescription,SmallSp">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/item_join_num_img"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_margin="1dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:descendantFocusability="blocksDescendants"
+        android:focusable="true"
+        app:cardBackgroundColor="?attr/colorCardViewBackground"
+        app:cardCornerRadius="6dp">
+
+        <ImageView
+            android:id="@+id/item_lottery_gift_card_img"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="4dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/icon_lottery" />
+
+    </androidx.cardview.widget.CardView>
+
+    <ImageView
+        android:id="@+id/item_lottery_expand"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/icon_extra_grey" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="6dp"
+        android:layout_toStartOf="@id/item_lottery_expand"
+        android:layout_toEndOf="@id/item_join_num_img"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/item_lottery_gift_ranking"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2dp"
+            android:ellipsize="end"
+            android:lines="1"
+            android:textColor="?attr/colorTitle"
+            android:textStyle="bold"
+            tool:text="啊啊啊啊啊" />
+
+        <TextView
+            android:id="@+id/item_lottery_gift_gift"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textSize="11sp"
+            tool:text="啊啊啊啊啊啊啊啊啊啊啊啊啊" />
+    </LinearLayout>
+
+</RelativeLayout>

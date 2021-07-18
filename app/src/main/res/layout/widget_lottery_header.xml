@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp"
+    tools:ignore="UseCompoundDrawables,ContentDescription,SmallSp">
+
+    <RelativeLayout
+        android:id="@+id/lottery_card_lay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:descendantFocusability="blocksDescendants"
+        android:focusable="true"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp">
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/lottery_card_head"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:layout_marginStart="@dimen/dimen_20_10"
+            android:src="@drawable/img_default_animation"
+            app:riv_oval="true" />
+
+        <ImageView
+            android:id="@+id/lottery_card_off_1"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_alignEnd="@id/lottery_card_head"
+            android:layout_alignBottom="@id/lottery_card_head"
+            android:layout_marginEnd="-2dp"
+            android:src="@drawable/icon_ou_ver_1"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/lottery_card_off_2"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_alignEnd="@id/lottery_card_head"
+            android:layout_alignBottom="@id/lottery_card_head"
+            android:layout_marginEnd="-2dp"
+            android:src="@drawable/icon_ou_ver_2"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="@dimen/dimen_20_10"
+            android:layout_toEndOf="@id/lottery_card_head"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/lottery_card_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="?attr/colorTitle"
+                android:textStyle="bold"
+                tools:text="春卷饭harumakigohan" />
+
+            <TextView
+                android:id="@+id/lottery_card_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textSize="11sp"
+                tools:text="2021/01/11 16:57" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <cn.luern0313.wristbilibili.widget.ExpandableTextView
+        android:id="@+id/lottery_dynamic"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="2dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:paddingStart="@dimen/dimen_20_12"
+        android:paddingTop="4dp"
+        android:paddingEnd="@dimen/dimen_20_12"
+        android:paddingBottom="4dp"
+        android:textSize="12sp"
+        app:etv_MaxLinesOnShrink="6"
+        tools:text="额为负i黑i我返回未婚夫i额货物i额威风威风威风" />
+
+    <TextView
+        android:id="@+id/lottery_countdown_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/lottery_countdown"
+        android:textColor="?attr/colorTitle" />
+
+    <org.sufficientlysecure.htmltextview.HtmlTextView
+        android:id="@+id/lottery_countdown"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dimen_18_10"
+        android:layout_marginEnd="@dimen/dimen_18_10"
+        android:gravity="center"
+        android:textColor="?attr/colorTitle"
+        android:textSize="16sp" />
+
+    <org.sufficientlysecure.htmltextview.HtmlTextView
+        android:id="@+id/lottery_desc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dimen_18_10"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="@dimen/dimen_18_10"
+        android:textColor="?attr/colorTitle"
+        android:textSize="12sp"
+        tools:text="1111" />
+
+</LinearLayout>
