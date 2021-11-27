@@ -39,6 +39,8 @@ public class ThemeActivity extends BaseActivity implements TitleView.TitleViewLi
 
         titleView = findViewById(R.id.theme_title);
 
+        final RecyclerView recyclerView = findViewById(R.id.theme_list);
+
         ThemeAdapter.ThemeAdapterListener themeAdapterListener = new ThemeAdapter.ThemeAdapterListener()
         {
             @Override
@@ -51,10 +53,10 @@ public class ThemeActivity extends BaseActivity implements TitleView.TitleViewLi
             public void onChangeTheme(ViewGroup group, int primary, int fore)
             {
                 changeTheme(group, primary, fore);
+                // Bug fix: 没有清理已被回收的View，导致切换主题时出现显示问题
+                recyclerView.getRecycledViewPool().clear();
             }
         };
-
-        final RecyclerView recyclerView = findViewById(R.id.theme_list);
 
         ThemeAdapter themeAdapter = new ThemeAdapter(ctx, getLayoutInflater(), themeAdapterListener, recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
