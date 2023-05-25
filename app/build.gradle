@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 28
@@ -11,6 +12,9 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         javaCompileOptions { annotationProcessorOptions { includeCompileClasspath = true } }
+    }
+    kotlinOptions {
+        jvmTarget = 1.8
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -42,6 +46,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation 'junit:junit:4.12'
+    testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
